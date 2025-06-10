@@ -13,24 +13,25 @@ const authService = {
         try {
             const user = await UserModel.findOne({ username })
             if (!user) {
-                throw new BadReq(errorCode?.INCORRECT_USERNAME)
+                throw new BadReq(errorCode.INCORRECT_USERNAME)
             }
             const comparePassword = await bcrypt.compare(
                 password,
-                user?.password,
+                user.password,
             )
             if (!comparePassword) {
-                throw new BadReq(errorCode?.INCORRECT_PASSWORD)
+                throw new BadReq(errorCode.INCORRECT_PASSWORD)
             }
+            const ts = Date.now()
             const accessToken = jwt.sign(
-                { userId: user._id },
-                envConfig?.JWT_ACCESS_TOKEN_PRIVATE_KEY,
-                { expiresIn: Number(envConfig?.JWT_ACCESS_TOKEN_EXPIRES) },
+                { userId: user._id, ts },
+                envConfig.JWT_ACCESS_TOKEN_PRIVATE_KEY,
+                { expiresIn: Number(envConfig.JWT_ACCESS_TOKEN_EXPIRES) },
             )
 
             // set redis
             await clientRedis.set(
-                `${constant.REDIS_PREFIX_ACCESS_TOKEN}_${user._id}`,
+                `${constant.REDIS_PREFIX_ACCESS_TOKEN}_${user._id}_${ts}`,
                 accessToken,
                 {
                     EX: envConfig.JWT_ACCESS_TOKEN_EXPIRES,
@@ -48,7 +49,7 @@ const authService = {
                 __v: 0,
             })
             if (!user) {
-                throw new BadReq(errorCode?.USER_NOT_FOUND)
+                throw new BadReq(errorCode.USER_NOT_FOUND)
             }
             return user
         } catch (error) {
@@ -68,10 +69,10 @@ const authService = {
             throw error
         }
     },
-    logout: async (userId) => {
+    logout: async (payloadToken) => {
         try {
             await clientRedis.del(
-                `${constant.REDIS_PREFIX_ACCESS_TOKEN}_${userId}`,
+                `${constant.REDIS_PREFIX_ACCESS_TOKEN}_${payloadToken.userId}_${payloadToken.ts}`,
             )
             return null
         } catch (error) {
