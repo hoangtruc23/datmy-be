@@ -22,7 +22,7 @@ const userSchema = new Schema(
         },
         isActive: {
             type: Boolean,
-            require: true,
+            required: true,
             default: true,
         },
         roleIds: [

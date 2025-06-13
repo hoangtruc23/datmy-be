@@ -43,7 +43,39 @@ async function apiSeeder() {
         },
 
         // Khách hàng
+
         // Nhà cung cấp
+        {
+            _id: new Types.ObjectId('684927c871287f2ae7d81320'),
+            api: '/supplier/create',
+            note: 'Tạo nhà cung cấp',
+        },
+        {
+            _id: new Types.ObjectId('684927c871287f2ae7d81321'),
+            api: '/supplier/update',
+            note: 'Cập nhật thông tin nhà cung cấp',
+        },
+        {
+            _id: new Types.ObjectId('684927c871287f2ae7d81322'),
+            api: '/supplier/delete',
+            note: 'Xóa nhà cung cấp',
+        },
+        {
+            _id: new Types.ObjectId('684927c871287f2ae7d81323'),
+            api: '/supplier/getById',
+            note: 'Lấy thông tin nhà cung cấp theo ID',
+        },
+        {
+            _id: new Types.ObjectId('684927c871287f2ae7d81324'),
+            api: '/supplier/getall',
+            note: 'Lấy danh sách tất cả nhà cung cấp',
+        },
+        {
+            _id: new Types.ObjectId('684927c871287f2ae7d81325'),
+            api: '/supplier/lock-unlock',
+            note: 'Khóa hoặc mở khóa nhà cung cấp',
+        },
+
         // Kho hàng
         // Danh mục
         // Thương hiệu
