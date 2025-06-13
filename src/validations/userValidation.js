@@ -1,6 +1,8 @@
 const joi = require('joi')
 
 const userValidation = {
+    getAll: {},
+    getById: {},
     create: {
         body: joi.object({
             fullname: joi
@@ -69,6 +71,10 @@ const userValidation = {
             }),
         }),
     },
+    update: {},
+    changePassword: {},
+    changeActiveStatus: {},
+    delete: {},
 }
 
 module.exports = userValidation

@@ -9,10 +9,11 @@ const route = require('./routes/index')
 const response = require('./utils/response/response')
 const { envConfig } = require('./config/envConfg')
 const { logger } = require('./config/loggerConfig')
-const limiter = require('./middleware/rateLimit')
-const corsMiddleware = require('./middleware/cors')
+const limiter = require('./middlewares/rateLimit')
+const corsMiddleware = require('./middlewares/cors')
 const swaggerSpec = require('./docs/swaggerConfig')
 const BadReq = require('./utils/response/requestError')
+const { checkPermission, authenticated } = require('./middlewares/auth')
 
 const app = express()
 
@@ -22,11 +23,12 @@ app.use(corsMiddleware)
 app.use(compression({ threshold: 100 * 1000 }))
 app.use(express.json())
 app.use('/swagger/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+app.use(authenticated)
+app.use(checkPermission)
 
 app.use(envConfig.BASE_URL, route)
 
 app.use((req, res, next) => {
-    console.log(req.path)
     next(response.notFound())
 })
 app.use((error, req, res, next) => {

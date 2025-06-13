@@ -37,7 +37,10 @@ const authController = {
     logout: async (req, res, next) => {
         try {
             const token = req.headers.authorization?.split(' ')[1]
-            const payloadToken = jwt.verify(token, envConfig.JWT_ACCESS_TOKEN_PRIVATE_KEY)
+            const payloadToken = jwt.verify(
+                token,
+                envConfig.JWT_ACCESS_TOKEN_PRIVATE_KEY,
+            )
             const logout = await authService.logout(payloadToken)
             return res.status(200).json(response.success(logout))
         } catch (error) {

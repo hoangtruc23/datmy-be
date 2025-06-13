@@ -7,6 +7,9 @@ const { envConfig } = require('../config/envConfg')
 const { clientRedis } = require('../config/redisConfig')
 const BadReq = require('../utils/response/requestError')
 const constant = require('../utils/constant/constant')
+const RolePermissionModel = require('../models/rolePermission')
+const ApiModel = require('../models/api')
+const PermissionApiModel = require('../models/permissionApi')
 
 const authService = {
     login: async (username, password) => {
@@ -33,6 +36,23 @@ const authService = {
             await clientRedis.set(
                 `${constant.REDIS_PREFIX_ACCESS_TOKEN}_${user._id}_${ts}`,
                 accessToken,
+                {
+                    EX: envConfig.JWT_ACCESS_TOKEN_EXPIRES,
+                },
+            )
+            const permissions = await RolePermissionModel.find({
+                roleId: { $in: user.roleIds },
+            })
+            const permissonIds = permissions.map(
+                (permission) => permission.permissionId,
+            )
+            let apis = await PermissionApiModel.find({
+                permissionId: { $in: permissonIds },
+            }).populate('apiId')
+            apis = apis.map((api) => api?.apiId?.api)
+            await clientRedis.set(
+                `${constant.REDIS_PREFIX_PERMISSION}_${user.id}`,
+                JSON.stringify(apis),
                 {
                     EX: envConfig.JWT_ACCESS_TOKEN_EXPIRES,
                 },

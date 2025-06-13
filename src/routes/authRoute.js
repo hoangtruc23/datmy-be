@@ -1,18 +1,13 @@
 const express = require('express')
-const validate = require('../middleware/validation')
-const authValidation = require('../validation/authValidation')
+const validate = require('../middlewares/validation')
+const authValidation = require('../validations/authValidation')
 const authController = require('../controllers/authController')
-const { isAuthenticated } = require('../middleware/auth')
 const router = express.Router()
 
 router.post('/login', validate(authValidation.login), authController.login)
-router.get(
-    '/getUserLoginDetail',
-    isAuthenticated,
-    authController.getUserLoginDetail,
-)
-router.post('/changePassword', isAuthenticated, authController.changePassword)
-router.get('/logout', isAuthenticated, authController.logout)
+router.get('/getUserLoginDetail', authController.getUserLoginDetail)
+router.post('/changePassword', authController.changePassword)
+router.get('/logout', authController.logout)
 
 module.exports = router
 
