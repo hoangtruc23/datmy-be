@@ -6,12 +6,20 @@ const supplierValidation = require('../validations/supplierValidation')
 
 const router = express.Router()
 //chưa validate
-router.post('/create',validate(supplierValidation.create), supplierController.create)
-router.put('/update/:id',validate(supplierValidation.update), supplierController.update)
+router.post(
+    '/create',
+    validate(supplierValidation.create),
+    supplierController.create,
+)
+router.post(
+    '/update/:id',
+    validate(supplierValidation.update),
+    supplierController.update,
+)
 router.delete('/delete/:id', supplierController.delete)
 router.get('/getById/:id', supplierController.getById)
-router.get('/getall', supplierController.getAll)
-router.patch('/lock-unlock/:id', supplierController.lockUnlock)
+router.get('/getAll', supplierController.getAll)
+router.post('/lockUnlock/:id', supplierController.lockUnlock)
 module.exports = router
 
 /**
@@ -114,7 +122,7 @@ module.exports = router
  *               contactPersons:
  *                 type: object
  *                 properties:
- *                   kho:
+ *                   warehouseAccountant:
  *                     type: array
  *                     items:
  *                       type: object
@@ -128,7 +136,7 @@ module.exports = router
  *                         phone:
  *                           type: string
  *                           example: "0911111111"
- *                   ban_hang:
+ *                   sale:
  *                     type: array
  *                     items:
  *                       type: object
@@ -142,7 +150,7 @@ module.exports = router
  *                         phone:
  *                           type: string
  *                           example: "0922222222"
- *                   ke_toan:
+ *                   accountant:
  *                     type: array
  *                     items:
  *                       type: object
@@ -156,7 +164,7 @@ module.exports = router
  *                         phone:
  *                           type: string
  *                           example: "0933333333"
- *                   ky_thuat:
+ *                   tech:
  *                     type: array
  *                     items:
  *                       type: object
@@ -196,13 +204,10 @@ module.exports = router
  *         description: Tạo nhà cung cấp thành công
  */
 
-
-
-
 /**
  * @swagger
  * /supplier/update/{id}:
- *   put:
+ *   post:
  *     summary: Cập nhật nhà cung cấp
  *     tags: [Supplier]
  *     security:
@@ -282,21 +287,6 @@ module.exports = router
  *                   phone:
  *                     type: string
  *                     example: "0923456789"
- *               contactPersons:
- *                 type: array
- *                 items:
- *                   type: object
- *                   properties:
- *                     name:
- *                       type: string
- *                       example: "Nguyễn Văn C"
- *                     phone:
- *                       type: string
- *                       example: "0934567890"
- *                     role:
- *                       type: string
- *                       enum: [kho, ban_hang, ke_toan, ky_thuat]
- *                       example: "kho"
  *               notes:
  *                 type: string
  *                 example: "Cập nhật thông tin theo yêu cầu khách hàng"
@@ -306,9 +296,6 @@ module.exports = router
  *               internalTransport:
  *                 type: boolean
  *                 example: false
- *               warehouseId:
- *                 type: string
- *                 example: "60d21b4667d0d8992e610c85"
  *               productsInUse:
  *                 type: array
  *                 items:
@@ -316,7 +303,7 @@ module.exports = router
  *                 example: ["60d21b4967d0d8992e610c86", "60d21b4b67d0d8992e610c87"]
  *               status:
  *                 type: string
- *                 enum: [active, inactive, pending]
+ *                 enum: [none, met, notMet]
  *                 example: "active"
  *               isActive:
  *                 type: boolean
@@ -368,7 +355,7 @@ module.exports = router
 
 /**
  * @swagger
- * /supplier/getall:
+ * /supplier/getAll:
  *   get:
  *     summary: Lấy danh sách nhà cung cấp
  *     tags: [Supplier]
@@ -410,11 +397,10 @@ module.exports = router
  *         description: Lấy danh sách thành công
  */
 
-
 /**
  * @swagger
- * /supplier/lock-unlock/{id}:
- *   patch:
+ * /supplier/lockUnlock/{id}:
+ *   post:
  *     summary: Khóa hoặc mở khóa nhà cung cấp
  *     tags: [Supplier]
  *     security:

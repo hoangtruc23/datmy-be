@@ -1,4 +1,5 @@
 const SupplierModel = require('../models/supplier')
+
 const errorCode = require('../utils/response/errorCode')
 const BadReq = require('../utils/response/requestError')
 const UserModel = require('../models/user')
@@ -8,7 +9,6 @@ const supplierService = {
     create: async (supplier) => {
         try {
             const {
-                
                 type,
                 name,
                 officialName,
@@ -33,16 +33,12 @@ const supplierService = {
                 throw new BadReq(errorCode.TAXCODE_EXISTED)
             }
 
-            const listSuppliers = await SupplierModel.find({}, 'MKH').sort({ MKH: 1 })
-            let nextMKH = 1
-            for (let i = 0; i < listSuppliers.length; i++) {
-                if (listSuppliers[i].MKH === nextMKH) {
-                    nextMKH++
-                } else {
-                    break
-                }
-            }
-
+            const lastSupplier = await SupplierModel.findOne({}, 'MKH')
+                .sort({ MKH: -1 })
+                .lean()
+            let nextMKH
+            if (lastSupplier) nextMKH = lastSupplier.MKH + 1
+            else nextMKH = 1
 
             await SupplierModel.create({
                 MKH: nextMKH,
@@ -87,32 +83,7 @@ const supplierService = {
                 }
             }
 
-            const updatableFields = [
-                'type',
-                'name',
-                'officialName',
-                'taxCode',
-                'fax',
-                'email',
-                'phone',
-                'billingAddress',
-                'garageAddress',
-                'deliveryAddresses',
-                'representative',
-                'contactPersons',
-                'notes',
-                'purchaseCycleInWeeks',
-                'internalTransport',
-                'productsInUse',
-                'status',
-            ]
-
-            updatableFields.forEach((field) => {
-                if (supplier[field] !== undefined) {
-                    current[field] = supplier[field]
-                }
-            })
-
+            current.set(supplier)
             const updated = await current.save()
             return updated
         } catch (error) {
@@ -134,47 +105,56 @@ const supplierService = {
 
     getById: async (id, userId) => {
         try {
-            const supplier = await SupplierModel.findById(id)
+            const user = await UserModel.findById(userId)
+            if (!user) {
+                throw new BadReq(errorCode.USER_NOT_FOUND)
+            }
+            const roleIds = user.roleIds.map((id) => id.toString())
+
+            let contactPersonsFields = ''
+
+            if (
+                roleIds.includes(constant.ROLES.BGD) || // Ban giám đốc
+                roleIds.includes(constant.ROLES.admin) // Quản trị viên
+            ) {
+                contactPersonsFields = 'contactPersons'
+            } else if (roleIds.includes(constant.ROLES.warehouseAccountant)) {
+                contactPersonsFields = 'contactPersons.warehouseAccountant'
+            } else if (roleIds.includes(constant.ROLES.sale)) {
+                contactPersonsFields = 'contactPersons.sale'
+            } else if (roleIds.includes(constant.ROLES.debtAccountant)) {
+                contactPersonsFields = 'contactPersons.debtAccountant'
+            } else if (roleIds.includes(constant.ROLES.billAccountant)) {
+                contactPersonsFields = 'contactPersons.billAccountant'
+            } else {
+                contactPersonsFields = ''
+            }
+
+            const commonFields =
+                'type MKH name officialName taxCode isActive status fax email phone billingAddress garageAddress deliveryAddresses representative notes purchaseCycleInWeeks internalTransport productsInUse'
+            const fieldsToSelect = contactPersonsFields
+                ? `${contactPersonsFields} ${commonFields}`
+                : commonFields
+
+            const supplier =
+                await SupplierModel.findById(id).select(fieldsToSelect)
             if (!supplier) {
                 throw new BadReq(errorCode.SUPPLIER_NOT_FOUND)
             }
 
-            const user = await UserModel.findById(userId)
-             if (!user) {
-                 throw new BadReq(errorCode.USER_NOT_FOUND)
-            }
-            
-            let result = supplier.toObject(); 
-            const roleIds = user.roleIds.map(id => id.toString());
-            if (
-                roleIds.includes(constant.Role.BGD) || // admin
-                roleIds.includes(constant.Role.quan_tri_vien)   // quản trị viên
-                ) {
-                 result.contactPersons = result.contactPersons || {};
-                }
-
-                else if (roleIds.includes(constant.Role.ke_toan_kho)) { // kế toán kho
-                    result.contactPersons = { ke_toan_kho: result.contactPersons.ke_toan_kho || [] };
-                } else if (roleIds.includes(constant.Role.ban_hang)) { // bán hàng
-                    result.contactPersons = { ban_hang: result.contactPersons.ban_hang || [] };
-                } else if (roleIds.includes(constant.Role.ke_toan_cong_no)) { // kế toán công nợ
-                    result.contactPersons = { ke_toan_cong_no: result.contactPersons.ke_toan_cong_no || [] };
-                } else if (roleIds.includes(constant.Role.ke_toan_hoa_don)) { // kế toán hoa đơn
-                    result.contactPersons = { ke_toan_hoa_don: result.contactPersons.ke_toan_hoa_don || [] };
-                } 
-                 else {
-                    result.contactPersons = {};
-                }
-
-            return result;
-
+            return supplier
         } catch (error) {
             throw error
         }
     },
 
-
-    getAll: async (page = 1, limit = 10, search = '', city = '', district = '')  => {
+    getAll: async (
+        page = 1,
+        limit = 10,
+        search = '',
+        city = '',
+        district = '',
+    ) => {
         try {
             page = parseInt(page, 10)
             limit = parseInt(limit, 10)
@@ -183,35 +163,37 @@ const supplierService = {
             const filter = {}
             if (search && typeof search === 'string' && search.trim() !== '') {
                 const regex = new RegExp(search.trim(), 'i')
-                filter.$or = [
-                    { name: regex }, 
-                    { officialName: regex },
-
-                ]
-                
+                filter.$or = [{ name: regex }, { officialName: regex }]
             }
-            
+
             if (city && typeof city === 'string' && city.trim() !== '') {
                 filter['deliveryAddresses'] = {
                     ...filter['deliveryAddresses'],
                     $elemMatch: {
-                        city: new RegExp(city.trim(), 'i')
-                    }
-                };
-            }
-
-            if (district && typeof district === 'string' && district.trim() !== '') {
-                if (filter['deliveryAddresses'] && filter['deliveryAddresses'].$elemMatch) {
-                    filter['deliveryAddresses'].$elemMatch.district = new RegExp(district.trim(), 'i');
-                } else {
-                    filter['deliveryAddresses'] = {
-                        $elemMatch: {
-                            district: new RegExp(district.trim(), 'i')
-                        }
-                    };
+                        city: new RegExp(city.trim(), 'i'),
+                    },
                 }
             }
 
+            if (
+                district &&
+                typeof district === 'string' &&
+                district.trim() !== ''
+            ) {
+                if (
+                    filter['deliveryAddresses'] &&
+                    filter['deliveryAddresses'].$elemMatch
+                ) {
+                    filter['deliveryAddresses'].$elemMatch.district =
+                        new RegExp(district.trim(), 'i')
+                } else {
+                    filter['deliveryAddresses'] = {
+                        $elemMatch: {
+                            district: new RegExp(district.trim(), 'i'),
+                        },
+                    }
+                }
+            }
 
             const [items, total, cities, districts] = await Promise.all([
                 SupplierModel.find(filter)
@@ -227,9 +209,7 @@ const supplierService = {
             ])
 
             const totalPages = Math.ceil(total / limit)
-            return { items, total, page, limit, totalPages, cities, districts };
-
-
+            return { items, total, page, limit, totalPages, cities, districts }
         } catch (error) {
             throw error
         }

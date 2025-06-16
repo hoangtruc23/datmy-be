@@ -108,12 +108,12 @@ const supplierSchema = new Schema(
         deliveryAddresses: [deliveryAddressSchema],
         representative: representativeSchema,
         contactPersons: {
-            ke_toan_kho: [contactPersonSchema],
-            ban_hang: [contactPersonSchema],
-            ke_toan: [contactPersonSchema],
-            ky_thuat: [contactPersonSchema],
-            ke_toan_cong_no: [contactPersonSchema],
-            ke_toan_hoa_don: [contactPersonSchema],
+            warehouseAccountant: [contactPersonSchema],
+            sale: [contactPersonSchema],
+            accountant: [contactPersonSchema],
+            tech: [contactPersonSchema],
+            debtAccountant: [contactPersonSchema],
+            billAccountant: [contactPersonSchema],
         },
         notes: {
             type: String,
@@ -127,7 +127,7 @@ const supplierSchema = new Schema(
         productsInUse: [{ type: Schema.Types.ObjectId, ref: 'Product' }],
         status: {
             type: String,
-            enum: ['none', 'met', 'not_met'],
+            enum: ['none', 'met', 'notMet'],
             default: 'none',
         },
 
