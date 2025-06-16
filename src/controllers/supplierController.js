@@ -34,7 +34,7 @@ const supplierController = {
     getById: async (req, res, next) => {
         try {
             const { id } = req.params
-            const supplier = await supplierService.getById(id)
+            const supplier = await supplierService.getById(id, req.userId)
             return res.status(200).json(response.success(supplier))
         } catch (error) {
             next(error)
@@ -43,8 +43,8 @@ const supplierController = {
 
     getAll: async (req, res, next) => {
         try {
-            const { page, limit, search } = req.query
-            const suppliers = await supplierService.getAll(page, limit, search)
+            const { page, limit, search, city, district } = req.query;
+            const suppliers = await supplierService.getAll(page, limit, search, city, district);
             return res.status(200).json(response.success(suppliers))
         } catch (error) {
             next(error)
@@ -54,8 +54,7 @@ const supplierController = {
     lockUnlock: async (req, res, next) => {
         try {
             const { id } = req.params
-            const { isActive } = req.body
-            const supplier = await supplierService.lockUnlock(id, isActive)
+            const supplier = await supplierService.lockUnlock(id)
             return res.status(200).json(response.success(supplier))
         } catch (error) {
             next(error)

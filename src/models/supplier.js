@@ -54,11 +54,6 @@ const contactPersonSchema = new Schema(
             required: true,
             trim: true,
         },
-        role: {
-            type: String,
-            required: true,
-            enum: ['kho', 'ban_hang', 'ke_toan', 'ky_thuat'],
-        },
     },
     { _id: false },
 )
@@ -69,6 +64,11 @@ const supplierSchema = new Schema(
             type: String,
             required: true,
             enum: ['customer', 'supplier'],
+        },
+        MKH: {
+            type: Number,
+            required: true,
+            unique: true,
         },
         name: {
             type: String,
@@ -107,7 +107,14 @@ const supplierSchema = new Schema(
         garageAddress: { type: String, trim: true },
         deliveryAddresses: [deliveryAddressSchema],
         representative: representativeSchema,
-        contactPersons: [contactPersonSchema],
+        contactPersons: {
+            ke_toan_kho: [contactPersonSchema],
+            ban_hang: [contactPersonSchema],
+            ke_toan: [contactPersonSchema],
+            ky_thuat: [contactPersonSchema],
+            ke_toan_cong_no: [contactPersonSchema],
+            ke_toan_hoa_don: [contactPersonSchema],
+        },
         notes: {
             type: String,
             trim: true,
@@ -116,13 +123,14 @@ const supplierSchema = new Schema(
             type: Number,
         },
         internalTransport: { type: Boolean, default: false },
-        warehouseId: { type: Schema.Types.ObjectId, ref: 'Warehouse' },
+        //warehouseId: { type: Schema.Types.ObjectId, ref: 'Warehouse' },
         productsInUse: [{ type: Schema.Types.ObjectId, ref: 'Product' }],
         status: {
             type: String,
-            enum: ['active', 'inactive', 'pending'],
-            default: 'pending',
+            enum: ['none', 'met', 'not_met'],
+            default: 'none',
         },
+
         isActive: {
             type: Boolean,
             default: true,

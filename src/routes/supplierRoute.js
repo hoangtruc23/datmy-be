@@ -6,8 +6,8 @@ const supplierValidation = require('../validations/supplierValidation')
 
 const router = express.Router()
 //chưa validate
-router.post('/create', supplierController.create)
-router.put('/update/:id', supplierController.update)
+router.post('/create',validate(supplierValidation.create), supplierController.create)
+router.put('/update/:id',validate(supplierValidation.update), supplierController.update)
 router.delete('/delete/:id', supplierController.delete)
 router.get('/getById/:id', supplierController.getById)
 router.get('/getall', supplierController.getAll)
@@ -41,6 +41,7 @@ module.exports = router
  *               - officialName
  *               - taxCode
  *               - billingAddress
+ *               - deliveryAddresses
  *             properties:
  *               type:
  *                 type: string
@@ -72,6 +73,8 @@ module.exports = router
  *                 example: "Bãi xe ABC, KCN XYZ"
  *               deliveryAddresses:
  *                 type: array
+ *                 minItems: 1
+ *                 maxItems: 5
  *                 items:
  *                   type: object
  *                   required:
@@ -109,24 +112,64 @@ module.exports = router
  *                     type: string
  *                     example: "0909999999"
  *               contactPersons:
- *                 type: array
- *                 items:
- *                   type: object
- *                   required:
- *                     - name
- *                     - phone
- *                     - role
- *                   properties:
- *                     name:
- *                       type: string
- *                       example: "Nguyễn Văn B"
- *                     phone:
- *                       type: string
- *                       example: "0911111111"
- *                     role:
- *                       type: string
- *                       enum: [kho, ban_hang, ke_toan, ky_thuat]
- *                       example: "kho"
+ *                 type: object
+ *                 properties:
+ *                   kho:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *                       required:
+ *                         - name
+ *                         - phone
+ *                       properties:
+ *                         name:
+ *                           type: string
+ *                           example: "Nguyễn Văn B"
+ *                         phone:
+ *                           type: string
+ *                           example: "0911111111"
+ *                   ban_hang:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *                       required:
+ *                         - name
+ *                         - phone
+ *                       properties:
+ *                         name:
+ *                           type: string
+ *                           example: "Nguyễn Văn C"
+ *                         phone:
+ *                           type: string
+ *                           example: "0922222222"
+ *                   ke_toan:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *                       required:
+ *                         - name
+ *                         - phone
+ *                       properties:
+ *                         name:
+ *                           type: string
+ *                           example: "Nguyễn Văn D"
+ *                         phone:
+ *                           type: string
+ *                           example: "0933333333"
+ *                   ky_thuat:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *                       required:
+ *                         - name
+ *                         - phone
+ *                       properties:
+ *                         name:
+ *                           type: string
+ *                           example: "Nguyễn Văn E"
+ *                         phone:
+ *                           type: string
+ *                           example: "0944444444"
  *               notes:
  *                 type: string
  *                 example: "Khách hàng lâu năm"
@@ -136,9 +179,6 @@ module.exports = router
  *               internalTransport:
  *                 type: boolean
  *                 example: true
- *               warehouseId:
- *                 type: string
- *                 example: "60d21b4667d0d8992e610c85"
  *               productsInUse:
  *                 type: array
  *                 items:
@@ -146,8 +186,8 @@ module.exports = router
  *                 example: ["60d21b4967d0d8992e610c86", "60d21b4b67d0d8992e610c87"]
  *               status:
  *                 type: string
- *                 enum: [active, inactive, pending]
- *                 example: active
+ *                 enum: [none, met, not_met]
+ *                 example: none
  *               isActive:
  *                 type: boolean
  *                 example: true
@@ -155,6 +195,9 @@ module.exports = router
  *       200:
  *         description: Tạo nhà cung cấp thành công
  */
+
+
+
 
 /**
  * @swagger
@@ -336,26 +379,37 @@ module.exports = router
  *         name: page
  *         schema:
  *           type: integer
- *           minimum: 1
  *         required: false
- *         description: Trang hiện tại, mặc định 1
+ *         description: Trang hiện tại (mặc định 1)
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
- *           minimum: 1
  *         required: false
- *         description: Số mục mỗi trang, mặc định 10
+ *         description: Số mục mỗi trang (mặc định 10)
  *       - in: query
  *         name: search
  *         schema:
  *           type: string
  *         required: false
- *         description: Từ khóa tìm kiếm theo tên hoặc tên đầy đủ
+ *         description: Tìm kiếm theo tên hoặc tên đầy đủ
+ *       - in: query
+ *         name: city
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: Tìm theo thành phố trong địa chỉ giao hàng
+ *       - in: query
+ *         name: district
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: Tìm theo quận/huyện trong địa chỉ giao hàng
  *     responses:
  *       200:
  *         description: Lấy danh sách thành công
  */
+
 
 /**
  * @swagger
@@ -371,19 +425,7 @@ module.exports = router
  *         required: true
  *         schema:
  *           type: string
- *         description: ID của nhà cung cấp
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - isActive
- *             properties:
- *               isActive:
- *                 type: boolean
- *                 example: false
+ *         description: ID của nhà cung cấp cần khóa/mở khóa
  *     responses:
  *       200:
  *         description: Khóa/mở khóa thành công
