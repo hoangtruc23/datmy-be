@@ -3,6 +3,7 @@ require('dotenv').config()
 const envConfig = {
     BASE_URL: process.env.BASE_URL || '/inventory/api',
     PORT: process.env.PORT || 3000,
+    SWAGGER_URL: process.env.SWAGGER_URL || '/inventory/swagger',
     DB_HOST: process.env.DB_HOST || 'localhost',
     DB_PORT: process.env.DB_PORT || 27017,
     DB_NAME: process.env.DB_NAME || 'inventory-dat-my-api',

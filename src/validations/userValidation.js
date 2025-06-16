@@ -23,14 +23,14 @@ const userValidation = {
             username: joi
                 .string()
                 .alphanum()
-                .min(4)
+                .min(3)
                 .max(30)
                 .required()
                 .messages({
                     'string.empty': 'Tên đăng nhập là bắt buộc',
                     'string.alphanum':
                         'Tên đăng nhập chỉ được chứa chữ cái và số',
-                    'string.min': 'Tên đăng nhập phải có ít nhất 4 ký tự',
+                    'string.min': 'Tên đăng nhập phải có ít nhất 3 ký tự',
                     'string.max': 'Tên đăng nhập không được vượt quá 30 ký tự',
                     'any.required': 'Tên đăng nhập là bắt buộc',
                 }),

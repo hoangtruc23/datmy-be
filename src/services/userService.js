@@ -15,6 +15,7 @@ const userService = {
             const [items, totalItem] = await Promise.all([
                 UserModel.find(
                     {
+                        username: {$nin: 'root'},
                         $or: [{ fullname: search }, { username: search }],
                     },
                     { password: 0 },

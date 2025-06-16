@@ -40,16 +40,27 @@ const authService = {
                     EX: envConfig.JWT_ACCESS_TOKEN_EXPIRES,
                 },
             )
-            const permissions = await RolePermissionModel.find({
-                roleId: { $in: user.roleIds },
-            })
-            const permissonIds = permissions.map(
-                (permission) => permission.permissionId,
-            )
-            let apis = await PermissionApiModel.find({
-                permissionId: { $in: permissonIds },
-            }).populate('apiId')
-            apis = apis.map((api) => api?.apiId?.api)
+
+            let apis
+            if (
+                user.username == constant.USER_ROOT ||
+                user.username == constant.USER_BGD
+            ) {
+                apis = await ApiModel.find()
+                apis = apis.map((api) => api.api)
+            } else {
+                const permissions = await RolePermissionModel.find({
+                    roleId: { $in: user.roleIds },
+                })
+                const permissonIds = permissions.map(
+                    (permission) => permission.permissionId,
+                )
+                apis = await PermissionApiModel.find({
+                    permissionId: { $in: permissonIds },
+                }).populate('apiId')
+                apis = apis.map((api) => api?.apiId?.api)
+            }
+
             await clientRedis.set(
                 `${constant.REDIS_PREFIX_PERMISSION}_${user.id}`,
                 JSON.stringify(apis),

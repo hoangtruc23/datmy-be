@@ -157,11 +157,11 @@ module.exports = router
  *                       type: string
  *                       format: date-time
  *                       example: 2025-06-09T07:02:15.834Z
- *                     roles:
+ *                     roleIds:
  *                       type: array
  *                       items:
  *                         type: string
- *                       example: [ admin ]
+ *                       example: [ 684927c871287f2ae7d8130b ]
  *       401:
  *         description: Chưa đăng nhập
  *         content:

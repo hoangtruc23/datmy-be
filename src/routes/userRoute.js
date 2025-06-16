@@ -112,11 +112,11 @@ module.exports = router
  *                             type: string
  *                             format: date-time
  *                             example: 2025-06-09T07:02:15.834Z
- *                           roles:
+ *                           roleIds:
  *                             type: array
  *                             items:
  *                               type: string
- *                             example: [ admin ]
+ *                             example: [ 684927c871287f2ae7d8130b ]
  *                     page:
  *                       type: number
  *                       example: 1
@@ -243,11 +243,11 @@ module.exports = router
  *                       type: string
  *                       format: date-time
  *                       example: 2025-06-09T07:02:15.834Z
- *                     roles:
+ *                     roleIds:
  *                       type: array
  *                       items:
  *                         type: string
- *                       example: [ admin ]
+ *                       example: [ 684927c871287f2ae7d8130b ]
  *       401:
  *         description: Chưa đăng nhập
  *         content:
@@ -338,11 +338,11 @@ module.exports = router
  *               password:
  *                 type: string
  *                 example: Quantrivien123!@#
- *               roles:
+ *               roleIds:
  *                 type: array
  *                 items:
  *                   type: string
- *                 example: [ quantrivien ]
+ *                 example: [ 684927c871287f2ae7d8130b ]
  *     responses:
  *       200:
  *         description: Tạo user thành công
@@ -478,11 +478,11 @@ module.exports = router
  *               phoneNumber:
  *                 type: string
  *                 example: "0987548548"
- *               roles:
+ *               roleIds:
  *                 type: array
  *                 items:
  *                   type: string
- *                 example: [ quantrivien ]
+ *                 example: [ 684927c871287f2ae7d8130b ]
  *     responses:
  *       200:
  *         description: Cập nhật thành công

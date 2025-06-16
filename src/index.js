@@ -22,7 +22,7 @@ app.use(helmet())
 app.use(corsMiddleware)
 app.use(compression({ threshold: 100 * 1000 }))
 app.use(express.json())
-app.use('/swagger/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+app.use(envConfig.SWAGGER_URL, swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 app.use(authenticated)
 app.use(checkPermission)
 
