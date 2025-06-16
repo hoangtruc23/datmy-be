@@ -8,10 +8,10 @@ const rolePermissionSeeder = require('./rolePermission')
 const roleSeeder = require('./role')
 const userSeeder = require('./user')
 
-const args = process.argv.slice(2);
+const args = process.argv.slice(2)
 async function run() {
     try {
-        switch(args[0]) {
+        switch (args[0]) {
             case 'api': {
                 await apiSeeder()
                 break

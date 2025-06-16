@@ -36,7 +36,7 @@ module.exports = router
  *             properties:
  *               username:
  *                 type: string
- *                 example: admin
+ *                 example: quantrivien
  *               password:
  *                 type: string
  *                 example: Admin123!@#

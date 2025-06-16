@@ -45,6 +45,35 @@ async function permissionApiSeeder() {
         // Khách hàng
 
         // Nhà cung cấp
+        {
+            permissionId: '684bd4f6fa59db4b4781d2b2', // Thêm
+            apiId: '684927c871287f2ae7d81320', // /supplier/create
+        },
+
+        {
+            permissionId: '684bd4f6fa59db4b4781d2ae', // Cập nhật
+            apiId: '684927c871287f2ae7d81321', // /supplier/update
+        },
+
+        {
+            permissionId: '684bd4f6fa59db4b4781d2af', // Xóa
+            apiId: '684927c871287f2ae7d81322', // /supplier/delete
+        },
+
+        {
+            permissionId: '684bd4f6fa59db4b4781d2b0', // Xem
+            apiId: '684927c871287f2ae7d81323', // /supplier/getById
+        },
+
+        {
+            permissionId: '684bd4f6fa59db4b4781d2b0', // Xem
+            apiId: '684927c871287f2ae7d81324', // /supplier/getAll
+        },
+
+        {
+            permissionId: '684bd4f6fa59db4b4781d2b1', // Khóa/Mở khóa
+            apiId: '684927c871287f2ae7d81325', // /supplier/lock-unlock
+        },
 
         // Kho hàng
 

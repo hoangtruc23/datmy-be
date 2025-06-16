@@ -38,6 +38,27 @@ async function rolePermissionSeeder() {
         },
         {
             roleId: '684927c871287f2ae7d8130b',
+            permissionId: '684bd4f6fa59db4b4781d2b2', // Thêm nhà cung cấp
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b',
+            permissionId: '684bd4f6fa59db4b4781d2ae', // Cập nhật nhà cung cấp
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b',
+            permissionId: '684bd4f6fa59db4b4781d2af', // Xóa nhà cung cấp
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b',
+            permissionId: '684bd4f6fa59db4b4781d2b0', // Xem nhà cung cấp
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b',
+            permissionId: '684bd4f6fa59db4b4781d2b1', //Khóa mở khóa nhà cung cấp
+        },
+
+        {
+            roleId: '684927c871287f2ae7d8130b',
             permissionId: '684927c871287f2ae7d81304', // Kho hàng
         },
         {
