@@ -15,7 +15,7 @@ const userService = {
             const [items, totalItem] = await Promise.all([
                 UserModel.find(
                     {
-                        username: {$nin: 'root'},
+                        username: { $nin: 'root' },
                         $or: [{ fullname: search }, { username: search }],
                     },
                     { password: 0 },
@@ -49,8 +49,14 @@ const userService = {
     },
     create: async (user) => {
         try {
-            const { fullname, username, email, phoneNumber, password, roles } =
-                user
+            const {
+                fullname,
+                username,
+                email,
+                phoneNumber,
+                password,
+                roleIds,
+            } = user
             const checkUsername = await UserModel.findOne({ username })
             if (checkUsername) {
                 throw new BadReq(errorCode.USER_EXISTED)
@@ -62,7 +68,7 @@ const userService = {
                 email,
                 phoneNumber,
                 password: hashPass,
-                roles,
+                roleIds,
             })
             return null
         } catch (error) {
@@ -71,7 +77,7 @@ const userService = {
     },
     update: async (userId, user) => {
         try {
-            const { fullname, username, email, phoneNumber, roles } = user
+            const { fullname, username, email, phoneNumber, roleIds } = user
             const checkUser = await UserModel.findById(userId)
             if (!checkUser) {
                 throw new BadReq(errorCode.USER_NOT_FOUND)
@@ -88,7 +94,7 @@ const userService = {
                 username,
                 email,
                 phoneNumber,
-                roles,
+                roleIds,
             })
             return null
         } catch (error) {
