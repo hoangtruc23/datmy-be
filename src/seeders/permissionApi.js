@@ -41,8 +41,12 @@ async function permissionApiSeeder() {
             permissionId: '684927c871287f2ae7d81301', // Xóa nhân viên
             apiId: '684927c871287f2ae7d812fc', //
         },
-
+        
         // Khách hàng
+        {
+            permissionId: '684927c871287f2ae7d81302', // Thêm khách hàng
+            apiId: '684fd10b82aec8d414ba544d', //
+        },
 
         // Nhà cung cấp
         {
