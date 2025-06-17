@@ -77,6 +77,22 @@ async function apiSeeder() {
         },
 
         // Kho hàng
+        {
+            _id: new Types.ObjectId('684c41f3ae24ff427ec487ea'),
+            api: '/warehouse/getAll',
+            note: 'Lấy danh sách các kho',
+        },
+        {
+            _id: new Types.ObjectId('6850f580343ebe406db9af51'),
+            api: '/warehouse/create',
+            note: 'Tạo kho mới',
+        },
+        {
+            _id: new Types.ObjectId('68511d6d55dd137821188fdb'),
+            api: 'warehouse/getById',
+            note: 'Lấy một kho theo ID',
+        },
+
         // Danh mục
         // Thương hiệu
         // Nhập kho

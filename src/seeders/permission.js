@@ -90,6 +90,33 @@ async function permissionSeeder() {
             code: 'kho_hang',
             parentPermissionId: null,
         },
+        {
+            _id: new Types.ObjectId('684c3d35f0e869d0df11fed3'),
+            name: 'xem',
+            code: 'kho_hang-xem',
+            parentPermissionId: '684927c871287f2ae7d81304',
+        },
+
+        {
+            _id: new Types.ObjectId('684c3d35f0e869d0df11fed4'),
+            name: 'thêm',
+            code: 'kho_hang-them',
+            parentPermissionId: '684927c871287f2ae7d81304',
+        },
+
+        {
+            _id: new Types.ObjectId('684c3d35f0e869d0df11fed5'),
+            name: 'cập nhật',
+            code: 'kho_hang-cap_nhat',
+            parentPermissionId: '684927c871287f2ae7d81304',
+        },
+
+        {
+            _id: new Types.ObjectId('684c3d35f0e869d0df11fed6'),
+            name: 'xóa',
+            code: 'kho_hang-xoa',
+            parentPermissionId: '684927c871287f2ae7d81304',
+        },
 
         // Danh mục
         {

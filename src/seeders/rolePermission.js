@@ -63,6 +63,23 @@ async function rolePermissionSeeder() {
         },
         {
             roleId: '684927c871287f2ae7d8130b',
+            permissionId: '684c3d35f0e869d0df11fed3', // xem
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b',
+            permissionId: '684c3d35f0e869d0df11fed4', // thêm
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b',
+            permissionId: '684c3d35f0e869d0df11fed5', // cập nhật
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b',
+            permissionId: '684c3d35f0e869d0df11fed6', // xóa
+        },
+
+        {
+            roleId: '684927c871287f2ae7d8130b',
             permissionId: '684927c871287f2ae7d81305', // Danh mục
         },
         {

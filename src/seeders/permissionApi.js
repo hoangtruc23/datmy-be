@@ -76,6 +76,18 @@ async function permissionApiSeeder() {
         },
 
         // Kho hàng
+        {
+            permissionId: '684c3d35f0e869d0df11fed3', // Xem kho hàng
+            apiId: '684c41f3ae24ff427ec487ea', // warehouse/getAll
+        },
+        {
+            permissionId: '684c3d35f0e869d0df11fed4',// Tạo kho hàng
+            apiId: '6850f580343ebe406db9af51', // warehouse/create
+        },
+        {
+            permissionId: '684c3d35f0e869d0df11fed3',// Xem kho hàng
+            apiId: '68511d6d55dd137821188fdb',// warehouse/getById/{id}
+        },
 
         // Danh mục
 

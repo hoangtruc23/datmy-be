@@ -18,6 +18,14 @@ const errorCode = {
         code: 7,
         message: 'Nhà cung cấp không tồn tại!',
     },
+    WAREHOUSE_EXISTED: {
+        code: 8,
+        message: 'Kho hàng đã tồn tại.',
+    },
+    WAREHOUSE_NOT_FOUND: {
+        code: 9,
+        message: 'Kho hàng không tồn tại.',
+    },
 }
 
 module.exports = errorCode
