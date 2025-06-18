@@ -2,6 +2,7 @@ const express = require('express')
 const helmet = require('helmet')
 const compression = require('compression')
 const swaggerUi = require('swagger-ui-express')
+const path = require('path')
 
 require('./config/mongodbConfig')
 require('./config/redisConfig')
@@ -25,6 +26,8 @@ app.use(express.json())
 app.use(envConfig.SWAGGER_URL, swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 app.use(authenticated)
 app.use(checkPermission)
+
+app.use('/public', express.static(path.join(__dirname, 'public')))
 
 app.use(envConfig.BASE_URL, route)
 
