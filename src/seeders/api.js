@@ -67,12 +67,12 @@ async function apiSeeder() {
         },
         {
             _id: new Types.ObjectId('684927c871287f2ae7d81324'),
-            api: '/supplier/getall',
+            api: '/supplier/getAll',
             note: 'Lấy danh sách tất cả nhà cung cấp',
         },
         {
             _id: new Types.ObjectId('684927c871287f2ae7d81325'),
-            api: '/supplier/lock-unlock',
+            api: '/supplier/lockUnlock',
             note: 'Khóa hoặc mở khóa nhà cung cấp',
         },
 
