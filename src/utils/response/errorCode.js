@@ -18,13 +18,22 @@ const errorCode = {
         code: 7,
         message: 'Nhà cung cấp không tồn tại!',
     },
+
     WAREHOUSE_EXISTED: {
-        code: 8,
+        code: 10,
         message: 'Kho hàng đã tồn tại.',
     },
     WAREHOUSE_NOT_FOUND: {
-        code: 9,
+        code: 11,
         message: 'Kho hàng không tồn tại.',
+    },
+    FILE_NOT_UPLOADED: {
+        code: 8,
+        message: 'Không có file nào được upload!',
+    },
+    IMAGE_INCORECT_FORMAT: {
+        code: 9,
+        message: 'Định dạng hìn ảnh nên là jpg, jpeg hoặc png!',
     },
 }
 

@@ -5,7 +5,6 @@ const validate = require('../middlewares/validation')
 const supplierValidation = require('../validations/supplierValidation')
 
 const router = express.Router()
-//chưa validate
 router.post(
     '/create',
     validate(supplierValidation.create),
@@ -44,17 +43,12 @@ module.exports = router
  *           schema:
  *             type: object
  *             required:
- *               - type
  *               - name
  *               - officialName
  *               - taxCode
  *               - billingAddress
  *               - deliveryAddresses
  *             properties:
- *               type:
- *                 type: string
- *                 enum: [customer, supplier]
- *                 example: supplier
  *               name:
  *                 type: string
  *                 example: "Công ty TNHH ABC"
@@ -227,10 +221,6 @@ module.exports = router
  *             type: object
  *             description: Các trường cần cập nhật (ít nhất một trường)
  *             properties:
- *               type:
- *                 type: string
- *                 enum: [customer, supplier]
- *                 example: "supplier"
  *               name:
  *                 type: string
  *                 example: "Công ty TNHH XYZ"

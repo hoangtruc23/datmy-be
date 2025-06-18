@@ -1,4 +1,4 @@
-// src/models/supplier.js
+// src/models/customer.js
 
 const { Schema, model } = require('mongoose')
 
@@ -58,8 +58,13 @@ const contactPersonSchema = new Schema(
     { _id: false },
 )
 
-const supplierSchema = new Schema(
+const customerSchema = new Schema(
     {
+        // type: {
+        //     type: String,
+        //     required: true,
+        //     enum: ['customer', 'supplier'],
+        // },
         code: {
             type: Number,
             required: true,
@@ -122,7 +127,7 @@ const supplierSchema = new Schema(
         productsInUse: [{ type: Schema.Types.ObjectId, ref: 'Product' }],
         status: {
             type: String,
-            enum: ['none', 'met', 'notMet'],
+            enum: ['none', 'met', 'not_met'],
             default: 'none',
         },
 
@@ -134,6 +139,6 @@ const supplierSchema = new Schema(
     { timestamps: true },
 )
 
-const SupplierModel = model('suppliers', supplierSchema)
+const CustomerModel = model('customers', customerSchema)
 
-module.exports = SupplierModel
+module.exports = CustomerModel

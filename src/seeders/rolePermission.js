@@ -34,6 +34,10 @@ async function rolePermissionSeeder() {
         },
         {
             roleId: '684927c871287f2ae7d8130b',
+            permissionId: '685135a0f2a5cb3fcc6b8f03', // The ID for "Thêm khách hàng"
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b',
             permissionId: '684927c871287f2ae7d81303', // Nhà cung cấp
         },
         {
