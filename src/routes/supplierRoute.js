@@ -5,7 +5,6 @@ const validate = require('../middlewares/validation')
 const supplierValidation = require('../validations/supplierValidation')
 
 const router = express.Router()
-//chưa validate
 router.post(
     '/create',
     validate(supplierValidation.create),
