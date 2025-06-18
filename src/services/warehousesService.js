@@ -28,15 +28,14 @@ const warehousesService = {
     },
     create: async (warehouse) => {
         try {
-            const { name, detail } = warehouse
+            const { name, description } = warehouse
             const checkName = await WareHousesModel.findOne({ name: name })
             if (checkName) {
                 throw new BadReq(errorCode.WAREHOUSE_EXISTED)
             }
             const data = {
                 name: name,
-                detail: detail,
-                isActive: true,
+                description: description,
             }
             await WareHousesModel.create(data)
             return null
@@ -51,6 +50,55 @@ const warehousesService = {
                 throw new BadReq(errorCode.WAREHOUSE_NOT_FOUND)
             }
             return warehouse
+        } catch (error) {
+            throw error
+        }
+    },
+    update: async (id, reqData) => {
+        try {
+            const { name, description } = reqData
+            const warehouse = await WareHousesModel.findById(id)
+            if (!warehouse) {
+                throw new BadReq(errorCode.WAREHOUSE_NOT_FOUND)
+            }
+            const checkName = await WareHousesModel.findOne({
+                name: name,
+                _id: { $ne: id },
+            })
+            if (checkName) {
+                throw new BadReq(errorCode.WAREHOUSE_EXISTED)
+            }
+
+            await WareHousesModel.findByIdAndUpdate(id, {
+                name,
+                description,
+            })
+            return null
+        } catch (error) {
+            throw error
+        }
+    },
+    delete: async (id) => {
+        try {
+            const warehouse = await WareHousesModel.findById(id)
+            if (!warehouse) {
+                throw new BadReq(errorCode.WAREHOUSE_NOT_FOUND)
+            }
+            await WareHousesModel.findByIdAndDelete(id)
+            return null
+        } catch (error) {
+            throw error
+        }
+    },
+    changeActive: async (id) => {
+        try {
+            const warehouse = await WareHousesModel.findById(id)
+            if (!warehouse) {
+                throw new BadReq(errorCode.WAREHOUSE_NOT_FOUND)
+            }
+            const oldState = warehouse.isActive
+            await WareHousesModel.findByIdAndUpdate(id, { isActive: !oldState })
+            return null
         } catch (error) {
             throw error
         }

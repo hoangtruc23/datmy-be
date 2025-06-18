@@ -11,6 +11,7 @@ const wareHouses = new Schema({
     },
     isActive: {
         type: Boolean,
+        default: true,
     },
 })
 

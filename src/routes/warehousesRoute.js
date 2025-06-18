@@ -2,10 +2,39 @@ const express = require('express')
 const router = express.Router()
 
 const warehousesController = require('../controllers/warehousesController')
+const warehousesValidation = require('../validations/warehousesValidation')
+const validate = require('../middlewares/validation')
 
-router.get('/getAll', warehousesController.getAll)
-router.post('/create', warehousesController.create)
-router.get('/getById/:warehouseID', warehousesController.getById)
+router.get(
+    '/getAll',
+    validate(warehousesValidation.getAll),
+    warehousesController.getAll,
+)
+router.post(
+    '/create',
+    validate(warehousesValidation.create),
+    warehousesController.create,
+)
+router.get(
+    '/getById/:warehouseID',
+    validate(warehousesValidation.getById),
+    warehousesController.getById,
+)
+router.post(
+    '/update/:warehouseID',
+    validate(warehousesValidation.update),
+    warehousesController.update,
+)
+router.delete(
+    '/delete/:warehouseID',
+    validate(warehousesValidation.delete),
+    warehousesController.delete,
+)
+router.post(
+    '/changeActive/:warehouseID',
+    validate(warehousesValidation.changeActive),
+    warehousesController.changeActive,
+)
 
 module.exports = router
 
@@ -162,7 +191,7 @@ module.exports = router
  *               name:
  *                 type: string
  *                 example: Kho Bình Tân
- *               detail:
+ *               description:
  *                 type: string
  *                 example: null
  *     responses:
@@ -265,7 +294,7 @@ module.exports = router
 
 /**
  * @swagger
- * /warehouse/getById/{id}:
+ * /warehouse/getById/{warehouseId}:
  *   get:
  *     summary: Lấy thông tin 1 kho
  *     security:
@@ -273,7 +302,7 @@ module.exports = router
  *     tags: [WareHouse]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: warehouseId
  *         schema:
  *           type: string
  *         required: true
@@ -358,6 +387,360 @@ module.exports = router
  *                 code:
  *                   type: integer
  *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Lỗi server!
+ *                 data:
+ *                   type: string
+ *                   example: null
+ */
+
+/**
+ * @swagger
+ * /warehouse/update/{warehouseId}:
+ *   post:
+ *     summary: Cập nhật thông tin kho hàng
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [WareHouse]
+ *     parameters:
+ *     - name: warehouseId
+ *       in: path
+ *       required: true
+ *       schema:
+ *         type: string
+ *       description: Id của kho hàng
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: Kho Bình Tân
+ *               description:
+ *                 type: string
+ *                 example: null
+ *     responses:
+ *       200:
+ *         description: Cập nhật kho hàng thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
+ *                 code:
+ *                   type: integer
+ *                   example: 1
+ *                 message:
+ *                   type: string
+ *                   example: OK!
+ *                 data:
+ *                   type: object
+ *                   example: null
+ *       400:
+ *         description: Lỗi input
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 400
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Tên kho là bắt buộc!
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       401:
+ *         description: Chưa đăng nhập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 401
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có token
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       403:
+ *         description: Không có quyền truy cập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 403
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có quyền
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       500:
+ *         description: Lỗi server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 500
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Lỗi server!
+ *                 data:
+ *                   type: string
+ *                   example: null
+ */
+
+/**
+ * @swagger
+ * /warehouse/delete/{warehouseId}:
+ *   delete:
+ *     summary: Xóa kho hàng
+ *     tags: [WareHouse]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: warehouseId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID của kho hàng cần xóa
+ *     responses:
+ *       200:
+ *         description: Xoá kho hàng thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
+ *                 code:
+ *                   type: integer
+ *                   example: 1
+ *                 message:
+ *                   type: string
+ *                   example: OK!
+ *                 data:
+ *                   type: object
+ *                   example: null
+ *       400:
+ *         description: Lỗi input
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 400
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Kho không tồn tại!
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       401:
+ *         description: Chưa đăng nhập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 401
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có token
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       403:
+ *         description: Không có quyền truy cập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 403
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có quyền
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       500:
+ *         description: Lỗi server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 500
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Lỗi server!
+ *                 data:
+ *                   type: string
+ *                   example: null
+ */
+
+/**
+ * @swagger
+ * /warehouse/changeActive/{warehouseId}:
+ *   post:
+ *     summary: Cập nhật trạng thái của kho hàng
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [WareHouse]
+ *     parameters:
+ *     - name: warehouseId
+ *       in: path
+ *       required: true
+ *       schema:
+ *         type: string
+ *       description: Id của kho hàng
+ *     responses:
+ *       200:
+ *         description: Cập nhật trạng thái kho hàng thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
+ *                 code:
+ *                   type: integer
+ *                   example: 1
+ *                 message:
+ *                   type: string
+ *                   example: OK!
+ *                 data:
+ *                   type: object
+ *                   example: null
+ *       400:
+ *         description: Lỗi input
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 400
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Kho hàng không tồn tại!
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       401:
+ *         description: Chưa đăng nhập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 401
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có token
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       403:
+ *         description: Không có quyền truy cập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 403
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có quyền
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       500:
+ *         description: Lỗi server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 500
+ *                 code:
+ *                   type: integer
+ *                   example: -1
  *                 message:
  *                   type: string
  *                   example: Lỗi server!

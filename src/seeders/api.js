@@ -92,6 +92,21 @@ async function apiSeeder() {
             api: 'warehouse/getById',
             note: 'Lấy một kho theo ID',
         },
+        {
+            _id: new Types.ObjectId('685139e2ca1de719c6e17706'),
+            api: '/warehouse/update',
+            note: 'Chỉnh sửa kho',
+        },
+        {
+            _id: new Types.ObjectId('68523eb5400185858c2a19d3'),
+            api: '/warehouse/delete',
+            note: 'Xoá kho hàng',
+        },
+        {
+            _id: new Types.ObjectId('685246a87a7937ce073f6d51'),
+            api: '/warehouse/changeActive',
+            note: 'Thay đổi trạng thái của kho',
+        },
 
         // Danh mục
         // Thương hiệu

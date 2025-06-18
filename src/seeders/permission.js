@@ -118,6 +118,13 @@ async function permissionSeeder() {
             parentPermissionId: '684927c871287f2ae7d81304',
         },
 
+        {
+            _id: new Types.ObjectId('685247989820dda77e2e7272'),
+            name: 'cập nhật trạng thái',
+            code: 'kho_hang-cap_nhat_trang_thai',
+            parentPermissionId: '684927c871287f2ae7d81304',
+        },
+
         // Danh mục
         {
             _id: new Types.ObjectId('684927c871287f2ae7d81305'),

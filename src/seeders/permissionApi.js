@@ -81,12 +81,24 @@ async function permissionApiSeeder() {
             apiId: '684c41f3ae24ff427ec487ea', // warehouse/getAll
         },
         {
-            permissionId: '684c3d35f0e869d0df11fed4',// Tạo kho hàng
+            permissionId: '684c3d35f0e869d0df11fed4', // Tạo kho hàng
             apiId: '6850f580343ebe406db9af51', // warehouse/create
         },
         {
-            permissionId: '684c3d35f0e869d0df11fed3',// Xem kho hàng
-            apiId: '68511d6d55dd137821188fdb',// warehouse/getById/{id}
+            permissionId: '684c3d35f0e869d0df11fed3', // Xem kho hàng
+            apiId: '68511d6d55dd137821188fdb', // warehouse/getById/{id}
+        },
+        {
+            permissionId: '684c3d35f0e869d0df11fed5', // Chỉnh sửa kho hàng
+            apiId: '685139e2ca1de719c6e17706', // warehouse/update/{id}
+        },
+        {
+            permissionId: '684c3d35f0e869d0df11fed6', // Xoá kho hàng
+            apiId: '68523eb5400185858c2a19d3', // warehouse/delete/{id}
+        },
+        {
+            permissionId: '685247989820dda77e2e7272', // Cập nhật trạng thái kho hàng
+            apiId: '685246a87a7937ce073f6d51', // warehouse/changeActive/{id}
         },
 
         // Danh mục
