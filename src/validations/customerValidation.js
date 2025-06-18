@@ -79,8 +79,13 @@ const customerBaseSchema = {
         .required()
         .messages({
             'string.empty': 'Mã số thuế là bắt buộc',
+<<<<<<< HEAD
             'string.pattern.base':
                 'Mã số thuế phải là chữ số và có từ 10-15 ký tự',
+=======
+            'string.pattern.base': 
+            'Mã số thuế phải là chữ số và có từ 10-15 ký tự',
+>>>>>>> 7cce48f58ffbf5295c11b2fbd118b0eb09bf7f71
             'any.required': 'Mã số thuế là bắt buộc',
         }),
     fax: joi.string().allow('', null),
@@ -140,9 +145,17 @@ const customerValidation = {
         body: joi.object({
             ...customerBaseSchema,
             // 'code' is the unique customer ID and should never be changed.
+<<<<<<< HEAD
             code: joi.forbidden(),
+=======
+            code: joi.forbidden(), 
+>>>>>>> 7cce48f58ffbf5295c11b2fbd118b0eb09bf7f71
         }),
     },
 }
 
+<<<<<<< HEAD
 module.exports = customerValidation
+=======
+module.exports = customerValidation
+>>>>>>> 7cce48f58ffbf5295c11b2fbd118b0eb09bf7f71
