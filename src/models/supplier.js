@@ -60,12 +60,7 @@ const contactPersonSchema = new Schema(
 
 const supplierSchema = new Schema(
     {
-        type: {
-            type: String,
-            required: true,
-            enum: ['customer', 'supplier'],
-        },
-        MKH: {
+        code: {
             type: Number,
             required: true,
             unique: true,

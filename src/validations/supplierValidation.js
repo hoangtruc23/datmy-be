@@ -60,7 +60,7 @@ const representativeSchema = joi.object({
 })
 
 const supplierBaseSchema = {
-    type: joi.string().valid('customer', 'supplier').required(),
+    // type: joi.string().valid('customer', 'supplier').required(),
     //MKH: joi.number().required(),
     name: joi.string().required().messages({
         'string.empty': 'Tên là bắt buộc',

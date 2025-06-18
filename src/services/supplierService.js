@@ -9,7 +9,6 @@ const supplierService = {
     create: async (supplier) => {
         try {
             const {
-                type,
                 name,
                 officialName,
                 taxCode,
@@ -33,16 +32,14 @@ const supplierService = {
                 throw new BadReq(errorCode.TAXCODE_EXISTED)
             }
 
-            const lastSupplier = await SupplierModel.findOne({}, 'MKH')
-                .sort({ MKH: -1 })
+            const lastSupplier = await SupplierModel.findOne({}, 'code')
+                .sort({ code: -1 })
                 .lean()
-            let nextMKH
-            if (lastSupplier) nextMKH = lastSupplier.MKH + 1
-            else nextMKH = 1
-
+            let nextCode
+            if (lastSupplier) nextCode = lastSupplier.code + 1
+            else nextCode = 1
             await SupplierModel.create({
-                MKH: nextMKH,
-                type,
+                code: nextCode,
                 name,
                 officialName,
                 taxCode,
@@ -131,7 +128,7 @@ const supplierService = {
             }
 
             const commonFields =
-                'type MKH name officialName taxCode isActive status fax email phone billingAddress garageAddress deliveryAddresses representative notes purchaseCycleInWeeks internalTransport productsInUse'
+                'code name officialName taxCode isActive status fax email phone billingAddress garageAddress deliveryAddresses representative notes purchaseCycleInWeeks internalTransport productsInUse'
             const fieldsToSelect = contactPersonsFields
                 ? `${contactPersonsFields} ${commonFields}`
                 : commonFields

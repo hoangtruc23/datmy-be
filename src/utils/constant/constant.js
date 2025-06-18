@@ -12,6 +12,11 @@ const constant = {
         billAccountant: '684927c871287f2ae7d81310',
         sale: '684927c871287f2ae7d81311',
     },
+    PRODUCT_MANAGEMENT_TYPE: {
+        NONE: 'none',
+        SERIAL: 'serial',
+        BATCH: 'batch',
+    },
 }
 
 module.exports = constant
