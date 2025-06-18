@@ -44,7 +44,12 @@ async function permissionSeeder() {
             code: 'khach_hang',
             parentPermissionId: null,
         },
-
+        {
+            _id: new Types.ObjectId('685135a0f2a5cb3fcc6b8f03'), // <-- The ID from Step 1
+            name: 'Thêm',
+            code: 'khach_hang-them',
+            parentPermissionId: '684927c871287f2ae7d81302',
+        },
         // Nhà cung cấp
         {
             _id: new Types.ObjectId('684927c871287f2ae7d81303'),

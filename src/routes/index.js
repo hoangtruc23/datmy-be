@@ -5,10 +5,13 @@ const authRoute = require('./authRoute')
 const userRoute = require('./userRoute')
 const supplierRoute = require('./supplierRoute')
 const uploadRoute = require('./uploadRoute')
+const customerRoute = require('./customerRoute')
 
 router.use('/auth', authRoute)
 router.use('/user', userRoute)
 router.use('/supplier', supplierRoute)
 router.use('/upload', uploadRoute)
+router.use('/customer', customerRoute)
+
 
 module.exports = router
