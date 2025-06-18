@@ -8,15 +8,18 @@ const customerService = {
     create: async (customerData) => {
         try {
             // Check if tax code already exists, as it must be unique
-            const checkTaxCode = await CustomerModel.findOne({ taxCode: customerData.taxCode })
+            const checkTaxCode = await CustomerModel.findOne({
+                taxCode: customerData.taxCode,
+            })
             if (checkTaxCode) {
                 // You should define this new error code in your errorCode.js file
                 throw new BadReq({ message: 'Mã số thuế đã tồn tại' })
             }
-            
-            const latestCustomer = await CustomerModel.findOne().sort({ code: -1 });
-            const newCode = latestCustomer ? latestCustomer.code + 1 : 1;
 
+            const latestCustomer = await CustomerModel.findOne().sort({
+                code: -1,
+            })
+            const newCode = latestCustomer ? latestCustomer.code + 1 : 1
 
             const newCustomer = await CustomerModel.create({
                 ...customerData,

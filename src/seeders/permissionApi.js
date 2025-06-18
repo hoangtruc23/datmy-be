@@ -45,7 +45,7 @@ async function permissionApiSeeder() {
         // Khách hàng
         {
             permissionId: '685135a0f2a5cb3fcc6b8f03', // The ID for "Thêm khách hàng"
-            apiId: '685135a0f2a5cb3fcc6b8ea0',           // The ID for the /customer/create API
+            apiId: '685135a0f2a5cb3fcc6b8ea0', // The ID for the /customer/create API
         },
         // Nhà cung cấp
         {
@@ -107,6 +107,30 @@ async function permissionApiSeeder() {
         // Danh mục
 
         // Thương hiệu
+        {
+            permissionId: '68525e2d25829b7e6b32a612', // tạo thương hiệu
+            apiId: '68525e2d25829b7e6b32a5e8', // brand/create
+        },
+        {
+            permissionId: '68525e2d25829b7e6b32a613', // lấy tất cả thương hiệu
+            apiId: '68525e2d25829b7e6b32a5e9', // brand/getAll
+        },
+        {
+            permissionId: '68525e2d25829b7e6b32a613', // lấy một thương hiệu theo id
+            apiId: '68525e2d25829b7e6b32a5ea', // brand/getById/{id}
+        },
+        {
+            permissionId: '68525e2d25829b7e6b32a615', // chỉnh sửa thương hiệu
+            apiId: '68525e2d25829b7e6b32a5eb', // brand/update/{id}
+        },
+        {
+            permissionId: '68525e2d25829b7e6b32a614', // xoá thương hiệu
+            apiId: '68525e2d25829b7e6b32a5ec', // brand/delete/{id}
+        },
+        {
+            permissionId: '68525e2d25829b7e6b32a615', // thay đổi trạng thái thương hiệu
+            apiId: '68525e2d25829b7e6b32a5ed', // brand/changeActive/{id}
+        },
 
         // Nhập kho
 

@@ -146,6 +146,34 @@ async function permissionSeeder() {
             parentPermissionId: null,
         },
 
+        {
+            _id: new Types.ObjectId('68525e2d25829b7e6b32a612'),
+            name: 'thêm',
+            code: 'thuong_hieu-them',
+            parentPermissionId: '684927c871287f2ae7d81306',
+        },
+
+        {
+            _id: new Types.ObjectId('68525e2d25829b7e6b32a613'),
+            name: 'xem',
+            code: 'thuong_hieu-xem',
+            parentPermissionId: '684927c871287f2ae7d81306',
+        },
+
+        {
+            _id: new Types.ObjectId('68525e2d25829b7e6b32a614'),
+            name: 'xoá',
+            code: 'thuong_hieu-xoá',
+            parentPermissionId: '684927c871287f2ae7d81306',
+        },
+
+        {
+            _id: new Types.ObjectId('68525e2d25829b7e6b32a615'),
+            name: 'cập nhật',
+            code: 'thuong_hieu-cap_nhat',
+            parentPermissionId: '684927c871287f2ae7d81306',
+        },
+
         // Nhập kho
         {
             _id: new Types.ObjectId('684927c871287f2ae7d81307'),
