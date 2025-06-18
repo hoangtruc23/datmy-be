@@ -96,6 +96,23 @@ async function rolePermissionSeeder() {
         },
         {
             roleId: '684927c871287f2ae7d8130b',
+            permissionId: '68525e2d25829b7e6b32a612', // thêm
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b',
+            permissionId: '68525e2d25829b7e6b32a613', // xem
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b',
+            permissionId: '68525e2d25829b7e6b32a615', // sửa
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b',
+            permissionId: '68525e2d25829b7e6b32a614', // xoá
+        },
+
+        {
+            roleId: '684927c871287f2ae7d8130b',
             permissionId: '684927c871287f2ae7d81307', // Nhập kho
         },
         {

@@ -35,6 +35,14 @@ const errorCode = {
         code: 9,
         message: 'Định dạng hìn ảnh nên là jpg, jpeg hoặc png!',
     },
+    BRAND_EXISTED: {
+        code: 13,
+        message: 'Thương hiệu đã tồn tại',
+    },
+    BRAND_NOT_FOUND: {
+        code: 14,
+        message: 'Thương hiệu không tồn tại',
+    },
 }
 
 module.exports = errorCode
