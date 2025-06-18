@@ -2,11 +2,8 @@ const express = require('express')
 const router = express.Router()
 const uploadController = require('../controllers/uploadController')
 const { uploadImage, uploadFile } = require('../middlewares/upload')
-const validate = require('../middlewares/validation')
-const uploadValidation = require('../validations/uploadValidation')
 
 //chưa tạo quyền, đang cmt
-
 router.post('/image', uploadImage.single('image'), uploadController.uploadImage)
 router.post('/file', uploadFile.array('file', 12), uploadController.uploadFile)
 
