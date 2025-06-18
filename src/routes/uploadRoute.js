@@ -3,8 +3,6 @@ const router = express.Router()
 const uploadController = require('../controllers/uploadController')
 const { uploadImage, uploadFile } = require('../middlewares/upload')
 
-//chưa tạo quyền, đang cmt
-
 router.post('/image', uploadImage.single('image'), uploadController.uploadImage)
 router.post('/file', uploadFile.array('file', 12), uploadController.uploadFile)
 
@@ -39,14 +37,6 @@ module.exports = router
  *     responses:
  *       200:
  *         description: Upload thành công
- *         content:
- *           application/json:
- *             example:
- *               status: success
- *               message: Upload image successfully
- *               data:
- *                 filename: "1718638291234-avatar.png"
- *                 url: "http://localhost:3000/public/upload/image/1718638291234-avatar.png"
  */
 
 /**
@@ -73,14 +63,4 @@ module.exports = router
  *     responses:
  *       200:
  *         description: Upload thành công
- *         content:
- *           application/json:
- *             example:
- *               status: success
- *               message: Upload file successfully
- *               data:
- *                 - filename: "1718638291234-doc.pdf"
- *                   url: "http://localhost:3000/public/upload/file/1718638291234-doc.pdf"
- *                 - filename: "1718638295678-doc2.pdf"
- *                   url: "http://localhost:3000/public/upload/file/1718638295678-doc2.pdf"
  */

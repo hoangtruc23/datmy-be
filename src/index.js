@@ -24,10 +24,9 @@ app.use(corsMiddleware)
 app.use(compression({ threshold: 100 * 1000 }))
 app.use(express.json())
 app.use(envConfig.SWAGGER_URL, swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+app.use(process.env.BASE_URL, express.static(path.join(__dirname, 'public')))
 app.use(authenticated)
 app.use(checkPermission)
-
-app.use('/public', express.static(path.join(__dirname, 'public')))
 
 app.use(envConfig.BASE_URL, route)
 

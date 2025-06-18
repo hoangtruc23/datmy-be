@@ -7,7 +7,8 @@ const uploadService = {
         if (!file) {
             throw new BadReq(errorCode.FILE_NOT_UPLOADED)
         }
-        const fileUrl = `${req.protocol}://${req.get('host')}/public/upload/image/${file.filename}`
+        const fileUrl = `${req.protocol}://${req.get('host')}${process.env.BASE_URL}/upload/image/${file.filename}`
+
         return { filename: file.filename, url: fileUrl }
     },
 
@@ -17,7 +18,7 @@ const uploadService = {
         }
 
         const fileUrls = files.map((file) => {
-            const fileUrl = `${req.protocol}://${req.get('host')}/public/upload/file/${file.filename}`
+            const fileUrl = `${req.protocol}://${req.get('host')}${process.env.BASE_URL}/upload/file/${file.filename}`
             return { filename: file.filename, url: fileUrl }
         })
 

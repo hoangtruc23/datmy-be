@@ -43,7 +43,11 @@ async function apiSeeder() {
         },
 
         // Khách hàng
-
+        {
+            _id: new Types.ObjectId('685135a0f2a5cb3fcc6b8ea0'), // Use a unique ID for this API
+            api: '/customer/create',
+            note: 'Tạo khách hàng',
+        },
         // Nhà cung cấp
         {
             _id: new Types.ObjectId('684927c871287f2ae7d81320'),
@@ -77,6 +81,37 @@ async function apiSeeder() {
         },
 
         // Kho hàng
+        {
+            _id: new Types.ObjectId('684c41f3ae24ff427ec487ea'),
+            api: '/warehouse/getAll',
+            note: 'Lấy danh sách các kho',
+        },
+        {
+            _id: new Types.ObjectId('6850f580343ebe406db9af51'),
+            api: '/warehouse/create',
+            note: 'Tạo kho mới',
+        },
+        {
+            _id: new Types.ObjectId('68511d6d55dd137821188fdb'),
+            api: 'warehouse/getById',
+            note: 'Lấy một kho theo ID',
+        },
+        {
+            _id: new Types.ObjectId('685139e2ca1de719c6e17706'),
+            api: '/warehouse/update',
+            note: 'Chỉnh sửa kho',
+        },
+        {
+            _id: new Types.ObjectId('68523eb5400185858c2a19d3'),
+            api: '/warehouse/delete',
+            note: 'Xoá kho hàng',
+        },
+        {
+            _id: new Types.ObjectId('685246a87a7937ce073f6d51'),
+            api: '/warehouse/changeActive',
+            note: 'Thay đổi trạng thái của kho',
+        },
+
         // Danh mục
         // Thương hiệu
         // Nhập kho

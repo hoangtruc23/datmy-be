@@ -20,7 +20,7 @@ module.exports = router
  *     summary: Tạo mới danh mục sản phẩm
  *     tags: [ProductCategory]
  *     security:
- *       - bearerAuth: []
+ *       - bearerAuth: []   # Nếu cần token, nếu không cần thì xoá 2 dòng này
  *     requestBody:
  *       required: true
  *       content:
@@ -33,7 +33,7 @@ module.exports = router
  *               image:
  *                 type: string
  *                 description: Đường dẫn (URL) của ảnh danh mục
- *                 example: "http://localhost:3000/public/upload/image/1750222239346-1.png"
+ *                 example: "http://localhost:3000/inventory/api/upload/image/1750233539665-1.png"
  *               name:
  *                 type: string
  *                 description: Tên danh mục
