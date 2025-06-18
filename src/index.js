@@ -24,7 +24,7 @@ app.use(compression({ threshold: 100 * 1000 }))
 app.use(express.json())
 app.use(envConfig.SWAGGER_URL, swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 app.use(authenticated)
-//app.use(checkPermission)
+app.use(checkPermission)
 
 app.use(envConfig.BASE_URL, route)
 

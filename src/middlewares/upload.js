@@ -1,14 +1,16 @@
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const errorCode = require('../utils/response/errorCode')
+const BadReq = require('../utils/response/requestError')
 
-// chỉnh lại errorCode type
+
 const imageFileFilter = (req, file, cb) => {
     const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
     if (allowedTypes.includes(file.mimetype)) {
         cb(null, true);
     } else {
-        cb(new Error('Chỉ cho phép upload file ảnh (jpg, jpeg, png)'), false);
+        cb(new BadReq(errorCode.IMAGE_INCORECT_FORMAT), false);
     }
 };
 
