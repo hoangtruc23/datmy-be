@@ -1,4 +1,4 @@
-// src/models/partner.js
+// src/models/customer.js
 
 const { Schema, model } = require('mongoose')
 
@@ -60,12 +60,12 @@ const contactPersonSchema = new Schema(
 
 const customerSchema = new Schema(
     {
-        type: {
-            type: String,
-            required: true,
-            enum: ['customer', 'supplier'],
-        },
-        MKH: {
+        // type: {
+        //     type: String,
+        //     required: true,
+        //     enum: ['customer', 'supplier'],
+        // },
+        code: {
             type: Number,
             required: true,
             unique: true,

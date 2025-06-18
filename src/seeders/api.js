@@ -44,11 +44,10 @@ async function apiSeeder() {
 
         // Khách hàng
         {
-            _id: new Types.ObjectId('684fd10b82aec8d414ba544d'),
-            api: '/partner/create',
-            note: 'Tạo khach hang',
+            _id: new Types.ObjectId('685135a0f2a5cb3fcc6b8ea0'), // Use a unique ID for this API
+            api: '/customer/create',
+            note: 'Tạo khách hàng',
         },
-        
         // Nhà cung cấp
         {
             _id: new Types.ObjectId('684927c871287f2ae7d81320'),
