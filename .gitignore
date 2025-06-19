@@ -10,6 +10,9 @@ yarn-error.log*
 pnpm-debug.log*
 storages
 
+# public directory
+public/upload/
+
 # Runtime data
 pids/
 *.pid

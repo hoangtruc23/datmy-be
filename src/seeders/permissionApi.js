@@ -45,7 +45,7 @@ async function permissionApiSeeder() {
         // Khách hàng
         {
             permissionId: '685135a0f2a5cb3fcc6b8f03', // The ID for "Thêm khách hàng"
-            apiId: '685135a0f2a5cb3fcc6b8ea0',           // The ID for the /customer/create API
+            apiId: '685135a0f2a5cb3fcc6b8ea0', // The ID for the /customer/create API
         },
         // Nhà cung cấp
         {
