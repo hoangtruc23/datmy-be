@@ -3,10 +3,6 @@ const router = express.Router()
 const uploadController = require('../controllers/uploadController')
 const { uploadImage, uploadFile } = require('../middlewares/upload')
 
-<<<<<<< HEAD
-=======
-//chưa tạo quyền, đang cmt
->>>>>>> 7cce48f58ffbf5295c11b2fbd118b0eb09bf7f71
 router.post('/image', uploadImage.single('image'), uploadController.uploadImage)
 router.post('/file', uploadFile.array('file', 12), uploadController.uploadFile)
 
