@@ -114,6 +114,36 @@ async function apiSeeder() {
 
         // Danh mục
         // Thương hiệu
+        {
+            _id: new Types.ObjectId('68525e2d25829b7e6b32a5e8'),
+            api: '/brand/create',
+            note: 'Tạo thương hiệu mới',
+        },
+        {
+            _id: new Types.ObjectId('68525e2d25829b7e6b32a5e9'),
+            api: '/brand/getAll',
+            note: 'Lấy tất cả thương hiệu',
+        },
+        {
+            _id: new Types.ObjectId('68525e2d25829b7e6b32a5ea'),
+            api: '/brand/getById',
+            note: 'Lấy thương hiệu theo id',
+        },
+        {
+            _id: new Types.ObjectId('68525e2d25829b7e6b32a5eb'),
+            api: '/brand/update',
+            note: 'Chỉnh sửa thương hiệu',
+        },
+        {
+            _id: new Types.ObjectId('68525e2d25829b7e6b32a5ec'),
+            api: '/brand/delete',
+            note: 'Xoá thương hiệu',
+        },
+        {
+            _id: new Types.ObjectId('68525e2d25829b7e6b32a5ed'),
+            api: '/brand/changeActive',
+            note: 'Thay đổi trạng thái của thương hiệu',
+        },
         // Nhập kho
         // Xuất kho
         // Tạm ứng

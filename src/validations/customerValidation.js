@@ -140,7 +140,7 @@ const customerValidation = {
         body: joi.object({
             ...customerBaseSchema,
             // 'code' is the unique customer ID and should never be changed.
-            code: joi.forbidden(), 
+            code: joi.forbidden(),
         }),
     },
 }
