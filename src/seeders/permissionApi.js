@@ -72,6 +72,14 @@ async function permissionApiSeeder() {
             permissionId: '684bd4f6fa59db4b4781d2b0', // Xem
             apiId: '684927c871287f2ae7d81324', // /supplier/getAll
         },
+        {
+            permissionId: '684bd4f6fa59db4b4781d2b0', // Xem
+            apiId: '6854111eb04f5d42c7ef5ef2', // /suplier/cities
+        },
+        {
+            permissionId: '684bd4f6fa59db4b4781d2b0', // Xem
+            apiId: '6854111eb04f5d42c7ef5ef3', // /supplier/districts
+        },
 
         {
             permissionId: '684bd4f6fa59db4b4781d2b1', // Khóa/Mở khóa

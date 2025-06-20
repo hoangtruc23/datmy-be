@@ -15,7 +15,7 @@ const uploadController = {
 
     uploadFile: async (req, res, next) => {
         try {
-            const result = await uploadService.uploadFile(req.files, req)
+            const result = await uploadService.uploadFile(req.file, req)
             return res
                 .status(200)
                 .json(response.success(result, 'Upload file successfully'))

@@ -12,17 +12,13 @@ const uploadService = {
         return { filename: file.filename, url: fileUrl }
     },
 
-    uploadFile: async (files, req) => {
-        if (!files || files.length === 0) {
+    uploadFile: async (file, req) => {
+        if (!file) {
             throw new BadReq(errorCode.FILE_NOT_UPLOADED)
         }
 
-        const fileUrls = files.map((file) => {
-            const fileUrl = `${req.protocol}://${req.get('host')}${process.env.BASE_URL}/upload/file/${file.filename}`
-            return { filename: file.filename, url: fileUrl }
-        })
-
-        return fileUrls
+        const fileUrl = `${req.protocol}://${req.get('host')}${process.env.BASE_URL}/upload/file/${file.filename}`
+        return { filename: file.filename, url: fileUrl }
     },
 }
 

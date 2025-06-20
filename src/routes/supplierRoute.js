@@ -19,6 +19,8 @@ router.delete('/delete/:id', supplierController.delete)
 router.get('/getById/:id', supplierController.getById)
 router.get('/getAll', supplierController.getAll)
 router.post('/lockUnlock/:id', supplierController.lockUnlock)
+router.get('/cities', supplierController.getAllCities);
+router.get('/districts', supplierController.getAllDistricts);
 module.exports = router
 
 /**
@@ -386,6 +388,36 @@ module.exports = router
  *       200:
  *         description: Lấy danh sách thành công
  */
+
+
+
+/**
+ * @swagger
+ * /supplier/cities:
+ *   get:
+ *     summary: Lấy danh sách tất cả thành phố
+ *     tags: [Supplier]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lấy danh sách thành phố thành công
+ */
+
+/**
+ * @swagger
+ * /supplier/districts:
+ *   get:
+ *     summary: Lấy danh sách tất cả quận/huyện
+ *     tags: [Supplier]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lấy danh sách quận/huyện thành công
+ */
+
+
 
 /**
  * @swagger

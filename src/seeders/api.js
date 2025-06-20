@@ -75,6 +75,16 @@ async function apiSeeder() {
             note: 'Lấy danh sách tất cả nhà cung cấp',
         },
         {
+            _id: new Types.ObjectId('6854111eb04f5d42c7ef5ef2'),
+            api: '/supplier/cities',
+            note: 'Lấy danh sách tất cả thành phố, quận huyện',
+        },        
+        {
+            _id: new Types.ObjectId('6854111eb04f5d42c7ef5ef3'),
+            api: '/supplier/districts',
+            note: 'Lấy danh sách tất cả tỉnh thành',
+        },
+        {
             _id: new Types.ObjectId('684927c871287f2ae7d81325'),
             api: '/supplier/lockUnlock',
             note: 'Khóa hoặc mở khóa nhà cung cấp',

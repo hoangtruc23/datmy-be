@@ -192,7 +192,7 @@ const supplierService = {
                 }
             }
 
-            const [items, total, cities, districts] = await Promise.all([
+            const [items, total] = await Promise.all([
                 SupplierModel.find(filter)
                     .skip(skip)
                     .limit(limit)
@@ -201,16 +201,33 @@ const supplierService = {
                         'name officialName taxCode phone status isActive deliveryAddresses',
                     ),
                 SupplierModel.countDocuments(filter),
-                SupplierModel.distinct('deliveryAddresses.city'),
-                SupplierModel.distinct('deliveryAddresses.district'),
+
             ])
 
             const totalPages = Math.ceil(total / limit)
-            return { items, total, page, limit, totalPages, cities, districts }
+            return { items, total, page, limit, totalPages }
         } catch (error) {
             throw error
         }
     },
+    getAllCities: async () => {
+        try {
+            const cities = await SupplierModel.distinct('deliveryAddresses.city');
+            return cities;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    getAllDistricts: async () => {
+        try {
+            const districts = await SupplierModel.distinct('deliveryAddresses.district');
+            return districts;
+        } catch (error) {
+            throw error;
+        }
+    },
+
 
     lockUnlock: async (id) => {
         try {
