@@ -11,6 +11,11 @@ router.post(
     validate(customerValidation.create),
     customerController.create,
 )
+router.post(
+    '/update/:id',
+    validate(customerValidation.update),
+    customerController.update,
+)
 
 module.exports = router
 
@@ -282,6 +287,169 @@ module.exports = router
  *               data: null
  *       '403':
  *         description: Forbidden - The user does not have permission to perform this action.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status: { type: integer }
+ *                 code: { type: integer }
+ *                 message: { type: string }
+ *                 data: { type: 'object' }
+ *             example:
+ *               status: 403
+ *               code: -1
+ *               message: "Không có quyền"
+ *               data: null
+ */
+
+
+/**
+ * @swagger
+ * /customer/update/{id}:
+ *   post:
+ *     summary: Cập nhật thông tin khách hàng (Update an existing customer)
+ *     tags: [Customer]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID của khách hàng cần cập nhật.
+ *         example: "685160b736b60123f03418e2"
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "Công ty Dược phẩm XYZ (Đã cập nhật)"
+ *               officialName:
+ *                 type: string
+ *                 example: "CÔNG TY CỔ PHẦN DƯỢC PHẨM XYZ"
+ *               taxCode:
+ *                 type: string
+ *                 example: "0312345678"
+ *               billingAddress:
+ *                 type: string
+ *                 example: "123 Đường Cập Nhật, Phường 10, Quận Tân Bình, TP. HCM"
+ *               deliveryAddresses:
+ *                 type: array
+ *                 minItems: 1
+ *                 maxItems: 5
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     street: { type: string }
+ *                     ward: { type: string }
+ *                     district: { type: string }
+ *                     city: { type: string }
+ *                     country: { type: string }
+ *                 example:
+ *                   - street: "Kho A, Lô B, KCN Tân Tạo"
+ *                     ward: "Phường Tân Tạo A"
+ *                     district: "Quận Bình Tân"
+ *                     city: "TP. HCM"
+ *                     country: "Việt Nam"
+ *               representative:
+ *                 type: object
+ *                 properties:
+ *                   name: { type: string, example: "Trần Thị Lan" }
+ *                   title: { type: string, example: "Trưởng phòng Kinh doanh" }
+ *                   phone: { type: string, example: "0987654321" }
+ *               notes:
+ *                 type: string
+ *                 example: "Giao hàng sau 14:00. Liên hệ Ms. Lan."
+ *               isActive:
+ *                 type: boolean
+ *                 example: false
+ *     responses:
+ *       '200':
+ *         description: OK - Khách hàng đã được cập nhật thành công.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status: { type: integer }
+ *                 code: { type: integer }
+ *                 message: { type: string }
+ *                 data: { type: object }
+ *             example:
+ *               status: 200
+ *               code: 1
+ *               message: "OK!"
+ *               data:
+ *                 _id: "685160b736b60123f03418e2"
+ *                 code: 2
+ *                 name: "Công ty Dược phẩm XYZ (Đã cập nhật)"
+ *                 officialName: "CÔNG TY CỔ PHẦN DƯỢC PHẨM XYZ"
+ *                 taxCode: "0312345678"
+ *                 billingAddress: "123 Đường Cập Nhật, Phường 10, Quận Tân Bình, TP. HCM"
+ *                 deliveryAddresses:
+ *                   - street: "Kho A, Lô B, KCN Tân Tạo"
+ *                     ward: "Phường Tân Tạo A"
+ *                     district: "Quận Bình Tân"
+ *                     city: "TP. HCM"
+ *                     country: "Việt Nam"
+ *                 representative:
+ *                   name: "Trần Thị Lan"
+ *                   title: "Trưởng phòng Kinh doanh"
+ *                   phone: "0987654321"
+ *                 notes: "Giao hàng sau 14:00. Liên hệ Ms. Lan."
+ *                 isActive: false
+ *                 createdAt: "2025-06-18T12:00:00.000Z"
+ *                 updatedAt: "2025-06-19T08:30:00.000Z"
+ *       '400':
+ *         description: Bad Request - Dữ liệu không hợp lệ hoặc không tìm thấy khách hàng.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status: { type: integer }
+ *                 code: { type: integer }
+ *                 message: { type: string }
+ *                 data: { type: 'object' }
+ *             examples:
+ *               VALIDATION_ERROR:
+ *                 summary: "Lỗi validation"
+ *                 value:
+ *                   status: 400
+ *                   code: -1
+ *                   message: "Tên là bắt buộc"
+ *                   data: null
+ *               NOT_FOUND:
+ *                 summary: "Không tìm thấy khách hàng"
+ *                 value:
+ *                   status: 400
+ *                   code: 1005
+ *                   message: "Không tìm thấy khách hàng"
+ *                   data: null
+ *       '401':
+ *         description: Unauthorized - Token không hợp lệ hoặc đã hết hạn.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status: { type: integer }
+ *                 code: { type: integer }
+ *                 message: { type: string }
+ *                 data: { type: 'object' }
+ *             example:
+ *               status: 401
+ *               code: -1
+ *               message: "Không có token"
+ *               data: null
+ *       '403':
+ *         description: Forbidden - Không có quyền thực hiện hành động này.
  *         content:
  *           application/json:
  *             schema:

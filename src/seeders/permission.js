@@ -50,6 +50,12 @@ async function permissionSeeder() {
             code: 'khach_hang-them',
             parentPermissionId: '684927c871287f2ae7d81302',
         },
+        {
+            _id: new Types.ObjectId('6853d1b6fa10ea77cf67990a'),
+            name: 'Cập nhật',
+            code: 'khach_hang-cap_nhat',
+            parentPermissionId: '684927c871287f2ae7d81302', 
+        },
         // Nhà cung cấp
         {
             _id: new Types.ObjectId('684927c871287f2ae7d81303'),

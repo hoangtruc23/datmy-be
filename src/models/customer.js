@@ -142,3 +142,4 @@ const customerSchema = new Schema(
 const CustomerModel = model('customers', customerSchema)
 
 module.exports = CustomerModel
+// tên, tên chính thức, code, địa chỉ bill, địa chỉ giao hàng (1-5)

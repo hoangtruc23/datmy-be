@@ -48,6 +48,11 @@ async function apiSeeder() {
             api: '/customer/create',
             note: 'Tạo khách hàng',
         },
+        {
+            _id: new Types.ObjectId('6853d1b6fa10ea77cf679909'), 
+            api: '/customer/update',
+            note: 'Cập nhật khách hàng',
+        },
         // Nhà cung cấp
         {
             _id: new Types.ObjectId('684927c871287f2ae7d81320'),
