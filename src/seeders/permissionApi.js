@@ -121,6 +121,15 @@ async function permissionApiSeeder() {
             permissionId: '6854e30d6b90439ad8c00dbb', // Thêm
             apiId: '6854e30d6b90439ad8c00dc0', // /upload/file
         },
+
+        {
+            permissionId: '6854e30d6b90439ad8c00dbd', // Cập nhật
+            apiId: '6854e30d6b90439ad8c00dbf', // /upload/image
+        },
+        {
+            permissionId: '6854e30d6b90439ad8c00dbd', // Cập nhật
+            apiId: '6854e30d6b90439ad8c00dc0', // /upload/file
+        },
         // Danh mục
 
         {
