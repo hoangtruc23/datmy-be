@@ -56,7 +56,23 @@ const supplierController = {
             next(error)
         }
     },
+    getAllCities: async (req, res, next) => {
+        try {
+            const cities = await supplierService.getAllCities();
+            return res.status(200).json(response.success(cities));
+        } catch (error) {
+            next(error);
+        }
+    },
 
+    getAllDistricts: async (req, res, next) => {
+        try {
+            const districts = await supplierService.getAllDistricts();
+            return res.status(200).json(response.success(districts));
+        } catch (error) {
+            next(error);
+        }
+    },
     lockUnlock: async (req, res, next) => {
         try {
             const { id } = req.params

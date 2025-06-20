@@ -33,7 +33,11 @@ const errorCode = {
     },
     IMAGE_INCORECT_FORMAT: {
         code: 9,
-        message: 'Định dạng hìn ảnh nên là jpg, jpeg hoặc png!',
+        message: 'Định dạng hình ảnh nên là jpg, jpeg hoặc png!',
+    },
+    FILE_INCORECT_FORMAT: {
+        code: 9,
+        message: 'Định dạng file nên là  pdf, powerpoint, docx, xlsx, csv, png, jpeg!',
     },
     BRAND_EXISTED: {
         code: 13,

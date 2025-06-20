@@ -4,7 +4,7 @@ const uploadController = require('../controllers/uploadController')
 const { uploadImage, uploadFile } = require('../middlewares/upload')
 
 router.post('/image', uploadImage.single('image'), uploadController.uploadImage)
-router.post('/file', uploadFile.array('file', 12), uploadController.uploadFile)
+router.post('/file', uploadFile.single('file'), uploadController.uploadFile)
 
 module.exports = router
 
@@ -55,11 +55,9 @@ module.exports = router
  *             type: object
  *             properties:
  *               file:
- *                 type: array
- *                 items:
- *                   type: string
- *                   format: binary
- *                 description: Danh sách file tài liệu cần upload
+ *                 type: string
+ *                 format: binary  
+ *                 description:  file tài liệu cần upload
  *     responses:
  *       200:
  *         description: Upload thành công
