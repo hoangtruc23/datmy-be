@@ -79,7 +79,7 @@ const customerBaseSchema = {
         .required()
         .messages({
             'string.empty': 'Mã số thuế là bắt buộc',
-            'string.pattern.base': 
+            'string.pattern.base':
                 'Mã số thuế phải là chữ số và có từ 10-15 ký tự',
             'any.required': 'Mã số thuế là bắt buộc',
         }),

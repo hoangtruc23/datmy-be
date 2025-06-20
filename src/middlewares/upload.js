@@ -5,15 +5,16 @@ const errorCode = require('../utils/response/errorCode')
 const BadReq = require('../utils/response/requestError')
 
 const removeVietnameseTones = (str) => {
-    if (!str) return '';
-    return str.normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "") 
-        .replace(/đ/g, "d").replace(/Đ/g, "D")
-        .replace(/\s+/g, '-') 
-        .replace(/[^a-zA-Z0-9\-\.]/g, '') 
-        .toLowerCase();
-};
-
+    if (!str) return ''
+    return str
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/đ/g, 'd')
+        .replace(/Đ/g, 'D')
+        .replace(/\s+/g, '-')
+        .replace(/[^a-zA-Z0-9\-\.]/g, '')
+        .toLowerCase()
+}
 
 const imageFileFilter = (req, file, cb) => {
     const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg']
@@ -26,16 +27,16 @@ const imageFileFilter = (req, file, cb) => {
 
 const fileFileFilter = (req, file, cb) => {
     const allowedTypes = [
-        'image/jpeg',       
-        'image/png',        
-        'image/jpg',       
-        'application/pdf',  
-        'application/vnd.openxmlformats-officedocument.presentationml.presentation', 
-        'application/vnd.ms-powerpoint', 
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 
-        'text/csv' 
-    ];
+        'image/jpeg',
+        'image/png',
+        'image/jpg',
+        'application/pdf',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+        'application/vnd.ms-powerpoint',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'text/csv',
+    ]
 
     if (allowedTypes.includes(file.mimetype)) {
         cb(null, true)
@@ -51,9 +52,11 @@ const imageStorage = multer.diskStorage({
         cb(null, dir)
     },
     filename: (req, file, cb) => {
-        const filenameUTF8 = Buffer.from(file.originalname, 'latin1').toString('utf8');
-        const cleanName = removeVietnameseTones(filenameUTF8);
-        cb(null, `${Date.now()}-${cleanName}`);
+        const filenameUTF8 = Buffer.from(file.originalname, 'latin1').toString(
+            'utf8',
+        )
+        const cleanName = removeVietnameseTones(filenameUTF8)
+        cb(null, `${Date.now()}-${cleanName}`)
     },
 })
 
@@ -63,10 +66,11 @@ const fileStorage = multer.diskStorage({
         cb(null, dir)
     },
     filename: (req, file, cb) => {
-        const filenameUTF8 = Buffer.from(file.originalname, 'latin1').toString('utf8');
-        const cleanName = removeVietnameseTones(filenameUTF8);
-        cb(null, `${Date.now()}-${cleanName}`);
-
+        const filenameUTF8 = Buffer.from(file.originalname, 'latin1').toString(
+            'utf8',
+        )
+        const cleanName = removeVietnameseTones(filenameUTF8)
+        cb(null, `${Date.now()}-${cleanName}`)
     },
 })
 

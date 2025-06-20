@@ -137,6 +137,35 @@ async function permissionSeeder() {
             code: 'danh_muc',
             parentPermissionId: null,
         },
+        {
+            _id: new Types.ObjectId('6854e30d6b90439ad8c00dbb'),
+            name: 'Thêm',
+            code: 'danh_muc-them',
+            parentPermissionId: '684927c871287f2ae7d81305',
+        },
+
+        {
+            _id: new Types.ObjectId('6854e30d6b90439ad8c00dbc'),
+            name: 'Xem',
+            code: 'danh_muc-xem',
+            parentPermissionId: '684927c871287f2ae7d81305',
+        },
+
+        {
+            _id: new Types.ObjectId('6854e30d6b90439ad8c00dbd'),
+            name: 'Cập nhật',
+            code: 'danh_muc-cap_nhat',
+            parentPermissionId: '684927c871287f2ae7d81305',
+        },
+
+        {
+            _id: new Types.ObjectId('6854e30d6b90439ad8c00dbe'),
+            name: 'Khóa Mở khóa',
+            code: 'danh_muc-khoa_mo_khoa',
+            parentPermissionId: '684927c871287f2ae7d81305',
+        },
+
+        // Sản phẩm
 
         // Thương hiệu
         {

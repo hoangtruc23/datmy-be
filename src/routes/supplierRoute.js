@@ -7,7 +7,7 @@ const supplierValidation = require('../validations/supplierValidation')
 const router = express.Router()
 router.post(
     '/create',
-    validate(supplierValidation.create),
+    //validate(supplierValidation.create),
     supplierController.create,
 )
 router.post(
@@ -19,8 +19,8 @@ router.delete('/delete/:id', supplierController.delete)
 router.get('/getById/:id', supplierController.getById)
 router.get('/getAll', supplierController.getAll)
 router.post('/lockUnlock/:id', supplierController.lockUnlock)
-router.get('/cities', supplierController.getAllCities);
-router.get('/districts', supplierController.getAllDistricts);
+router.get('/cities', supplierController.getAllCities)
+router.get('/districts', supplierController.getAllDistricts)
 module.exports = router
 
 /**
@@ -389,8 +389,6 @@ module.exports = router
  *         description: Lấy danh sách thành công
  */
 
-
-
 /**
  * @swagger
  * /supplier/cities:
@@ -416,8 +414,6 @@ module.exports = router
  *       200:
  *         description: Lấy danh sách quận/huyện thành công
  */
-
-
 
 /**
  * @swagger

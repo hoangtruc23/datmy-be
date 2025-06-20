@@ -56,7 +56,7 @@ module.exports = router
  *             properties:
  *               file:
  *                 type: string
- *                 format: binary  
+ *                 format: binary
  *                 description:  file tài liệu cần upload
  *     responses:
  *       200:

@@ -201,7 +201,6 @@ const supplierService = {
                         'name officialName taxCode phone status isActive deliveryAddresses',
                     ),
                 SupplierModel.countDocuments(filter),
-
             ])
 
             const totalPages = Math.ceil(total / limit)
@@ -212,22 +211,25 @@ const supplierService = {
     },
     getAllCities: async () => {
         try {
-            const cities = await SupplierModel.distinct('deliveryAddresses.city');
-            return cities;
+            const cities = await SupplierModel.distinct(
+                'deliveryAddresses.city',
+            )
+            return cities
         } catch (error) {
-            throw error;
+            throw error
         }
     },
 
     getAllDistricts: async () => {
         try {
-            const districts = await SupplierModel.distinct('deliveryAddresses.district');
-            return districts;
+            const districts = await SupplierModel.distinct(
+                'deliveryAddresses.district',
+            )
+            return districts
         } catch (error) {
-            throw error;
+            throw error
         }
     },
-
 
     lockUnlock: async (id) => {
         try {

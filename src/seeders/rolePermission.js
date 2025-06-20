@@ -85,11 +85,29 @@ async function rolePermissionSeeder() {
             roleId: '684927c871287f2ae7d8130b',
             permissionId: '685247989820dda77e2e7272', // cập nhật trạng thái
         },
-
+        ////////// Danh mục
         {
             roleId: '684927c871287f2ae7d8130b',
             permissionId: '684927c871287f2ae7d81305', // Danh mục
         },
+
+        {
+            roleId: '684927c871287f2ae7d8130b',
+            permissionId: '6854e30d6b90439ad8c00dbb', // Thêm
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b',
+            permissionId: '6854e30d6b90439ad8c00dbc', // Xem
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b',
+            permissionId: '6854e30d6b90439ad8c00dbd', // Cập nhật
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b',
+            permissionId: '6854e30d6b90439ad8c00dbe', // Khóa Mở khóa
+        },
+
         {
             roleId: '684927c871287f2ae7d8130b',
             permissionId: '684927c871287f2ae7d81306', // Thương hiệu

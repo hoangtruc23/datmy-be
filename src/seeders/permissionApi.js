@@ -112,7 +112,37 @@ async function permissionApiSeeder() {
             apiId: '685246a87a7937ce073f6d51', // warehouse/changeActive/{id}
         },
 
+        // Tải tệp lên
+        {
+            permissionId: '6854e30d6b90439ad8c00dbb', // Thêm
+            apiId: '6854e30d6b90439ad8c00dbf', // /upload/image
+        },
+        {
+            permissionId: '6854e30d6b90439ad8c00dbb', // Thêm
+            apiId: '6854e30d6b90439ad8c00dc0', // /upload/file
+        },
         // Danh mục
+
+        {
+            permissionId: '6854e30d6b90439ad8c00dbb', // Thêm
+            apiId: '6854e30d6b90439ad8c00db6', // /productCategory/create
+        },
+        {
+            permissionId: '6854e30d6b90439ad8c00dbc', // Xem
+            apiId: '6854e30d6b90439ad8c00db7', // /productCategory/getAll
+        },
+        {
+            permissionId: '6854e30d6b90439ad8c00dbc', // Xem
+            apiId: '6854e30d6b90439ad8c00db8', // /productCategory/getById
+        },
+        {
+            permissionId: '6854e30d6b90439ad8c00dbd', // Cập nhật
+            apiId: '6854e30d6b90439ad8c00db9', // /productCategory/update
+        },
+        {
+            permissionId: '6854e30d6b90439ad8c00dbe', // Khóa/Mở khóa
+            apiId: '6854e30d6b90439ad8c00dba', // /productCategory/lockUnlock
+        },
 
         // Thương hiệu
         {
