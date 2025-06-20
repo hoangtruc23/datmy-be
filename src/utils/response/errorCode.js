@@ -37,7 +37,8 @@ const errorCode = {
     },
     FILE_INCORECT_FORMAT: {
         code: 9,
-        message: 'Định dạng file nên là  pdf, powerpoint, docx, xlsx, csv, png, jpeg!',
+        message:
+            'Định dạng file nên là  pdf, powerpoint, docx, xlsx, csv, png, jpeg!',
     },
     BRAND_EXISTED: {
         code: 13,
@@ -46,6 +47,23 @@ const errorCode = {
     BRAND_NOT_FOUND: {
         code: 14,
         message: 'Thương hiệu không tồn tại',
+    },
+
+    PRODUCT_CATEGORY_EXISTED: {
+        code: 15,
+        message: 'Danh mục sản phẩm đã tồn tại',
+    },
+    PRODUCT_CATEGORY_NOT_FOUND: {
+        code: 16,
+        message: 'Danh mục sản phẩm không tồn tại',
+    },
+    PRODUCT_EXISTED: {
+        code: 17,
+        message: 'Sản phẩm đã tồn tại',
+    },
+    PRODUCT_NOT_FOUND: {
+        code: 18,
+        message: 'Sản phẩm không tồn tại',
     },
 }
 

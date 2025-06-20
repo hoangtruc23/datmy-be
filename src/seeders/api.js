@@ -78,7 +78,7 @@ async function apiSeeder() {
             _id: new Types.ObjectId('6854111eb04f5d42c7ef5ef2'),
             api: '/supplier/cities',
             note: 'Lấy danh sách tất cả thành phố, quận huyện',
-        },        
+        },
         {
             _id: new Types.ObjectId('6854111eb04f5d42c7ef5ef3'),
             api: '/supplier/districts',
@@ -122,7 +122,48 @@ async function apiSeeder() {
             note: 'Thay đổi trạng thái của kho',
         },
 
+        // Tải tệp lên
+        {
+            _id: new Types.ObjectId('6854e30d6b90439ad8c00dbf'),
+            api: '/upload/image',
+            note: 'Tải lên hình ảnh',
+        },
+        {
+            _id: new Types.ObjectId('6854e30d6b90439ad8c00dc0'),
+            api: '/upload/file',
+            note: 'Tải lên tệp tài liệu',
+        },
+
         // Danh mục
+        {
+            _id: new Types.ObjectId('6854e30d6b90439ad8c00db6'),
+            api: '/productCategory/create',
+            note: 'Tạo danh mục sản phẩm mới',
+        },
+        {
+            _id: new Types.ObjectId('6854e30d6b90439ad8c00db7'),
+            api: '/productCategory/getAll',
+            note: 'Lấy tất cả danh mục sản phẩm',
+        },
+        {
+            _id: new Types.ObjectId('6854e30d6b90439ad8c00db8'),
+            api: '/productCategory/getById',
+            note: 'Lấy danh mục sản phẩm theo id',
+        },
+        {
+            _id: new Types.ObjectId('6854e30d6b90439ad8c00db9'),
+            api: '/productCategory/update',
+            note: 'Chỉnh sửa danh mục sản phẩm',
+        },
+
+        {
+            _id: new Types.ObjectId('6854e30d6b90439ad8c00dba'),
+            api: '/productCategory/lockUnlock',
+            note: 'Khóa hoặc mở khóa danh mục sản phẩm',
+        },
+
+        //Sản phẩm
+
         // Thương hiệu
         {
             _id: new Types.ObjectId('68525e2d25829b7e6b32a5e8'),

@@ -51,11 +51,8 @@ const representativeSchema = joi.object({
     phone: joi
         .string()
         .pattern(/^[0-9]{10,15}$/)
-        .required()
         .messages({
-            'string.empty': 'Số điện thoại người đại diện là bắt buộc',
             'string.pattern.base': 'Số điện thoại phải có từ 10 đến 15 chữ số',
-            'any.required': 'Số điện thoại người đại diện là bắt buộc',
         }),
 })
 
@@ -109,7 +106,7 @@ const supplierBaseSchema = {
             'any.required': 'Danh sách địa chỉ giao hàng là bắt buộc',
         }),
 
-    representative: representativeSchema.required(),
+    representative: representativeSchema,
     contactPersons: joi.object({
         warehouseAccountant: joi.array().items(contactPersonSchema),
         sale: joi.array().items(contactPersonSchema),
@@ -135,7 +132,7 @@ const supplierValidation = {
     update: {
         body: joi.object({
             ...supplierBaseSchema,
-            MKH: joi.forbidden(),
+            code: joi.forbidden(),
         }),
     },
 }
