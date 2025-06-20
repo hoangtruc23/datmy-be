@@ -30,7 +30,7 @@ const brandService = {
             ])
 
             const res = {
-                brands,
+                items: brands,
                 page,
                 totalBrands,
                 totalPage: Math.ceil(totalBrands / limit),

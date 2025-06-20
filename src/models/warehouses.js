@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
-const wareHouses = new Schema(
+const warehouseSchema = new Schema(
     {
         name: {
             type: String,
@@ -18,4 +18,6 @@ const wareHouses = new Schema(
     { timestamps: true },
 )
 
-module.exports = mongoose.model('WareHouses', wareHouses)
+const WarehouseModel= mongoose.model('warehouses', warehouseSchema)
+
+module.exports = WarehouseModel
