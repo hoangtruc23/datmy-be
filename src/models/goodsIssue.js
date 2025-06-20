@@ -1,7 +1,25 @@
 const { Schema, model, Types } = require('mongoose')
+const constant = require('../utils/constant/constant')
+
+const contactPersonSchema = new Schema({
+    _id: false,
+    name: {
+        type: String,
+        required: true,
+    },
+    phone: {
+        type: String,
+        required: true,
+    },
+})
 
 const goodsIssueSchema = new Schema(
     {
+        issueNumber: {
+            type: Number,
+            required: true,
+            min: 1,
+        },
         customerId: {
             type: Types.ObjectId,
             ref: 'customers',
@@ -41,11 +59,11 @@ const goodsIssueSchema = new Schema(
             required: true,
             default: true,
         },
-        // status: {
-        //     type: String,
-        //     required: true,
-        //     enum: ['Chờ duyệt', 'Hoàn thành']
-        // },
+        status: {
+            type: String,
+            required: true,
+            enum: Object.values(constant.GOODS_ISSUE_STATUS),
+        },
         createdBy: {
             type: Types.ObjectId,
             ref: 'users',
@@ -59,18 +77,6 @@ const goodsIssueSchema = new Schema(
     },
     { timestamps: true },
 )
-
-const contactPersonSchema = new Schema({
-    _id: false,
-    name: {
-        type: String,
-        required: true,
-    },
-    phone: {
-        type: String,
-        required: true,
-    },
-})
 
 const GoodsIssueModel = model('goodsIssues', goodsIssueSchema)
 

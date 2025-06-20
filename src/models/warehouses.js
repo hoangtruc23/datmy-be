@@ -18,6 +18,6 @@ const warehouseSchema = new Schema(
     { timestamps: true },
 )
 
-const WarehouseModel= mongoose.model('warehouses', warehouseSchema)
+const WarehouseModel = mongoose.model('warehouses', warehouseSchema)
 
 module.exports = WarehouseModel

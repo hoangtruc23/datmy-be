@@ -16,17 +16,14 @@ const approvalContent = new Schema({
     },
 })
 
-const goodsIssueApprovalSchema = new Schema(
+const goodsReceiptApprovalSchema = new Schema(
     {
-        goodsIssueId: {
+        goodsReceiptId: {
             type: Types.ObjectId,
-            ref: 'goodsIssues',
+            ref: 'goodsReceipts',
             required: true,
         },
         warehouseStaffApproval: approvalContent,
-        warehouseAccountantApproval: approvalContent,
-        debtAccountantApproval: approvalContent,
-        billAccountantApproval: approvalContent,
         nextApprovalRoleId: {
             type: String,
             default: constant.ROLES.warehouseStaff,
@@ -35,9 +32,9 @@ const goodsIssueApprovalSchema = new Schema(
     { timestamps: true },
 )
 
-const GoodsIssueApprovalModel = model(
-    'goodsIssueApprovals',
-    goodsIssueApprovalSchema,
+const GoodsReceiptApprovalModel = model(
+    'goodsReceiptApprovals',
+    goodsReceiptApprovalSchema,
 )
 
-module.exports = GoodsIssueApprovalModel
+module.exports = GoodsReceiptApprovalModel
