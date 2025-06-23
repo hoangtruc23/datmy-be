@@ -44,9 +44,34 @@ async function apiSeeder() {
 
         // Khách hàng
         {
-            _id: new Types.ObjectId('685135a0f2a5cb3fcc6b8ea0'), // Use a unique ID for this API
+            _id: new Types.ObjectId('685135a0f2a5cb3fcc6b8ea0'),
             api: '/customer/create',
             note: 'Tạo khách hàng',
+        },
+        {
+            _id: new Types.ObjectId('6853d1b6fa10ea77cf679909'),
+            api: '/customer/update',
+            note: 'Cập nhật khách hàng',
+        },
+        {
+            _id: new Types.ObjectId('6853d1b6fa10ea77cf67990c'),
+            api: '/customer/getById',
+            note: 'Xem khách hàng theo ID',
+        },
+        {
+            _id: new Types.ObjectId('6853d1b6fa10ea77cf679910'),
+            api: '/customer/getAll',
+            note: 'Xem khách hàng',
+        },
+        {
+            _id: new Types.ObjectId('6853d1b6fa10ea77cf67990e'),
+            api: '/customer/lockUnlock',
+            note: 'Khóa hoặc mở khóa khách hàng',
+        },
+        {
+            _id: new Types.ObjectId('6853d1b6fa10ea77cf679912'),
+            api: '/customer/delete',
+            note: 'Xoá khách hàng',
         },
         // Nhà cung cấp
         {
@@ -195,7 +220,59 @@ async function apiSeeder() {
             api: '/brand/changeActive',
             note: 'Thay đổi trạng thái của thương hiệu',
         },
+
         // Nhập kho
+        {
+            _id: new Types.ObjectId('685799ea543a1de61aec7329'),
+            api: '/goodsReceipt/getAll',
+            note: 'Lấy danh sách các phiếu nhập kho',
+        },
+        {
+            _id: new Types.ObjectId('6856e210a596678c37b505e2'),
+            api: '/goodsReceipt/getById',
+            note: 'Xem chi tiết phiếu nhập kho',
+        },
+        {
+            _id: new Types.ObjectId('68568d96dd90fa75cb28647a'),
+            api: '/goodsReceipt/createTemporary',
+            note: 'Tạo phiếu nhập kho tạm (chưa có giá trị)',
+        },
+        {
+            _id: new Types.ObjectId('685830dc888ceab12ecb2759'),
+            api: '/goodsReceipt/create',
+            note: 'Tạo phiếu nhập kho chính thức',
+        },
+        {
+            _id: new Types.ObjectId('6858d5bd26c71e076fdfad84'),
+            api: '/goodsReceipt/update',
+            note: 'Cập nhật thông tin phiếu nhập kho',
+        },
+        {
+            _id: new Types.ObjectId('6856a471897b183049a2ef8a'),
+            api: '/goodsReceipt/addProduct',
+            note: 'Thêm sản phẩm cho phiếu nhập kho',
+        },
+        {
+            _id: new Types.ObjectId('6856e210a596678c37b505de'),
+            api: '/goodsReceipt/updateProduct',
+            note: 'Cập nhật sản phẩm cho phiếu nhập kho',
+        },
+        {
+            _id: new Types.ObjectId('6856e210a596678c37b505df'),
+            api: '/goodsReceipt/deleteProduct',
+            note: 'Xóa sản phẩm khỏi phiếu nhập kho',
+        },
+        {
+            _id: new Types.ObjectId('6858d5bd26c71e076fdfad75'),
+            api: '/goodsReceipt/confirmQuantity',
+            note: 'Xác nhận số lượng sản phẩm của phiếu nhập kho',
+        },
+        {
+            _id: new Types.ObjectId('6858d5bd26c71e076fdfad76'),
+            api: '/goodsReceipt/approval',
+            note: 'Xác nhận phiếu nhập kho',
+        },
+
         // Xuất kho
         // Tạm ứng
     ])

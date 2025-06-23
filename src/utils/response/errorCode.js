@@ -18,6 +18,11 @@ const errorCode = {
         code: 7,
         message: 'Nhà cung cấp không tồn tại!',
     },
+    CUSTOMER_NOT_FOUND: {
+        // <-- ADD THIS
+        code: 12, // Use an available code
+        message: 'Khách hàng không tồn tại!',
+    },
 
     WAREHOUSE_EXISTED: {
         code: 10,
@@ -65,12 +70,45 @@ const errorCode = {
         code: 18,
         message: 'Sản phẩm không tồn tại',
     },
-    PRODUCT_CODE_EXISTED: {
+    GOODS_RECEIPT_NOT_FOUND: {
         code: 19,
+        message: 'Phiếu nhập kho không tồn tại',
+    },
+    GOODS_RECEIPT_DETAIL_EXISTED: {
+        code: 20,
+        message: 'Sản phẩm được thêm đã tồn tại trong phiếu nhập kho',
+    },
+    GOODS_RECEIPT_DETAIL_NOT_FOUND: {
+        code: 21,
+        message: 'Không tìm thấy sản phẩm này trong phiếu nhập',
+    },
+    ACTUAL_QUANTITY_INVALID: {
+        code: 22,
+        message: 'Số lượng thực tế lớn số lượng đặt hàng',
+    },
+    GOODS_RECEIPT_SERIAL_OR_BATCH_EXISTED: {
+        code: 23,
+        message: 'Số lô hoặc số serial đã tồn tại',
+    },
+    SERIAL_OR_BATCH_QUANTITY_INVALID: {
+        code: 24,
+        message:
+            'Tổng số lượng sản phẩm của các serial/ số lô không khớp với số lượng thực tế.',
+    },
+    GOODS_RECEIPT_APPROVAL_NOT_FOUND: {
+        code: 25,
+        message: 'Không tìm thấy phiếu xác nhận nhập kho',
+    },
+    NOT_PERMISSION_APPROVAL: {
+        code: 26,
+        message: 'Người dùng không có quyền xác nhận',
+    },
+        PRODUCT_CODE_EXISTED: {
+        code: 27,
         message: 'Mã sản phẩm đã tồn tại',
     },
     PRODUCT_CANNOT_CHANGE_MANAGEMENT_TYPE: {
-        code: 20,
+        code: 28,
         message: 'Không thể thay đổi loại quản lý của sản phẩm đã có trong kho',
     },
 }

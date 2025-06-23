@@ -1,8 +1,7 @@
 const userService = require('../services/userService')
 const response = require('../utils/response/response')
-const { changePassword } = require('./authController')
 
-const authController = {
+const userController = {
     getAll: async (req, res, next) => {
         try {
             const result = await userService.getAll(req.query)
@@ -66,4 +65,4 @@ const authController = {
     },
 }
 
-module.exports = authController
+module.exports = userController

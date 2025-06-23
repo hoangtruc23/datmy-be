@@ -4,14 +4,13 @@ const constant = require('../utils/constant/constant')
 const approvalContent = new Schema({
     _id: false,
     approvedBy: {
-        type: Types.ObjectId,
-        ref: 'users',
+        type: String,
     },
     approvedAt: {
         type: Date,
         default: Date.now,
     },
-    note: {
+    content: {
         type: String,
     },
 })

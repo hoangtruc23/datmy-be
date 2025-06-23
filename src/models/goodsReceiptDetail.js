@@ -20,7 +20,7 @@ const goodsReceiptDetailSchema = new Schema({
     productId: {
         type: Types.ObjectId,
         ref: 'products',
-        required: true,
+        // required: true,
     },
     warehouseId: {
         type: Types.ObjectId,
@@ -35,7 +35,7 @@ const goodsReceiptDetailSchema = new Schema({
     },
     managementType: {
         type: String,
-        required: true,
+        // required: true,
         enum: Object.values(constant.PRODUCT_MANAGEMENT_TYPE),
     },
     unit: {
@@ -69,6 +69,11 @@ const goodsReceiptDetailSchema = new Schema({
     storages: [storagesSchema],
     note: {
         type: String,
+    },
+    isTemporary: {
+        type: Boolean,
+        default: true,
+        required: true,
     },
 })
 

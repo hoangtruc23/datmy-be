@@ -28,17 +28,20 @@ const goodsIssueSchema = new Schema(
         invoiceFile: {
             type: String,
         },
+        invoiceNumber: {
+            type: String,
+        },
         invoiceOrContractNumber: {
             type: String,
         },
         estimatedDeliveryDate: {
             type: Date,
         },
-        warehouseId: {
-            type: Types.ObjectId,
-            ref: 'warehouses',
-            required: true,
-        },
+        // warehouseId: {
+        //     type: Types.ObjectId,
+        //     ref: 'warehouses',
+        //     required: true,
+        // },
         customer: {
             type: String,
         },

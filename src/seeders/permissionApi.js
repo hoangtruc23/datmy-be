@@ -45,7 +45,27 @@ async function permissionApiSeeder() {
         // Khách hàng
         {
             permissionId: '685135a0f2a5cb3fcc6b8f03', // The ID for "Thêm khách hàng"
-            apiId: '685135a0f2a5cb3fcc6b8ea0', // The ID for the /customer/create API
+            apiId: '685135a0f2a5cb3fcc6b8ea0', // /customer/create
+        },
+        {
+            permissionId: '6853d1b6fa10ea77cf67990a', // Cập nhật khách hàng
+            apiId: '6853d1b6fa10ea77cf679909', // /customer/update
+        },
+        {
+            permissionId: '6853d1b6fa10ea77cf67990b', // Xem khách hàng
+            apiId: '6853d1b6fa10ea77cf67990c', // /customer/getById
+        },
+        {
+            permissionId: '6853d1b6fa10ea77cf67990f', // The existing 'Xem khách hàng' permission ID
+            apiId: '6853d1b6fa10ea77cf679910', // /customer/getAll
+        },
+        {
+            permissionId: '6853d1b6fa10ea77cf67990d', // khoá mở khoá khách hàng
+            apiId: '6853d1b6fa10ea77cf67990e', // /customer/lockUnlock
+        },
+        {
+            permissionId: '6853d1b6fa10ea77cf679911', // xoá khách hàng
+            apiId: '6853d1b6fa10ea77cf679912', // /customer/delete
         },
         // Nhà cung cấp
         {
@@ -130,8 +150,8 @@ async function permissionApiSeeder() {
             permissionId: '6854e30d6b90439ad8c00dbd', // Cập nhật
             apiId: '6854e30d6b90439ad8c00dc0', // /upload/file
         },
-        // Danh mục
 
+        // Danh mục
         {
             permissionId: '6854e30d6b90439ad8c00dbb', // Thêm
             apiId: '6854e30d6b90439ad8c00db6', // /productCategory/create
@@ -180,6 +200,59 @@ async function permissionApiSeeder() {
         },
 
         // Nhập kho
+        {
+            permissionId: '6856e210a596678c37b505e1', // Xem phiếu nhập kho
+            apiId: '685799ea543a1de61aec7329', // /goodsReceipt/getAll
+        },
+        {
+            permissionId: '6856e210a596678c37b505e1', // Xem phiếu nhập kho
+            apiId: '6856e210a596678c37b505e2', // /goodsReceipt/getById
+        },
+        {
+            permissionId: '68568d96dd90fa75cb286479', // Tạo phiếu nhập kho
+            apiId: '68568d96dd90fa75cb28647a', // /goodsReceipt/createTemporary
+        },
+        {
+            permissionId: '68568d96dd90fa75cb286479', // Tạo phiếu nhập kho
+            apiId: '685830dc888ceab12ecb2759', // /goodsReceipt/create
+        },
+        {
+            permissionId: '68568d96dd90fa75cb286479', // Tạo phiếu nhập kho
+            apiId: '6856a471897b183049a2ef8a', // /goodsReceipt/addProduct
+        },
+        {
+            permissionId: '68568d96dd90fa75cb286479', // Tạo phiếu nhập kho
+            apiId: '6856e210a596678c37b505de', // /goodsReceipt/updateProduct
+        },
+        {
+            permissionId: '68568d96dd90fa75cb286479', // Tạo phiếu nhập kho
+            apiId: '6856e210a596678c37b505df', // /goodsReceipt/deleteProduct
+        },
+        {
+            permissionId: '6858d5bd26c71e076fdfad83', // Cập nhật phiếu nhập kho
+            apiId: '6858d5bd26c71e076fdfad84', // /goodsReceipt/update
+        },
+        //Cập nhật thì cũng có thể thêm xóa sửa sản phẩm cho phiếu nhập kho
+        {
+            permissionId: '6858d5bd26c71e076fdfad83', // Tạo phiếu nhập kho
+            apiId: '6856a471897b183049a2ef8a', // /goodsReceipt/addProduct
+        },
+        {
+            permissionId: '6858d5bd26c71e076fdfad83', // Tạo phiếu nhập kho
+            apiId: '6856e210a596678c37b505de', // /goodsReceipt/updateProduct
+        },
+        {
+            permissionId: '6858d5bd26c71e076fdfad83', // Tạo phiếu nhập kho
+            apiId: '6856e210a596678c37b505df', // /goodsReceipt/deleteProduct
+        },
+        {
+            permissionId: '6858d5bd26c71e076fdfad21', // Xác nhận nhập kho
+            apiId: '6858d5bd26c71e076fdfad75', // /goodsReceipt/confirmQuantity
+        },
+        {
+            permissionId: '6858d5bd26c71e076fdfad21', // Xác nhận nhập kho
+            apiId: '6858d5bd26c71e076fdfad76', // /goodsReceipt/approval
+        },
 
         // Xuất kho
 

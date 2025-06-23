@@ -38,6 +38,26 @@ async function rolePermissionSeeder() {
         },
         {
             roleId: '684927c871287f2ae7d8130b',
+            permissionId: '6853d1b6fa10ea77cf67990b', // Xem khách hàng
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b',
+            permissionId: '6853d1b6fa10ea77cf67990f', // Xem tất cả khách hàng
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b',
+            permissionId: '6853d1b6fa10ea77cf67990a', // Cập nhật khách hàng
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b',
+            permissionId: '6853d1b6fa10ea77cf67990d', // khoá hoặc mở khoá khách hàng
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b',
+            permissionId: '6853d1b6fa10ea77cf679911', // delete bay màu khách hàng
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b',
             permissionId: '684927c871287f2ae7d81303', // Nhà cung cấp
         },
         {
@@ -133,6 +153,23 @@ async function rolePermissionSeeder() {
             roleId: '684927c871287f2ae7d8130b',
             permissionId: '684927c871287f2ae7d81307', // Nhập kho
         },
+        {
+            roleId: '684927c871287f2ae7d8130b',
+            permissionId: '6856e210a596678c37b505e1', // Xem phiếu nhập kho
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b',
+            permissionId: '68568d96dd90fa75cb286479', // Tạo phiếu nhập kho
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b',
+            permissionId: '6858d5bd26c71e076fdfad83', // Cập nhật phiếu nhập kho
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b',
+            permissionId: '6858d5bd26c71e076fdfad21', // Xác nhận phiếu nhập kho
+        },
+
         {
             roleId: '684927c871287f2ae7d8130b',
             permissionId: '684927c871287f2ae7d81308', // Xuất kho
