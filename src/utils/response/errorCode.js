@@ -65,6 +65,39 @@ const errorCode = {
         code: 18,
         message: 'Sản phẩm không tồn tại',
     },
+    GOODS_RECEIPT_NOT_FOUND: {
+        code: 19,
+        message: 'Phiếu nhập kho không tồn tại',
+    },
+    GOODS_RECEIPT_DETAIL_EXISTED: {
+        code: 20,
+        message: 'Sản phẩm được thêm đã tồn tại trong phiếu nhập kho',
+    },
+    GOODS_RECEIPT_DETAIL_NOT_FOUND: {
+        code: 21,
+        message: 'Không tìm thấy sản phẩm này trong phiếu nhập',
+    },
+    ACTUAL_QUANTITY_INVALID: {
+        code: 22,
+        message: 'Số lượng thực tế lớn số lượng đặt hàng',
+    },
+    GOODS_RECEIPT_SERIAL_OR_BATCH_EXISTED: {
+        code: 23,
+        message: 'Số lô hoặc số serial đã tồn tại',
+    },
+    SERIAL_OR_BATCH_QUANTITY_INVALID: {
+        code: 24,
+        message:
+            'Tổng số lượng sản phẩm của các serial/ số lô không khớp với số lượng thực tế.',
+    },
+    GOODS_RECEIPT_APPROVAL_NOT_FOUND: {
+        code: 25,
+        message: 'Không tìm thấy phiếu xác nhận nhập kho',
+    },
+    NOT_PERMISSION_APPROVAL: {
+        code: 26,
+        message: 'Người dùng không có quyền xác nhận',
+    },
 }
 
 module.exports = errorCode

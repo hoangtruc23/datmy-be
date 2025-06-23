@@ -18,15 +18,15 @@ const constant = {
         BATCH: 'batch',
     },
     GOODS_ISSUE_STATUS: {
-        WAREHOUSE_STAFF_APPROVAL: 'Chờ nhân viên kho duyệt',
-        WAREHOUSE_ACCOUNTANT_APPROVAL: 'Chờ kế toán kho duyệt',
-        DEBT_ACCOUNTANT_APPROVAL: 'Chờ kế toán công nợ duyệt',
-        BILL_ACCOUNTANT_APPROVAL: 'Chờ kế toán hóa đơn duyệt',
-        COMPLETED: 'Hoàn thành',
+        WAREHOUSE_STAFF_APPROVAL: 'warehouseStaffApproval',
+        WAREHOUSE_ACCOUNTANT_APPROVAL: 'warehouseAccountantApproval',
+        DEBT_ACCOUNTANT_APPROVAL: 'debtAccountantApproval',
+        BILL_ACCOUNTANT_APPROVAL: 'billAccountApproval',
+        SUCCESS: 'success',
     },
     GOODS_RECEIPT_STATUS: {
-        WAREHOUSE_STAFF_APPROVAL: 'Chờ nhân viên kho duyệt',
-        COMPLETED: 'Hoàn thành',
+        WAREHOUSE_STAFF_APPROVAL: 'warehouseStaffApproval',
+        SUCCESS: 'success',
     },
 }
 

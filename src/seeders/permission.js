@@ -210,6 +210,30 @@ async function permissionSeeder() {
             code: 'nhap_kho',
             parentPermissionId: null,
         },
+        {
+            _id: new Types.ObjectId('6856e210a596678c37b505e1'),
+            name: 'Xem',
+            code: 'nhap_kho-xem',
+            parentPermissionId: '684927c871287f2ae7d81307',
+        },
+        {
+            _id: new Types.ObjectId('68568d96dd90fa75cb286479'),
+            name: 'Thêm',
+            code: 'nhap_kho-them',
+            parentPermissionId: '684927c871287f2ae7d81307',
+        },
+        {
+            _id: new Types.ObjectId('6858d5bd26c71e076fdfad83'),
+            name: 'Cập nhật',
+            code: 'nhap_kho-cap_nhat',
+            parentPermissionId: '684927c871287f2ae7d81307',
+        },
+        {
+            _id: new Types.ObjectId('6858d5bd26c71e076fdfad21'),
+            name: 'Xác nhận nhập kho',
+            code: 'nhap_kho-xac_nhan_nhap_kho',
+            parentPermissionId: '684927c871287f2ae7d81307',
+        },
 
         // Xuất kho
         {

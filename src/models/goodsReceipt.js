@@ -1,17 +1,18 @@
-const { Schema, model, Types } = require('mongoose')
+const mongoose = require('mongoose')
+const { Schema, model, Types } = mongoose
 const constant = require('../utils/constant/constant')
+const autoIncrement = require('mongoose-sequence')(mongoose)
 
 const goodsReceiptSchema = new Schema(
     {
         receiptNumber: {
             type: Number,
-            required: true,
-            min: 1,
+            unique: true,
         },
-        customerId: {
+        supplierId: {
             type: Types.ObjectId,
-            ref: 'customers',
-            required: true,
+            ref: 'suppliers',
+            // required: true,
         },
         invoiceFile: {
             type: String,
@@ -22,18 +23,18 @@ const goodsReceiptSchema = new Schema(
         estimatedDeliveryDate: {
             type: Date,
         },
-        warehouseId: {
-            type: Types.ObjectId,
-            ref: 'warehouses',
-            required: true,
-        },
-        provider: {
+        // warehouseId: {
+        //     type: Types.ObjectId,
+        //     ref: 'warehouses',
+        //     // required: true,
+        // },
+        supplier: {
             type: String,
         },
-        billingAddress: {
-            type: String,
-            required: true,
-        },
+        // billingAddress: {
+        //     type: String,
+        //     // required: true,
+        // },
         deliveryAddresses: {
             type: String,
         },
@@ -42,13 +43,14 @@ const goodsReceiptSchema = new Schema(
         },
         isTemporary: {
             type: Boolean,
-            required: true,
             default: true,
+            required: true,
         },
         status: {
             type: String,
-            required: true,
             enum: Object.values(constant.GOODS_RECEIPT_STATUS),
+            // required: true,
+            default: constant.GOODS_RECEIPT_STATUS.NULL,
         },
         createdBy: {
             type: Types.ObjectId,
@@ -58,11 +60,16 @@ const goodsReceiptSchema = new Schema(
         updatedBy: {
             type: Types.ObjectId,
             ref: 'users',
-            required: true,
+            default: null,
         },
     },
     { timestamps: true },
 )
+
+goodsReceiptSchema.plugin(autoIncrement, {
+    inc_field: 'receiptNumber',
+    id: 'receiptNumber',
+})
 
 const GoodsReceiptModel = model('goodsReceipts', goodsReceiptSchema)
 
