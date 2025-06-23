@@ -37,8 +37,24 @@ async function rolePermissionSeeder() {
             permissionId: '685135a0f2a5cb3fcc6b8f03', // The ID for "Thêm khách hàng"
         },
         {
-            roleId: '684927c871287f2ae7d8130b', // Role Quản trị viên
+            roleId: '684927c871287f2ae7d8130b',
+            permissionId: '6853d1b6fa10ea77cf67990b', // Xem khách hàng
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b',
+            permissionId: '6853d1b6fa10ea77cf67990f', // Xem tất cả khách hàng
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b',
             permissionId: '6853d1b6fa10ea77cf67990a', // Cập nhật khách hàng
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b',
+            permissionId: '6853d1b6fa10ea77cf67990d', // khoá hoặc mở khoá khách hàng
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b',
+            permissionId: '6853d1b6fa10ea77cf679911', // delete bay màu khách hàng
         },
         {
             roleId: '684927c871287f2ae7d8130b',
