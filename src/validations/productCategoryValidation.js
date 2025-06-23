@@ -14,7 +14,7 @@ const productCategoryBaseSchema = {
     }),
 }
 
-const supplierValidation = {
+const productValidation = {
     create: {
         body: joi.object({
             ...productCategoryBaseSchema,
@@ -27,4 +27,4 @@ const supplierValidation = {
     },
 }
 
-module.exports = supplierValidation
+module.exports = productValidation

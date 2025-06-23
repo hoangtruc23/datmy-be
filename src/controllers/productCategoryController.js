@@ -58,6 +58,15 @@ const productCategoryController = {
             next(error)
         }
     },
+    getAllProductCategoryId: async (req, res, next) => {
+        try {
+            const productCategory =
+                await productCategoryService.getAllProductCategoryId()
+            return res.status(200).json(response.success(productCategory))
+        } catch (error) {
+            next(error)
+        }
+    },
 }
 
 module.exports = productCategoryController

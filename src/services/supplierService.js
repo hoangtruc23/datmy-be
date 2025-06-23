@@ -104,7 +104,7 @@ const supplierService = {
         try {
             const user = await UserModel.findById(userId)
             if (!user) {
-                throw new BadReq(errorCode.SUPPLIER_NOT_FOUND)
+                throw new BadReq(errorCode.USER_NOT_FOUND)
             }
             const roleIds = user.roleIds.map((id) => id.toString())
 

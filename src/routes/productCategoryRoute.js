@@ -17,6 +17,10 @@ router.post(
 router.get('/getById/:id', productCategoryController.getById)
 router.get('/getAll', productCategoryController.getAll)
 router.post('/lockUnlock/:id', productCategoryController.lockUnlock)
+router.get(
+    '/getAllProductCategoryId',
+    productCategoryController.getAllProductCategoryId,
+)
 
 module.exports = router
 
@@ -171,4 +175,17 @@ module.exports = router
  *     responses:
  *       200:
  *         description: Khóa hoặc mở khóa danh mục thành công
+ */
+
+/**
+ * @swagger
+ * /productCategory/getAllProductCategoryId:
+ *   get:
+ *     summary: Lấy danh sách tất cả danh mục sản phẩm (chỉ gồm id và tên)
+ *     tags: [ProductCategory]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Danh sách các danh mục sản phẩm
  */

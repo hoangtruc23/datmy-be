@@ -7,7 +7,7 @@ const permissionSeeder = require('./permission')
 const rolePermissionSeeder = require('./rolePermission')
 const roleSeeder = require('./role')
 const userSeeder = require('./user')
-
+const unitSeeder = require('./unit')
 const args = process.argv.slice(2)
 async function run() {
     try {
@@ -36,6 +36,10 @@ async function run() {
                 await userSeeder()
                 break
             }
+            case 'unit': {
+                await unitSeeder()
+                break
+            }
             case 'all': {
                 await Promise.all([
                     apiSeeder(),
@@ -44,6 +48,7 @@ async function run() {
                     roleSeeder(),
                     rolePermissionSeeder(),
                     userSeeder(),
+                    unitSeeder(),
                 ])
                 break
             }

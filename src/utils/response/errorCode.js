@@ -65,6 +65,14 @@ const errorCode = {
         code: 18,
         message: 'Sản phẩm không tồn tại',
     },
+    PRODUCT_CODE_EXISTED: {
+        code: 19,
+        message: 'Mã sản phẩm đã tồn tại',
+    },
+    PRODUCT_CANNOT_CHANGE_MANAGEMENT_TYPE: {
+        code: 20,
+        message: 'Không thể thay đổi loại quản lý của sản phẩm đã có trong kho',
+    },
 }
 
 module.exports = errorCode
