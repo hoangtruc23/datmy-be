@@ -45,7 +45,27 @@ async function permissionApiSeeder() {
         // Khách hàng
         {
             permissionId: '685135a0f2a5cb3fcc6b8f03', // The ID for "Thêm khách hàng"
-            apiId: '685135a0f2a5cb3fcc6b8ea0', // The ID for the /customer/create API
+            apiId: '685135a0f2a5cb3fcc6b8ea0', // /customer/create
+        },
+        {
+            permissionId: '6853d1b6fa10ea77cf67990a', // Cập nhật khách hàng
+            apiId: '6853d1b6fa10ea77cf679909', // /customer/update
+        },
+        {
+            permissionId: '6853d1b6fa10ea77cf67990b', // Xem khách hàng
+            apiId: '6853d1b6fa10ea77cf67990c', // /customer/getById
+        },
+        {
+            permissionId: '6853d1b6fa10ea77cf67990f', // The existing 'Xem khách hàng' permission ID
+            apiId: '6853d1b6fa10ea77cf679910', // /customer/getAll
+        },
+        {
+            permissionId: '6853d1b6fa10ea77cf67990d', // khoá mở khoá khách hàng
+            apiId: '6853d1b6fa10ea77cf67990e', // /customer/lockUnlock
+        },
+        {
+            permissionId: '6853d1b6fa10ea77cf679911', // xoá khách hàng
+            apiId: '6853d1b6fa10ea77cf679912', // /customer/delete
         },
         // Nhà cung cấp
         {

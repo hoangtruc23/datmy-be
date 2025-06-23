@@ -44,9 +44,34 @@ async function apiSeeder() {
 
         // Khách hàng
         {
-            _id: new Types.ObjectId('685135a0f2a5cb3fcc6b8ea0'), // Use a unique ID for this API
+            _id: new Types.ObjectId('685135a0f2a5cb3fcc6b8ea0'),
             api: '/customer/create',
             note: 'Tạo khách hàng',
+        },
+        {
+            _id: new Types.ObjectId('6853d1b6fa10ea77cf679909'),
+            api: '/customer/update',
+            note: 'Cập nhật khách hàng',
+        },
+        {
+            _id: new Types.ObjectId('6853d1b6fa10ea77cf67990c'),
+            api: '/customer/getById',
+            note: 'Xem khách hàng theo ID',
+        },
+        {
+            _id: new Types.ObjectId('6853d1b6fa10ea77cf679910'),
+            api: '/customer/getAll',
+            note: 'Xem khách hàng',
+        },
+        {
+            _id: new Types.ObjectId('6853d1b6fa10ea77cf67990e'),
+            api: '/customer/lockUnlock',
+            note: 'Khóa hoặc mở khóa khách hàng',
+        },
+        {
+            _id: new Types.ObjectId('6853d1b6fa10ea77cf679912'),
+            api: '/customer/delete',
+            note: 'Xoá khách hàng',
         },
         // Nhà cung cấp
         {

@@ -18,6 +18,11 @@ const errorCode = {
         code: 7,
         message: 'Nhà cung cấp không tồn tại!',
     },
+    CUSTOMER_NOT_FOUND: {
+        // <-- ADD THIS
+        code: 12, // Use an available code
+        message: 'Khách hàng không tồn tại!',
+    },
 
     WAREHOUSE_EXISTED: {
         code: 10,
