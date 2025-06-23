@@ -7,7 +7,7 @@ const supplierValidation = require('../validations/supplierValidation')
 const router = express.Router()
 router.post(
     '/create',
-    //validate(supplierValidation.create),
+    validate(supplierValidation.create),
     supplierController.create,
 )
 router.post(

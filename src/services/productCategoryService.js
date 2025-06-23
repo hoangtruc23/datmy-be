@@ -93,6 +93,16 @@ const productCategoryService = {
             throw error
         }
     },
+    getAllProductCategoryId: async () => {
+        try {
+            const productCategory = await ProductCategoryModel.find({}).select(
+                '_id name',
+            )
+            return productCategory
+        } catch (error) {
+            throw error
+        }
+    },
 }
 
 module.exports = productCategoryService

@@ -20,39 +20,58 @@ const productSchema = new Schema(
         },
         name: {
             type: String,
+            required: true,
+            trim: true,
         },
         shortName: {
             type: String,
+            required: true,
+            trim: true,
         },
         code: {
             type: String,
+            required: true,
+            unique: true,
         },
-        specification: {
-            type: String,
-        },
+
         unit: {
-            type: String,
+            type: Types.ObjectId,
+            ref: 'units',
+            required: true,
+            validate: {
+                validator: Types.ObjectId.isValid,
+                message: 'Invalid unit id',
+            },
         },
+
         safetyQuantity: {
             type: Number,
+            required: true,
             min: 0,
-        },
-        description: {
-            type: String,
         },
         isWarranty: {
             type: Boolean,
             required: true,
             default: true,
         },
+
+        specification: {
+            //quy cách
+            type: String,
+        },
+        description: {
+            type: String,
+        },
+
         image: {
             type: String,
         },
         // //isHasProduct dùng để check là đã thêm sản phẩm thì không cho update managementType nữa
-        // isHasProduct: {
-        //     type: Boolean,
-        //     default: false,
-        // },
+        // chưa có hàm thay đổi isHasProduct
+        isHasProduct: {
+            type: Boolean,
+            default: false,
+        },
         isActive: {
             type: Boolean,
             required: true,
