@@ -103,14 +103,18 @@ const errorCode = {
         code: 26,
         message: 'Người dùng không có quyền xác nhận',
     },
-        PRODUCT_CODE_EXISTED: {
+    APPROVAL_QUANTITY_NOT_YET: {
         code: 27,
+        message: 'Chưa xác nhận hết số lượng sản phẩm',
+    },
+    PRODUCT_CODE_EXISTED: {
+        code: 28,
         message: 'Mã sản phẩm đã tồn tại',
     },
     PRODUCT_CANNOT_CHANGE_MANAGEMENT_TYPE: {
-        code: 28,
+        code: 29,
         message: 'Không thể thay đổi loại quản lý của sản phẩm đã có trong kho',
-    },
+    }
 }
 
 module.exports = errorCode

@@ -52,8 +52,8 @@ const goodsIssueSchema = new Schema(
         deliveryAddresses: {
             type: String,
         },
-        orderedBy: contactPersonSchema,
-        recipient: contactPersonSchema,
+        orderedBy: contactPersonSchema, // người đặt hàng là người liên hệ bán hàng trong khách hàng
+        recipient: contactPersonSchema, // người nhận hàng là người liên hệ kho trong khách hàng
         note: {
             type: String,
         },

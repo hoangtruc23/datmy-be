@@ -347,7 +347,6 @@ const goodsReceiptService = {
                 }
                 checkTotalProductStorage += storage.quantity
             }
-            console.log(actualQuantity, checkTotalProductStorage)
             // Kiểm tra tổng số lượng của các số serial/ số lô có khớp với số lượng thực tế nhập hay không
             if (checkTotalProductStorage != actualQuantity) {
                 throw new BadReq(errorCode.SERIAL_OR_BATCH_QUANTITY_INVALID)
@@ -378,6 +377,13 @@ const goodsReceiptService = {
             if (!checkGoodsReceiptApproval) {
                 throw new BadReq(errorCode.GOODS_RECEIPT_APPROVAL_NOT_FOUND)
             }
+            const checkGoodsReceipt = await GoodsReceiptModel.findById(checkGoodsReceiptApproval.goodsReceiptId)
+            const checkGoodsReceiptDetails = await GoodsReceiptDetaileModel.find({goodsReceiptId: checkGoodsReceipt._id})
+            for(let checkGoodsReceiptDetail of checkGoodsReceiptDetails) {
+                if(checkGoodsReceiptDetail.storages.length <= 0){
+                    throw new BadReq(errorCode.APPROVAL_QUANTITY_NOT_YET)
+                }
+            }
             const checkUser = await UserModel.findById(currentUserId)
             if (
                 !checkUser.roleIds.includes(
@@ -394,11 +400,20 @@ const goodsReceiptService = {
                         approvedBy: user.fullname,
                         content,
                     },
-                    nextApprovalRoleId: null,
+                    // nextApprovalRoleId: null,
                 },
             )
 
-            // TODO: Cập nhật lại số lượng sản phẩm sau khi đã chấp nhận phiếu nhập kho
+            // Cập nhật lại số lượng sản phẩm sau khi đã chấp nhận phiếu nhập kho
+            for(let goodsReceiptDetail of checkGoodsReceiptDetails) {
+                const productInsertDatas = goodsReceiptDetail.storages.map(storage => ({
+                    warehouseId: goodsReceiptDetail.warehouseId,
+                    productId: goodsReceiptDetail.productId,
+                    trackingCode: storage.trackingCode,
+                    quantity: storage.quantity,
+                }))
+                await ProductStorageModel.insertMany(productInsertDatas)
+            }
             return null
         } catch (error) {
             throw error
