@@ -46,7 +46,7 @@ const constant = {
         APPROVED: 'approved',
         REJECTED: 'rejected',
         CANCEL: 'cancel',
-    }
+    },
 }
 
 module.exports = constant

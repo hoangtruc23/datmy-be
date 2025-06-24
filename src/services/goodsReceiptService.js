@@ -124,8 +124,8 @@ const goodsReceiptService = {
                 createdBy: {
                     approvedBy: user.fullname,
                     status: constant.APPROVAL_STATUS.APPROVED,
-                    content: 'Tạo'
-                }
+                    content: 'Tạo',
+                },
             })
             return null
         } catch (error) {
@@ -149,7 +149,9 @@ const goodsReceiptService = {
             if (!checkGoodsReceipt) {
                 throw new BadReq(errorCode.GOODS_RECEIPT_NOT_FOUND)
             }
-            if(checkGoodsReceipt.status == constant.GOODS_RECEIPT_STATUS.CANCEL) {
+            if (
+                checkGoodsReceipt.status == constant.GOODS_RECEIPT_STATUS.CANCEL
+            ) {
                 throw new BadReq(errorCode.DO_NOT_UPDATE_STATUS_CANCEL)
             }
             await GoodsReceiptModel.findByIdAndUpdate(goodsReceiptId, {
@@ -177,18 +179,21 @@ const goodsReceiptService = {
             if (!checkGoodsReceipt) {
                 throw new BadReq(errorCode.GOODS_RECEIPT_NOT_FOUND)
             }
-            if(checkGoodsReceipt.createdBy != currentUserId) {
+            if (checkGoodsReceipt.createdBy != currentUserId) {
                 throw new BadReq(errorCode.DO_NOT_CANCEL_GOODS_RECEIPT)
             }
             await GoodsReceiptModel.findByIdAndUpdate(goodsReceiptId, {
                 status: constant.GOODS_RECEIPT_STATUS.CANCEL,
                 updatedBy: currentUserId,
             })
-            await GoodsReceiptApprovalModel.findOneAndUpdate({goodsReceiptId}, {
-                createdBy: {
-                    status: constant.APPROVAL_STATUS.CANCEL
-                } 
-            })
+            await GoodsReceiptApprovalModel.findOneAndUpdate(
+                { goodsReceiptId },
+                {
+                    createdBy: {
+                        status: constant.APPROVAL_STATUS.CANCEL,
+                    },
+                },
+            )
             return null
         } catch (error) {
             throw error
@@ -410,11 +415,16 @@ const goodsReceiptService = {
             if (!checkGoodsReceiptApproval) {
                 throw new BadReq(errorCode.GOODS_RECEIPT_APPROVAL_NOT_FOUND)
             }
-            if(status == constant.APPROVAL_STATUS.APPROVED) {
-                const checkGoodsReceipt = await GoodsReceiptModel.findById(checkGoodsReceiptApproval.goodsReceiptId)
-                const checkGoodsReceiptDetails = await GoodsReceiptDetaileModel.find({goodsReceiptId: checkGoodsReceipt._id})
-                for(let checkGoodsReceiptDetail of checkGoodsReceiptDetails) {
-                    if(checkGoodsReceiptDetail.storages.length <= 0){
+            if (status == constant.APPROVAL_STATUS.APPROVED) {
+                const checkGoodsReceipt = await GoodsReceiptModel.findById(
+                    checkGoodsReceiptApproval.goodsReceiptId,
+                )
+                const checkGoodsReceiptDetails =
+                    await GoodsReceiptDetaileModel.find({
+                        goodsReceiptId: checkGoodsReceipt._id,
+                    })
+                for (let checkGoodsReceiptDetail of checkGoodsReceiptDetails) {
+                    if (checkGoodsReceiptDetail.storages.length <= 0) {
                         throw new BadReq(errorCode.APPROVAL_QUANTITY_NOT_YET)
                     }
                 }
@@ -426,15 +436,17 @@ const goodsReceiptService = {
                 ) {
                     throw new BadReq(errorCode.NOT_PERMISSION_APPROVAL)
                 }
-    
+
                 // Cập nhật lại số lượng sản phẩm sau khi đã chấp nhận phiếu nhập kho
-                for(let goodsReceiptDetail of checkGoodsReceiptDetails) {
-                    const productInsertDatas = goodsReceiptDetail.storages.map(storage => ({
-                        warehouseId: goodsReceiptDetail.warehouseId,
-                        productId: goodsReceiptDetail.productId,
-                        trackingCode: storage.trackingCode,
-                        quantity: storage.quantity,
-                    }))
+                for (let goodsReceiptDetail of checkGoodsReceiptDetails) {
+                    const productInsertDatas = goodsReceiptDetail.storages.map(
+                        (storage) => ({
+                            warehouseId: goodsReceiptDetail.warehouseId,
+                            productId: goodsReceiptDetail.productId,
+                            trackingCode: storage.trackingCode,
+                            quantity: storage.quantity,
+                        }),
+                    )
                     await ProductStorageModel.insertMany(productInsertDatas)
                 }
             }

@@ -122,7 +122,7 @@ const errorCode = {
     DO_NOT_CANCEL_GOODS_RECEIPT: {
         code: 31,
         message: 'Chỉ người tạo phiếu mới được phép hủy phiếu nhập kho',
-    }
+    },
 }
 
 module.exports = errorCode
