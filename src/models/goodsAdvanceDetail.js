@@ -11,16 +11,15 @@ const storagesSchema = new Schema({
     },
 })
 
-const goodsIssueDetailSchema = new Schema({
-    goodsIssueId: {
+const goodsAdvanceDetailSchema = new Schema({
+    goodsAdvanceId: {
         type: Types.ObjectId,
-        ref: 'goodsIssues',
+        ref: 'goodsAdvances',
         required: true,
     },
     productId: {
         type: Types.ObjectId,
         ref: 'products',
-        required: true,
     },
     warehouseId: {
         type: Types.ObjectId,
@@ -35,28 +34,21 @@ const goodsIssueDetailSchema = new Schema({
     },
     managementType: {
         type: String,
-        required: true,
         enum: Object.values(constant.PRODUCT_MANAGEMENT_TYPE),
     },
     unit: {
         type: String,
     },
-    origin: {
-        type: String,
-    },
-    soldQuantity: {
+    quantity: {
         type: Number,
         min: 1,
         required: true,
     },
-    price: {
-        type: Number,
-        min: 0,
-        required: true,
+    productStatus: {
+        type: String,
     },
-    totalAmount: {
-        type: Number,
-        min: 0,
+    usageContent: {
+        type: String,
         required: true,
     },
     warehouseName: {
@@ -66,11 +58,16 @@ const goodsIssueDetailSchema = new Schema({
     note: {
         type: String,
     },
+    isTemporary: {
+        type: Boolean,
+        default: true,
+        required: true,
+    },
 })
 
-const GoodsIssueDetaileModel = model(
-    'goodsIssueDetails',
-    goodsIssueDetailSchema,
+const GoodsAdvanceDetaileModel = model(
+    'goodsAdvanceDetails',
+    goodsAdvanceDetailSchema,
 )
 
-module.exports = GoodsIssueDetaileModel
+module.exports = GoodsAdvanceDetaileModel

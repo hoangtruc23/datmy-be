@@ -114,6 +114,14 @@ const errorCode = {
     PRODUCT_CANNOT_CHANGE_MANAGEMENT_TYPE: {
         code: 29,
         message: 'Không thể thay đổi loại quản lý của sản phẩm đã có trong kho',
+    },
+    DO_NOT_UPDATE_STATUS_CANCEL: {
+        code: 30,
+        message: 'Không thể cập nhật phiếu với trạng thái đã hủy',
+    },
+    DO_NOT_CANCEL_GOODS_RECEIPT: {
+        code: 31,
+        message: 'Chỉ người tạo phiếu mới được phép hủy phiếu nhập kho',
     }
 }
 

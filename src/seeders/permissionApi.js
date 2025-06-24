@@ -218,6 +218,10 @@ async function permissionApiSeeder() {
         },
         {
             permissionId: '68568d96dd90fa75cb286479', // Tạo phiếu nhập kho
+            apiId: '68592f5521ca74c391267f78', // /goodsReceipt/cancel
+        },
+        {
+            permissionId: '68568d96dd90fa75cb286479', // Tạo phiếu nhập kho
             apiId: '6856a471897b183049a2ef8a', // /goodsReceipt/addProduct
         },
         {

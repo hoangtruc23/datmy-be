@@ -10,6 +10,11 @@ const approvalContent = new Schema({
         type: Date,
         default: Date.now,
     },
+    status: {
+        type: String,
+        enum: Object.values(constant.APPROVAL_STATUS),
+        default: constant.APPROVAL_STATUS.NULL,
+    },
     content: {
         type: String,
     },
@@ -22,6 +27,7 @@ const goodsIssueApprovalSchema = new Schema(
             ref: 'goodsIssues',
             required: true,
         },
+        createdBy: approvalContent,
         warehouseStaffApproval: approvalContent,
         warehouseAccountantApproval: approvalContent,
         debtAccountantApproval: approvalContent,

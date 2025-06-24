@@ -57,6 +57,19 @@ const goodsReceiptController = {
             next(error)
         }
     },
+    cancel: async (req, res, next) => {
+        try {
+            const currentUserId = req.userId
+            const { goodsReceiptId } = req.params
+            const result = await goodsReceiptService.cancel(
+                goodsReceiptId,
+                currentUserId,
+            )
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
     addProduct: async (req, res, next) => {
         try {
             const result = await goodsReceiptService.addProduct(req.body)

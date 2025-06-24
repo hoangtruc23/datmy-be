@@ -20,11 +20,11 @@ const approvalContent = new Schema({
     },
 })
 
-const goodsReceiptApprovalSchema = new Schema(
+const goodsAdvanceApprovalSchema = new Schema(
     {
-        goodsReceiptId: {
+        goodsAdvanceId: {
             type: Types.ObjectId,
-            ref: 'goodsReceipts',
+            ref: 'goodsAdvances',
             required: true,
         },
         createdBy: approvalContent,
@@ -37,9 +37,9 @@ const goodsReceiptApprovalSchema = new Schema(
     { timestamps: true },
 )
 
-const GoodsReceiptApprovalModel = model(
-    'goodsReceiptApprovals',
-    goodsReceiptApprovalSchema,
+const GoodsAdvanceApprovalModel = model(
+    'goodsAdvanceApprovals',
+    goodsAdvanceApprovalSchema,
 )
 
-module.exports = GoodsReceiptApprovalModel
+module.exports = GoodsAdvanceApprovalModel

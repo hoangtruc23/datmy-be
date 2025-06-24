@@ -248,6 +248,11 @@ async function apiSeeder() {
             note: 'Cập nhật thông tin phiếu nhập kho',
         },
         {
+            _id: new Types.ObjectId('68592f5521ca74c391267f78'),
+            api: '/goodsReceipt/cancel',
+            note: 'Hủy phiếu nhập kho',
+        },
+        {
             _id: new Types.ObjectId('6856a471897b183049a2ef8a'),
             api: '/goodsReceipt/addProduct',
             note: 'Thêm sản phẩm cho phiếu nhập kho',

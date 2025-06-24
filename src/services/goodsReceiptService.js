@@ -118,8 +118,14 @@ const goodsReceiptService = {
                 createdBy: currentUserId,
             })
 
+            const user = await UserModel.findById(currentUserId)
             await GoodsReceiptApprovalModel.create({
                 goodsReceiptId,
+                createdBy: {
+                    approvedBy: user.fullname,
+                    status: constant.APPROVAL_STATUS.APPROVED,
+                    content: 'Tạo'
+                }
             })
             return null
         } catch (error) {
@@ -143,6 +149,9 @@ const goodsReceiptService = {
             if (!checkGoodsReceipt) {
                 throw new BadReq(errorCode.GOODS_RECEIPT_NOT_FOUND)
             }
+            if(checkGoodsReceipt.status == constant.GOODS_RECEIPT_STATUS.CANCEL) {
+                throw new BadReq(errorCode.DO_NOT_UPDATE_STATUS_CANCEL)
+            }
             await GoodsReceiptModel.findByIdAndUpdate(goodsReceiptId, {
                 supplierId,
                 invoiceFile,
@@ -155,6 +164,30 @@ const goodsReceiptService = {
                 // status: constant.GOODS_RECEIPT_STATUS.WAREHOUSE_STAFF_APPROVAL,
                 // createdBy: currentUserId,
                 updatedBy: currentUserId,
+            })
+            return null
+        } catch (error) {
+            throw error
+        }
+    },
+    cancel: async (goodsReceiptId, currentUserId) => {
+        try {
+            const checkGoodsReceipt =
+                await GoodsReceiptModel.findById(goodsReceiptId)
+            if (!checkGoodsReceipt) {
+                throw new BadReq(errorCode.GOODS_RECEIPT_NOT_FOUND)
+            }
+            if(checkGoodsReceipt.createdBy != currentUserId) {
+                throw new BadReq(errorCode.DO_NOT_CANCEL_GOODS_RECEIPT)
+            }
+            await GoodsReceiptModel.findByIdAndUpdate(goodsReceiptId, {
+                status: constant.GOODS_RECEIPT_STATUS.CANCEL,
+                updatedBy: currentUserId,
+            })
+            await GoodsReceiptApprovalModel.findOneAndUpdate({goodsReceiptId}, {
+                createdBy: {
+                    status: constant.APPROVAL_STATUS.CANCEL
+                } 
             })
             return null
         } catch (error) {
@@ -371,26 +404,39 @@ const goodsReceiptService = {
     },
     approval: async (input, currentUserId) => {
         try {
-            const { goodsReceiptApprovalId, content } = input
+            const { goodsReceiptApprovalId, status, content } = input
             const checkGoodsReceiptApproval =
                 await GoodsReceiptApprovalModel.findById(goodsReceiptApprovalId)
             if (!checkGoodsReceiptApproval) {
                 throw new BadReq(errorCode.GOODS_RECEIPT_APPROVAL_NOT_FOUND)
             }
-            const checkGoodsReceipt = await GoodsReceiptModel.findById(checkGoodsReceiptApproval.goodsReceiptId)
-            const checkGoodsReceiptDetails = await GoodsReceiptDetaileModel.find({goodsReceiptId: checkGoodsReceipt._id})
-            for(let checkGoodsReceiptDetail of checkGoodsReceiptDetails) {
-                if(checkGoodsReceiptDetail.storages.length <= 0){
-                    throw new BadReq(errorCode.APPROVAL_QUANTITY_NOT_YET)
+            if(status == constant.APPROVAL_STATUS.APPROVED) {
+                const checkGoodsReceipt = await GoodsReceiptModel.findById(checkGoodsReceiptApproval.goodsReceiptId)
+                const checkGoodsReceiptDetails = await GoodsReceiptDetaileModel.find({goodsReceiptId: checkGoodsReceipt._id})
+                for(let checkGoodsReceiptDetail of checkGoodsReceiptDetails) {
+                    if(checkGoodsReceiptDetail.storages.length <= 0){
+                        throw new BadReq(errorCode.APPROVAL_QUANTITY_NOT_YET)
+                    }
                 }
-            }
-            const checkUser = await UserModel.findById(currentUserId)
-            if (
-                !checkUser.roleIds.includes(
-                    checkGoodsReceiptApproval.nextApprovalRoleId,
-                )
-            ) {
-                throw new BadReq(errorCode.NOT_PERMISSION_APPROVAL)
+                const checkUser = await UserModel.findById(currentUserId)
+                if (
+                    !checkUser.roleIds.includes(
+                        checkGoodsReceiptApproval.nextApprovalRoleId,
+                    )
+                ) {
+                    throw new BadReq(errorCode.NOT_PERMISSION_APPROVAL)
+                }
+    
+                // Cập nhật lại số lượng sản phẩm sau khi đã chấp nhận phiếu nhập kho
+                for(let goodsReceiptDetail of checkGoodsReceiptDetails) {
+                    const productInsertDatas = goodsReceiptDetail.storages.map(storage => ({
+                        warehouseId: goodsReceiptDetail.warehouseId,
+                        productId: goodsReceiptDetail.productId,
+                        trackingCode: storage.trackingCode,
+                        quantity: storage.quantity,
+                    }))
+                    await ProductStorageModel.insertMany(productInsertDatas)
+                }
             }
             const user = await UserModel.findById(currentUserId)
             await GoodsReceiptApprovalModel.findByIdAndUpdate(
@@ -398,22 +444,12 @@ const goodsReceiptService = {
                 {
                     warehouseStaffApproval: {
                         approvedBy: user.fullname,
+                        status,
                         content,
                     },
-                    // nextApprovalRoleId: null,
+                    nextApprovalRoleId: null,
                 },
             )
-
-            // Cập nhật lại số lượng sản phẩm sau khi đã chấp nhận phiếu nhập kho
-            for(let goodsReceiptDetail of checkGoodsReceiptDetails) {
-                const productInsertDatas = goodsReceiptDetail.storages.map(storage => ({
-                    warehouseId: goodsReceiptDetail.warehouseId,
-                    productId: goodsReceiptDetail.productId,
-                    trackingCode: storage.trackingCode,
-                    quantity: storage.quantity,
-                }))
-                await ProductStorageModel.insertMany(productInsertDatas)
-            }
             return null
         } catch (error) {
             throw error

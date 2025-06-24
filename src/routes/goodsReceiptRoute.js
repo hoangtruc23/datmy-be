@@ -9,6 +9,7 @@ router.get('/getById/:goodsReceiptId', goodsReceiptController.getById)
 router.post('/createTemporary', goodsReceiptController.createTemporary)
 router.post('/create/:goodsReceiptId', goodsReceiptController.create)
 router.post('/update/:goodsReceiptId', goodsReceiptController.update)
+router.post('/cancel/:goodsReceiptId', goodsReceiptController.cancel)
 router.post('/addProduct', goodsReceiptController.addProduct)
 router.post(
     '/updateProduct/:goodsReceiptDetailId',
@@ -64,8 +65,8 @@ module.exports = router
  *         type: array
  *         items:
  *           type: string
- *           enum: ["warehouseStaffApproval", "success"]
- *         example: ["warehouseStaffApproval", "success"]
+ *           enum: [warehouseStaffApproval, reject, cancel, approved]
+ *         example: [warehouseStaffApproval, reject, cancel, approved]
  *         style: form
  *         explode: true
  *     responses:
@@ -594,6 +595,119 @@ module.exports = router
  *               note:
  *                 type: string
  *                 example: Ghi chú
+ *     responses:
+ *       200:
+ *         description: Cập nhật thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
+ *                 code:
+ *                   type: integer
+ *                   example: 1
+ *                 message:
+ *                   type: string
+ *                   example: OK!
+ *                 data:
+ *                   type: object
+ *                   example: null
+ *       400:
+ *         description: Lỗi input
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 400
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Tên đăng nhập là bắt buộc!
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       401:
+ *         description: Chưa đăng nhập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 401
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có token
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       403:
+ *         description: Không có quyền truy cập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 403
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có quyền
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       500:
+ *         description: Lỗi server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 500
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Lỗi server!
+ *                 data:
+ *                   type: string
+ *                   example: null
+ */
+
+/**
+ * @swagger
+ * /goodsReceipt/cancel/{goodsReceiptId}:
+ *   post:
+ *     summary: Hủy phiếu nhập kho
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [GoodsReceipt]
+ *     parameters:
+ *     - name: goodsReceiptId
+ *       in: path
+ *       required: true
+ *       schema:
+ *         type: string
+ *       description: Id của phiếu nhập kho
  *     responses:
  *       200:
  *         description: Cập nhật thành công

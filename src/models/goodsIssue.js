@@ -62,6 +62,11 @@ const goodsIssueSchema = new Schema(
             required: true,
             default: true,
         },
+        isTemporary: {
+            type: Boolean,
+            default: true,
+            required: true,
+        },
         status: {
             type: String,
             required: true,
