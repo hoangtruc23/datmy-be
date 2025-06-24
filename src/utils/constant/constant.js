@@ -38,6 +38,7 @@ const constant = {
         NULL: '',
         WAREHOUSE_STAFF_APPROVAL: 'warehouseStaffApproval',
         APPROVED: 'approved',
+        WAITING_FOR_EXTENSION: 'waitingForExtension',
         REJECT: 'reject',
         CANCEL: 'cancel',
     },

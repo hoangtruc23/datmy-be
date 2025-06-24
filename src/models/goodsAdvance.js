@@ -13,7 +13,10 @@ const goodsAdvanceSchema = new Schema(
             ref: 'customers',
             required: true,
         },
-        advanceRequester: {
+        borrower: {
+            type: String,
+        },
+        returner: {
             type: String,
         },
         advanceBy: {
@@ -37,7 +40,7 @@ const goodsAdvanceSchema = new Schema(
         status: {
             type: String,
             required: true,
-            enum: Object.values(constant.GOODS_STATUS),
+            enum: Object.values(constant.GOODS_ADVANCE_STATUS),
         },
         isTemporary: {
             type: Boolean,

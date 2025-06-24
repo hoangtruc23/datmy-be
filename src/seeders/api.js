@@ -188,6 +188,36 @@ async function apiSeeder() {
         },
 
         //Sản phẩm
+        {
+            _id: new Types.ObjectId('685a1b9f9f5d2f68d81a1ead'),
+            api: '/product/create',
+            note: 'Tạo sản phẩm mới',
+        },
+        {
+            _id: new Types.ObjectId('685a1b9f9f5d2f68d81a1eae'),
+            api: '/product/update',
+            note: 'Chỉnh sửa sản phẩm',
+        },
+        {
+            _id: new Types.ObjectId('685a1b9f9f5d2f68d81a1eaf'),
+            api: '/product/getAllUnit',
+            note: 'Lấy tất cả sản phẩm',
+        },
+        {
+            _id: new Types.ObjectId('685a1b9f9f5d2f68d81a1eb0'),
+            api: '/product/lockUnlock',
+            note: 'Khóa hoặc mở khóa sản phẩm',
+        },
+        {
+            _id: new Types.ObjectId('685a1b9f9f5d2f68d81a1eb1'),
+            api: '/product/getAll',
+            note: 'Lấy tất cả sản phẩm',
+        },
+        {
+            _id: new Types.ObjectId('685a1b9f9f5d2f68d81a1eb2'),
+            api: '/product/getById',
+            note: 'Lấy sản phẩm theo id',
+        },
 
         // Thương hiệu
         {

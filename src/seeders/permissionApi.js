@@ -173,6 +173,32 @@ async function permissionApiSeeder() {
             apiId: '6854e30d6b90439ad8c00dba', // /productCategory/lockUnlock
         },
 
+        // Sản phẩm
+        {
+            permissionId: '685a1b9f9f5d2f68d81a1eb6', // Thêm
+            apiId: '685a1b9f9f5d2f68d81a1ead', // /product/create
+        },
+        {
+            permissionId: '685a1b9f9f5d2f68d81a1eb6', // Thêm
+            apiId: '685a1b9f9f5d2f68d81a1eaf', // /product/getAllUnit
+        },
+        {
+            permissionId: '685a1b9f9f5d2f68d81a1eb7', // Xem
+            apiId: '685a1b9f9f5d2f68d81a1eb1', // /product/getAll
+        },
+        {
+            permissionId: '685a1b9f9f5d2f68d81a1eb7', // Xem
+            apiId: '685a1b9f9f5d2f68d81a1eb2', // /product/getById
+        },
+        {
+            permissionId: '685a1b9f9f5d2f68d81a1eb8', // Cập nhật
+            apiId: '685a1b9f9f5d2f68d81a1eae', // /product/update
+        },
+        {
+            permissionId: '685a1b9f9f5d2f68d81a1eb9', // Khóa/Mở khóa
+            apiId: '685a1b9f9f5d2f68d81a1eb0', // /product/lockUnlock
+        },
+
         // Thương hiệu
         {
             permissionId: '68525e2d25829b7e6b32a612', // tạo thương hiệu

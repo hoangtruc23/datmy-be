@@ -21,11 +21,6 @@ const goodsAdvanceDetailSchema = new Schema({
         type: Types.ObjectId,
         ref: 'products',
     },
-    warehouseId: {
-        type: Types.ObjectId,
-        ref: 'warehouses',
-        required: true,
-    },
     productCode: {
         type: String,
     },
@@ -39,25 +34,55 @@ const goodsAdvanceDetailSchema = new Schema({
     unit: {
         type: String,
     },
-    quantity: {
-        type: Number,
-        min: 1,
-        required: true,
-    },
-    productStatus: {
-        type: String,
-    },
     usageContent: {
         type: String,
         required: true,
     },
-    warehouseName: {
+    borrowWarehouseId: {
+        type: Types.ObjectId,
+        ref: 'warehouses',
+        required: true,
+    },
+    returnWarehouseId: {
+        type: Types.ObjectId,
+        ref: 'warehouses',
+        required: true,
+    },
+    borrowedQuantity: {
+        type: Number,
+        min: 1,
+        required: true,
+    },
+    returnedQuantity: {
+        type: Number,
+        min: 1,
+        required: true,
+    },
+    borrowStatus: {
         type: String,
     },
-    storages: [storagesSchema],
+    returnStatus: {
+        type: String,
+    },
+    borrowWarehouseName: {
+        type: String,
+    },
+    returnWarehouseName: {
+        type: String,
+    },
+    borrowStorages: [storagesSchema],
+    returnStorages: [storagesSchema],
     note: {
         type: String,
     },
+    lostReason: {
+        type: String,
+    },
+    lostStorages: [storagesSchema],
+    purchaseReason: {
+        type: String,
+    },
+    purchaseStorages: [storagesSchema],
     isTemporary: {
         type: Boolean,
         default: true,
