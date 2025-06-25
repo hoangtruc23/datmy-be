@@ -123,6 +123,47 @@ const errorCode = {
         code: 31,
         message: 'Chỉ người tạo phiếu mới được phép hủy phiếu nhập kho',
     },
+    GOODS_ISSUE_NOT_FOUND: {
+        code: 32,
+        message: 'Phiếu xuất kho không tồn tại',
+    },
+    GOODS_ISSUE_DETAIL_EXISTED: {
+        code: 33,
+        message: 'Sản phẩm được thêm đã tồn tại trong phiếu xuất kho',
+    },
+    GOODS_ISSUE_DETAIL_NOT_FOUND: {
+        code: 35,
+        message: 'Không tìm thấy sản phẩm này trong phiếu xuất',
+    },
+    GOODS_ISSUE_SERIAL_OR_BATCH_EXISTED: {
+        code: 36,
+        message: 'Số lô hoặc số serial đã tồn tại',
+    },
+    GOODS_ISSUE_APPROVAL_NOT_FOUND: {
+        code: 37,
+        message: 'Không tìm thấy phiếu xác nhận xuất kho',
+    },
+    DO_NOT_CANCEL_GOODS_ISSUE: {
+        code: 38,
+        message: 'Chỉ người tạo phiếu mới được phép hủy phiếu xuất kho',
+    },
+    ISSUED_QUANTITY_INVALID: {
+        code: 39,
+        message: 'Số lượng xuất lớn hơn số lượng tồn kho',
+    },
+    SERIAL_OR_BATCH_QUANTITY_INVALID: {
+        code: 40,
+        message: 'Số lượng sản phẩm trong lô lớn hơn số lượng tồn kho',
+    },
+    SERIAL_OR_BATCH_QUANTITY_TOTAL_INVALID: {
+        code: 41,
+        message:
+            'Tổng số lượng sản phẩm của các lô không khớp với số lượng xuất',
+    },
+    GOODS_RECEIPT_APPROVAL_APPROVED: {
+        code: 42,
+        message: 'Phiếu này đã hoàn thành',
+    },
 }
 
 module.exports = errorCode

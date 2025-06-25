@@ -70,10 +70,10 @@ const goodsReceiptService = {
                     },
                 },
             ])
-            if (!goodsReceipt) {
+            if (!goodsReceipt[0]) {
                 throw new BadReq(errorCode.GOODS_RECEIPT_NOT_FOUND)
             }
-            return goodsReceipt
+            return goodsReceipt[0]
         } catch (error) {
             throw error
         }
@@ -236,9 +236,9 @@ const goodsReceiptService = {
                 throw new BadReq(errorCode.WAREHOUSE_NOT_FOUND)
             }
             // Do chưa có api product nên chưa check được
-            // if(!checkProduct) {
-            //     throw new BadReq(errorCode.PRODUCT_NOT_FOUND)
-            // }
+            if (!checkProduct) {
+                throw new BadReq(errorCode.PRODUCT_NOT_FOUND)
+            }
             await GoodsReceiptDetaileModel.create({
                 goodsReceiptId,
                 productId,
@@ -305,9 +305,9 @@ const goodsReceiptService = {
                 throw new BadReq(errorCode.WAREHOUSE_NOT_FOUND)
             }
             // Do chưa có api product nên chưa check được
-            // if(!checkProduct) {
-            //     throw new BadReq(errorCode.PRODUCT_NOT_FOUND)
-            // }
+            if (!checkProduct) {
+                throw new BadReq(errorCode.PRODUCT_NOT_FOUND)
+            }
             await GoodsReceiptDetaileModel.findByIdAndUpdate(
                 goodsReceiptDetailId,
                 {
@@ -361,9 +361,9 @@ const goodsReceiptService = {
             if (!checkWarehouse) {
                 throw new BadReq(errorCode.WAREHOUSE_NOT_FOUND)
             }
-            // if (!checkProduct) {
-            //     throw new BadReq(errorCode.PRODUCT_NOT_FOUND)
-            // }
+            if (!checkProduct) {
+                throw new BadReq(errorCode.PRODUCT_NOT_FOUND)
+            }
 
             // kiểm tra số lượng thực tế không được lớn hơn số lượng đặt hàng
             if (actualQuantity > checkGoodsReceiptDetail.orderedQuantity) {
@@ -415,6 +415,9 @@ const goodsReceiptService = {
             if (!checkGoodsReceiptApproval) {
                 throw new BadReq(errorCode.GOODS_RECEIPT_APPROVAL_NOT_FOUND)
             }
+            if (!checkGoodsReceiptApproval.nextApprovalRoleId) {
+                throw new BadReq(errorCode.GOODS_RECEIPT_APPROVAL_APPROVED)
+            }
             if (status == constant.APPROVAL_STATUS.APPROVED) {
                 const checkGoodsReceipt = await GoodsReceiptModel.findById(
                     checkGoodsReceiptApproval.goodsReceiptId,
@@ -450,18 +453,25 @@ const goodsReceiptService = {
                     await ProductStorageModel.insertMany(productInsertDatas)
                 }
             }
-            const user = await UserModel.findById(currentUserId)
-            await GoodsReceiptApprovalModel.findByIdAndUpdate(
-                goodsReceiptApprovalId,
-                {
-                    warehouseStaffApproval: {
-                        approvedBy: user.fullname,
-                        status,
-                        content,
+            if (
+                status == constant.APPROVAL_STATUS.APPROVED ||
+                status == constant.APPROVAL_STATUS.REJECTED ||
+                status == constant.APPROVAL_STATUS.CANCEL
+            ) {
+                const user = await UserModel.findById(currentUserId)
+                await GoodsReceiptApprovalModel.findByIdAndUpdate(
+                    goodsReceiptApprovalId,
+                    {
+                        warehouseStaffApproval: {
+                            approvedBy: user.fullname,
+                            status,
+                            content,
+                        },
+                        nextApprovalRoleId: null,
                     },
-                    nextApprovalRoleId: null,
-                },
-            )
+                )
+            }
+
             return null
         } catch (error) {
             throw error

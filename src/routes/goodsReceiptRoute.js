@@ -450,7 +450,7 @@ module.exports = router
  *                 example:
  *     responses:
  *       200:
- *         description: Tạo user thành công
+ *         description: Tạo phiếu nhập kho thành công
  *         content:
  *           application/json:
  *             schema:
@@ -1376,10 +1376,15 @@ module.exports = router
  *             required:
  *               - goodsReceiptApprovalId
  *               - goodsReceiptId
+ *               - status
  *             properties:
  *               goodsReceiptApprovalId:
  *                 type: string
  *                 example: "684c4cd3d1becf7806470255"
+ *               status:
+ *                 type: string
+ *                 enum: [approved, rejected, cancel]
+ *                 example: approved
  *               content:
  *                 type: string
  *                 example: Ok
