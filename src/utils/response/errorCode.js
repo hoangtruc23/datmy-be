@@ -164,6 +164,10 @@ const errorCode = {
         code: 42,
         message: 'Phiếu này đã hoàn thành',
     },
+    TRACKING_CODE_NOT_FOUND: {
+        code: 43,
+        message: 'Không tìm thấy phiếu nhập kho cho số lô này',
+    },
 }
 
 module.exports = errorCode

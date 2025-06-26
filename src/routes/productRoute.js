@@ -10,7 +10,17 @@ router.post('/lockUnlock/:id', productController.lockUnlock)
 router.delete('/delete/:id', productController.delete)
 router.get('/getAll', productController.getAll)
 router.get('/getById/:id', productController.getById)
+router.get(
+    '/getTotalQuantityByProductId',
+    productController.getTotalQuantityByProductId,
+)
+router.get('/getAllWithQuantity', productController.getAllWithQuantity)
 
+router.get('/getProductStorages', productController.getProductStorages)
+router.get(
+    '/getReceiptByTrackingCode',
+    productController.getReceiptByTrackingCode,
+)
 module.exports = router
 
 /**
@@ -193,13 +203,11 @@ module.exports = router
  *         name: page
  *         schema:
  *           type: integer
- *           default: 1
  *         description: Trang hiện tại
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
- *           default: 10
  *         description: Số lượng mục trên mỗi trang
  *       - in: query
  *         name: search
@@ -288,4 +296,132 @@ module.exports = router
  *     responses:
  *       200:
  *         description: Xóa thành công
+ */
+
+/**
+ * @swagger
+ * /product/getTotalQuantityByProductId:
+ *   get:
+ *     summary: Tính tổng số lượng tồn kho theo productId
+ *     tags: [Product]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: productId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID của sản phẩm cần tính tồn kho
+ *       - in: query
+ *         name: warehouseId
+ *         schema:
+ *           type: string
+ *         description: ID của kho để lọc tồn kho
+ *       - in: query
+ *         name: safetyQuantity
+ *         schema:
+ *           type: integer
+ *           default: 0
+ *         description: Số lượng tối thiểu an toàn (safetyQuantity)
+ *     responses:
+ *       200:
+ *         description: Tổng số lượng tồn kho và trạng thái an toàn
+ */
+
+/**
+ * @swagger
+ * /product/getAllWithQuantity:
+ *   get:
+ *     summary: Lấy danh sách sản phẩm kèm số lượng tồn kho và trạng thái an toàn
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Product]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Trang hiện tại
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Số lượng sản phẩm trên mỗi trang
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Tìm kiếm theo tên, mã, tên ngắn sản phẩm
+ *       - in: query
+ *         name: categoryId
+ *         schema:
+ *           type: string
+ *         description: Lọc theo ID danh mục sản phẩm
+ *       - in: query
+ *         name: warehouseId
+ *         schema:
+ *           type: string
+ *         description: Lọc theo ID kho hàng để tính tồn kho
+ *       - in: query
+ *         name: isSafeFilter
+ *         schema:
+ *           type: boolean
+ *         description: Lọc theo trạng thái an toàn
+ *     responses:
+ *       200:
+ *         description: Danh sách sản phẩm kèm tồn kho và trạng thái an toàn
+ */
+
+/**
+ * @swagger
+ * /product/getProductStorages:
+ *   get:
+ *     summary: Lấy danh sách tồn kho theo sản phẩm, kho và trạng thái tồn
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Product]
+ *     parameters:
+ *       - in: query
+ *         name: productId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID sản phẩm cần lọc (ObjectId)
+ *       - in: query
+ *         name: warehouseId
+ *         schema:
+ *           type: string
+ *         description: ID kho hàng để lọc (tùy chọn)
+ *       - in: query
+ *         name: hasQuantity
+ *         schema:
+ *           type: boolean
+ *           default: true
+ *         description: Đang tồn là (`true`) hoặc hết hàng là (`false`), mặc định đang tồn
+ *     responses:
+ *       200:
+ *         description: Danh sách tồn kho thỏa điều kiện
+ */
+
+/**
+ * @swagger
+ * /product/getReceiptByTrackingCode:
+ *   get:
+ *     summary: Tìm phiếu nhập kho theo mã trackingCode
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Product]
+ *     parameters:
+ *       - in: query
+ *         name: trackingCode
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Mã trackingCode trong chi tiết phiếu nhập
+ *     responses:
+ *       200:
+ *         description: Thông tin phiếu nhập có chứa trackingCode tương ứng
  */
