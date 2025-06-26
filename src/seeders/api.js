@@ -309,9 +309,65 @@ async function apiSeeder() {
         },
 
         // Xuất kho
+        {
+            _id: new Types.ObjectId('685a477d73dd15c087569de3'),
+            api: '/goodsIssue/getAll',
+            note: 'Lấy danh sách các phiếu xuất kho',
+        },
+        {
+            _id: new Types.ObjectId('685a477d73dd15c087569de4'),
+            api: '/goodsIssue/getById',
+            note: 'Xem chi tiết phiếu xuất kho',
+        },
+        {
+            _id: new Types.ObjectId('685a477d73dd15c087569de5'),
+            api: '/goodsIssue/createTemporary',
+            note: 'Tạo phiếu xuất kho tạm (chưa có giá trị)',
+        },
+        {
+            _id: new Types.ObjectId('685a477d73dd15c087569de6'),
+            api: '/goodsIssue/create',
+            note: 'Tạo phiếu xuất kho chính thức',
+        },
+        {
+            _id: new Types.ObjectId('685a477d73dd15c087569de7'),
+            api: '/goodsIssue/update',
+            note: 'Cập nhật thông tin phiếu xuất kho',
+        },
+        {
+            _id: new Types.ObjectId('685a477d73dd15c087569de8'),
+            api: '/goodsIssue/cancel',
+            note: 'Hủy phiếu xuất kho',
+        },
+        {
+            _id: new Types.ObjectId('685a477d73dd15c087569de9'),
+            api: '/goodsIssue/addProduct',
+            note: 'Thêm sản phẩm cho phiếu xuất kho',
+        },
+        {
+            _id: new Types.ObjectId('685a477d73dd15c087569dea'),
+            api: '/goodsIssue/updateProduct',
+            note: 'Cập nhật sản phẩm cho phiếu xuất kho',
+        },
+        {
+            _id: new Types.ObjectId('685a477d73dd15c087569deb'),
+            api: '/goodsIssue/deleteProduct',
+            note: 'Xóa sản phẩm khỏi phiếu xuất kho',
+        },
+        {
+            _id: new Types.ObjectId('685a477d73dd15c087569dec'),
+            api: '/goodsIssue/confirmQuantity',
+            note: 'Xác nhận số lượng sản phẩm của phiếu xuất kho',
+        },
+        {
+            _id: new Types.ObjectId('685a477d73dd15c087569ded'),
+            api: '/goodsIssue/approval',
+            note: 'Xác nhận phiếu xuất kho',
+        },
+
         // Tạm ứng
     ])
-    logger.info('Users seeded')
+    logger.info('apis seeded')
 }
 
 module.exports = apiSeeder

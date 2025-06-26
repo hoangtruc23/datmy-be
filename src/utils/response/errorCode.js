@@ -162,7 +162,28 @@ const errorCode = {
     },
     GOODS_RECEIPT_APPROVAL_APPROVED: {
         code: 42,
-        message: 'Phiếu này đã hoàn thành',
+        message: 'Phiếu nhập này đã hoàn thành',
+    },
+    GOODS_ISSUE_APPROVAL_APPROVED: {
+        code: 43,
+        message: 'Phiếu xuất này đã hoàn thành',
+    },
+    DO_NOT_UPDATE_GOODS_ISSUE_NOT_DRAFT: {
+        code: 44,
+        message: 'Không thể chỉnh sửa phiếu xuất kho không phải là nháp',
+    },
+    DO_NOT_UPDATE_PRODUCT_CREATED: {
+        code: 45,
+        message:
+            'Không thể chỉnh sửa sản phẩm của phiếu nhập kho trong trạng thái: Hoàn thành, Từ chối, Hủy',
+    },
+    SERIAL_OR_BATCH_DUPLICATED: {
+        code: 46,
+        message: 'Số serial hoặc số lô bị trùng',
+    },
+    PRODUCT_STORAGE_NOT_FOUND: {
+        code: 47,
+        message: 'Không tìm thấy số serial / số lô',
     },
     TRACKING_CODE_NOT_FOUND: {
         code: 43,

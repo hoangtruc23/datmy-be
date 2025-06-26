@@ -10,6 +10,7 @@ const constant = require('../utils/constant/constant')
 const RolePermissionModel = require('../models/rolePermission')
 const ApiModel = require('../models/api')
 const PermissionApiModel = require('../models/permissionApi')
+const PermissionModel = require('../models/permission')
 
 const authService = {
     login: async (username, password) => {
@@ -78,10 +79,18 @@ const authService = {
             const user = await UserModel.findById(userId, {
                 password: 0,
                 __v: 0,
-            })
+            }).lean()
             if (!user) {
                 throw new BadReq(errorCode.USER_NOT_FOUND)
             }
+            
+            // Lấy tất cả các permission
+            const rolePermissions = await RolePermissionModel.find({roleId: {$in: user.roleIds}}).populate('permissionId', 'code')
+            const permissionCodeList = new Set()
+            rolePermissions.forEach(item => {
+                permissionCodeList.add(item?.permissionId?.code)
+            })
+            user.permissionCodeList = [...permissionCodeList]
             return user
         } catch (error) {
             throw error

@@ -24,6 +24,11 @@ const productStorageSchema = new Schema(
     { timestamps: true },
 )
 
+productStorageSchema.index(
+    { warehouseId: 1, productId: 1, trackingCode: 1 },
+    { unique: true },
+)
+
 const ProductStorageModel = model('productStorages', productStorageSchema)
 
 module.exports = ProductStorageModel
