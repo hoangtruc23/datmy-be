@@ -4,11 +4,13 @@ const GoodsReceiptModel = require('../models/goodsReceipt')
 const ProductModel = require('../models/product')
 const GoodsReceiptDetaileModel = require('../models/goodsReceiptDetail')
 const WarehouseModel = require('../models/warehouses')
-const { Types } = require('mongoose')
+const { Types, default: mongoose } = require('mongoose')
 const constant = require('../utils/constant/constant')
 const ProductStorageModel = require('../models/productStorage')
 const GoodsReceiptApprovalModel = require('../models/goodsReceiptApproval')
 const UserModel = require('../models/user')
+const SupplierModel = require('../models/supplier')
+const { findDuplicateTrackingCode } = require('../utils/helper/helper')
 
 const goodsReceiptService = {
     getAll: async (query) => {
@@ -89,7 +91,9 @@ const goodsReceiptService = {
         }
     },
     create: async (goodsReceiptId, goodsReceipt, currentUserId) => {
+        const session = await mongoose.startSession()
         try {
+            session.startTransaction()
             const {
                 supplierId,
                 invoiceFile,
@@ -105,35 +109,55 @@ const goodsReceiptService = {
             if (!checkGoodsReceipt) {
                 throw new BadReq(errorCode.GOODS_RECEIPT_NOT_FOUND)
             }
-            await GoodsReceiptModel.findByIdAndUpdate(goodsReceiptId, {
-                supplierId,
-                invoiceFile,
-                invoiceOrContractNumber,
-                estimatedDeliveryDate,
-                supplier,
-                deliveryAddresses,
-                note,
-                isTemporary: false,
-                status: constant.GOODS_RECEIPT_STATUS.WAREHOUSE_STAFF_APPROVAL,
-                createdBy: currentUserId,
-            })
+            const checkSupplier = await SupplierModel.findById(supplierId)
+            if (!checkSupplier) {
+                throw new BadReq(errorCode.SUPPLIER_NOT_FOUND)
+            }
+            await GoodsReceiptModel.findByIdAndUpdate(
+                goodsReceiptId,
+                {
+                    supplierId,
+                    invoiceFile,
+                    invoiceOrContractNumber,
+                    estimatedDeliveryDate,
+                    supplier,
+                    deliveryAddresses,
+                    note,
+                    isTemporary: false,
+                    status: constant.GOODS_RECEIPT_STATUS
+                        .WAREHOUSE_STAFF_APPROVAL,
+                    createdBy: currentUserId,
+                },
+                { session },
+            )
 
             const user = await UserModel.findById(currentUserId)
-            await GoodsReceiptApprovalModel.create({
-                goodsReceiptId,
-                createdBy: {
-                    approvedBy: user.fullname,
-                    status: constant.APPROVAL_STATUS.APPROVED,
-                    content: 'Tạo',
-                },
-            })
+            await GoodsReceiptApprovalModel.create(
+                [
+                    {
+                        goodsReceiptId,
+                        createdBy: {
+                            approvedBy: user.fullname,
+                            status: constant.APPROVAL_STATUS.APPROVED,
+                            content: 'Tạo',
+                        },
+                    },
+                ],
+                { session },
+            )
+            await session.commitTransaction()
             return null
         } catch (error) {
+            await session.abortTransaction()
             throw error
+        } finally {
+            session.endSession()
         }
     },
     update: async (goodsReceiptId, goodsReceipt, currentUserId) => {
+        const session = await mongoose.startSession()
         try {
+            session.startTransaction()
             const {
                 supplierId,
                 invoiceFile,
@@ -154,26 +178,40 @@ const goodsReceiptService = {
             ) {
                 throw new BadReq(errorCode.DO_NOT_UPDATE_STATUS_CANCEL)
             }
-            await GoodsReceiptModel.findByIdAndUpdate(goodsReceiptId, {
-                supplierId,
-                invoiceFile,
-                invoiceOrContractNumber,
-                estimatedDeliveryDate,
-                supplier,
-                deliveryAddresses,
-                note,
-                // isTemporary: false,
-                // status: constant.GOODS_RECEIPT_STATUS.WAREHOUSE_STAFF_APPROVAL,
-                // createdBy: currentUserId,
-                updatedBy: currentUserId,
-            })
+            const checkSupplier = await SupplierModel.findById(supplierId)
+            if (!checkSupplier) {
+                throw new BadReq(errorCode.SUPPLIER_NOT_FOUND)
+            }
+            await GoodsReceiptModel.findByIdAndUpdate(
+                goodsReceiptId,
+                {
+                    supplierId,
+                    invoiceFile,
+                    invoiceOrContractNumber,
+                    estimatedDeliveryDate,
+                    supplier,
+                    deliveryAddresses,
+                    note,
+                    // isTemporary: false,
+                    // status: constant.GOODS_RECEIPT_STATUS.WAREHOUSE_STAFF_APPROVAL,
+                    // createdBy: currentUserId,
+                    updatedBy: currentUserId,
+                },
+                { session },
+            )
+            await session.commitTransaction()
             return null
         } catch (error) {
+            await session.abortTransaction()
             throw error
+        } finally {
+            session.endSession()
         }
     },
     cancel: async (goodsReceiptId, currentUserId) => {
+        const session = await mongoose.startSession()
         try {
+            session.startTransaction()
             const checkGoodsReceipt =
                 await GoodsReceiptModel.findById(goodsReceiptId)
             if (!checkGoodsReceipt) {
@@ -182,10 +220,14 @@ const goodsReceiptService = {
             if (checkGoodsReceipt.createdBy != currentUserId) {
                 throw new BadReq(errorCode.DO_NOT_CANCEL_GOODS_RECEIPT)
             }
-            await GoodsReceiptModel.findByIdAndUpdate(goodsReceiptId, {
-                status: constant.GOODS_RECEIPT_STATUS.CANCEL,
-                updatedBy: currentUserId,
-            })
+            await GoodsReceiptModel.findByIdAndUpdate(
+                goodsReceiptId,
+                {
+                    status: constant.GOODS_RECEIPT_STATUS.CANCEL,
+                    updatedBy: currentUserId,
+                },
+                { session },
+            )
             await GoodsReceiptApprovalModel.findOneAndUpdate(
                 { goodsReceiptId },
                 {
@@ -193,10 +235,15 @@ const goodsReceiptService = {
                         status: constant.APPROVAL_STATUS.CANCEL,
                     },
                 },
+                { session },
             )
+            await session.commitTransaction()
             return null
         } catch (error) {
+            await session.abortTransaction()
             throw error
+        } finally {
+            session.endSession()
         }
     },
     addProduct: async (product) => {
@@ -243,8 +290,8 @@ const goodsReceiptService = {
                 goodsReceiptId,
                 productId,
                 warehouseId,
-                productCode: checkProduct?.productCode,
-                productName: checkProduct?.productName,
+                productCode: checkProduct?.code,
+                productName: checkProduct?.name,
                 managementType: checkProduct?.managementType,
                 unit: checkProduct?.checkProduct,
                 origin,
@@ -297,6 +344,10 @@ const goodsReceiptService = {
                 throw new BadReq(errorCode.GOODS_RECEIPT_DETAIL_NOT_FOUND)
             }
 
+            // if (checkGoodsReceiptDetail.storages.length > 0) {
+            //     throw new BadReq(errorCode.DO_NOT_UPDATE_PRODUCT_CREATED)
+            // }
+
             if (!checkReceipt) {
                 throw new BadReq(errorCode.GOODS_RECEIPT_NOT_FOUND)
             }
@@ -304,7 +355,7 @@ const goodsReceiptService = {
             if (!checkWarehouse) {
                 throw new BadReq(errorCode.WAREHOUSE_NOT_FOUND)
             }
-            // Do chưa có api product nên chưa check được
+
             if (!checkProduct) {
                 throw new BadReq(errorCode.PRODUCT_NOT_FOUND)
             }
@@ -314,8 +365,8 @@ const goodsReceiptService = {
                     goodsReceiptId,
                     productId,
                     warehouseId,
-                    productCode: checkProduct?.productCode,
-                    productName: checkProduct?.productName,
+                    productCode: checkProduct?.code,
+                    productName: checkProduct?.name,
                     managementType: checkProduct?.managementType,
                     unit: checkProduct?.checkProduct,
                     origin,
@@ -347,7 +398,9 @@ const goodsReceiptService = {
         }
     },
     confirmQuantity: async (goodsReceiptDetailId, input, currentUserId) => {
+        const session = await mongoose.startSession()
         try {
+            session.startTransaction()
             const { actualQuantity, warehouseId, productId, storages } = input
             const [checkGoodsReceiptDetail, checkWarehouse, checkProduct] =
                 await Promise.all([
@@ -368,6 +421,12 @@ const goodsReceiptService = {
             // kiểm tra số lượng thực tế không được lớn hơn số lượng đặt hàng
             if (actualQuantity > checkGoodsReceiptDetail.orderedQuantity) {
                 throw new BadReq(errorCode.ACTUAL_QUANTITY_INVALID)
+            }
+
+            // Kiểm tra các số serial/ số lô truyền xuống có trùng không
+            const duplicatesKey = findDuplicateTrackingCode(storages)
+            if (duplicatesKey.length > 0) {
+                throw new BadReq(errorCode.SERIAL_OR_BATCH_DUPLICATED)
             }
 
             let checkTotalProductStorage = 0
@@ -396,19 +455,27 @@ const goodsReceiptService = {
                     actualQuantity,
                     storages,
                 },
+                { session },
             )
 
             await GoodsReceiptModel.findByIdAndUpdate(
                 checkGoodsReceiptDetail.goodsReceiptId,
                 { updatedBy: currentUserId },
+                { session },
             )
+            await session.commitTransaction()
             return null
         } catch (error) {
+            await session.abortTransaction()
             throw error
+        } finally {
+            session.endSession()
         }
     },
     approval: async (input, currentUserId) => {
+        const session = await mongoose.startSession()
         try {
+            session.startTransaction()
             const { goodsReceiptApprovalId, status, content } = input
             const checkGoodsReceiptApproval =
                 await GoodsReceiptApprovalModel.findById(goodsReceiptApprovalId)
@@ -450,7 +517,9 @@ const goodsReceiptService = {
                             quantity: storage.quantity,
                         }),
                     )
-                    await ProductStorageModel.insertMany(productInsertDatas)
+                    await ProductStorageModel.insertMany(productInsertDatas, {
+                        session,
+                    })
                 }
             }
             if (
@@ -469,12 +538,24 @@ const goodsReceiptService = {
                         },
                         nextApprovalRoleId: null,
                     },
+                    { session },
+                )
+
+                await GoodsReceiptModel.findByIdAndUpdate(
+                    checkGoodsReceiptApproval.goodsReceiptId,
+                    {
+                        status,
+                    },
+                    { session },
                 )
             }
-
+            await session.commitTransaction()
             return null
         } catch (error) {
+            await session.abortTransaction()
             throw error
+        } finally {
+            session.endSession()
         }
     },
 }

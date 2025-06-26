@@ -44,7 +44,7 @@ const goodsIssueDetailSchema = new Schema({
     origin: {
         type: String,
     },
-    soldQuantity: {
+    issuedQuantity: {
         type: Number,
         min: 1,
         required: true,

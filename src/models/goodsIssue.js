@@ -1,5 +1,7 @@
-const { Schema, model, Types } = require('mongoose')
+const mongoose = require('mongoose')
+const { Schema, model, Types } = mongoose
 const constant = require('../utils/constant/constant')
+const autoIncrement = require('mongoose-sequence')(mongoose)
 
 const contactPersonSchema = new Schema({
     _id: false,
@@ -19,11 +21,12 @@ const goodsIssueSchema = new Schema(
             type: Number,
             required: true,
             min: 1,
+            default: 1,
         },
         customerId: {
             type: Types.ObjectId,
             ref: 'customers',
-            required: true,
+            // required: true,
         },
         invoiceFile: {
             type: String,
@@ -37,17 +40,12 @@ const goodsIssueSchema = new Schema(
         estimatedDeliveryDate: {
             type: Date,
         },
-        // warehouseId: {
-        //     type: Types.ObjectId,
-        //     ref: 'warehouses',
-        //     required: true,
-        // },
         customer: {
             type: String,
         },
         billingAddress: {
             type: String,
-            required: true,
+            // required: true,
         },
         deliveryAddresses: {
             type: String,
@@ -69,8 +67,8 @@ const goodsIssueSchema = new Schema(
         },
         status: {
             type: String,
-            required: true,
             enum: Object.values(constant.GOODS_ISSUE_STATUS),
+            default: constant.GOODS_ISSUE_STATUS.NULL,
         },
         createdBy: {
             type: Types.ObjectId,
@@ -80,11 +78,16 @@ const goodsIssueSchema = new Schema(
         updatedBy: {
             type: Types.ObjectId,
             ref: 'users',
-            required: true,
+            default: null,
         },
     },
     { timestamps: true },
 )
+
+goodsIssueSchema.plugin(autoIncrement, {
+    inc_field: 'issueNumber',
+    id: 'issueNumber',
+})
 
 const GoodsIssueModel = model('goodsIssues', goodsIssueSchema)
 

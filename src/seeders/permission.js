@@ -62,12 +62,12 @@ async function permissionSeeder() {
             code: 'khach_hang-xem',
             parentPermissionId: '684927c871287f2ae7d81302',
         },
-        {
-            _id: new Types.ObjectId('6853d1b6fa10ea77cf67990f'),
-            name: 'Xem tất cả khách hàng',
-            code: 'khach_hang-xem_all',
-            parentPermissionId: '684927c871287f2ae7d81302',
-        },
+        // {
+        //     _id: new Types.ObjectId('6853d1b6fa10ea77cf67990f'),
+        //     name: 'Xem tất cả khách hàng',
+        //     code: 'khach_hang-xem_all',
+        //     parentPermissionId: '684927c871287f2ae7d81302',
+        // },
         {
             _id: new Types.ObjectId('6853d1b6fa10ea77cf67990d'),
             name: 'Khóa/Mở khóa',
@@ -304,6 +304,30 @@ async function permissionSeeder() {
             name: 'Xuất kho',
             code: 'xuat_kho',
             parentPermissionId: null,
+        },
+        {
+            _id: new Types.ObjectId('685a477d73dd15c087569dee'),
+            name: 'Xem',
+            code: 'xuat_kho-xem',
+            parentPermissionId: '684927c871287f2ae7d81308',
+        },
+        {
+            _id: new Types.ObjectId('685a477d73dd15c087569def'),
+            name: 'Thêm',
+            code: 'xuat_kho-them',
+            parentPermissionId: '684927c871287f2ae7d81308',
+        },
+        {
+            _id: new Types.ObjectId('685a477d73dd15c087569df0'),
+            name: 'Cập nhật',
+            code: 'xuat_kho-cap_nhat',
+            parentPermissionId: '684927c871287f2ae7d81308',
+        },
+        {
+            _id: new Types.ObjectId('685a477d73dd15c087569df1'),
+            name: 'Xác nhận nhập kho',
+            code: 'xuat_kho-xac_nhan_xuat_kho',
+            parentPermissionId: '684927c871287f2ae7d81308',
         },
 
         // Tạm ứng

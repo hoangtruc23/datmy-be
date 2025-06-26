@@ -56,9 +56,13 @@ async function permissionApiSeeder() {
             apiId: '6853d1b6fa10ea77cf67990c', // /customer/getById
         },
         {
-            permissionId: '6853d1b6fa10ea77cf67990f', // The existing 'Xem khách hàng' permission ID
+            permissionId: '6853d1b6fa10ea77cf67990b', // Xem khách hàng
             apiId: '6853d1b6fa10ea77cf679910', // /customer/getAll
         },
+        // {
+        //     permissionId: '6853d1b6fa10ea77cf67990f', // The existing 'Xem khách hàng' permission ID
+        //     apiId: '6853d1b6fa10ea77cf679910', // /customer/getAll
+        // },
         {
             permissionId: '6853d1b6fa10ea77cf67990d', // khoá mở khoá khách hàng
             apiId: '6853d1b6fa10ea77cf67990e', // /customer/lockUnlock
@@ -264,15 +268,15 @@ async function permissionApiSeeder() {
         },
         //Cập nhật thì cũng có thể thêm xóa sửa sản phẩm cho phiếu nhập kho
         {
-            permissionId: '6858d5bd26c71e076fdfad83', // Tạo phiếu nhập kho
+            permissionId: '6858d5bd26c71e076fdfad83', // Cập nhật phiếu nhập kho
             apiId: '6856a471897b183049a2ef8a', // /goodsReceipt/addProduct
         },
         {
-            permissionId: '6858d5bd26c71e076fdfad83', // Tạo phiếu nhập kho
+            permissionId: '6858d5bd26c71e076fdfad83', // Cập nhật phiếu nhập kho
             apiId: '6856e210a596678c37b505de', // /goodsReceipt/updateProduct
         },
         {
-            permissionId: '6858d5bd26c71e076fdfad83', // Tạo phiếu nhập kho
+            permissionId: '6858d5bd26c71e076fdfad83', // Cập nhật phiếu nhập kho
             apiId: '6856e210a596678c37b505df', // /goodsReceipt/deleteProduct
         },
         {
@@ -285,6 +289,63 @@ async function permissionApiSeeder() {
         },
 
         // Xuất kho
+        {
+            permissionId: '685a477d73dd15c087569dee', // Xem phiếu xuất kho
+            apiId: '685a477d73dd15c087569de3', // /goodsIssue/getAll
+        },
+        {
+            permissionId: '685a477d73dd15c087569dee', // Xem phiếu xuất kho
+            apiId: '685a477d73dd15c087569de4', // /goodsIssue/getById
+        },
+        {
+            permissionId: '685a477d73dd15c087569def', // Tạo phiếu xuất kho
+            apiId: '685a477d73dd15c087569de5', // /goodsIssue/createTemporary
+        },
+        {
+            permissionId: '685a477d73dd15c087569def', // Tạo phiếu xuất kho
+            apiId: '685a477d73dd15c087569de6', // /goodsIssue/create
+        },
+        {
+            permissionId: '685a477d73dd15c087569def', // Tạo phiếu xuất kho
+            apiId: '685a477d73dd15c087569de8', // /goodsIssue/cancel
+        },
+        {
+            permissionId: '685a477d73dd15c087569def', // Tạo phiếu xuất kho
+            apiId: '685a477d73dd15c087569de9', // /goodsIssue/addProduct
+        },
+        {
+            permissionId: '685a477d73dd15c087569def', // Tạo phiếu xuất kho
+            apiId: '685a477d73dd15c087569dea', // /goodsIssue/updateProduct
+        },
+        {
+            permissionId: '685a477d73dd15c087569def', // Tạo phiếu xuất kho
+            apiId: '685a477d73dd15c087569deb', // /goodsIssue/deleteProduct
+        },
+        {
+            permissionId: '685a477d73dd15c087569df0', // Cập nhật phiếu xuất kho
+            apiId: '685a477d73dd15c087569de7', // /goodsIssue/update
+        },
+        //Cập nhật thì cũng có thể thêm xóa sửa sản phẩm cho phiếu xuất kho
+        {
+            permissionId: '685a477d73dd15c087569df0', // Cập nhật phiếu xuất kho
+            apiId: '685a477d73dd15c087569de9', // /goodsIssue/addProduct
+        },
+        {
+            permissionId: '685a477d73dd15c087569df0', // Cập nhật phiếu xuất kho
+            apiId: '685a477d73dd15c087569dea', // /goodsIssue/updateProduct
+        },
+        {
+            permissionId: '685a477d73dd15c087569df0', // Cập nhật phiếu xuất kho
+            apiId: '685a477d73dd15c087569deb', // /goodsIssue/deleteProduct
+        },
+        {
+            permissionId: '685a477d73dd15c087569df1', // Xác nhận nhập kho
+            apiId: '685a477d73dd15c087569dec', // /goodsIssue/confirmQuantity
+        },
+        {
+            permissionId: '685a477d73dd15c087569df1', // Xác nhận nhập kho
+            apiId: '685a477d73dd15c087569ded', // /goodsIssue/approval
+        },
 
         // Tạm ứng
     ])
