@@ -31,7 +31,8 @@ const goodsReceiptService = {
                     isTemporary: false,
                 })
                     .skip((page - 1) * limit)
-                    .limit(limit),
+                    .limit(limit)
+                    .populate('createdBy', 'fullname'),
                 GoodsReceiptModel.countDocuments({
                     status: { $in: statuses },
                     $or: [{ supplier: search }, { invoiceNumber: search }],

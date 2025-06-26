@@ -36,6 +36,12 @@ async function permissionSeeder() {
             code: 'nhan_vien-xoa',
             parentPermissionId: '684927c871287f2ae7d812fd',
         },
+        {
+            _id: new Types.ObjectId('685cd0861d476d4f5d40f95e'),
+            name: 'Khóa / Mở khóa',
+            code: 'nhan_vien-khoa_mo_khoa',
+            parentPermissionId: '684927c871287f2ae7d812fd',
+        },
 
         // Khách hàng
         {
@@ -70,7 +76,7 @@ async function permissionSeeder() {
         // },
         {
             _id: new Types.ObjectId('6853d1b6fa10ea77cf67990d'),
-            name: 'Khóa/Mở khóa',
+            name: 'Khóa / Mở khóa',
             code: 'khach_hang-khoa_mo_khoa',
             parentPermissionId: '684927c871287f2ae7d81302',
         },
@@ -113,8 +119,8 @@ async function permissionSeeder() {
         },
         {
             _id: new Types.ObjectId('684bd4f6fa59db4b4781d2b1'),
-            name: 'Khóa/Mở khóa',
-            code: 'nha_cung_cap-khoa-mo_khoa',
+            name: 'Khóa / Mở khóa',
+            code: 'nha_cung_cap-khoa_mo_khoa',
             parentPermissionId: '684927c871287f2ae7d81303',
         },
 
@@ -127,36 +133,36 @@ async function permissionSeeder() {
         },
         {
             _id: new Types.ObjectId('684c3d35f0e869d0df11fed3'),
-            name: 'xem',
+            name: 'Xem',
             code: 'kho_hang-xem',
             parentPermissionId: '684927c871287f2ae7d81304',
         },
 
         {
             _id: new Types.ObjectId('684c3d35f0e869d0df11fed4'),
-            name: 'thêm',
+            name: 'Thêm',
             code: 'kho_hang-them',
             parentPermissionId: '684927c871287f2ae7d81304',
         },
 
         {
             _id: new Types.ObjectId('684c3d35f0e869d0df11fed5'),
-            name: 'cập nhật',
+            name: 'Cập nhật',
             code: 'kho_hang-cap_nhat',
             parentPermissionId: '684927c871287f2ae7d81304',
         },
 
         {
             _id: new Types.ObjectId('684c3d35f0e869d0df11fed6'),
-            name: 'xóa',
+            name: 'Xóa',
             code: 'kho_hang-xoa',
             parentPermissionId: '684927c871287f2ae7d81304',
         },
 
         {
             _id: new Types.ObjectId('685247989820dda77e2e7272'),
-            name: 'cập nhật trạng thái',
-            code: 'kho_hang-cap_nhat_trang_thai',
+            name: 'Khóa / Mở khóa',
+            code: 'kho_hang-khoa_mo_khoa',
             parentPermissionId: '684927c871287f2ae7d81304',
         },
 
@@ -190,7 +196,7 @@ async function permissionSeeder() {
 
         {
             _id: new Types.ObjectId('6854e30d6b90439ad8c00dbe'),
-            name: 'Khóa Mở khóa',
+            name: 'Khóa / Mở khóa',
             code: 'danh_muc-khoa_mo_khoa',
             parentPermissionId: '684927c871287f2ae7d81305',
         },
@@ -225,7 +231,7 @@ async function permissionSeeder() {
 
         {
             _id: new Types.ObjectId('685a1b9f9f5d2f68d81a1eb9'),
-            name: 'Khóa Mở khóa',
+            name: 'Khóa / Mở khóa',
             code: 'san_pham-khoa_mo_khoa',
             parentPermissionId: '685a1b9f9f5d2f68d81a1eb4',
         },
@@ -237,32 +243,34 @@ async function permissionSeeder() {
             code: 'thuong_hieu',
             parentPermissionId: null,
         },
-
         {
             _id: new Types.ObjectId('68525e2d25829b7e6b32a612'),
-            name: 'thêm',
+            name: 'Thêm',
             code: 'thuong_hieu-them',
             parentPermissionId: '684927c871287f2ae7d81306',
         },
-
         {
             _id: new Types.ObjectId('68525e2d25829b7e6b32a613'),
-            name: 'xem',
+            name: 'Xem',
             code: 'thuong_hieu-xem',
             parentPermissionId: '684927c871287f2ae7d81306',
         },
-
         {
             _id: new Types.ObjectId('68525e2d25829b7e6b32a614'),
-            name: 'xoá',
-            code: 'thuong_hieu-xoá',
+            name: 'Xoá',
+            code: 'thuong_hieu-xoa',
             parentPermissionId: '684927c871287f2ae7d81306',
         },
-
         {
             _id: new Types.ObjectId('68525e2d25829b7e6b32a615'),
-            name: 'cập nhật',
+            name: 'Cập nhật',
             code: 'thuong_hieu-cap_nhat',
+            parentPermissionId: '684927c871287f2ae7d81306',
+        },
+        {
+            _id: new Types.ObjectId('685cd0861d476d4f5d40f95f'),
+            name: 'Khóa / Mở khóa',
+            code: 'thuong_hieu-khoa_mo_khoa',
             parentPermissionId: '684927c871287f2ae7d81306',
         },
 

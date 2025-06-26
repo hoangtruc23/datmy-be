@@ -25,6 +25,10 @@ async function rolePermissionSeeder() {
         },
         {
             roleId: '684927c871287f2ae7d8130b',
+            permissionId: '685cd0861d476d4f5d40f95e', // Khóa / Mở khóa
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b',
             permissionId: '684927c871287f2ae7d81301', // xóa
         },
 
@@ -235,6 +239,10 @@ async function rolePermissionSeeder() {
         // {
         //     roleId: '684927c871287f2ae7d8130c',
         //     permissionId: '684927c871287f2ae7d81300', // cập nhật
+        // },
+        // {
+        //     roleId: '684927c871287f2ae7d8130b',
+        //     permissionId: '685cd0861d476d4f5d40f95e', // Khóa / Mở khóa
         // },
         // {
         //     roleId: '684927c871287f2ae7d8130c',
@@ -448,6 +456,10 @@ async function rolePermissionSeeder() {
         //     permissionId: '684927c871287f2ae7d81300', // cập nhật
         // },
         // {
+        //     roleId: '684927c871287f2ae7d8130b',
+        //     permissionId: '685cd0861d476d4f5d40f95e', // Khóa / Mở khóa
+        // },
+        // {
         //     roleId: '684927c871287f2ae7d8130e',
         //     permissionId: '684927c871287f2ae7d81301', // xóa
         // },
@@ -657,6 +669,10 @@ async function rolePermissionSeeder() {
         // {
         //     roleId: '684927c871287f2ae7d8130f',
         //     permissionId: '684927c871287f2ae7d81300', // cập nhật
+        // },
+        // {
+        //     roleId: '684927c871287f2ae7d8130b',
+        //     permissionId: '685cd0861d476d4f5d40f95e', // Khóa / Mở khóa
         // },
         // {
         //     roleId: '684927c871287f2ae7d8130f',
@@ -870,6 +886,10 @@ async function rolePermissionSeeder() {
         //     permissionId: '684927c871287f2ae7d81300', // cập nhật
         // },
         // {
+        //     roleId: '684927c871287f2ae7d8130b',
+        //     permissionId: '685cd0861d476d4f5d40f95e', // Khóa / Mở khóa
+        // },
+        // {
         //     roleId: '684927c871287f2ae7d81310',
         //     permissionId: '684927c871287f2ae7d81301', // xóa
         // },
@@ -1079,6 +1099,10 @@ async function rolePermissionSeeder() {
         // {
         //     roleId: '684927c871287f2ae7d81311',
         //     permissionId: '684927c871287f2ae7d81300', // cập nhật
+        // },
+        // {
+        //     roleId: '684927c871287f2ae7d8130b',
+        //     permissionId: '685cd0861d476d4f5d40f95e', // Khóa / Mở khóa
         // },
         // {
         //     roleId: '684927c871287f2ae7d81311',

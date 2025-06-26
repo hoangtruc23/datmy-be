@@ -34,7 +34,7 @@ async function permissionApiSeeder() {
             apiId: '684927c871287f2ae7d81318', // user/changePassword
         },
         {
-            permissionId: '684927c871287f2ae7d81300', // Cập nhật nhân viên
+            permissionId: '685cd0861d476d4f5d40f95e', // Khóa / Mở khóa nhân viên
             apiId: '684927c871287f2ae7d81319', // user/changeActiveStatus
         },
         {
@@ -225,7 +225,7 @@ async function permissionApiSeeder() {
             apiId: '68525e2d25829b7e6b32a5ec', // brand/delete/{id}
         },
         {
-            permissionId: '68525e2d25829b7e6b32a615', // thay đổi trạng thái thương hiệu
+            permissionId: '685cd0861d476d4f5d40f95f', // thay đổi trạng thái thương hiệu
             apiId: '68525e2d25829b7e6b32a5ed', // brand/changeActive/{id}
         },
 
