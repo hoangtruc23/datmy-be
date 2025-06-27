@@ -1,3 +1,5 @@
+const ExcelJS = require('exceljs') 
+const { generateGoodsReport } = require('../utils/helper/excelReportHelper');
 const errorCode = require('../utils/response/errorCode')
 const BadReq = require('../utils/response/requestError')
 const GoodsReceiptModel = require('../models/goodsReceipt')
@@ -557,6 +559,95 @@ const goodsReceiptService = {
             throw error
         } finally {
             session.endSession()
+        }
+    },
+    exportReport: async (filters) => {
+        try {
+            const { startDate, endDate, warehouseIds, statuses } = filters;
+            // console.log(statuses)
+
+            // Step 1: Fetch and Prepare Data
+            const matchConditions = { 'goodsReceipt.isTemporary': false };
+            if (statuses && statuses.length > 0) { 
+                matchConditions['goodsReceipt.status'] = { $in: statuses };}
+            if (warehouseIds && warehouseIds.length > 0) { 
+                matchConditions.warehouseId = { $in: warehouseIds.map(id => new Types.ObjectId(String(id))) }; }
+            if (startDate || endDate) {
+                matchConditions['goodsReceipt.createdAt'] = {};
+                if (startDate) { matchConditions['goodsReceipt.createdAt'].$gte = new Date(startDate); }
+                if (endDate) {
+                    const end = new Date(endDate);
+                    end.setHours(23, 59, 59, 999);
+                    matchConditions['goodsReceipt.createdAt'].$lte = end;
+                }
+            }
+            const results = await GoodsReceiptDetaileModel.aggregate([
+                { $lookup: { from: 'goodsreceipts', localField: 'goodsReceiptId', foreignField: '_id', as: 'goodsReceipt' } },
+                { $unwind: '$goodsReceipt' },
+                { $match: matchConditions },
+                { $lookup: { from: 'products', localField: 'productId', foreignField: '_id', as: 'productInfo' } },
+                { $unwind: { path: '$productInfo', preserveNullAndEmptyArrays: true } },
+                { $lookup: { from: 'brands', localField: 'productInfo.brand', foreignField: '_id', as: 'brandInfo' } },
+                { $unwind: { path: '$brandInfo', preserveNullAndEmptyArrays: true } },
+                { $sort: { 'goodsReceipt.createdAt': -1, 'goodsReceipt.receiptNumber': 1 } },
+                {
+                    $project: {
+                        _id: 0, date: '$goodsReceipt.createdAt', receiptNumber: '$goodsReceipt.receiptNumber',
+                        status: '$goodsReceipt.status', deliveryAddress: { $ifNull: ['$goodsReceipt.deliveryAddresses', 'N/A'] },
+                        supplier: '$goodsReceipt.supplier', productCode: '$productInfo.code',
+                        specification: '$productInfo.specification', brandName: '$brandInfo.name',
+                        warehouseName: '$warehouseName', totalAmount: '$totalAmount'
+                    }
+                }
+            ]);
+            const groupedByDate = new Map();
+            for (const item of results) {
+                const dateKey = new Date(item.date).toLocaleDateString('vi-VN');
+                if (!groupedByDate.has(dateKey)) { groupedByDate.set(dateKey, { receipts: new Map(), dailyTotal: 0 }); }
+                const dayData = groupedByDate.get(dateKey);
+                const receiptKey = item.receiptNumber;
+                if (!dayData.receipts.has(receiptKey)) { dayData.receipts.set(receiptKey, { header: item, lineItems: [] }); }
+                const receiptData = dayData.receipts.get(receiptKey);
+                receiptData.lineItems.push(item);
+                dayData.dailyTotal += item.totalAmount || 0;
+            }
+
+            // Step 2: Define Report Configuration
+            const leftAlignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+            const centerAlignmentForColumn = { vertical: 'middle', horizontal: 'center', wrapText: true };
+            
+            const finalStartDate = startDate ? new Date(startDate).toLocaleDateString('vi-VN') : (results.length > 0 ? new Date(results[results.length - 1].date).toLocaleDateString('vi-VN') : '...');
+            const finalEndDate = endDate ? new Date(endDate).toLocaleDateString('vi-VN') : (results.length > 0 ? new Date(results[0].date).toLocaleDateString('vi-VN') : '...');
+
+            const reportConfig = {
+                worksheetName: 'Bảng kê chi tiết nhập hàng',
+                reportTitle: 'BẢNG KÊ CHI TIẾT NHẬP HÀNG THEO NGÀY',
+                dateRange: { startDate: finalStartDate, endDate: finalEndDate },
+                headers: ['NGÀY', 'SỐ PNK', 'TRẠNG THÁI', 'ĐỊA CHỈ (XHĐ)', 'KHÁCH HÀNG', 'MÃ HÀNG', 'QUY CÁCH', 'NHÃN HIỆU', 'KHO', 'TỔNG CỘNG'],
+                columnKeys: ['date', 'receiptNumber', 'status', 'deliveryAddress', 'supplier', 'productCode', 'specification', 'brandName', 'warehouseName', 'totalAmount'],
+                mergeableColumnKeys: ['date', 'receiptNumber', 'status', 'deliveryAddress', 'supplier'],
+                statusMap: { 'approved': 'Thành công', 'warehouseStaffApproval': 'Chờ duyệt', 'reject': 'Từ chối', 'cancel': 'Đã hủy' },
+                summaryRowText: 'TỔNG CỘNG:',
+                grandTotalText: 'TỔNG CỘNG:',
+                columnConfigs: [
+                    { key: 'date', width: 15, style: { alignment: centerAlignmentForColumn } },
+                    { key: 'receiptNumber', width: 12, style: { alignment: leftAlignment } },
+                    { key: 'status', width: 20, style: { alignment: leftAlignment } },
+                    { key: 'deliveryAddress', width: 45, style: { alignment: leftAlignment } },
+                    { key: 'supplier', width: 45, style: { alignment: leftAlignment } },
+                    { key: 'productCode', width: 18, style: { alignment: leftAlignment } },
+                    { key: 'specification', width: 15, style: { alignment: leftAlignment } },
+                    { key: 'brandName', width: 15, style: { alignment: leftAlignment } },
+                    { key: 'warehouseName', width: 20, style: { alignment: leftAlignment } },
+                    { key: 'totalAmount', width: 20, style: { numFmt: '#,##0', alignment: centerAlignmentForColumn } }
+                ]
+            };
+            
+            // 3. Call the generic helper
+            return generateGoodsReport(groupedByDate, reportConfig);
+
+        } catch (error) {
+            throw error;
         }
     },
 }

@@ -196,7 +196,10 @@ async function rolePermissionSeeder() {
             roleId: '684927c871287f2ae7d8130b',
             permissionId: '6858d5bd26c71e076fdfad21', // Xác nhận phiếu nhập kho
         },
-
+        {
+            roleId: '684927c871287f2ae7d8130b', // Role ID for "Quản trị viên"
+            permissionId: '685a2a4f4630d293367c288c', // The new "Xuất báo cáo" permission
+        },
         {
             roleId: '684927c871287f2ae7d8130b',
             permissionId: '684927c871287f2ae7d81308', // Xuất kho

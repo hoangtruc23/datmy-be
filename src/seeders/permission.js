@@ -305,6 +305,12 @@ async function permissionSeeder() {
             code: 'nhap_kho-xac_nhan_nhap_kho',
             parentPermissionId: '684927c871287f2ae7d81307',
         },
+        {
+            _id: new Types.ObjectId('685a2a4f4630d293367c288c'), 
+            name: 'Xuất báo cáo',
+            code: 'nhap_kho-xuat_bao_cao',
+            parentPermissionId: '684927c871287f2ae7d81307', 
+        },
 
         // Xuất kho
         {
