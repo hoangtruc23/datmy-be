@@ -64,6 +64,68 @@ const productController = {
             next(error)
         }
     },
+    getTotalQuantityByProductId: async (req, res, next) => {
+        try {
+            const { productId, warehouseId, safetyQuantity } = req.query
+            const totalQuantity =
+                await productService.getTotalQuantityByProductId(
+                    productId,
+                    warehouseId,
+                    safetyQuantity,
+                )
+            return res.status(200).json(response.success(totalQuantity))
+        } catch (error) {
+            next(error)
+        }
+    },
+    getAllWithQuantity: async (req, res, next) => {
+        try {
+            const {
+                page,
+                limit,
+                search,
+                categoryId,
+                warehouseId,
+                isSafeFilter,
+            } = req.query
+            const products = await productService.getAllWithQuantity(
+                page,
+                limit,
+                search,
+                categoryId,
+                warehouseId,
+                isSafeFilter,
+            )
+            return res.status(200).json(response.success(products))
+        } catch (error) {
+            next(error)
+        }
+    },
+    getProductStorages: async (req, res, next) => {
+        try {
+            const { productId, warehouseId, hasQuantity } = req.query
+
+            const productStorages = await productService.getProductStorages({
+                productId,
+                warehouseId,
+                hasQuantity,
+            })
+
+            return res.status(200).json(response.success(productStorages))
+        } catch (error) {
+            next(error)
+        }
+    },
+    getReceiptByTrackingCode: async (req, res, next) => {
+        try {
+            const { trackingCode } = req.query
+            const receipt =
+                await productService.getReceiptByTrackingCode(trackingCode)
+            return res.status(200).json(response.success(receipt))
+        } catch (error) {
+            next(error)
+        }
+    },
 }
 
 module.exports = productController

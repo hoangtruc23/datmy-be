@@ -218,6 +218,26 @@ async function apiSeeder() {
             api: '/product/getById',
             note: 'Lấy sản phẩm theo id',
         },
+        {
+            _id: new Types.ObjectId('685e0db179ac9c1b83c0f4ae'),
+            api: '/product/getTotalQuantityByProductId',
+            note: 'Trả về tồn kho theo productId',
+        },
+        {
+            _id: new Types.ObjectId('685e0db179ac9c1b83c0f4af'),
+            api: '/product/getAllWithQuantity',
+            note: 'Trả về danh sách sản phẩm kèm theo tồn kho',
+        },
+        {
+            _id: new Types.ObjectId('685e0db179ac9c1b83c0f4b0'),
+            api: '/product/getProductStorages',
+            note: 'Trả về danh sách các ProductStorages của sản phẩm',
+        },
+        {
+            _id: new Types.ObjectId('685e0db179ac9c1b83c0f4b1'),
+            api: '/product/getReceiptByTrackingCode',
+            note: 'Trả về goodsReceiptId theo trackingCode',
+        },
 
         // Thương hiệu
         {
