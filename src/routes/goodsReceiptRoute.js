@@ -24,6 +24,7 @@ router.post(
     goodsReceiptController.confirmQuantity,
 )
 router.post('/approval', goodsReceiptController.approval)
+router.post('/export', goodsReceiptController.exportReport)
 module.exports = router
 
 /**
@@ -1408,6 +1409,131 @@ module.exports = router
  *                 data:
  *                   type: object
  *                   example: null
+ *       400:
+ *         description: Lỗi input
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 400
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Tên đăng nhập là bắt buộc!
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       401:
+ *         description: Chưa đăng nhập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 401
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có token
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       403:
+ *         description: Không có quyền truy cập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 403
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có quyền
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       500:
+ *         description: Lỗi server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 500
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Lỗi server!
+ *                 data:
+ *                   type: string
+ *                   example: null
+ */
+
+
+
+/**
+ * @swagger
+ * /goodsReceipt/export:
+ *   post:
+ *     summary: Xuất báo cáo nhập kho ra file excel
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [GoodsReceipt]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               startDate:
+ *                 type: string
+ *                 format: date
+ *                 description: "Ngày bắt đầu (YYYY-MM-DD). Nếu bỏ trống sẽ lấy từ đầu."
+ *                 example: "2025-06-01"
+ *               endDate:
+ *                 type: string
+ *                 format: date
+ *                 description: "Ngày kết thúc (YYYY-MM-DD). Nếu bỏ trống sẽ lấy tới hiện tại."
+ *                 example: "2025-06-25"
+ *               warehouseIds:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: "Mảng chứa các ID của kho cần lọc. Gửi mảng rỗng [] để lấy tất cả."
+ *                 example: ["684c41f3ae24ff427ec487ea", "68511d6d55dd137821188fdb"]
+ *               statuses:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: "Mảng chứa các trạng thái cần lọc. Gửi mảng rỗng [] để lấy tất cả."
+ *                 example: ["success", "warehouseStaffApproval"]
+ *     responses:
+ *       200:
+ *         description: Trả về file excel để tải xuống.
+ *         content:
+ *           application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+ *             schema:
+ *               type: string
+ *               format: binary
  *       400:
  *         description: Lỗi input
  *         content:

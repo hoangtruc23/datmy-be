@@ -304,7 +304,10 @@ async function permissionApiSeeder() {
             permissionId: '6858d5bd26c71e076fdfad21', // Xác nhận nhập kho
             apiId: '6858d5bd26c71e076fdfad76', // /goodsReceipt/approval
         },
-
+        {
+            permissionId: '685a2a4f4630d293367c288c', 
+            apiId: '685a2a4f4630d293367c288b', // /goodsReceipt/export 
+        },
         // Xuất kho
         {
             permissionId: '685a477d73dd15c087569dee', // Xem phiếu xuất kho

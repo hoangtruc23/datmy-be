@@ -327,6 +327,11 @@ async function apiSeeder() {
             api: '/goodsReceipt/approval',
             note: 'Xác nhận phiếu nhập kho',
         },
+        {
+            _id: new Types.ObjectId('685a2a4f4630d293367c288b'), 
+            api: '/goodsReceipt/export',
+            note: 'Xuất báo cáo nhập kho ra excel',
+        },
 
         // Xuất kho
         {
