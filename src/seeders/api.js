@@ -328,7 +328,7 @@ async function apiSeeder() {
             note: 'Xác nhận phiếu nhập kho',
         },
         {
-            _id: new Types.ObjectId('685a2a4f4630d293367c288b'), 
+            _id: new Types.ObjectId('685a2a4f4630d293367c288b'),
             api: '/goodsReceipt/export',
             note: 'Xuất báo cáo nhập kho ra excel',
         },
@@ -391,6 +391,61 @@ async function apiSeeder() {
         },
 
         // Tạm ứng
+        {
+            _id: new Types.ObjectId('685cf633e0e45d397c4ca18b'),
+            api: '/goodsAdvance/getAll',
+            note: 'Lấy danh sách các phiếu tạm ứng',
+        },
+        {
+            _id: new Types.ObjectId('685cf633e0e45d397c4ca18c'),
+            api: '/goodsAdvance/getById',
+            note: 'Xem chi tiết phiếu tạm ứng',
+        },
+        {
+            _id: new Types.ObjectId('685cf633e0e45d397c4ca18d'),
+            api: '/goodsAdvance/createTemporary',
+            note: 'Tạo phiếu tạm ứng tạm (chưa có giá trị)',
+        },
+        {
+            _id: new Types.ObjectId('685cf633e0e45d397c4ca18e'),
+            api: '/goodsAdvance/create',
+            note: 'Tạo phiếu tạm ứng chính thức',
+        },
+        {
+            _id: new Types.ObjectId('685cf633e0e45d397c4ca18f'),
+            api: '/goodsAdvance/update',
+            note: 'Cập nhật thông tin phiếu tạm ứng',
+        },
+        {
+            _id: new Types.ObjectId('685cf633e0e45d397c4ca190'),
+            api: '/goodsAdvance/cancel',
+            note: 'Hủy phiếu tạm ứng',
+        },
+        {
+            _id: new Types.ObjectId('685cf633e0e45d397c4ca191'),
+            api: '/goodsAdvance/addProduct',
+            note: 'Thêm sản phẩm cho phiếu tạm ứng',
+        },
+        {
+            _id: new Types.ObjectId('685cf633e0e45d397c4ca192'),
+            api: '/goodsAdvance/updateProduct',
+            note: 'Cập nhật sản phẩm cho phiếu tạm ứng',
+        },
+        {
+            _id: new Types.ObjectId('685cf633e0e45d397c4ca193'),
+            api: '/goodsAdvance/deleteProduct',
+            note: 'Xóa sản phẩm khỏi phiếu tạm ứng',
+        },
+        {
+            _id: new Types.ObjectId('685cf633e0e45d397c4ca194'),
+            api: '/goodsAdvance/confirmQuantity',
+            note: 'Xác nhận số lượng sản phẩm của phiếu tạm ứng',
+        },
+        {
+            _id: new Types.ObjectId('685cf633e0e45d397c4ca195'),
+            api: '/goodsAdvance/approval',
+            note: 'Xác nhận phiếu tạm ứng',
+        },
     ])
     logger.info('apis seeded')
 }

@@ -31,10 +31,11 @@ const goodsIssueService = {
                     isTemporary: false,
                 })
                     .skip((page - 1) * limit)
-                    .limit(limit),
+                    .limit(limit)
+                    .populate('createdBy', 'fullname'),
                 GoodsIssueModel.countDocuments({
                     status: { $in: statuses },
-                    $or: [{ customer: search }, { invoiceNumber: search }],
+                    $or: [{ customer: search }],
                 }),
             ])
             return {
@@ -100,7 +101,7 @@ const goodsIssueService = {
                 invoiceOrContractNumber,
                 estimatedDeliveryDate,
                 customer,
-                billingAddress,
+                // billingAddress,
                 deliveryAddresses,
                 orderedBy,
                 recipient,
@@ -116,7 +117,6 @@ const goodsIssueService = {
                 throw new BadReq(errorCode.CUSTOMER_NOT_FOUND)
             }
             if (!isDraft && checkGoodsIssue.isDraft) {
-                console.log('aaaaaaaaaaaaa')
                 // Nếu phiếu tạo mà không phải nháp thì ta cập nhật lại productStorage (tồn kho)
                 const goodsIssueDetails =
                     await GoodsIssueDetaileModel.find(goodsIssueId)
@@ -147,15 +147,17 @@ const goodsIssueService = {
                     invoiceOrContractNumber,
                     estimatedDeliveryDate,
                     customer,
-                    billingAddress,
+                    billingAddress: checkCustomer.billingAddress,
                     deliveryAddresses,
+                    garageAddress: checkCustomer.garageAddress,
                     orderedBy,
                     recipient,
                     note,
                     isDraft,
                     isTemporary: false,
-                    status: constant.GOODS_ISSUE_STATUS
-                        .WAREHOUSE_STAFF_APPROVAL,
+                    status: isDraft
+                        ? constant.GOODS_ISSUE_STATUS.DRAFT
+                        : constant.GOODS_ISSUE_STATUS.WAREHOUSE_STAFF_APPROVAL,
                     createdBy: currentUserId,
                 },
                 { session },
@@ -194,7 +196,7 @@ const goodsIssueService = {
                 invoiceOrContractNumber,
                 estimatedDeliveryDate,
                 customer,
-                billingAddress,
+                // billingAddress,
                 deliveryAddresses,
                 orderedBy,
                 recipient,
@@ -247,12 +249,16 @@ const goodsIssueService = {
                     invoiceOrContractNumber,
                     estimatedDeliveryDate,
                     customer,
-                    billingAddress,
+                    billingAddress: checkCustomer.billingAddress,
                     deliveryAddresses,
+                    garageAddress: checkCustomer.garageAddress,
                     orderedBy,
                     recipient,
                     note,
                     isDraft,
+                    status: isDraft
+                        ? constant.GOODS_ISSUE_STATUS.DRAFT
+                        : constant.GOODS_ISSUE_STATUS.WAREHOUSE_STAFF_APPROVAL,
                     // isTemporary: false,
                     // status: constant.GOODS_ISSUE_STATUS.WAREHOUSE_STAFF_APPROVAL,
                     // createdBy: currentUserId,
@@ -280,6 +286,29 @@ const goodsIssueService = {
             if (checkGoodsIssue.createdBy != currentUserId) {
                 throw new BadReq(errorCode.DO_NOT_CANCEL_GOODS_ISSUE)
             }
+
+            // Cập nhật lại số lượng sản phẩm khi bị từ chối hoặc hủy
+            const goodsIssueDetails = await GoodsIssueDetaileModel.find({
+                goodsIssueId,
+            })
+            for (let goodsIssueDetail of goodsIssueDetails) {
+                if (goodsIssueDetail.storages.length > 0) {
+                    for (let storage of goodsIssueDetail.storages) {
+                        await ProductStorageModel.findOneAndUpdate(
+                            {
+                                warehouseId: goodsIssueDetail.warehouseId,
+                                productId: goodsIssueDetail.productId,
+                                trackingCode: storage.trackingCode,
+                            },
+                            {
+                                $inc: { quantity: storage.quantity },
+                            },
+                            { session },
+                        )
+                    }
+                }
+            }
+
             await GoodsIssueModel.findByIdAndUpdate(
                 goodsIssueId,
                 {
@@ -478,7 +507,6 @@ const goodsIssueService = {
                 (acc, cur) => acc + cur.quantity,
                 0,
             )
-            console.log(`totalProduct = ${totalProduct}`)
             if (issuedQuantity > totalProduct) {
                 throw new BadReq(errorCode.ISSUED_QUANTITY_INVALID)
             }
@@ -576,9 +604,9 @@ const goodsIssueService = {
                 status == constant.APPROVAL_STATUS.CANCEL
             ) {
                 // Cập nhật lại số lượng sản phẩm khi bị từ chối hoặc hủy
-                const goodsIssueDetails = await GoodsIssueDetaileModel.find(
-                    checkGoodsIssue.goodsIssueId,
-                )
+                const goodsIssueDetails = await GoodsIssueDetaileModel.find({
+                    goodsIssueId: checkGoodsIssue.goodsIssueId,
+                })
                 for (let goodsIssueDetail of goodsIssueDetails) {
                     if (goodsIssueDetail.storages.length > 0) {
                         for (let storage of goodsIssueDetail.storages) {

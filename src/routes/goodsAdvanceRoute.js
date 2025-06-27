@@ -1,45 +1,40 @@
 const express = require('express')
-const goodsReceiptController = require('../controllers/goodsReceiptController')
+const goodsAdvanceController = require('../controllers/goodsAdvanceController')
 const router = express.Router()
 
-router.get('/getAll', goodsReceiptController.getAll)
-router.get('/getById/:goodsReceiptId', goodsReceiptController.getById)
-router.post('/createTemporary', goodsReceiptController.createTemporary)
-router.post('/create/:goodsReceiptId', goodsReceiptController.create)
-router.post('/update/:goodsReceiptId', goodsReceiptController.update)
-router.post('/cancel/:goodsReceiptId', goodsReceiptController.cancel)
-router.post('/addProduct', goodsReceiptController.addProduct)
+router.get('/getAll', goodsAdvanceController.getAll)
+router.get('/getById/:goodsAdvanceId', goodsAdvanceController.getById)
+router.post('/createTemporary', goodsAdvanceController.createTemporary)
+router.post('/create/:goodsAdvanceId', goodsAdvanceController.create)
+router.post('/update/:goodsAdvanceId', goodsAdvanceController.update)
+router.post('/cancel/:goodsAdvanceId', goodsAdvanceController.cancel)
+router.post('/addProduct', goodsAdvanceController.addProduct)
 router.post(
-    '/updateProduct/:goodsReceiptDetailId',
-    goodsReceiptController.updateProduct,
+    '/updateProduct/:goodsAdvanceDetailId',
+    goodsAdvanceController.updateProduct,
 )
 router.post(
-    '/deleteProduct/:goodsReceiptDetailId',
-    goodsReceiptController.deleteProduct,
+    '/deleteProduct/:goodsAdvanceDetailId',
+    goodsAdvanceController.deleteProduct,
 )
-router.post(
-    '/confirmQuantity/:goodsReceiptDetailId',
-    goodsReceiptController.confirmQuantity,
-)
-router.post('/approval', goodsReceiptController.approval)
-router.post('/export', goodsReceiptController.exportReport)
+router.post('/approval', goodsAdvanceController.approval)
 module.exports = router
 
 /**
  * @swagger
  * tags:
- *   name: GoodsReceipt
- *   description: Phiếu nhập kho
+ *   name: GoodsAdvance
+ *   description: Phiếu tạm ứng
  */
 
 /**
  * @swagger
- * /goodsReceipt/getAll:
+ * /goodsAdvance/getAll:
  *   get:
- *     summary: Lấy danh sách các phiếu nhập kho
+ *     summary: Lấy danh sách các phiếu tạm ứng
  *     security:
  *       - bearerAuth: []
- *     tags: [GoodsReceipt]
+ *     tags: [GoodsAdvance]
  *     parameters:
  *     - name: search
  *       in: query
@@ -64,8 +59,8 @@ module.exports = router
  *         type: array
  *         items:
  *           type: string
- *           enum: [warehouseStaffApproval, reject, cancel, approved]
- *         example: [warehouseStaffApproval, reject, cancel, approved]
+ *           enum: [warehouseStaffApproval, warehouseAccountantApproval, debtAccountantApproval, billAccountApproval, reject, cancel, approved]
+ *         example: [warehouseStaffApproval, warehouseAccountantApproval, debtAccountantApproval, billAccountApproval, reject, cancel, approved]
  *         style: form
  *         explode: true
  *     responses:
@@ -93,37 +88,7 @@ module.exports = router
  *                       items:
  *                         type: object
  *                         properties:
- *                           _id:
- *                             type: string
- *                             example: 684686f736b60123f03418dd
- *                           fullname:
- *                             type: string
- *                             example: Nguyễn Văn Tài
- *                           username:
- *                             type: string
- *                             example: admin
- *                           email:
- *                             type: string
- *                             example: admin@gmail.com
- *                           phoneNumber:
- *                             type: string
- *                             example: 0968457245
- *                           isActive:
- *                             type: boolean
- *                             example: true
- *                           createdAt:
- *                             type: string
- *                             format: date-time
- *                             example: 2025-06-09T07:02:15.834Z
- *                           updatedAt:
- *                             type: string
- *                             format: date-time
- *                             example: 2025-06-09T07:02:15.834Z
- *                           roleIds:
- *                             type: array
- *                             items:
- *                               type: string
- *                             example: [ 684927c871287f2ae7d8130b ]
+ *
  *                     page:
  *                       type: number
  *                       example: 1
@@ -191,19 +156,19 @@ module.exports = router
 
 /**
  * @swagger
- * /goodsReceipt/getById/{goodsReceiptId}:
+ * /goodsAdvance/getById/{goodsAdvanceId}:
  *   get:
- *     summary: Lấy thông tin 1 phiếu nhập kho
+ *     summary: Lấy thông tin 1 phiếu tạm ứng
  *     security:
  *       - bearerAuth: []
- *     tags: [GoodsReceipt]
+ *     tags: [GoodsAdvance]
  *     parameters:
- *     - name: goodsReceiptId
+ *     - name: goodsAdvanceId
  *       in: path
  *       required: true
  *       schema:
  *         type: string
- *       description: Id của phiếu nhập kho
+ *       description: Id của phiếu tạm ứng
  *     responses:
  *       200:
  *         description: Lấy thông tin thành công
@@ -221,40 +186,7 @@ module.exports = router
  *                 message:
  *                   type: string
  *                   example: OK!
- *                 data:
- *                   type: object
- *                   properties:
- *                     _id:
- *                       type: string
- *                       example: 684686f736b60123f03418dd
- *                     fullname:
- *                       type: string
- *                       example: Nguyễn Văn Tài
- *                     username:
- *                       type: string
- *                       example: admin
- *                     email:
- *                       type: string
- *                       example: admin@gmail.com
- *                     phoneNumber:
- *                       type: string
- *                       example: 0968457245
- *                     isActive:
- *                       type: boolean
- *                       example: true
- *                     createdAt:
- *                       type: string
- *                       format: date-time
- *                       example: 2025-06-09T07:02:15.834Z
- *                     updatedAt:
- *                       type: string
- *                       format: date-time
- *                       example: 2025-06-09T07:02:15.834Z
- *                     roleIds:
- *                       type: array
- *                       items:
- *                         type: string
- *                       example: [ 684927c871287f2ae7d8130b ]
+ *                 data: null
  *       401:
  *         description: Chưa đăng nhập
  *         content:
@@ -313,15 +245,15 @@ module.exports = router
 
 /**
  * @swagger
- * /goodsReceipt/createTemporary:
+ * /goodsAdvance/createTemporary:
  *   post:
- *     summary: Gọi api khi nhấn nút tạo phiếu nhập kho để lấy _id phiếu nhập kho
+ *     summary: Gọi api khi nhấn nút tạo phiếu tạm ứng để lấy _id phiếu tạm ứng
  *     security:
  *       - bearerAuth: []
- *     tags: [GoodsReceipt]
+ *     tags: [GoodsAdvance]
  *     responses:
  *       200:
- *         description: Tạo phiếu nhập kho tạm thành công
+ *         description: Tạo phiếu tạm ứng tạm thành công
  *         content:
  *           application/json:
  *             schema:
@@ -400,19 +332,19 @@ module.exports = router
 
 /**
  * @swagger
- * /goodsReceipt/create/{goodsReceiptId}:
+ * /goodsAdvance/create/{goodsAdvanceId}:
  *   post:
- *     summary: Tạo tài khoản người dùng
+ *     summary: Tạo phiếu tạm ứng
  *     security:
  *       - bearerAuth: []
- *     tags: [GoodsReceipt]
+ *     tags: [GoodsAdvance]
  *     parameters:
- *     - name: goodsReceiptId
+ *     - name: goodsAdvanceId
  *       in: path
  *       required: true
  *       schema:
  *         type: string
- *       description: Id của phiếu nhập kho
+ *       description: Id của phiếu tạm ứng
  *     requestBody:
  *       required: true
  *       content:
@@ -420,36 +352,33 @@ module.exports = router
  *           schema:
  *             type: object
  *             required:
- *               - supplierId
- *               - invoiceOrContractNumber
- *               - estimatedDeliveryDate
- *               - supplier
+ *               - customerId
+ *               - borrower
+ *               - expectedReturnDate
+ *               - customer
  *               - deliveryAddresses
  *             properties:
- *               supplierId:
+ *               customerId:
  *                 type: string
  *                 example: 68568d96dd90fa75cb28647a
- *               invoiceFile:
+ *               borrower:
  *                 type: string
  *                 example: path/to/file
- *               invoiceOrContractNumber:
- *                 type: string
- *                 example: 123
- *               estimatedDeliveryDate:
+ *               expectedReturnDate:
  *                 type: date
  *                 example: 2025-06-23
- *               supplier:
+ *               borrowContent:
  *                 type: string
- *                 example: Tên chính thức của nhà cung cấp
+ *                 example: Nội dung mượn
+ *               customer:
+ *                 type: string
+ *                 example: Tên chính thức của khách hàng
  *               deliveryAddresses:
  *                 type: string
  *                 example: Địa chỉ giao hàng
- *               note:
- *                 type: string
- *                 example: Ghi chú
  *     responses:
  *       200:
- *         description: Tạo phiếu nhập kho thành công
+ *         description: Tạo phiếu tạm ứng thành công
  *         content:
  *           application/json:
  *             schema:
@@ -547,19 +476,19 @@ module.exports = router
 
 /**
  * @swagger
- * /goodsReceipt/update/{goodsReceiptId}:
+ * /goodsAdvance/cancel/{goodsAdvanceId}:
  *   post:
- *     summary: Cập nhật thông tin phiếu nhập kho
+ *     summary: Hủy phiếu tạm ứng
  *     security:
  *       - bearerAuth: []
- *     tags: [GoodsReceipt]
+ *     tags: [GoodsAdvance]
  *     parameters:
- *     - name: goodsReceiptId
+ *     - name: goodsAdvanceId
  *       in: path
  *       required: true
  *       schema:
  *         type: string
- *       description: Id của phiếu nhập kho
+ *       description: Id của phiếu tạm ứng
  *     requestBody:
  *       required: true
  *       content:
@@ -567,36 +496,143 @@ module.exports = router
  *           schema:
  *             type: object
  *             required:
- *               - supplierId
- *               - invoiceOrContractNumber
- *               - estimatedDeliveryDate
- *               - supplier
- *               - deliveryAddresses
+ *               - note
  *             properties:
- *               supplierId:
+ *               note:
  *                 type: string
- *                 example: 68568d96dd90fa75cb28647a
- *               invoiceFile:
- *                 type: string
- *                 example: /path/to/file
- *               invoiceOrContractNumber:
- *                 type: string
- *                 example: 123
- *               estimatedDeliveryDate:
+ *                 example: Lí do hủy
+ *     responses:
+ *       200:
+ *         description: Hủy thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
+ *                 code:
+ *                   type: integer
+ *                   example: 1
+ *                 message:
+ *                   type: string
+ *                   example: OK!
+ *                 data:
+ *                   type: object
+ *                   example: null
+ *       400:
+ *         description: Lỗi input
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 400
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Tên đăng nhập là bắt buộc!
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       401:
+ *         description: Chưa đăng nhập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 401
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có token
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       403:
+ *         description: Không có quyền truy cập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 403
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có quyền
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       500:
+ *         description: Lỗi server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 500
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Lỗi server!
+ *                 data:
+ *                   type: string
+ *                   example: null
+ */
+
+/**
+ * @swagger
+ * /goodsAdvance/extend/{goodsAdvanceId}:
+ *   post:
+ *     summary: Gia hạn phiếu tạm ứng
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [GoodsAdvance]
+ *     parameters:
+ *     - name: goodsAdvanceId
+ *       in: path
+ *       required: true
+ *       schema:
+ *         type: string
+ *       description: Id của phiếu tạm ứng
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - extendedReturnDate
+ *               - note
+ *             properties:
+ *               extendedReturnDate:
  *                 type: date
- *                 example: 2025-06-21
- *               supplier:
- *                 type: string
- *                 example: Công ty TNHH ABC Việt Nam
- *               deliveryAddresses:
- *                 type: string
- *                 example: 123 Đường ABC, Phường 5, Quận 1, TP.HCM, Việt Nam
+ *                 example: 2025-06-23
  *               note:
  *                 type: string
- *                 example: Ghi chú
+ *                 example: Lí do hủy
  *     responses:
  *       200:
- *         description: Cập nhật thành công
+ *         description: Gia hạn thành công
  *         content:
  *           application/json:
  *             schema:
@@ -694,125 +730,12 @@ module.exports = router
 
 /**
  * @swagger
- * /goodsReceipt/cancel/{goodsReceiptId}:
+ * /goodsAdvance/addProduct:
  *   post:
- *     summary: Hủy phiếu nhập kho
+ *     summary: Thêm sản phẩm vào phiếu tạm ứng
  *     security:
  *       - bearerAuth: []
- *     tags: [GoodsReceipt]
- *     parameters:
- *     - name: goodsReceiptId
- *       in: path
- *       required: true
- *       schema:
- *         type: string
- *       description: Id của phiếu nhập kho
- *     responses:
- *       200:
- *         description: Cập nhật thành công
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: integer
- *                   example: 200
- *                 code:
- *                   type: integer
- *                   example: 1
- *                 message:
- *                   type: string
- *                   example: OK!
- *                 data:
- *                   type: object
- *                   example: null
- *       400:
- *         description: Lỗi input
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: integer
- *                   example: 400
- *                 code:
- *                   type: integer
- *                   example: -1
- *                 message:
- *                   type: string
- *                   example: Tên đăng nhập là bắt buộc!
- *                 data:
- *                   type: string
- *                   example: null
- *       401:
- *         description: Chưa đăng nhập
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: integer
- *                   example: 401
- *                 code:
- *                   type: integer
- *                   example: -1
- *                 message:
- *                   type: string
- *                   example: Không có token
- *                 data:
- *                   type: string
- *                   example: null
- *       403:
- *         description: Không có quyền truy cập
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: integer
- *                   example: 403
- *                 code:
- *                   type: integer
- *                   example: -1
- *                 message:
- *                   type: string
- *                   example: Không có quyền
- *                 data:
- *                   type: string
- *                   example: null
- *       500:
- *         description: Lỗi server
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: integer
- *                   example: 500
- *                 code:
- *                   type: integer
- *                   example: -1
- *                 message:
- *                   type: string
- *                   example: Lỗi server!
- *                 data:
- *                   type: string
- *                   example: null
- */
-
-/**
- * @swagger
- * /goodsReceipt/addProduct:
- *   post:
- *     summary: Thêm sản phẩm vào phiếu nhập kho
- *     security:
- *       - bearerAuth: []
- *     tags: [GoodsReceipt]
+ *     tags: [GoodsAdvance]
  *     requestBody:
  *       required: true
  *       content:
@@ -820,14 +743,12 @@ module.exports = router
  *           schema:
  *             type: object
  *             required:
- *               - goodsReceiptId
+ *               - goodsAdvanceId
  *               - productId
  *               - warehouseId
- *               - orderedQuantity
- *               - price
- *               - totalAmount
+ *               - AdvancedQuantity
  *             properties:
- *               goodsReceiptId:
+ *               goodsAdvanceId:
  *                 type: string
  *                 example: "684c4cd3d1becf7806470255"
  *               productId:
@@ -839,430 +760,29 @@ module.exports = router
  *               origin:
  *                 type: string
  *                 example: Xuất xứ sản phẩm
- *               orderedQuantity:
+ *               AdvancedQuantity:
  *                 type: number
  *                 example: 3
- *               price:
- *                 type: number
- *                 example: 20000
- *               totalAmount:
- *                 type: number
- *                 example: 60000
- *               note:
- *                 type: string
- *                 example: Ghi chú
- *     responses:
- *       200:
- *         description: Thêm sản phẩm cho phiếu nhập kho thành công
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: integer
- *                   example: 200
- *                 code:
- *                   type: integer
- *                   example: 1
- *                 message:
- *                   type: string
- *                   example: OK!
- *                 data:
- *                   type: object
- *                   example: null
- *       400:
- *         description: Lỗi input
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: integer
- *                   example: 400
- *                 code:
- *                   type: integer
- *                   example: -1
- *                 message:
- *                   type: string
- *                   example: Tên đăng nhập là bắt buộc!
- *                 data:
- *                   type: string
- *                   example: null
- *       401:
- *         description: Chưa đăng nhập
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: integer
- *                   example: 401
- *                 code:
- *                   type: integer
- *                   example: -1
- *                 message:
- *                   type: string
- *                   example: Không có token
- *                 data:
- *                   type: string
- *                   example: null
- *       403:
- *         description: Không có quyền truy cập
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: integer
- *                   example: 403
- *                 code:
- *                   type: integer
- *                   example: -1
- *                 message:
- *                   type: string
- *                   example: Không có quyền
- *                 data:
- *                   type: string
- *                   example: null
- *       500:
- *         description: Lỗi server
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: integer
- *                   example: 500
- *                 code:
- *                   type: integer
- *                   example: -1
- *                 message:
- *                   type: string
- *                   example: Lỗi server!
- *                 data:
- *                   type: string
- *                   example: null
- */
-
-/**
- * @swagger
- * /goodsReceipt/updateProduct/{goodsReceiptDetailId}:
- *   post:
- *     summary: Thêm sản phẩm vào phiếu nhập kho
- *     security:
- *       - bearerAuth: []
- *     tags: [GoodsReceipt]
- *     parameters:
- *     - name: goodsReceiptDetailId
- *       in: path
- *       required: true
- *       schema:
- *         type: string
- *       description: Id của 1 sản phẩm được thêm vào phiếu nhập kho
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - goodsReceiptId
- *               - productId
- *               - warehouseId
- *               - orderedQuantity
- *               - price
- *               - totalAmount
- *             properties:
- *               goodsReceiptId:
- *                 type: string
- *                 example: "684c4cd3d1becf7806470255"
- *               productId:
- *                 type: string
- *                 example: "684c4cd3d1becf7806470255"
- *               warehouseId:
- *                 type: string
- *                 example: "684c4cd3d1becf7806470255"
- *               origin:
- *                 type: string
- *                 example: Xuất xứ sản phẩm
- *               orderedQuantity:
- *                 type: number
- *                 example: 3
- *               price:
- *                 type: number
- *                 example: 20000
- *               totalAmount:
- *                 type: number
- *                 example: 60000
- *               note:
- *                 type: string
- *                 example: Ghi chú
- *     responses:
- *       200:
- *         description: Chỉnh sửa sản phẩm cho phiếu nhập kho thành công
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: integer
- *                   example: 200
- *                 code:
- *                   type: integer
- *                   example: 1
- *                 message:
- *                   type: string
- *                   example: OK!
- *                 data:
- *                   type: object
- *                   example: null
- *       400:
- *         description: Lỗi input
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: integer
- *                   example: 400
- *                 code:
- *                   type: integer
- *                   example: -1
- *                 message:
- *                   type: string
- *                   example: Tên đăng nhập là bắt buộc!
- *                 data:
- *                   type: string
- *                   example: null
- *       401:
- *         description: Chưa đăng nhập
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: integer
- *                   example: 401
- *                 code:
- *                   type: integer
- *                   example: -1
- *                 message:
- *                   type: string
- *                   example: Không có token
- *                 data:
- *                   type: string
- *                   example: null
- *       403:
- *         description: Không có quyền truy cập
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: integer
- *                   example: 403
- *                 code:
- *                   type: integer
- *                   example: -1
- *                 message:
- *                   type: string
- *                   example: Không có quyền
- *                 data:
- *                   type: string
- *                   example: null
- *       500:
- *         description: Lỗi server
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: integer
- *                   example: 500
- *                 code:
- *                   type: integer
- *                   example: -1
- *                 message:
- *                   type: string
- *                   example: Lỗi server!
- *                 data:
- *                   type: string
- *                   example: null
- */
-
-/**
- * @swagger
- * /goodsReceipt/deleteProduct/{goodsReceiptDetailId}:
- *   post:
- *     summary: Xóa sản phẩm khỏi phiếu nhập kho
- *     security:
- *       - bearerAuth: []
- *     tags: [GoodsReceipt]
- *     parameters:
- *     - name: goodsReceiptDetailId
- *       in: path
- *       required: true
- *       schema:
- *         type: string
- *       description: Id của 1 sản phẩm xóa khỏi phiếu nhập kho
- *     responses:
- *       200:
- *         description: Xóa sản phẩm khỏi phiếu nhập kho thành công
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: integer
- *                   example: 200
- *                 code:
- *                   type: integer
- *                   example: 1
- *                 message:
- *                   type: string
- *                   example: OK!
- *                 data:
- *                   type: object
- *                   example: null
- *       400:
- *         description: Lỗi input
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: integer
- *                   example: 400
- *                 code:
- *                   type: integer
- *                   example: -1
- *                 message:
- *                   type: string
- *                   example: Tên đăng nhập là bắt buộc!
- *                 data:
- *                   type: string
- *                   example: null
- *       401:
- *         description: Chưa đăng nhập
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: integer
- *                   example: 401
- *                 code:
- *                   type: integer
- *                   example: -1
- *                 message:
- *                   type: string
- *                   example: Không có token
- *                 data:
- *                   type: string
- *                   example: null
- *       403:
- *         description: Không có quyền truy cập
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: integer
- *                   example: 403
- *                 code:
- *                   type: integer
- *                   example: -1
- *                 message:
- *                   type: string
- *                   example: Không có quyền
- *                 data:
- *                   type: string
- *                   example: null
- *       500:
- *         description: Lỗi server
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: integer
- *                   example: 500
- *                 code:
- *                   type: integer
- *                   example: -1
- *                 message:
- *                   type: string
- *                   example: Lỗi server!
- *                 data:
- *                   type: string
- *                   example: null
- */
-
-/**
- * @swagger
- * /goodsReceipt/confirmQuantity/{goodsReceiptDetailId}:
- *   post:
- *     summary: Nhân viên kho xác nhận lại số lượng nhập và lưu sản phẩm với số serial hoặc số lô
- *     security:
- *       - bearerAuth: []
- *     tags: [GoodsReceipt]
- *     parameters:
- *     - name: goodsReceiptDetailId
- *       in: path
- *       required: true
- *       schema:
- *         type: string
- *       description: Id của 1 sản phẩm trong phiếu nhập kho
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - productId
- *               - warehouseId
- *               - actualQuantity
- *               - storages
- *             properties:
- *               productId:
- *                 type: string
- *                 example: "684c4cd3d1becf7806470255"
- *               warehouseId:
- *                 type: string
- *                 example: "684c4cd3d1becf7806470255"
- *               actualQuantity:
- *                 type: number
- *                 example: 20
  *               storages:
  *                 type: array
  *                 items:
  *                   type: object
  *                   properties:
+ *                     productStorageId:
+ *                       type: string
+ *                       example: '68568d96dd90fa75cb28647a'
  *                     trackingCode:
  *                       type: string
  *                       example: 'Số serial/ số lô'
  *                     quantity:
  *                       type: number
  *                       example: 10
+ *               note:
+ *                 type: string
+ *                 example: Ghi chú
  *     responses:
  *       200:
- *         description: Xác nhận số lượng sản phẩm nhập kho thành công
+ *         description: Thêm sản phẩm cho phiếu tạm ứng thành công
  *         content:
  *           application/json:
  *             schema:
@@ -1360,12 +880,19 @@ module.exports = router
 
 /**
  * @swagger
- * /goodsReceipt/approval:
+ * /goodsAdvance/updateProduct/{goodsAdvanceDetailId}:
  *   post:
- *     summary: Duyệt phiếu nhập kho
+ *     summary: Cập nhật sản phẩm của phiếu tạm ứng
  *     security:
  *       - bearerAuth: []
- *     tags: [GoodsReceipt]
+ *     tags: [GoodsAdvance]
+ *     parameters:
+ *     - name: goodsAdvanceDetailId
+ *       in: path
+ *       required: true
+ *       schema:
+ *         type: string
+ *       description: Id của 1 sản phẩm được cập nhật của phiếu tạm ứng
  *     requestBody:
  *       required: true
  *       content:
@@ -1373,23 +900,46 @@ module.exports = router
  *           schema:
  *             type: object
  *             required:
- *               - goodsReceiptApprovalId
- *               - goodsReceiptId
- *               - status
+ *               - goodsAdvanceId
+ *               - productId
+ *               - warehouseId
+ *               - AdvancedQuantity
  *             properties:
- *               goodsReceiptApprovalId:
+ *               goodsAdvanceId:
  *                 type: string
  *                 example: "684c4cd3d1becf7806470255"
- *               status:
+ *               productId:
  *                 type: string
- *                 enum: [approved, rejected, cancel]
- *                 example: approved
- *               content:
+ *                 example: "684c4cd3d1becf7806470255"
+ *               warehouseId:
  *                 type: string
- *                 example: Ok
+ *                 example: "684c4cd3d1becf7806470255"
+ *               origin:
+ *                 type: string
+ *                 example: Xuất xứ sản phẩm
+ *               AdvancedQuantity:
+ *                 type: number
+ *                 example: 3
+ *               storages:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     productStorageId:
+ *                       type: string
+ *                       example: '68568d96dd90fa75cb28647a'
+ *                     trackingCode:
+ *                       type: string
+ *                       example: 'Số serial/ số lô'
+ *                     quantity:
+ *                       type: number
+ *                       example: 10
+ *               note:
+ *                 type: string
+ *                 example: Ghi chú
  *     responses:
  *       200:
- *         description: Xác nhập phiếu nhập kho thành công
+ *         description: Chỉnh sửa sản phẩm cho phiếu tạm ứng thành công
  *         content:
  *           application/json:
  *             schema:
@@ -1487,49 +1037,164 @@ module.exports = router
 
 /**
  * @swagger
- * /goodsReceipt/export:
+ * /goodsAdvance/deleteProduct/{goodsAdvanceDetailId}:
  *   post:
- *     summary: Xuất báo cáo nhập kho ra file excel
+ *     summary: Xóa sản phẩm khỏi phiếu tạm ứng
  *     security:
  *       - bearerAuth: []
- *     tags: [GoodsReceipt]
+ *     tags: [GoodsAdvance]
+ *     parameters:
+ *     - name: goodsAdvanceDetailId
+ *       in: path
+ *       required: true
+ *       schema:
+ *         type: string
+ *       description: Id của 1 sản phẩm xóa khỏi phiếu tạm ứng
+ *     responses:
+ *       200:
+ *         description: Xóa sản phẩm khỏi phiếu tạm ứng thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
+ *                 code:
+ *                   type: integer
+ *                   example: 1
+ *                 message:
+ *                   type: string
+ *                   example: OK!
+ *                 data:
+ *                   type: object
+ *                   example: null
+ *       400:
+ *         description: Lỗi input
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 400
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Tên đăng nhập là bắt buộc!
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       401:
+ *         description: Chưa đăng nhập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 401
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có token
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       403:
+ *         description: Không có quyền truy cập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 403
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có quyền
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       500:
+ *         description: Lỗi server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 500
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Lỗi server!
+ *                 data:
+ *                   type: string
+ *                   example: null
+ */
+
+/**
+ * @swagger
+ * /goodsAdvance/approval:
+ *   post:
+ *     summary: Duyệt phiếu tạm ứng
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [GoodsAdvance]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - goodsAdvanceApprovalId
+ *               - goodsAdvanceId
  *             properties:
- *               startDate:
+ *               goodsAdvanceApprovalId:
  *                 type: string
- *                 format: date
- *                 description: "Ngày bắt đầu (YYYY-MM-DD). Nếu bỏ trống sẽ lấy từ đầu."
- *                 example: "2025-06-01"
- *               endDate:
+ *                 example: "684c4cd3d1becf7806470255"
+ *               status:
+ *                 type: boolean
+ *                 example: true
+ *               note:
  *                 type: string
- *                 format: date
- *                 description: "Ngày kết thúc (YYYY-MM-DD). Nếu bỏ trống sẽ lấy tới hiện tại."
- *                 example: "2025-06-25"
- *               warehouseIds:
- *                 type: array
- *                 items:
- *                   type: string
- *                 description: "Mảng chứa các ID của kho cần lọc. Gửi mảng rỗng [] để lấy tất cả."
- *                 example: ["684c41f3ae24ff427ec487ea", "68511d6d55dd137821188fdb"]
- *               statuses:
- *                 type: array
- *                 items:
- *                   type: string
- *                 description: "Mảng chứa các trạng thái cần lọc. Gửi mảng rỗng [] để lấy tất cả."
- *                 example: ["success", "warehouseStaffApproval"]
+ *                 example: Ok
  *     responses:
  *       200:
- *         description: Trả về file excel để tải xuống.
+ *         description: Xác nhập phiếu tạm ứng thành công
  *         content:
- *           application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+ *           application/json:
  *             schema:
- *               type: string
- *               format: binary
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
+ *                 code:
+ *                   type: integer
+ *                   example: 1
+ *                 message:
+ *                   type: string
+ *                   example: OK!
+ *                 data:
+ *                   type: object
+ *                   example: null
  *       400:
  *         description: Lỗi input
  *         content:

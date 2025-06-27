@@ -1,7 +1,5 @@
 const express = require('express')
-const validate = require('../middlewares/validation')
 const goodsIssueController = require('../controllers/goodsIssueController')
-const userValidation = require('../validations/userValidation')
 const router = express.Router()
 
 router.get('/getAll', goodsIssueController.getAll)
@@ -421,7 +419,6 @@ module.exports = router
  *               - invoiceOrContractNumber
  *               - estimatedDeliveryDate
  *               - customer
- *               - billingAddress
  *               - deliveryAddresses
  *               - orderedBy
  *               - recipient
@@ -441,9 +438,6 @@ module.exports = router
  *               customer:
  *                 type: string
  *                 example: Tên chính thức của khách hàng
- *               billingAddress:
- *                 type: string
- *                 example: Địa chỉ xuất hóa đơn của khách hàng
  *               deliveryAddresses:
  *                 type: string
  *                 example: Địa chỉ giao hàng
@@ -601,7 +595,6 @@ module.exports = router
  *               - invoiceOrContractNumber
  *               - estimatedDeliveryDate
  *               - customer
- *               - billingAddress
  *               - deliveryAddresses
  *               - orderedBy
  *               - recipient
@@ -621,9 +614,6 @@ module.exports = router
  *               customer:
  *                 type: string
  *                 example: Tên chính thức của khách hàng
- *               billingAddress:
- *                 type: string
- *                 example: Địa chỉ xuất hóa đơn của khách hàng
  *               deliveryAddresses:
  *                 type: string
  *                 example: Địa chỉ giao hàng

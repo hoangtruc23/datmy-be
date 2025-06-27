@@ -19,19 +19,22 @@ const goodsAdvanceSchema = new Schema(
         returner: {
             type: String,
         },
-        advanceBy: {
-            type: String,
-        },
+        // advanceBy: {
+        //     type: String,
+        // },
         expectedReturnDate: {
+            type: Date,
+        },
+        extendedReturnDate: {
             type: Date,
         },
         returnDate: {
             type: Date,
         },
-        customer: {
+        borrowContent: {
             type: String,
         },
-        borrowContent: {
+        customer: {
             type: String,
         },
         deliveryAddresses: {

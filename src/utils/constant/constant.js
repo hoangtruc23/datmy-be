@@ -19,6 +19,7 @@ const constant = {
     },
     GOODS_ISSUE_STATUS: {
         NULL: '',
+        DRAFT: 'draft',
         WAREHOUSE_STAFF_APPROVAL: 'warehouseStaffApproval',
         WAREHOUSE_ACCOUNTANT_APPROVAL: 'warehouseAccountantApproval',
         DEBT_ACCOUNTANT_APPROVAL: 'debtAccountantApproval',
@@ -40,6 +41,12 @@ const constant = {
         APPROVED: 'approved',
         WAITING_FOR_EXTENSION: 'waitingForExtension',
         REJECT: 'reject',
+        CANCEL: 'cancel',
+    },
+    GOODS_ADVANCE_PROCESS_TITLE: {
+        CREATE: 'create',
+        APPROVAL: 'approval',
+        EXTEND: 'extend',
         CANCEL: 'cancel',
     },
     APPROVAL_STATUS: {

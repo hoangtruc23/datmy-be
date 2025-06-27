@@ -306,10 +306,10 @@ async function permissionSeeder() {
             parentPermissionId: '684927c871287f2ae7d81307',
         },
         {
-            _id: new Types.ObjectId('685a2a4f4630d293367c288c'), 
+            _id: new Types.ObjectId('685a2a4f4630d293367c288c'),
             name: 'Xuất báo cáo',
             code: 'nhap_kho-xuat_bao_cao',
-            parentPermissionId: '684927c871287f2ae7d81307', 
+            parentPermissionId: '684927c871287f2ae7d81307',
         },
 
         // Xuất kho
@@ -350,6 +350,30 @@ async function permissionSeeder() {
             name: 'Tạm ứng',
             code: 'tam_ung',
             parentPermissionId: null,
+        },
+        {
+            _id: new Types.ObjectId('685cf633e0e45d397c4ca197'),
+            name: 'Xem',
+            code: 'tam_ung-xem',
+            parentPermissionId: '685cf633e0e45d397c4ca197',
+        },
+        {
+            _id: new Types.ObjectId('685cf633e0e45d397c4ca198'),
+            name: 'Thêm',
+            code: 'tam_ung-them',
+            parentPermissionId: '684927c871287f2ae7d81309',
+        },
+        {
+            _id: new Types.ObjectId('685cf633e0e45d397c4ca199'),
+            name: 'Cập nhật',
+            code: 'tam_ung-cap_nhat',
+            parentPermissionId: '684927c871287f2ae7d81309',
+        },
+        {
+            _id: new Types.ObjectId('685cf633e0e45d397c4ca19a'),
+            name: 'Xác nhận tạm ứng',
+            code: 'tam_ung-xac_nhan_tam_ung',
+            parentPermissionId: '684927c871287f2ae7d81309',
         },
     ])
     logger.info('Permissions seeded')

@@ -31,10 +31,10 @@ const goodsReceiptSchema = new Schema(
         supplier: {
             type: String,
         },
-        // billingAddress: {
-        //     type: String,
-        //     // required: true,
-        // },
+        billingAddress: {
+            type: String,
+            // required: true,
+        },
         deliveryAddresses: {
             type: String,
         },

@@ -8,15 +8,10 @@ const rolePermissionSeeder = require('./rolePermission')
 const roleSeeder = require('./role')
 const userSeeder = require('./user')
 const unitSeeder = require('./unit')
-const goodsReceiptReportSeeder = require('./goodsReceiptReportSeeder') 
 const args = process.argv.slice(2)
 async function run() {
     try {
         switch (args[0]) {
-            case 'report': {
-                await goodsReceiptReportSeeder()
-                break
-            }
             case 'api': {
                 await apiSeeder()
                 break
@@ -46,14 +41,13 @@ async function run() {
                 break
             }
             case 'all': {
-                await apiSeeder();
-                await permissionSeeder();
-                await permissionApiSeeder();
-                await roleSeeder();
-                await rolePermissionSeeder();
-                await userSeeder();
-                await unitSeeder();
-                await goodsReceiptReportSeeder(); 
+                await apiSeeder()
+                await permissionSeeder()
+                await permissionApiSeeder()
+                await roleSeeder()
+                await rolePermissionSeeder()
+                await userSeeder()
+                await unitSeeder()
                 break
             }
             default:

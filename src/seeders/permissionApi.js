@@ -305,8 +305,8 @@ async function permissionApiSeeder() {
             apiId: '6858d5bd26c71e076fdfad76', // /goodsReceipt/approval
         },
         {
-            permissionId: '685a2a4f4630d293367c288c', 
-            apiId: '685a2a4f4630d293367c288b', // /goodsReceipt/export 
+            permissionId: '685a2a4f4630d293367c288c',
+            apiId: '685a2a4f4630d293367c288b', // /goodsReceipt/export
         },
         // Xuất kho
         {

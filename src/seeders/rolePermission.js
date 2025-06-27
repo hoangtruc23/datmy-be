@@ -192,14 +192,15 @@ async function rolePermissionSeeder() {
             roleId: '684927c871287f2ae7d8130b',
             permissionId: '6858d5bd26c71e076fdfad83', // Cập nhật phiếu nhập kho
         },
+        // {
+        //     roleId: '684927c871287f2ae7d8130b',
+        //     permissionId: '6858d5bd26c71e076fdfad21', // Xác nhận phiếu nhập kho
+        // },
         {
             roleId: '684927c871287f2ae7d8130b',
-            permissionId: '6858d5bd26c71e076fdfad21', // Xác nhận phiếu nhập kho
+            permissionId: '685a2a4f4630d293367c288c', // Xuất báo cáo
         },
-        {
-            roleId: '684927c871287f2ae7d8130b', // Role ID for "Quản trị viên"
-            permissionId: '685a2a4f4630d293367c288c', // The new "Xuất báo cáo" permission
-        },
+
         {
             roleId: '684927c871287f2ae7d8130b',
             permissionId: '684927c871287f2ae7d81308', // Xuất kho
@@ -216,15 +217,31 @@ async function rolePermissionSeeder() {
             roleId: '684927c871287f2ae7d8130b',
             permissionId: '685a477d73dd15c087569df0', // Cập nhật phiếu xuất kho
         },
-        {
-            roleId: '684927c871287f2ae7d8130b',
-            permissionId: '685a477d73dd15c087569df1', // Xác nhận phiếu xuất kho
-        },
+        // {
+        //     roleId: '684927c871287f2ae7d8130b',
+        //     permissionId: '685a477d73dd15c087569df1', // Xác nhận phiếu xuất kho
+        // },
 
         {
             roleId: '684927c871287f2ae7d8130b',
             permissionId: '684927c871287f2ae7d81309', // Tạm ứng
         },
+        {
+            roleId: '684927c871287f2ae7d8130b',
+            permissionId: '685cf633e0e45d397c4ca197', // Xem phiếu tạm ứng
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b',
+            permissionId: '685cf633e0e45d397c4ca198', // Tạo phiếu tạm ứng
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b',
+            permissionId: '685cf633e0e45d397c4ca199', // Cập nhật phiếu tạm ứng
+        },
+        // {
+        //     roleId: '684927c871287f2ae7d8130b',
+        //     permissionId: '685cf633e0e45d397c4ca19a', // Xác nhận phiếu tạm ứng
+        // },
 
         // Nhân viên kho =======================================================================================
         // {
@@ -439,6 +456,22 @@ async function rolePermissionSeeder() {
         {
             roleId: '684927c871287f2ae7d8130c',
             permissionId: '684927c871287f2ae7d81309', // Tạm ứng
+        },
+        {
+            roleId: '684927c871287f2ae7d8130c',
+            permissionId: '685cf633e0e45d397c4ca197', // Xem phiếu tạm ứng
+        },
+        // {
+        //     roleId: '684927c871287f2ae7d8130c',
+        //     permissionId: '685cf633e0e45d397c4ca198', // Tạo phiếu tạm ứng
+        // },
+        // {
+        //     roleId: '684927c871287f2ae7d8130c',
+        //     permissionId: '685cf633e0e45d397c4ca199', // Cập nhật phiếu tạm ứng
+        // },
+        {
+            roleId: '684927c871287f2ae7d8130c',
+            permissionId: '685cf633e0e45d397c4ca19a', // Xác nhận phiếu tạm ứng
         },
 
         // Kế toán kho =======================================================================================
@@ -655,6 +688,22 @@ async function rolePermissionSeeder() {
         //     roleId: '684927c871287f2ae7d8130e',
         //     permissionId: '684927c871287f2ae7d81309', // Tạm ứng
         // },
+        // {
+        //     roleId: '684927c871287f2ae7d8130e',
+        //     permissionId: '685cf633e0e45d397c4ca197', // Xem phiếu tạm ứng
+        // },
+        // {
+        //     roleId: '684927c871287f2ae7d8130e',
+        //     permissionId: '685cf633e0e45d397c4ca198', // Tạo phiếu tạm ứng
+        // },
+        // {
+        //     roleId: '684927c871287f2ae7d8130e',
+        //     permissionId: '685cf633e0e45d397c4ca199', // Cập nhật phiếu tạm ứng
+        // },
+        // {
+        //     roleId: '684927c871287f2ae7d8130e',
+        //     permissionId: '685cf633e0e45d397c4ca19a', // Xác nhận phiếu tạm ứng
+        // },
 
         // Kế toán công nợ =======================================================================================
         // {
@@ -870,6 +919,22 @@ async function rolePermissionSeeder() {
         //     roleId: '684927c871287f2ae7d8130f',
         //     permissionId: '684927c871287f2ae7d81309', // Tạm ứng
         // },
+        // {
+        //     roleId: '684927c871287f2ae7d8130f',
+        //     permissionId: '685cf633e0e45d397c4ca197', // Xem phiếu tạm ứng
+        // },
+        // {
+        //     roleId: '684927c871287f2ae7d8130f',
+        //     permissionId: '685cf633e0e45d397c4ca198', // Tạo phiếu tạm ứng
+        // },
+        // {
+        //     roleId: '684927c871287f2ae7d8130f',
+        //     permissionId: '685cf633e0e45d397c4ca199', // Cập nhật phiếu tạm ứng
+        // },
+        // {
+        //     roleId: '684927c871287f2ae7d8130f',
+        //     permissionId: '685cf633e0e45d397c4ca19a', // Xác nhận phiếu tạm ứng
+        // },
 
         // Kế toán hóa đơn =======================================================================================
         // {
@@ -1084,6 +1149,22 @@ async function rolePermissionSeeder() {
         // {
         //     roleId: '684927c871287f2ae7d81310',
         //     permissionId: '684927c871287f2ae7d81309', // Tạm ứng
+        // },
+        // {
+        //     roleId: '684927c871287f2ae7d81310',
+        //     permissionId: '685cf633e0e45d397c4ca197', // Xem phiếu tạm ứng
+        // },
+        // {
+        //     roleId: '684927c871287f2ae7d81310',
+        //     permissionId: '685cf633e0e45d397c4ca198', // Tạo phiếu tạm ứng
+        // },
+        // {
+        //     roleId: '684927c871287f2ae7d81310',
+        //     permissionId: '685cf633e0e45d397c4ca199', // Cập nhật phiếu tạm ứng
+        // },
+        // {
+        //     roleId: '684927c871287f2ae7d81310',
+        //     permissionId: '685cf633e0e45d397c4ca19a', // Xác nhận phiếu tạm ứng
         // },
 
         // Bán hàng =======================================================================================

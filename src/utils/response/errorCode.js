@@ -185,8 +185,44 @@ const errorCode = {
         code: 47,
         message: 'Không tìm thấy số serial / số lô',
     },
+    GOODS_ADVANCE_NOT_FOUND: {
+        code: 48,
+        message: 'Phiếu tạm ứng không tồn tại',
+    },
+    GOODS_ADVANCE_DETAIL_EXISTED: {
+        code: 49,
+        message: 'Sản phẩm được thêm đã tồn tại trong phiếu tạm ứng',
+    },
+    GOODS_ADVANCE_DETAIL_NOT_FOUND: {
+        code: 50,
+        message: 'Không tìm thấy sản phẩm này trong phiếu tạm ứng',
+    },
+    GOODS_ADVANCE_SERIAL_OR_BATCH_EXISTED: {
+        code: 51,
+        message: 'Số lô hoặc số serial đã tồn tại',
+    },
+    GOODS_ADVANCE_APPROVAL_NOT_FOUND: {
+        code: 52,
+        message: 'Không tìm thấy phiếu xác nhận tạm ứng',
+    },
+    DO_NOT_CANCEL_GOODS_ADVANCE: {
+        code: 53,
+        message: 'Chỉ người tạo phiếu mới được phép hủy phiếu tạm ứng',
+    },
+    ADVANCE_QUANTITY_INVALID: {
+        code: 54,
+        message: 'Số lượng tạm ứng lớn hơn số lượng tồn kho',
+    },
+    GOODS_ADVANCE_APPROVAL_APPROVED: {
+        code: 56,
+        message: 'Phiếu tạm ứng này đã hoàn thành',
+    },
+    DO_NOT_UPDATE_GOODS_ADVANCE_CREATED: {
+        code: 57,
+        message: 'Không thể cập nhật phiếu tạm ứng đã',
+    },
     TRACKING_CODE_NOT_FOUND: {
-        code: 43,
+        code: 58,
         message: 'Không tìm thấy phiếu nhập kho cho số lô này',
     },
 }
