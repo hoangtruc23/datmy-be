@@ -195,8 +195,25 @@ async function permissionApiSeeder() {
             apiId: '685a1b9f9f5d2f68d81a1eb2', // /product/getById
         },
         {
+            permissionId: '685a1b9f9f5d2f68d81a1eb7', // Xem
+            apiId: '685e0db179ac9c1b83c0f4ae', // /product/getTotalQuantityByProductI
+        },
+        {
+            permissionId: '685a1b9f9f5d2f68d81a1eb7', // Xem
+            apiId: '685e0db179ac9c1b83c0f4af', // /product/getAllWithQuantity
+        },
+
+        {
             permissionId: '685a1b9f9f5d2f68d81a1eb8', // Cập nhật
             apiId: '685a1b9f9f5d2f68d81a1eae', // /product/update
+        },
+        {
+            permissionId: '685a1b9f9f5d2f68d81a1eb8', // Cập nhật
+            apiId: '685e0db179ac9c1b83c0f4b0', // /product/getProductStorages
+        },
+        {
+            permissionId: '685a1b9f9f5d2f68d81a1eb8', // Cập nhật
+            apiId: '685e0db179ac9c1b83c0f4b1', // /product/getReceiptByTrackingCode
         },
         {
             permissionId: '685a1b9f9f5d2f68d81a1eb9', // Khóa/Mở khóa
