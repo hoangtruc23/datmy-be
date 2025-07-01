@@ -198,7 +198,7 @@ async function rolePermissionSeeder() {
         // },
         {
             roleId: '684927c871287f2ae7d8130b',
-            permissionId: '685a2a4f4630d293367c288c', // Xuất báo cáo
+            permissionId: '685a2a4f4630d293367c288c', // báo cáo nhập kho
         },
 
         {
@@ -221,6 +221,10 @@ async function rolePermissionSeeder() {
         //     roleId: '684927c871287f2ae7d8130b',
         //     permissionId: '685a477d73dd15c087569df1', // Xác nhận phiếu xuất kho
         // },
+        {
+            roleId: '684927c871287f2ae7d8130b',
+            permissionId: '6861f2e524fe5c2a802dcaea', // báo cáo xuất kho
+        },
 
         {
             roleId: '684927c871287f2ae7d8130b',

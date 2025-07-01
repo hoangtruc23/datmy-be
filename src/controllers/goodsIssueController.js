@@ -112,6 +112,22 @@ const goodsIssueController = {
             next(error)
         }
     },
+    exportReport: async (req, res, next) => {
+        try {
+            const buffer = await goodsIssueService.exportReport(req.body);
+            res.setHeader(
+                'Content-Type',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            );
+            res.setHeader(
+                'Content-Disposition',
+                'attachment; filename="Bao_cao_ban_hang.xlsx"',
+            );
+            res.send(buffer);
+        } catch (error) {
+            next(error);
+        }
+    },
 }
 
 module.exports = goodsIssueController

@@ -343,6 +343,12 @@ async function permissionSeeder() {
             code: 'xuat_kho-xac_nhan_xuat_kho',
             parentPermissionId: '684927c871287f2ae7d81308',
         },
+        {
+            _id: new Types.ObjectId('6861f2e524fe5c2a802dcaea'),
+            name: 'Xuất báo cáo',
+            code: 'xuat_kho-xuat_bao_cao',
+            parentPermissionId: '684927c871287f2ae7d81308',
+        },
 
         // Tạm ứng
         {
