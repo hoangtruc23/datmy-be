@@ -389,6 +389,11 @@ async function apiSeeder() {
             api: '/goodsIssue/approval',
             note: 'Xác nhận phiếu xuất kho',
         },
+        {
+            _id: new Types.ObjectId('6861f2e524fe5c2a802dcae9'),
+            api: '/goodsIssue/export',
+            note: 'Xuất báo cáo xuất kho ra excel',
+        },
 
         // Tạm ứng
         {

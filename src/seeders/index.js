@@ -1,5 +1,7 @@
 require('../config/mongodbConfig')
 
+// const GoodsIssueReportSeeder = require('./goodsIssueReportSeeder') 
+// const goodsReceiptReportSeeder = require('./goodsReceiptReportSeeder') 
 const { logger } = require('../config/loggerConfig')
 const apiSeeder = require('./api')
 const permissionApiSeeder = require('./permissionApi')
@@ -12,6 +14,14 @@ const args = process.argv.slice(2)
 async function run() {
     try {
         switch (args[0]) {
+            // case 'goodsReciptReport': {
+            //     await goodsReceiptReportSeeder()
+            //     break
+            // }
+            // case 'goodsIssueReport': { 
+            //     await GoodsIssueReportSeeder();
+            //     break;
+            // }
             case 'api': {
                 await apiSeeder()
                 break
@@ -48,6 +58,8 @@ async function run() {
                 await rolePermissionSeeder()
                 await userSeeder()
                 await unitSeeder()
+                // await goodsReceiptReportSeeder(); 
+                // await GoodsIssueReportSeeder()
                 break
             }
             default:

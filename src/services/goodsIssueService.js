@@ -1,3 +1,4 @@
+const { generateGoodsReport } = require('../utils/helper/excelReportHelper')
 const errorCode = require('../utils/response/errorCode')
 const BadReq = require('../utils/response/requestError')
 const GoodsIssueModel = require('../models/goodsIssue')
@@ -756,6 +757,261 @@ const goodsIssueService = {
             throw error
         } finally {
             session.endSession()
+        }
+    },
+    
+    exportReport: async (filters) => {
+        try {
+            const { startDate, endDate, warehouseIds, statuses } = filters
+
+            // Step 1: Fetch and Prepare Data
+            const matchConditions = { 'goodsIssue.isTemporary': false }
+            if (statuses && statuses.length > 0) {
+                matchConditions['goodsIssue.status'] = { $in: statuses }
+            }
+            if (warehouseIds && warehouseIds.length > 0) {
+                matchConditions.warehouseId = {
+                    $in: warehouseIds.map(
+                        (id) => new Types.ObjectId(String(id)),
+                    ),
+                }
+            }
+            if (startDate || endDate) {
+                matchConditions['goodsIssue.createdAt'] = {}
+                if (startDate) {
+                    matchConditions['goodsIssue.createdAt'].$gte = new Date(
+                        startDate,
+                    )
+                }
+                if (endDate) {
+                    const end = new Date(endDate)
+                    end.setHours(23, 59, 59, 999)
+                    matchConditions['goodsIssue.createdAt'].$lte = end
+                }
+            }
+
+            const results = await GoodsIssueDetaileModel.aggregate([
+                {
+                    $lookup: {
+                        from: 'goodsissues',
+                        localField: 'goodsIssueId',
+                        foreignField: '_id',
+                        as: 'goodsIssue',
+                    },
+                },
+                { $unwind: '$goodsIssue' },
+                { $match: matchConditions },
+                {
+                    $lookup: {
+                        from: 'products',
+                        localField: 'productId',
+                        foreignField: '_id',
+                        as: 'productInfo',
+                    },
+                },
+                {
+                    $unwind: {
+                        path: '$productInfo',
+                        preserveNullAndEmptyArrays: true,
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'brands',
+                        localField: 'productInfo.brand',
+                        foreignField: '_id',
+                        as: 'brandInfo',
+                    },
+                },
+                {
+                    $unwind: {
+                        path: '$brandInfo',
+                        preserveNullAndEmptyArrays: true,
+                    },
+                },
+                {
+                    $sort: {
+                        'goodsIssue.createdAt': -1,
+                        'goodsIssue.issueNumber': 1,
+                    },
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        date: '$goodsIssue.createdAt',
+                        issueNumber: '$goodsIssue.issueNumber',
+                        status: '$goodsIssue.status',
+                        deliveryAddress: {
+                            $ifNull: [
+                                '$goodsIssue.deliveryAddresses',
+                                'N/A',
+                            ],
+                        },
+                        customer: '$goodsIssue.customer',
+                        productCode: '$productInfo.code',
+                        specification: '$productInfo.specification',
+                        brandName: '$brandInfo.name',
+                        warehouseName: '$warehouseName',
+                        totalAmount: '$totalAmount',
+                    },
+                },
+            ])
+
+            const groupedByDate = new Map()
+            for (const item of results) {
+                const dateKey = new Date(item.date).toLocaleDateString('vi-VN')
+                if (!groupedByDate.has(dateKey)) {
+                    groupedByDate.set(dateKey, {
+                        receipts: new Map(),
+                        dailyTotal: 0,
+                    })
+                }
+                const dayData = groupedByDate.get(dateKey)
+                const receiptKey = item.issueNumber
+                if (!dayData.receipts.has(receiptKey)) {
+                    dayData.receipts.set(receiptKey, {
+                        header: item,
+                        lineItems: [],
+                    })
+                }
+                const receiptData = dayData.receipts.get(receiptKey)
+                receiptData.lineItems.push(item)
+                dayData.dailyTotal += item.totalAmount || 0
+            }
+
+            // Step 2: Define Report Configuration
+            const leftAlignment = {
+                vertical: 'middle',
+                horizontal: 'left',
+                wrapText: true,
+            }
+            const centerAlignmentForColumn = {
+                vertical: 'middle',
+                horizontal: 'center',
+                wrapText: true,
+            }
+
+            const finalStartDate = startDate
+                ? new Date(startDate).toLocaleDateString('vi-VN')
+                : results.length > 0
+                  ? new Date(
+                        results[results.length - 1].date,
+                    ).toLocaleDateString('vi-VN')
+                  : '...'
+            const finalEndDate = endDate
+                ? new Date(endDate).toLocaleDateString('vi-VN')
+                : results.length > 0
+                  ? new Date(results[0].date).toLocaleDateString('vi-VN')
+                  : '...'
+                  
+            const reportConfig = {
+                worksheetName: 'Bảng kê chi tiết bán hàng',
+                reportTitle: 'BẢNG KÊ CHI TIẾT BÁN HÀNG THEO NGÀY',
+                dateRange: { startDate: finalStartDate, endDate: finalEndDate },
+                headers: [
+                    'NGÀY',
+                    'SỐ PXK',
+                    'TRẠNG THÁI',
+                    'ĐỊA CHỈ (XHĐ)',
+                    'KHÁCH HÀNG',
+                    'MÃ HÀNG',
+                    'QUY CÁCH',
+                    'NHÃN HIỆU',
+                    'KHO',
+                    'TỔNG CỘNG',
+                ],
+                columnKeys: [
+                    'date',
+                    'issueNumber',
+                    'status',
+                    'deliveryAddress',
+                    'customer',
+                    'productCode',
+                    'specification',
+                    'brandName',
+                    'warehouseName',
+                    'totalAmount',
+                ],
+                mergeableColumnKeys: [
+                    'date',
+                    'issueNumber',
+                    'status',
+                    'deliveryAddress',
+                    'customer',
+                ],
+                statusMap: {
+                    approved: 'Thành công',
+                    draft: 'Nháp',
+                    reject: 'Từ chối',
+                    cancel: 'Đã hủy',
+                    warehouseStaffApproval: 'Chờ duyệt',
+                    warehouseAccountantApproval: 'Chờ duyệt',
+                    debtAccountantApproval: 'Chờ duyệt',
+                    billAccountApproval: 'Chờ duyệt',
+                },
+                summaryRowText: 'TỔNG CỘNG:',
+                grandTotalText: 'TỔNG CỘNG:',
+                columnConfigs: [
+                    {
+                        key: 'date',
+                        width: 15,
+                        style: { alignment: centerAlignmentForColumn },
+                    },
+                    {
+                        key: 'issueNumber',
+                        width: 12,
+                        style: { alignment: leftAlignment },
+                    },
+                    {
+                        key: 'status',
+                        width: 20,
+                        style: { alignment: leftAlignment },
+                    },
+                    {
+                        key: 'deliveryAddress',
+                        width: 45,
+                        style: { alignment: leftAlignment },
+                    },
+                    {
+                        key: 'customer',
+                        width: 45,
+                        style: { alignment: leftAlignment },
+                    },
+                    {
+                        key: 'productCode',
+                        width: 18,
+                        style: { alignment: leftAlignment },
+                    },
+                    {
+                        key: 'specification',
+                        width: 15,
+                        style: { alignment: leftAlignment },
+                    },
+                    {
+                        key: 'brandName',
+                        width: 15,
+                        style: { alignment: leftAlignment },
+                    },
+                    {
+                        key: 'warehouseName',
+                        width: 20,
+                        style: { alignment: leftAlignment },
+                    },
+                    {
+                        key: 'totalAmount',
+                        width: 20,
+                        style: {
+                            numFmt: '#,##0',
+                            alignment: centerAlignmentForColumn,
+                        },
+                    },
+                ],
+            }
+
+            // 3. Call the generic helper
+            return generateGoodsReport(groupedByDate, reportConfig)
+        } catch (error) {
+            throw error
         }
     },
 }

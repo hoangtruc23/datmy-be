@@ -18,6 +18,7 @@ router.post(
     goodsIssueController.deleteProduct,
 )
 router.post('/approval', goodsIssueController.approval)
+router.post('/export', goodsIssueController.exportReport)
 module.exports = router
 
 /**
@@ -1418,4 +1419,110 @@ module.exports = router
  *                 data:
  *                   type: string
  *                   example: null
+ */
+
+
+/**
+ * @swagger
+ * /goodsIssue/export:
+ *   post:
+ *     summary: Xuất báo cáo bán hàng (xuất kho) ra file excel
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [GoodsIssue]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               startDate:
+ *                 type: string
+ *                 format: date
+ *                 description: "Ngày bắt đầu (YYYY-MM-DD). Nếu bỏ trống sẽ lấy từ đầu."
+ *                 example: "2025-06-12"
+ *               endDate:
+ *                 type: string
+ *                 format: date
+ *                 description: "Ngày kết thúc (YYYY-MM-DD). Nếu bỏ trống sẽ lấy tới hiện tại."
+ *                 example: "2025-06-25"
+ *               warehouseIds:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: "Mảng chứa các ID của kho cần lọc. Gửi mảng rỗng [] để lấy tất cả."
+ *                 example: []
+ *               statuses:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   enum: [draft, warehouseStaffApproval, warehouseAccountantApproval, debtAccountantApproval, billAccountApproval, approved, reject, cancel]
+ *                 description: "Mảng chứa các trạng thái cần lọc. Gửi mảng rỗng [] để lấy tất cả."
+ *                 example: ["approved", "draft"]
+ *     responses:
+ *       200:
+ *         description: Trả về file excel để tải xuống.
+ *         content:
+ *           application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       401:
+ *         description: Chưa đăng nhập hoặc token không hợp lệ
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 401
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: "Không có token"
+ *                 data:
+ *                   type: "object"
+ *                   nullable: true
+ *       403:
+ *         description: Không có quyền truy cập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 403
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: "Không có quyền"
+ *                 data:
+ *                   type: "object"
+ *                   nullable: true
+ *       500:
+ *         description: Lỗi server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 500
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: "Lỗi server!"
+ *                 data:
+ *                   type: "object"
+ *                   nullable: true
  */
