@@ -1,5 +1,7 @@
-const { Schema, model, Types } = require('mongoose')
+const mongoose = require('mongoose')
+const { Schema, model, Types } = mongoose
 const constant = require('../utils/constant/constant')
+const autoIncrement = require('mongoose-sequence')(mongoose)
 
 const goodsAdvanceSchema = new Schema(
     {
@@ -7,11 +9,12 @@ const goodsAdvanceSchema = new Schema(
             type: Number,
             required: true,
             min: 1,
+            default: 1,
         },
         customerId: {
             type: Types.ObjectId,
             ref: 'customers',
-            required: true,
+            // required: true,
         },
         borrower: {
             type: String,
@@ -42,7 +45,7 @@ const goodsAdvanceSchema = new Schema(
         },
         status: {
             type: String,
-            required: true,
+            // required: true,
             enum: Object.values(constant.GOODS_ADVANCE_STATUS),
         },
         isTemporary: {
@@ -58,12 +61,16 @@ const goodsAdvanceSchema = new Schema(
         updatedBy: {
             type: Types.ObjectId,
             ref: 'users',
-            required: true,
+            default: null,
         },
     },
     { timestamps: true },
 )
 
+goodsAdvanceSchema.plugin(autoIncrement, {
+    inc_field: 'advanceNumber',
+    id: 'advanceNumber',
+})
 const GoodsAdvanceModel = model('goodsAdvances', goodsAdvanceSchema)
 
 module.exports = GoodsAdvanceModel

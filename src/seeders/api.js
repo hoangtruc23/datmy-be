@@ -427,6 +427,11 @@ async function apiSeeder() {
             note: 'Hủy phiếu tạm ứng',
         },
         {
+            _id: new Types.ObjectId('686499029ae62f462152a6d4'),
+            api: '/goodsAdvance/extend',
+            note: 'Gia hạn phiếu tạm ứng',
+        },
+        {
             _id: new Types.ObjectId('685cf633e0e45d397c4ca191'),
             api: '/goodsAdvance/addProduct',
             note: 'Thêm sản phẩm cho phiếu tạm ứng',
@@ -440,11 +445,6 @@ async function apiSeeder() {
             _id: new Types.ObjectId('685cf633e0e45d397c4ca193'),
             api: '/goodsAdvance/deleteProduct',
             note: 'Xóa sản phẩm khỏi phiếu tạm ứng',
-        },
-        {
-            _id: new Types.ObjectId('685cf633e0e45d397c4ca194'),
-            api: '/goodsAdvance/confirmQuantity',
-            note: 'Xác nhận số lượng sản phẩm của phiếu tạm ứng',
         },
         {
             _id: new Types.ObjectId('685cf633e0e45d397c4ca195'),

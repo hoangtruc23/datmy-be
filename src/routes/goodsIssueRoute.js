@@ -1311,7 +1311,7 @@ module.exports = router
  *             type: object
  *             required:
  *               - goodsIssueApprovalId
- *               - goodsIssueId
+ *               - status
  *             properties:
  *               goodsIssueApprovalId:
  *                 type: string
@@ -1319,7 +1319,10 @@ module.exports = router
  *               status:
  *                 type: string
  *                 enum: [approved, rejected, cancel]
- *                 example: [approved]
+ *                 example: approved
+ *               invoiceNumber:
+ *                 type: string
+ *                 example: 123
  *               content:
  *                 type: string
  *                 example: Ok
@@ -1420,7 +1423,6 @@ module.exports = router
  *                   type: string
  *                   example: null
  */
-
 
 /**
  * @swagger

@@ -12,8 +12,8 @@ const goodsAdvanceController = {
     },
     getById: async (req, res, next) => {
         try {
-            const { goodsIssueId } = req.params
-            const result = await goodsAdvanceService.getById(goodsIssueId)
+            const { goodsAdvanceId } = req.params
+            const result = await goodsAdvanceService.getById(goodsAdvanceId)
             return res.status(200).json(response.success(result))
         } catch (error) {
             next(error)
@@ -32,9 +32,9 @@ const goodsAdvanceController = {
     create: async (req, res, next) => {
         try {
             const currentUserId = req.userId
-            const { goodsIssueId } = req.params
+            const { goodsAdvanceId } = req.params
             const result = await goodsAdvanceService.create(
-                goodsIssueId,
+                goodsAdvanceId,
                 req.body,
                 currentUserId,
             )
@@ -46,9 +46,9 @@ const goodsAdvanceController = {
     update: async (req, res, next) => {
         try {
             const currentUserId = req.userId
-            const { goodsIssueId } = req.params
+            const { goodsAdvanceId } = req.params
             const result = await goodsAdvanceService.update(
-                goodsIssueId,
+                goodsAdvanceId,
                 req.body,
                 currentUserId,
             )
@@ -60,9 +60,23 @@ const goodsAdvanceController = {
     cancel: async (req, res, next) => {
         try {
             const currentUserId = req.userId
-            const { goodsIssueId } = req.params
+            const { goodsAdvanceId } = req.params
             const result = await goodsAdvanceService.cancel(
-                goodsIssueId,
+                goodsAdvanceId,
+                req.body,
+                currentUserId,
+            )
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
+    extend: async (req, res, next) => {
+        try {
+            const currentUserId = req.userId
+            const { goodsAdvanceId } = req.params
+            const result = await goodsAdvanceService.extend(
+                goodsAdvanceId,
                 req.body,
                 currentUserId,
             )
@@ -81,9 +95,9 @@ const goodsAdvanceController = {
     },
     updateProduct: async (req, res, next) => {
         try {
-            const { goodsIssueDetailId } = req.params
+            const { goodsAdvanceDetailId } = req.params
             const result = await goodsAdvanceService.updateProduct(
-                goodsIssueDetailId,
+                goodsAdvanceDetailId,
                 req.body,
             )
             return res.status(200).json(response.success(result))
@@ -93,9 +107,9 @@ const goodsAdvanceController = {
     },
     deleteProduct: async (req, res, next) => {
         try {
-            const { goodsIssueDetailId } = req.params
+            const { goodsAdvanceDetailId } = req.params
             const result =
-                await goodsAdvanceService.deleteProduct(goodsIssueDetailId)
+                await goodsAdvanceService.deleteProduct(goodsAdvanceDetailId)
             return res.status(200).json(response.success(result))
         } catch (error) {
             next(error)

@@ -47,7 +47,7 @@ const goodsAdvanceService = {
             throw error
         }
     },
-    getById: async (goodsIssueId) => {
+    getById: async (goodsAdvanceId) => {
         try {
             const goodsAdvance = await GoodsAdvanceModel.aggregate([
                 {
@@ -65,8 +65,8 @@ const goodsAdvanceService = {
                 },
                 {
                     $lookup: {
-                        from: 'goodsadvanceapprovals',
-                        as: 'approvals',
+                        from: 'goodsadvanceprocesses',
+                        as: 'processes',
                         localField: '_id',
                         foreignField: 'goodsAdvanceId',
                     },
@@ -82,10 +82,10 @@ const goodsAdvanceService = {
     },
     createTemporary: async (currentUserId) => {
         try {
-            const goodsIssue = await GoodsAdvanceModel.create({
+            const goodsAdvance = await GoodsAdvanceModel.create({
                 createdBy: currentUserId,
             })
-            return goodsIssue
+            return goodsAdvance
         } catch (error) {
             throw error
         }
@@ -113,8 +113,10 @@ const goodsAdvanceService = {
             }
             // if (!isDraft && checkGoodsIssue.isDraft) {
             // Nếu phiếu tạo mà không phải nháp thì ta cập nhật lại productStorage (tồn kho)
-            const goodsAdvanceDetails =
-                await GoodsAdvanceDetaileModel.find(goodsAdvanceId)
+
+            const goodsAdvanceDetails = await GoodsAdvanceDetaileModel.find({
+                goodsAdvanceId,
+            })
             for (let goodsAdvanceDetail of goodsAdvanceDetails) {
                 if (goodsAdvanceDetail.borrowStorages.length > 0) {
                     for (let storage of goodsAdvanceDetail.borrowStorages) {
@@ -167,7 +169,7 @@ const goodsAdvanceService = {
                         status: false,
                     },
                 ],
-                { session },
+                { session, ordered: true },
             )
             await session.commitTransaction()
             return null
@@ -273,8 +275,8 @@ const goodsAdvanceService = {
                 goodsAdvanceId: checkGoodsAdvance.goodsAdvanceId,
             })
             for (let goodsAdvanceDetail of goodsAdvanceDetails) {
-                if (goodsAdvanceDetail.storages.length > 0) {
-                    for (let storage of goodsAdvanceDetail.storages) {
+                if (goodsAdvanceDetail.borrowStorages.length > 0) {
+                    for (let storage of goodsAdvanceDetail.borrowStorages) {
                         await ProductStorageModel.findOneAndUpdate(
                             {
                                 warehouseId: goodsAdvanceDetail.warehouseId,
@@ -368,20 +370,20 @@ const goodsAdvanceService = {
             const {
                 goodsAdvanceId,
                 productId,
-                warehouseId,
+                borrowWarehouseId,
                 origin,
                 borrowedQuantity,
                 borrowStatus,
                 usageContent,
                 storages,
             } = product
-
+            console.log(borrowWarehouseId)
             session.startTransaction()
             const checkGoodsAdvanceDetail =
                 await GoodsAdvanceDetaileModel.findOne({
                     goodsAdvanceId,
                     productId,
-                    warehouseId,
+                    borrowWarehouseId,
                 })
             if (checkGoodsAdvanceDetail) {
                 throw new BadReq(errorCode.GOODS_ADVANCE_DETAIL_EXISTED)
@@ -394,7 +396,7 @@ const goodsAdvanceService = {
             const [checkAdvance, checkWarehouse, checkProduct] =
                 await Promise.all([
                     GoodsAdvanceModel.findById(goodsAdvanceId),
-                    WarehouseModel.findById(warehouseId),
+                    WarehouseModel.findById(borrowWarehouseId),
                     ProductModel.findById(productId),
                 ])
 
@@ -410,7 +412,7 @@ const goodsAdvanceService = {
             }
             // Check số lượng xuất có lớn hơn số lượng tồn kho không
             const productStorages = await ProductStorageModel.find({
-                warehouseId,
+                warehouseId: borrowWarehouseId,
                 productId,
             })
             const totalProduct = productStorages.reduce(
@@ -446,7 +448,7 @@ const goodsAdvanceService = {
                     {
                         goodsAdvanceId,
                         productId,
-                        warehouseId,
+                        borrowWarehouseId,
                         productCode: checkProduct?.code,
                         productName: checkProduct?.name,
                         managementType: checkProduct?.managementType,
@@ -457,7 +459,7 @@ const goodsAdvanceService = {
                         usageContent,
                         borrowWarehouseName: checkWarehouse.warehouseName,
                         borrowStorages: storages,
-                        note,
+                        // note,
                     },
                 ],
                 { session },
@@ -599,9 +601,9 @@ const goodsAdvanceService = {
         const session = await mongoose.startSession()
         try {
             session.startTransaction()
-            const { goodsAdvanceProcesId, status, note } = input
+            const { goodsAdvanceProcessId, status, note } = input
             const checkGoodsAdvanceProcess =
-                await GoodsAdvanceProcessModel.findById(goodsAdvanceProcesId)
+                await GoodsAdvanceProcessModel.findById(goodsAdvanceProcessId)
             if (!checkGoodsAdvanceProcess) {
                 throw new BadReq(errorCode.GOODS_ADVANCE_APPROVAL_NOT_FOUND)
             }
@@ -617,7 +619,7 @@ const goodsAdvanceService = {
                         goodsAdvanceId: checkGoodsAdvance._id,
                     })
                 for (let checkGoodsAdvanceDetail of checkGoodsAdvanceDetails) {
-                    if (checkGoodsAdvanceDetail.storages.length <= 0) {
+                    if (checkGoodsAdvanceDetail.borrowStorages.length <= 0) {
                         throw new BadReq(errorCode.APPROVAL_QUANTITY_NOT_YET)
                     }
                 }
@@ -627,17 +629,15 @@ const goodsAdvanceService = {
                 ) {
                     throw new BadReq(errorCode.NOT_PERMISSION_APPROVAL)
                 }
-                await GoodsAdvanceProcessModel.create(
-                    [
-                        {
-                            goodsAdvanceId: checkGoodsAdvance._id,
-                            title: constant.GOODS_ADVANCE_PROCESS_TITLE
-                                .APPROVAL,
-                            createdBy: currentUserId,
-                            status: true,
-                            note,
-                        },
-                    ],
+                await GoodsAdvanceProcessModel.findByIdAndUpdate(
+                    goodsAdvanceProcessId,
+                    {
+                        goodsAdvanceId: checkGoodsAdvance._id,
+                        title: constant.GOODS_ADVANCE_PROCESS_TITLE.APPROVAL,
+                        createdBy: currentUserId,
+                        status: true,
+                        note,
+                    },
                     { session },
                 )
                 await GoodsAdvanceModel.findByIdAndUpdate(
@@ -656,8 +656,8 @@ const goodsAdvanceService = {
                     checkGoodsAdvance.goodsAdvanceId,
                 )
                 for (let goodsAdvanceDetail of goodsAdvanceDetails) {
-                    if (goodsAdvanceDetail.storages.length > 0) {
-                        for (let storage of goodsAdvanceDetail.storages) {
+                    if (goodsAdvanceDetail.borrowStorages.length > 0) {
+                        for (let storage of goodsAdvanceDetail.borrowStorages) {
                             await ProductStorageModel.findOneAndUpdate(
                                 {
                                     warehouseId: goodsAdvanceDetail.warehouseId,

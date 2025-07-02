@@ -46,7 +46,6 @@ const goodsAdvanceDetailSchema = new Schema({
     returnWarehouseId: {
         type: Types.ObjectId,
         ref: 'warehouses',
-        required: true,
     },
     borrowedQuantity: {
         type: Number,
@@ -56,7 +55,6 @@ const goodsAdvanceDetailSchema = new Schema({
     returnedQuantity: {
         type: Number,
         min: 1,
-        required: true,
     },
     borrowStatus: {
         type: String,

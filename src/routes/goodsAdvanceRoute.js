@@ -8,6 +8,7 @@ router.post('/createTemporary', goodsAdvanceController.createTemporary)
 router.post('/create/:goodsAdvanceId', goodsAdvanceController.create)
 router.post('/update/:goodsAdvanceId', goodsAdvanceController.update)
 router.post('/cancel/:goodsAdvanceId', goodsAdvanceController.cancel)
+router.post('/extend/:goodsAdvanceId', goodsAdvanceController.extend)
 router.post('/addProduct', goodsAdvanceController.addProduct)
 router.post(
     '/updateProduct/:goodsAdvanceDetailId',
@@ -754,15 +755,21 @@ module.exports = router
  *               productId:
  *                 type: string
  *                 example: "684c4cd3d1becf7806470255"
- *               warehouseId:
+ *               borrowWarehouseId:
  *                 type: string
  *                 example: "684c4cd3d1becf7806470255"
  *               origin:
  *                 type: string
  *                 example: Xuất xứ sản phẩm
- *               AdvancedQuantity:
+ *               borrowedQuantity:
  *                 type: number
  *                 example: 3
+ *               borrowStatus:
+ *                 type: string
+ *                 example: Mới
+ *               usageContent:
+ *                 type: string
+ *                 example: Mới
  *               storages:
  *                 type: array
  *                 items:
@@ -1163,10 +1170,9 @@ module.exports = router
  *           schema:
  *             type: object
  *             required:
- *               - goodsAdvanceApprovalId
- *               - goodsAdvanceId
+ *               - goodsAdvanceProcessId
  *             properties:
- *               goodsAdvanceApprovalId:
+ *               goodsAdvanceProcessId:
  *                 type: string
  *                 example: "684c4cd3d1becf7806470255"
  *               status:

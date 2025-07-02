@@ -2,6 +2,11 @@ const { Schema, model, Types } = require('mongoose')
 const constant = require('../utils/constant/constant')
 
 const storagesSchema = new Schema({
+    _id: false,
+    productStorageId: {
+        type: Types.ObjectId,
+        ref: 'productStorages',
+    },
     trackingCode: {
         type: String,
     },

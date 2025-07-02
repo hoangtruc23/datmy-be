@@ -568,7 +568,8 @@ const goodsIssueService = {
         const session = await mongoose.startSession()
         try {
             session.startTransaction()
-            const { goodsIssueApprovalId, status, content } = input
+            const { goodsIssueApprovalId, status, invoiceNumber, content } =
+                input
             const checkGoodsIssueApproval =
                 await GoodsIssueApprovalModel.findById(goodsIssueApprovalId)
             if (!checkGoodsIssueApproval) {
@@ -722,6 +723,9 @@ const goodsIssueService = {
                         break
                     }
                     case constant.ROLES.billAccountant: {
+                        await GoodsIssueModel.findByIdAndUpdate({
+                            invoiceNumber,
+                        })
                         await GoodsIssueApprovalModel.findByIdAndUpdate(
                             goodsIssueApprovalId,
                             {
@@ -759,7 +763,7 @@ const goodsIssueService = {
             session.endSession()
         }
     },
-    
+
     exportReport: async (filters) => {
         try {
             const { startDate, endDate, warehouseIds, statuses } = filters
@@ -842,10 +846,7 @@ const goodsIssueService = {
                         issueNumber: '$goodsIssue.issueNumber',
                         status: '$goodsIssue.status',
                         deliveryAddress: {
-                            $ifNull: [
-                                '$goodsIssue.deliveryAddresses',
-                                'N/A',
-                            ],
+                            $ifNull: ['$goodsIssue.deliveryAddresses', 'N/A'],
                         },
                         customer: '$goodsIssue.customer',
                         productCode: '$productInfo.code',
@@ -903,7 +904,7 @@ const goodsIssueService = {
                 : results.length > 0
                   ? new Date(results[0].date).toLocaleDateString('vi-VN')
                   : '...'
-                  
+
             const reportConfig = {
                 worksheetName: 'Bảng kê chi tiết bán hàng',
                 reportTitle: 'BẢNG KÊ CHI TIẾT BÁN HÀNG THEO NGÀY',
