@@ -19,6 +19,7 @@ router.post(
     goodsAdvanceController.deleteProduct,
 )
 router.post('/approval', goodsAdvanceController.approval)
+router.post('/export', goodsAdvanceController.exportReport)
 module.exports = router
 
 /**
@@ -1277,4 +1278,88 @@ module.exports = router
  *                 data:
  *                   type: string
  *                   example: null
+ */
+
+
+
+/**
+ * @swagger
+ * /goodsAdvance/export:
+ *   post:
+ *     summary: Xuất báo cáo tạm ứng chi tiết ra file excel
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [GoodsAdvance]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               startDate:
+ *                 type: string
+ *                 format: date
+ *                 description: "Lọc theo ngày bắt đầu (YYYY-MM-DD). Mặc định là không giới hạn."
+ *                 example: "2025-06-01"
+ *               endDate:
+ *                 type: string
+ *                 format: date
+ *                 description: "Lọc theo ngày kết thúc (YYYY-MM-DD). Mặc định là không giới hạn."
+ *                 example: "2025-06-30"
+ *               warehouseIds:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   description: "ID của kho"
+ *                 description: "Mảng chứa các ID của kho cần lọc. Gửi mảng rỗng [] hoặc bỏ qua để lấy tất cả kho."
+ *                 example: ["684c41f3ae24ff427ec487ea", "68511d6d55dd137821188fdb"]
+ *               statuses:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   enum: [warehouseStaffApproval, approved, waitingForExtension, reject, cancel]
+ *                 description: "Mảng chứa các trạng thái cần lọc. Gửi mảng rỗng [] hoặc bỏ qua để lấy tất cả."
+ *                 example: ["approved", "reject"]
+ *     responses:
+ *       '200':
+ *         description: Yêu cầu thành công. Trả về file Excel để tải xuống.
+ *         content:
+ *           application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       '401':
+ *         description: Chưa xác thực hoặc token không hợp lệ.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status: { type: integer, example: 401 }
+ *                 code: { type: integer, example: -1 }
+ *                 message: { type: string, example: 'Không có token' }
+ *                 data: { type: 'null', example: null }
+ *       '403':
+ *         description: Không có quyền truy cập chức năng này.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status: { type: integer, example: 403 }
+ *                 code: { type: integer, example: -1 }
+ *                 message: { type: string, example: 'Không có quyền' }
+ *                 data: { type: 'null', example: null }
+ *       '500':
+ *         description: Lỗi máy chủ nội bộ.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status: { type: integer, example: 500 }
+ *                 code: { type: integer, example: -1 }
+ *                 message: { type: string, example: 'Lỗi server!' }
+ *                 data: { type: string, example: null }
  */
