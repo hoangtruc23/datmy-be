@@ -308,6 +308,11 @@ async function permissionApiSeeder() {
             permissionId: '685a2a4f4630d293367c288c',
             apiId: '685a2a4f4630d293367c288b', // /goodsReceipt/export
         },
+        {
+            permissionId: '6864fd7c1d9ec4d84204b720', // Tải file số hóa đơn/ hợp đồng phiếu nhập kho
+            apiId: '6864fd7c1d9ec4d84204b71a', // /goodsReceipt/downloadInvoice
+        },
+
         // Xuất kho
         {
             permissionId: '685a477d73dd15c087569dee', // Xem phiếu xuất kho
@@ -369,6 +374,14 @@ async function permissionApiSeeder() {
         {
             permissionId: '6861f2e524fe5c2a802dcaea',
             apiId: '6861f2e524fe5c2a802dcae9', // /goodsIssue/export
+        },
+        {
+            permissionId: '6864fd7c1d9ec4d84204b71e', // Tải file số hóa đơn/ hợp đồng phiếu xuất kho
+            apiId: '6864fd7c1d9ec4d84204b71c', // /goodsIssue/downloadInvoice
+        },
+        {
+            permissionId: '6864fd7c1d9ec4d84204b71f', // Tải file PDF phiếu xuất kho
+            apiId: '6864fd7c1d9ec4d84204b71d', // /goodsIssue/generatePdf
         },
 
         // Tạm ứng

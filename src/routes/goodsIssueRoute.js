@@ -19,6 +19,11 @@ router.post(
 )
 router.post('/approval', goodsIssueController.approval)
 router.post('/export', goodsIssueController.exportReport)
+router.get(
+    '/downloadInvoice/:goodsIssueId',
+    goodsIssueController.downloadInvoiceFile,
+)
+router.get('/generatePdf/:goodsIssueId', goodsIssueController.generatePdf)
 module.exports = router
 
 /**
@@ -1527,4 +1532,62 @@ module.exports = router
  *                 data:
  *                   type: "object"
  *                   nullable: true
+ */
+
+/**
+ * @swagger
+ * /goodsIssue/downloadInvoice/{goodsIssueId}:
+ *   get:
+ *     summary: Tải file số hoá đơn/hợp đồng của phiếu xuất kho
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [GoodsIssue]
+ *     parameters:
+ *       - in: path
+ *         name: goodsIssueId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID của phiếu xuất kho
+ *     responses:
+ *       200:
+ *         description: Trả về file để tải về
+ *         content:
+ *           application/octet-stream:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       400:
+ *         description: Không tìm thấy phiếu hoặc file
+ *       500:
+ *         description: Lỗi server khi tải file
+ */
+
+/**
+ * @swagger
+ * /goodsIssue/generatePdf/{goodsIssueId}:
+ *   get:
+ *     summary: Xuất file PDF phiếu xuất kho
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [GoodsIssue]
+ *     parameters:
+ *       - in: path
+ *         name: goodsIssueId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID của phiếu xuất kho
+ *     responses:
+ *       200:
+ *         description: Trả về file PDF để tải về
+ *         content:
+ *           application/pdf:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       404:
+ *         description: Không tìm thấy phiếu
+ *       500:
+ *         description: Lỗi tạo PDF
  */

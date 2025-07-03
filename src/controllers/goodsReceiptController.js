@@ -142,6 +142,14 @@ const goodsReceiptController = {
             next(error)
         }
     },
+    downloadInvoiceFile: async (req, res, next) => {
+        try {
+            const { id } = req.params
+            await goodsReceiptService.downloadInvoiceFile(id, res)
+        } catch (err) {
+            next(err)
+        }
+    },
 }
 
 module.exports = goodsReceiptController

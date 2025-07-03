@@ -225,6 +225,14 @@ const errorCode = {
         code: 58,
         message: 'Không tìm thấy phiếu nhập kho cho số lô này',
     },
+    FILE_NOT_FOUND: {
+        code: 59,
+        message: 'Không tìm thấy file',
+    },
+    FILE_DOWNLOAD_FAILED: {
+        code: 60,
+        message: 'Tải file không thành công',
+    },
 }
 
 module.exports = errorCode

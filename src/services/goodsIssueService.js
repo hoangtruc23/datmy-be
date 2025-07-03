@@ -11,7 +11,10 @@ const ProductStorageModel = require('../models/productStorage')
 const GoodsIssueApprovalModel = require('../models/goodsIssueApproval')
 const UserModel = require('../models/user')
 const CustomerModel = require('../models/customer')
+const GoodsIssueDetailModel = require('../models/goodsIssueDetail')
 const { findDuplicateTrackingCode } = require('../utils/helper/helper')
+const downloadService = require('./downloadService')
+const pdfService = require('./pdfService')
 
 const goodsIssueService = {
     getAll: async (query) => {
@@ -1013,6 +1016,38 @@ const goodsIssueService = {
             return generateGoodsReport(groupedByDate, reportConfig)
         } catch (error) {
             throw error
+        }
+    },
+    downloadInvoiceFile: async (goodsIssueId, res) => {
+        try {
+            const goodsIssue = await GoodsIssueModel.findById(goodsIssueId)
+            if (!goodsIssue) {
+                throw new BadReq(errorCode.GOODS_ISSUE_NOT_FOUND)
+            }
+
+            const invoiceFile = goodsIssue.invoiceFile
+            await downloadService.downloadFile(invoiceFile, res)
+        } catch (error) {
+            throw error
+        }
+    },
+
+    generatePdf: async (goodsIssueId) => {
+        const goodsIssue = await GoodsIssueModel.findById(goodsIssueId).lean()
+        if (!goodsIssue) {
+            throw new BadReq(errorCode.GOODS_ISSUE_NOT_FOUND)
+        }
+        const goodsIssueDetails = await GoodsIssueDetailModel.find({
+            goodsIssueId,
+        }).lean()
+        const goodsIssueApproval = await GoodsIssueApprovalModel.findOne({
+            goodsIssueId,
+        }).lean()
+        const data = { ...goodsIssue, goodsIssueDetails, goodsIssueApproval }
+        const pdfBuffer = await pdfService.generateGoodsIssuePdf(data)
+        return {
+            pdfBuffer: pdfBuffer,
+            invoiceNumber: goodsIssue.invoiceNumber || goodsIssueId,
         }
     },
 }

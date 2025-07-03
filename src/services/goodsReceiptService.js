@@ -13,7 +13,7 @@ const GoodsReceiptApprovalModel = require('../models/goodsReceiptApproval')
 const UserModel = require('../models/user')
 const SupplierModel = require('../models/supplier')
 const { findDuplicateTrackingCode } = require('../utils/helper/helper')
-
+const downloadService = require('./downloadService')
 const goodsReceiptService = {
     getAll: async (query) => {
         try {
@@ -805,6 +805,21 @@ const goodsReceiptService = {
 
             // 3. Call the generic helper
             return generateGoodsReport(groupedByDate, reportConfig)
+        } catch (error) {
+            throw error
+        }
+    },
+    downloadInvoiceFile: async (goodsReceiptId, res) => {
+        try {
+            const goodsReceipt =
+                await GoodsReceiptModel.findById(goodsReceiptId)
+            if (!goodsReceipt) {
+                throw new BadReq(errorCode.GOODS_RECEIPT_NOT_FOUND)
+            }
+
+            const invoiceFile = goodsReceipt.invoiceFile
+
+            await downloadService.downloadFile(invoiceFile, res)
         } catch (error) {
             throw error
         }

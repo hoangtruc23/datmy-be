@@ -128,6 +128,31 @@ const goodsIssueController = {
             next(error)
         }
     },
+    downloadInvoiceFile: async (req, res, next) => {
+        try {
+            const { goodsIssueId } = req.params
+            await goodsIssueService.downloadInvoiceFile(goodsIssueId, res)
+        } catch (err) {
+            next(err)
+        }
+    },
+
+    generatePdf: async (req, res, next) => {
+        try {
+            const { goodsIssueId } = req.params
+            const { pdfBuffer, invoiceNumber } =
+                await goodsIssueService.generatePdf(goodsIssueId)
+
+            res.setHeader('Content-Type', 'application/pdf')
+            res.setHeader(
+                'Content-Disposition',
+                `attachment; filename=phieu_xuat_kho_${invoiceNumber}.pdf`,
+            )
+            res.send(pdfBuffer)
+        } catch (err) {
+            next(err)
+        }
+    },
 }
 
 module.exports = goodsIssueController

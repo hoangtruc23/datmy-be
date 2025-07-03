@@ -332,6 +332,11 @@ async function apiSeeder() {
             api: '/goodsReceipt/export',
             note: 'Xuất báo cáo nhập kho ra excel',
         },
+        {
+            _id: new Types.ObjectId('6864fd7c1d9ec4d84204b71a'),
+            api: '/goodsReceipt/downloadInvoice',
+            note: 'Tải file số hóa đơn/ hợp đồng phiếu nhập kho',
+        },
 
         // Xuất kho
         {
@@ -394,7 +399,16 @@ async function apiSeeder() {
             api: '/goodsIssue/export',
             note: 'Xuất báo cáo xuất kho ra excel',
         },
-
+        {
+            _id: new Types.ObjectId('6864fd7c1d9ec4d84204b71c'),
+            api: '/goodsIssue/downloadInvoice',
+            note: 'Tải file số hóa đơn/ hợp đồng phiếu xuất kho',
+        },
+        {
+            _id: new Types.ObjectId('6864fd7c1d9ec4d84204b71d'),
+            api: '/goodsIssue/generatePdf',
+            note: 'Tải file PDF phiếu xuất kho',
+        },
         // Tạm ứng
         {
             _id: new Types.ObjectId('685cf633e0e45d397c4ca18b'),
