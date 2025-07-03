@@ -23,6 +23,8 @@ router.post(
 )
 router.post('/approval', goodsReceiptController.approval)
 router.post('/export', goodsReceiptController.exportReport)
+router.get('/downloadInvoice/:id', goodsReceiptController.downloadInvoiceFile)
+
 module.exports = router
 
 /**
@@ -1606,4 +1608,33 @@ module.exports = router
  *                 data:
  *                   type: string
  *                   example: null
+ */
+
+/**
+ * @swagger
+ * /goodsReceipt/downloadInvoice/{id}:
+ *   get:
+ *     summary: Tải file số hoá đơn/hợp đồng của phiếu nhập kho
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [GoodsReceipt]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID của phiếu nhập kho
+ *     responses:
+ *       200:
+ *         description: Trả về file để tải về
+ *         content:
+ *           application/octet-stream:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       400:
+ *         description: Không tìm thấy phiếu hoặc file
+ *       500:
+ *         description: Lỗi server khi tải file
  */

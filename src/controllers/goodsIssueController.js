@@ -114,18 +114,43 @@ const goodsIssueController = {
     },
     exportReport: async (req, res, next) => {
         try {
-            const buffer = await goodsIssueService.exportReport(req.body);
+            const buffer = await goodsIssueService.exportReport(req.body)
             res.setHeader(
                 'Content-Type',
                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            );
+            )
             res.setHeader(
                 'Content-Disposition',
                 'attachment; filename="Bao_cao_ban_hang.xlsx"',
-            );
-            res.send(buffer);
+            )
+            res.send(buffer)
         } catch (error) {
-            next(error);
+            next(error)
+        }
+    },
+    downloadInvoiceFile: async (req, res, next) => {
+        try {
+            const { goodsIssueId } = req.params
+            await goodsIssueService.downloadInvoiceFile(goodsIssueId, res)
+        } catch (err) {
+            next(err)
+        }
+    },
+
+    generatePdf: async (req, res, next) => {
+        try {
+            const { goodsIssueId } = req.params
+            const { pdfBuffer, invoiceNumber } =
+                await goodsIssueService.generatePdf(goodsIssueId)
+
+            res.setHeader('Content-Type', 'application/pdf')
+            res.setHeader(
+                'Content-Disposition',
+                `attachment; filename=phieu_xuat_kho_${invoiceNumber}.pdf`,
+            )
+            res.send(pdfBuffer)
+        } catch (err) {
+            next(err)
         }
     },
 }

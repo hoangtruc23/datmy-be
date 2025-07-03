@@ -311,6 +311,12 @@ async function permissionSeeder() {
             code: 'nhap_kho-xuat_bao_cao',
             parentPermissionId: '684927c871287f2ae7d81307',
         },
+        {
+            _id: new Types.ObjectId('6864fd7c1d9ec4d84204b720'),
+            name: 'Tải file số hóa đơn/ hợp đồng phiếu nhập kho',
+            code: 'nhap_kho-tai_file_so_hoa_don',
+            parentPermissionId: '684927c871287f2ae7d81307',
+        },
 
         // Xuất kho
         {
@@ -347,6 +353,18 @@ async function permissionSeeder() {
             _id: new Types.ObjectId('6861f2e524fe5c2a802dcaea'),
             name: 'Xuất báo cáo',
             code: 'xuat_kho-xuat_bao_cao',
+            parentPermissionId: '684927c871287f2ae7d81308',
+        },
+        {
+            _id: new Types.ObjectId('6864fd7c1d9ec4d84204b71e'),
+            name: 'Tải file số hóa đơn/ hợp đồng phiếu xuất kho',
+            code: 'xuat_kho-tai_file_so_hoa_don',
+            parentPermissionId: '684927c871287f2ae7d81308',
+        },
+        {
+            _id: new Types.ObjectId('6864fd7c1d9ec4d84204b71f'),
+            name: 'Tải file PDF phiếu xuất kho',
+            code: 'xuat_kho-tai_file_pdf_phieu_xuat_kho',
             parentPermissionId: '684927c871287f2ae7d81308',
         },
 
