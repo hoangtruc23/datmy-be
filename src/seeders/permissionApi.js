@@ -385,6 +385,67 @@ async function permissionApiSeeder() {
         },
 
         // Tạm ứng
+        {
+            permissionId: '685cf633e0e45d397c4ca197', // Xem phiếu tạm ứng
+            apiId: '685cf633e0e45d397c4ca18b', // /goodsAdvance/getAll
+        },
+        {
+            permissionId: '685cf633e0e45d397c4ca197', // Xem phiếu tạm ứng
+            apiId: '685cf633e0e45d397c4ca18c', // /goodsAdvance/getById
+        },
+        {
+            permissionId: '685cf633e0e45d397c4ca198', // Tạo phiếu tạm ứng
+            apiId: '685cf633e0e45d397c4ca18d', // /goodsAdvance/createTemporary
+        },
+        {
+            permissionId: '685cf633e0e45d397c4ca198', // Tạo phiếu tạm ứng
+            apiId: '685cf633e0e45d397c4ca18e', // /goodsAdvance/create
+        },
+        {
+            permissionId: '685cf633e0e45d397c4ca198', // Tạo phiếu tạm ứng
+            apiId: '685cf633e0e45d397c4ca190', // /goodsAdvance/cancel
+        },
+        {
+            permissionId: '685cf633e0e45d397c4ca198', // Tạo phiếu tạm ứng
+            apiId: '686499029ae62f462152a6d4', // /goodsAdvance/extend
+        },
+        {
+            permissionId: '685cf633e0e45d397c4ca198', // Tạo phiếu tạm ứng
+            apiId: '685cf633e0e45d397c4ca191', // /goodsAdvance/addProduct
+        },
+        {
+            permissionId: '685cf633e0e45d397c4ca198', // Tạo phiếu tạm ứng
+            apiId: '685cf633e0e45d397c4ca192', // /goodsAdvance/updateProduct
+        },
+        {
+            permissionId: '685cf633e0e45d397c4ca198', // Tạo phiếu tạm ứng
+            apiId: '685cf633e0e45d397c4ca193', // /goodsAdvance/deleteProduct
+        },
+        // {
+        //     permissionId: '685cf633e0e45d397c4ca199', // Cập nhật phiếu tạm ứng
+        //     apiId: '685a477d73dd15c087569de7', // /goodsAdvance/update
+        // },
+        // //Cập nhật thì cũng có thể thêm xóa sửa sản phẩm cho phiếu tạm ứng
+        // {
+        //     permissionId: '685cf633e0e45d397c4ca199', // Cập nhật phiếu tạm ứng
+        //     apiId: '685a477d73dd15c087569de9', // /goodsAdvance/addProduct
+        // },
+        // {
+        //     permissionId: '685cf633e0e45d397c4ca199', // Cập nhật phiếu tạm ứng
+        //     apiId: '685a477d73dd15c087569dea', // /goodsAdvance/updateProduct
+        // },
+        // {
+        //     permissionId: '685cf633e0e45d397c4ca199', // Cập nhật phiếu tạm ứng
+        //     apiId: '685a477d73dd15c087569deb', // /goodsAdvance/deleteProduct
+        // },
+        {
+            permissionId: '685cf633e0e45d397c4ca19a', // Xác nhận nhập kho
+            apiId: '685cf633e0e45d397c4ca195', // /goodsAdvance/approval
+        },
+        {
+            permissionId: '6864e6cd4c3c96b50ff0e104', // Permission: Xuất báo cáo (Tạm ứng)
+            apiId: '6864e6cd4c3c96b50ff0e105',       // API: /goodsAdvance/export
+        },
     ])
     logger.info('PermissionApis seeded')
 }

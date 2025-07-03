@@ -571,7 +571,8 @@ const goodsIssueService = {
         const session = await mongoose.startSession()
         try {
             session.startTransaction()
-            const { goodsIssueApprovalId, status, content } = input
+            const { goodsIssueApprovalId, status, invoiceNumber, content } =
+                input
             const checkGoodsIssueApproval =
                 await GoodsIssueApprovalModel.findById(goodsIssueApprovalId)
             if (!checkGoodsIssueApproval) {
@@ -725,6 +726,9 @@ const goodsIssueService = {
                         break
                     }
                     case constant.ROLES.billAccountant: {
+                        await GoodsIssueModel.findByIdAndUpdate({
+                            invoiceNumber,
+                        })
                         await GoodsIssueApprovalModel.findByIdAndUpdate(
                             goodsIssueApprovalId,
                             {
@@ -762,6 +766,7 @@ const goodsIssueService = {
             session.endSession()
         }
     },
+
     exportReport: async (filters) => {
         try {
             const { startDate, endDate, warehouseIds, statuses } = filters

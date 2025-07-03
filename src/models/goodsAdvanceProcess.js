@@ -27,7 +27,7 @@ const goodsAdvanceProcessSchema = new Schema(
 )
 
 const GoodsAdvanceProcessModel = model(
-    'goodsAdvancePrcesses',
+    'goodsAdvanceProcesses',
     goodsAdvanceProcessSchema,
 )
 
