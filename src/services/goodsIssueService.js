@@ -427,7 +427,7 @@ const goodsIssueService = {
                         productCode: checkProduct?.code,
                         productName: checkProduct?.name,
                         managementType: checkProduct?.managementType,
-                        unit: checkProduct?.checkProduct,
+                        unit: checkProduct?.unit?.name,
                         origin,
                         issuedQuantity,
                         price,
@@ -540,7 +540,7 @@ const goodsIssueService = {
                 productCode: checkProduct?.productCode,
                 productName: checkProduct?.productName,
                 managementType: checkProduct?.managementType,
-                unit: checkProduct?.checkProduct,
+                unit: checkProduct?.unit?.name,
                 origin,
                 issuedQuantity,
                 price,
@@ -726,7 +726,7 @@ const goodsIssueService = {
                         break
                     }
                     case constant.ROLES.billAccountant: {
-                        await GoodsIssueModel.findByIdAndUpdate({
+                        await GoodsIssueModel.findByIdAndUpdate(checkGoodsIssue._id, {
                             invoiceNumber,
                         })
                         await GoodsIssueApprovalModel.findByIdAndUpdate(

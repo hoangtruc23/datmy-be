@@ -348,13 +348,19 @@ const goodsAdvanceService = {
                 [
                     {
                         goodsAdvanceId,
-                        title: constant.GOODS_ADVANCE_PROCESS_TITLE.CANCEL,
+                        title: constant.GOODS_ADVANCE_PROCESS_TITLE.EXTEND,
                         createdBy: currentUserId,
                         status: true,
                         note,
                     },
+                    {
+                        goodsAdvanceId,
+                        title: constant.GOODS_ADVANCE_PROCESS_TITLE.APPROVAL,
+                        // createdBy: currentUserId,
+                        status: false,
+                    },
                 ],
-                { session },
+                { session, ordered: true },
             )
             await session.commitTransaction()
             return null
