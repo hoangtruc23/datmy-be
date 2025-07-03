@@ -256,6 +256,10 @@ async function permissionApiSeeder() {
             apiId: '6856e210a596678c37b505e2', // /goodsReceipt/getById
         },
         {
+            permissionId: '6856e210a596678c37b505e1', // Xem phiếu nhập kho
+            apiId: '6864fd7c1d9ec4d84204b71a', // /goodsReceipt/downloadInvoice
+        },
+        {
             permissionId: '68568d96dd90fa75cb286479', // Tạo phiếu nhập kho
             apiId: '68568d96dd90fa75cb28647a', // /goodsReceipt/createTemporary
         },
@@ -322,6 +326,15 @@ async function permissionApiSeeder() {
             permissionId: '685a477d73dd15c087569dee', // Xem phiếu xuất kho
             apiId: '685a477d73dd15c087569de4', // /goodsIssue/getById
         },
+        {
+            permissionId: '685a477d73dd15c087569dee', // Xem phiếu xuất kho
+            apiId: '6864fd7c1d9ec4d84204b71c', // /goodsIssue/downloadInvoice
+        },
+        {
+            permissionId: '685a477d73dd15c087569dee', // Xem phiếu xuất kho
+            apiId: '6864fd7c1d9ec4d84204b71d', // /goodsIssue/generatePdf
+        },
+
         {
             permissionId: '685a477d73dd15c087569def', // Tạo phiếu xuất kho
             apiId: '685a477d73dd15c087569de5', // /goodsIssue/createTemporary
