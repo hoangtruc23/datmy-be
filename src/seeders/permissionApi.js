@@ -457,7 +457,7 @@ async function permissionApiSeeder() {
         },
         {
             permissionId: '6864e6cd4c3c96b50ff0e104', // Permission: Xuất báo cáo (Tạm ứng)
-            apiId: '6864e6cd4c3c96b50ff0e105',       // API: /goodsAdvance/export
+            apiId: '6864e6cd4c3c96b50ff0e105', // API: /goodsAdvance/export
         },
     ])
     logger.info('PermissionApis seeded')

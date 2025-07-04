@@ -1280,8 +1280,6 @@ module.exports = router
  *                   example: null
  */
 
-
-
 /**
  * @swagger
  * /goodsAdvance/export:

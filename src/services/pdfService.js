@@ -65,7 +65,10 @@ const pdfService = {
             .replace('{{checkBy}}', data.checkBy || '')
             .replace('{{storekeeper}}', data.storekeeper || '')
 
-        const browser = await puppeteer.launch({ headless: true })
+        const browser = await puppeteer.launch({
+            headless: true,
+            args: ['--no-sandbox', '--disable-setuid-sandbox'],
+        })
         const page = await browser.newPage()
         await page.setContent(html, { waitUntil: 'networkidle0' })
 

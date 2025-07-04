@@ -129,18 +129,18 @@ const goodsAdvanceController = {
     },
     exportReport: async (req, res, next) => {
         try {
-            const buffer = await goodsAdvanceService.exportReport(req.body);
+            const buffer = await goodsAdvanceService.exportReport(req.body)
             res.setHeader(
                 'Content-Type',
                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            );
+            )
             res.setHeader(
                 'Content-Disposition',
                 'attachment; filename="Bao_cao_tam_ung.xlsx"',
-            );
-            res.send(buffer);
+            )
+            res.send(buffer)
         } catch (error) {
-            next(error);
+            next(error)
         }
     },
 }

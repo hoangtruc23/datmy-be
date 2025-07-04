@@ -17,7 +17,6 @@ const downloadService = {
             '../public',
             relativeFilePath,
         )
-        console.log('Absolute Path:', absolutePath)
         if (!fs.existsSync(absolutePath)) {
             throw new BadReq(errorCode.FILE_NOT_FOUND)
         }

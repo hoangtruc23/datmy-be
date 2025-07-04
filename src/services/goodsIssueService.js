@@ -726,9 +726,12 @@ const goodsIssueService = {
                         break
                     }
                     case constant.ROLES.billAccountant: {
-                        await GoodsIssueModel.findByIdAndUpdate(checkGoodsIssue._id, {
-                            invoiceNumber,
-                        })
+                        await GoodsIssueModel.findByIdAndUpdate(
+                            checkGoodsIssue._id,
+                            {
+                                invoiceNumber,
+                            },
+                        )
                         await GoodsIssueApprovalModel.findByIdAndUpdate(
                             goodsIssueApprovalId,
                             {
