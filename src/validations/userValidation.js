@@ -63,7 +63,7 @@ const userValidation = {
                         'Mật khẩu phải có ít nhất 1 chữ cái, 1 số, 1 ký tự đặc biệt và độ dài từ 3–30 ký tự',
                     'any.required': 'Mật khẩu là bắt buộc',
                 }),
-            roles: joi.array().items(joi.string()).min(1).required().messages({
+            roleIds: joi.array().items(joi.string()).min(1).required().messages({
                 'array.base': 'Quyền phải là một mảng',
                 'array.includes': 'Mỗi quyền phải là một chuỗi',
                 'array.min': 'Phải có ít nhất một quyền',
