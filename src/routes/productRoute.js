@@ -21,6 +21,11 @@ router.get(
     '/getReceiptByTrackingCode',
     productController.getReceiptByTrackingCode,
 )
+router.get('/getIssueByTrackingCode', productController.getIssueByTrackingCode)
+router.get(
+    '/getAdvanceByTrackingCode',
+    productController.getAdvanceByTrackingCode,
+)
 module.exports = router
 
 /**
@@ -424,4 +429,106 @@ module.exports = router
  *     responses:
  *       200:
  *         description: Thông tin phiếu nhập có chứa trackingCode tương ứng
+ */
+
+/**
+ * @swagger
+ * /product/getIssueByTrackingCode:
+ *   get:
+ *     summary: Tìm phiếu xuất kho theo mã trackingCode
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Product]
+ *     parameters:
+ *       - in: query
+ *         name: trackingCode
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Mã trackingCode trong chi tiết phiếu xuất
+ *     responses:
+ *       200:
+ *         description: Thông tin phiếu xuất có chứa trackingCode tương ứng
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
+ *                 code:
+ *                   type: integer
+ *                   example: 1
+ *                 message:
+ *                   type: string
+ *                   example: OK!
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       goodsIssueId:
+ *                         type: string
+ *                         example: "68623cd765a37f482d98c864"
+ *                       issueNumber:
+ *                         type: integer
+ *                         example: 30
+ *                       status:
+ *                         type: string
+ *                         example: "rejected"
+ *                       approvedBy:
+ *                         type: string
+ *                         example: "Quản trị viên"
+ */
+
+/**
+ * @swagger
+ * /product/getAdvanceByTrackingCode:
+ *   get:
+ *     summary: Tìm phiếu tạm ứng theo mã trackingCode
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Product]
+ *     parameters:
+ *       - in: query
+ *         name: trackingCode
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Mã trackingCode trong borrowStorages
+ *     responses:
+ *       200:
+ *         description: Thông tin phiếu tạm ứng chứa trackingCode tương ứng
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
+ *                 code:
+ *                   type: integer
+ *                   example: 1
+ *                 message:
+ *                   type: string
+ *                   example: OK!
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       goodsAdvanceId:
+ *                         type: string
+ *                         example: "68623cd765a37f482d98c864"
+ *                       advanceNumber:
+ *                         type: integer
+ *                         example: 12
+ *                       status:
+ *                         type: string
+ *                         example: "approved"
+ *                       fullname:
+ *                         type: string
+ *                         example: "Nguyễn Văn A"
  */

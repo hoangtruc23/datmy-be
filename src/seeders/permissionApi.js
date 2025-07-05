@@ -216,6 +216,14 @@ async function permissionApiSeeder() {
             apiId: '685e0db179ac9c1b83c0f4b1', // /product/getReceiptByTrackingCode
         },
         {
+            permissionId: '685a1b9f9f5d2f68d81a1eb8', // Cập nhật
+            apiId: '6867a1e973162d4001f57c90', // /product/getIssueByTrackingCode
+        },
+        {
+            permissionId: '685a1b9f9f5d2f68d81a1eb8', // Cập nhật
+            apiId: '6868e75fcebe446e4c78bbb6', // /product/getAdvanceByTrackingCode
+        },
+        {
             permissionId: '685a1b9f9f5d2f68d81a1eb9', // Khóa/Mở khóa
             apiId: '685a1b9f9f5d2f68d81a1eb0', // /product/lockUnlock
         },

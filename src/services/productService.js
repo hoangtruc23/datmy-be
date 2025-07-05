@@ -2,6 +2,13 @@ const ProductModel = require('../models/product')
 const ProductStorageModel = require('../models/productStorage')
 const WarehouseModel = require('../models/warehouses')
 const GoodsReceiptDetailModel = require('../models/goodsReceiptDetail')
+const GoodsReceiptModel = require('../models/goodsReceipt')
+const GoodsIssueDetailModel = require('../models/goodsIssueDetail')
+const GoodsIssueModel = require('../models/goodsIssue')
+const GoodsIssueApprovalModel = require('../models/goodsIssueApproval')
+const GoodsAdvanceDetailModel = require('../models/goodsAdvanceDetail')
+const GoodsAdvanceModel = require('../models/goodsAdvance')
+const UserModel = require('../models/user')
 const UnitModel = require('../models/unit')
 const errorCode = require('../utils/response/errorCode')
 const BadReq = require('../utils/response/requestError')
@@ -349,7 +356,75 @@ const productCategoryService = {
             const storages = await ProductStorageModel.find(filter).select(
                 'trackingCode warehouseId quantity',
             )
-            return storages
+
+            const warehouseIds = [
+                ...new Set(
+                    storages
+                        .map((s) => s.warehouseId)
+                        .filter((id) => id)
+                        .map((id) => id.toString()),
+                ),
+            ]
+
+            const trackingCodes = [
+                ...new Set(
+                    storages.map((s) => s.trackingCode).filter((code) => code),
+                ),
+            ]
+
+            const warehouses = await WarehouseModel.find({
+                _id: { $in: warehouseIds },
+            }).select('_id name')
+            const warehouseMap = new Map(
+                warehouses.map((w) => [w._id.toString(), w.name]),
+            )
+
+            const receiptDetails = await GoodsReceiptDetailModel.find({
+                'storages.trackingCode': { $in: trackingCodes },
+            }).select('storages goodsReceiptId')
+
+            const trackCodeToReceiptMap = new Map()
+            for (const detail of receiptDetails) {
+                for (const storage of detail.storages || []) {
+                    if (storage.trackingCode && detail.goodsReceiptId) {
+                        trackCodeToReceiptMap.set(
+                            storage.trackingCode,
+                            detail.goodsReceiptId.toString(),
+                        )
+                    }
+                }
+            }
+
+            const goodsReceiptIds = [
+                ...new Set(Array.from(trackCodeToReceiptMap.values())),
+            ]
+
+            const receipts = await GoodsReceiptModel.find({
+                _id: { $in: goodsReceiptIds },
+            }).select('_id receiptNumber')
+
+            const receiptIdToNumberMap = new Map(
+                receipts.map((r) => [r._id.toString(), r.receiptNumber]),
+            )
+
+            const result = storages.map((storage) => {
+                const warehouseName =
+                    warehouseMap.get(storage.warehouseId?.toString()) || null
+
+                const goodsReceiptId = trackCodeToReceiptMap.get(
+                    storage.trackingCode,
+                )
+                const receiptNumber = goodsReceiptId
+                    ? receiptIdToNumberMap.get(goodsReceiptId) || null
+                    : null
+
+                return {
+                    ...storage.toObject(),
+                    warehouseName,
+                    receiptNumber,
+                }
+            })
+            return result
         } catch (error) {
             throw error
         }
@@ -366,6 +441,118 @@ const productCategoryService = {
             }
 
             return goodsReceiptId
+        } catch (error) {
+            throw error
+        }
+    },
+
+    getIssueByTrackingCode: async (trackingCode) => {
+        try {
+            const issueDetails = await GoodsIssueDetailModel.find({
+                'storages.trackingCode': trackingCode,
+            }).select('goodsIssueId')
+
+            if (!issueDetails || issueDetails.length === 0) {
+                throw new BadReq(errorCode.TRACKING_CODE_NOT_FOUND)
+            }
+
+            const goodsIssueIds = issueDetails
+                .map((detail) => detail.goodsIssueId)
+                .filter((id) => id != null)
+                .map((id) => id.toString())
+
+            const goodsIssues = await GoodsIssueModel.find({
+                _id: { $in: goodsIssueIds },
+            }).select('_id issueNumber status createdAt')
+
+            const issueMap = new Map(
+                goodsIssues.map((issue) => [
+                    issue._id.toString(),
+                    {
+                        issueNumber: issue.issueNumber,
+                        status: issue.status,
+                        createdAt: issue.createdAt,
+                    },
+                ]),
+            )
+            const approvals = await GoodsIssueApprovalModel.find({
+                goodsIssueId: { $in: goodsIssueIds },
+            }).select('goodsIssueId createdBy.approvedBy')
+
+            const approvalMap = new Map(
+                approvals.map((a) => [
+                    a.goodsIssueId.toString(),
+                    a.createdBy?.approvedBy || null,
+                ]),
+            )
+
+            const formatDateTime = (date) => {
+                if (!date) return null
+                const d = new Date(date)
+                const pad = (n) => n.toString().padStart(2, '0')
+                return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())} ${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} `
+            }
+            const result = goodsIssueIds.map((id) => ({
+                goodsIssueId: id,
+                issueNumber: issueMap.get(id)?.issueNumber || null,
+                status: issueMap.get(id)?.status || null,
+                approvedBy: approvalMap.get(id) || null,
+                createdAt: formatDateTime(issueMap.get(id)?.createdAt) || null,
+            }))
+
+            return result
+        } catch (error) {
+            throw error
+        }
+    },
+
+    getAdvanceByTrackingCode: async (trackingCode) => {
+        try {
+            const advanceDetails = await GoodsAdvanceDetailModel.find({
+                'borrowStorages.trackingCode': trackingCode,
+            }).select('goodsAdvanceId')
+
+            if (!advanceDetails || advanceDetails.length === 0) {
+                throw new BadReq(errorCode.TRACKING_CODE_NOT_FOUND)
+            }
+
+            const goodsAdvanceIds = advanceDetails
+                .map((detail) => detail.goodsAdvanceId)
+                .filter((id) => id != null)
+                .map((id) => id.toString())
+            const advances = await GoodsAdvanceModel.find({
+                _id: { $in: goodsAdvanceIds },
+            }).select('_id advanceNumber status createdBy createdAt')
+
+            const userIds = advances
+                .map((a) => a.createdBy)
+                .filter((id) => id != null)
+                .map((id) => id.toString())
+
+            const users = await UserModel.find({
+                _id: { $in: userIds },
+            }).select('_id fullname')
+
+            const userMap = new Map(
+                users.map((user) => [user._id.toString(), user.fullname]),
+            )
+
+            const formatDateTime = (date) => {
+                if (!date) return null
+                const d = new Date(date)
+                const pad = (n) => n.toString().padStart(2, '0')
+                return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())} ${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} `
+            }
+
+            const result = advances.map((a) => ({
+                goodsAdvanceId: a._id.toString(),
+                advanceNumber: a.advanceNumber,
+                status: a.status,
+                fullname: userMap.get(a.createdBy?.toString()) || null,
+                createdAt: formatDateTime(a.createdAt) || null,
+            }))
+
+            return result
         } catch (error) {
             throw error
         }
