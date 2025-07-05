@@ -126,6 +126,26 @@ const productController = {
             next(error)
         }
     },
+    getIssueByTrackingCode: async (req, res, next) => {
+        try {
+            const { trackingCode } = req.query
+            const issue =
+                await productService.getIssueByTrackingCode(trackingCode)
+            return res.status(200).json(response.success(issue))
+        } catch (error) {
+            next(error)
+        }
+    },
+    getAdvanceByTrackingCode: async (req, res, next) => {
+        try {
+            const { trackingCode } = req.query
+            const goodsAdvance =
+                await productService.getAdvanceByTrackingCode(trackingCode)
+            return res.status(200).json(response.success(goodsAdvance))
+        } catch (error) {
+            next(error)
+        }
+    },
 }
 
 module.exports = productController
