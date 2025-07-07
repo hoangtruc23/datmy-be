@@ -55,6 +55,41 @@ const constant = {
         REJECTED: 'rejected',
         CANCEL: 'cancel',
     },
+    PAYMENT_STATUS: {
+        PAID: 'paid',
+        PARTIALLY_PAID: 'partiallyPaid',
+    },
+    PAYMENT_METHOD: {
+        CASH: 'cash',
+        BANK_TRANSFER: 'bankTransfer',
+        CREDIT_CARD: 'creditCard',
+        MOBILE_PAYMENT: 'mobilePayment',
+        OTHER: 'other',
+    },
+    DISCOUNT_TYPE: {
+        PERCENTAGE: 'percentage',
+        AMOUNT: 'amount',
+    },
+    DEBT_REMINDER_STATUS: {
+        NULL: '',
+        PENDING: 'scheduled',
+        SENT: 'completed',
+        OVERDUE: 'late',
+        PAID: 'paid',
+    },
+    DEBT_REMINDER_METHOD: {
+        NULL: '',
+        EMAIL: 'email',
+        PHONE: 'phone',
+        OFFLINE: 'offline',
+    },
+    INVOICE_STATUS: {
+        NULL: '',
+        PAID: 'paid',
+        PARTIALLY_PAID: 'partiallyPaid',
+        PENDING: 'pending',
+        OVERDUE: 'overdue',
+    },
 }
 
 module.exports = constant
