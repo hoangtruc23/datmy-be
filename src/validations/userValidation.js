@@ -71,7 +71,47 @@ const userValidation = {
             }),
         }),
     },
-    update: {},
+        update: {
+        body: joi.object({
+            fullname: joi
+                .string()
+                .trim()
+                .min(2)
+                .max(100)
+                .pattern(/^[a-zA-ZÀ-ỹ\s']+$/u)
+                .messages({ 
+                    'string.min': 'Họ tên phải có ít nhất 2 ký tự',
+                    'string.max': 'Họ tên không được vượt quá 100 ký tự',
+                    'string.pattern.base':
+                        'Họ tên chỉ được chứa chữ cái và khoảng trắng',
+                 }),
+            username: joi
+                .string()
+                .alphanum()
+                .min(3)
+                .max(30)
+                .messages({ 
+                    'string.alphanum':
+                        'Tên đăng nhập chỉ được chứa chữ cái và số',
+                    'string.min': 'Tên đăng nhập phải có ít nhất 3 ký tự',
+                    'string.max': 'Tên đăng nhập không được vượt quá 30 ký tự',
+                }),
+            email: joi
+                .string()
+                .email({ tlds: { allow: false } }) 
+                .messages({ 
+                    'string.email': 'Email không đúng định dạng',
+                }),
+            phoneNumber: joi
+                .string()
+                .pattern(/^[0-9]{10,15}$/) 
+                .messages({
+                    'string.pattern.base':
+                        'Số điện thoại phải có từ 10 đến 15 chữ số',
+               }),
+            roleIds: joi.array().items(joi.string()).min(1).messages({'array.min': 'Phải có ít nhất một quyền', }),
+        }),
+    },
     changePassword: {},
     changeActiveStatus: {},
     delete: {},
