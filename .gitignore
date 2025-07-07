@@ -10,6 +10,9 @@ yarn-error.log*
 pnpm-debug.log*
 storages
 
+# public directory
+src/public/upload/
+
 # Runtime data
 pids/
 *.pid
@@ -74,3 +77,4 @@ temp/
 
 
 docker-compose.yml
+inventory-dat-my-nodejs.tar

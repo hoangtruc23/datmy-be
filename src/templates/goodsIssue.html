@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Phiếu xuất kho</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      margin: 30px;
+      line-height: 1.3;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+    }
+    .logo {
+      height: 40px;
+    }
+    .company-info,
+    .office-info {
+      white-space: pre-line;
+    }
+    .title {
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .sub-title {
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .info-block {
+      margin: 3px 3px 3px 5px;
+    }
+    .info-block p {
+      margin:  0;     
+      line-height: 1.3; 
+    }
+    table, th, td {
+      border: 1px solid black;
+        word-wrap: break-word;    
+        word-break: break-word;  
+        white-space: normal; 
+      
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 3px;
+      text-align: center;
+    }
+    td:nth-child(2),  
+    td:nth-child(6)  
+    {
+      text-align: left;
+    }
+    th:nth-child(1), td:nth-child(1) { width: 40px; } 
+    th:nth-child(2), td:nth-child(2) { width: 450px; }
+    th:nth-child(3), td:nth-child(3) { width: 200px; } 
+    th:nth-child(4), td:nth-child(4) { width: 70px; }
+    th:nth-child(5), td:nth-child(5) { width: 70px; }
+     th:nth-child(6), td:nth-child(6) { width: 250px; } 
+    .signature-section {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 3px;
+      text-align: center;
+    }
+    .signature-section div {
+      width: 20%;
+    }
+    .note {
+      margin-top: 3px;
+      font-size: 15px;
+      font-weight: bold;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class = "logo">
+    <img class="logo" src="{{logoPath}}" alt="Logo" />
+  </div>
+  <div class="header">
+    <div class="company-info"> 
+      <strong style="font-size: 14px">CÔNG TY TNHH TM-DV ĐẠT MỸ</strong>
+      <div>Số 12 - 14 Khu dân cư An Lạc, Đường số 16
+P.Bình Trị Đông B, Q.Bình Tân, TP.HCM
+ĐT: 028-37511715, 626.00789 FAX: 028-37511714
+Email: info@datmy.com.vn
+MST: 0301427596</div>
+    </div>
+    <div class="office-info">
+      <strong style="font-size: 14px">Văn phòng giao dịch tại Hà Nội</strong>
+      <div>Ô số 31 dãy 16B3, Làng Việt kiều Châu Âu
+KĐT Mỗ Lao, P.Mỗ Lao, Q.Hà Đông, Hà Nội
+ĐT: 024-33.546.787, 33.547.028</div>
+        
+      Ngày: {{createdAt}}
+      Số hóa đơn: {{invoiceNumber}}
+      Số phiếu: {{issueNumber}}
+      Số PO: {{invoiceOrContractNumber}}
+    </div>
+  </div>
+
+  <div class="title">PHIẾU GIAO HÀNG</div>
+  <div class="sub-title">KIÊM PHIẾU XUẤT KHO</div>
+
+  <div class="info-block">
+    <p><strong>Khách hàng:</strong> {{customer}}</p>
+    <p><strong>Người liên hệ:</strong> {{orderedBy.name}} - {{orderedBy.phone}}</p>
+    <p><strong>Người nhận hàng:</strong> {{recipient.name}} - {{recipient.phone}}</p>
+    <p><strong>Địa chỉ nhận hàng:</strong> {{deliveryAddresses}}</p>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>STT</th>
+        <th>TÊN HÀNG</th>
+        <th>DIỄN GIẢI</th>
+        <th>ĐVT</th>
+        <th>SL</th>
+        <th>GHI CHÚ</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{goodsIssueDetails}}
+      <tr>
+        <td></td>
+        <td></td>
+        <td colspan="2" style="text-align: right;">TỔNG CỘNG</td>
+        <td>{{totalIssuedQuantity}}</td>
+        <td  style="text-align: left;">{{goodsIssueNote}}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Địa chỉ chành xe:</strong> {{garageAddress}}</p>
+
+  <div class="signature-section">
+    <div>Người lập phiếu
+      <div style="padding-top: 90px;"></div>
+      {{createBy}}
+    </div>
+    <div>BP kiểm soát
+      <div style="padding-top: 90px;"></div>
+       Viên Lệ Bình
+    </div>
+    <div>Thủ kho
+      <div style="padding-top: 90px;"></div>
+      {{storekeeper}}
+    </div>
+    <div>Người giao hàng<br>(ký, họ tên)</div>
+    <div>Người nhận hàng<br>(ký, họ tên)</div>
+  </div>
+
+  <p class="note">**** LƯU Ý: VUI LÒNG CUNG CẤP LẠI THÔNG TIN XUẤT HÓA ĐƠN (NẾU CÓ THAY ĐỔI) ****</p>
+</body>
+</html>

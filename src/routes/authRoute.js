@@ -1,18 +1,13 @@
 const express = require('express')
-const validate = require('../middleware/validation')
-const authValidation = require('../validation/authValidation')
+const validate = require('../middlewares/validation')
+const authValidation = require('../validations/authValidation')
 const authController = require('../controllers/authController')
-const { isAuthenticated } = require('../middleware/auth')
 const router = express.Router()
 
 router.post('/login', validate(authValidation.login), authController.login)
-router.get(
-    '/getUserLoginDetail',
-    isAuthenticated,
-    authController.getUserLoginDetail,
-)
-router.post('/changePassword', isAuthenticated, authController.changePassword)
-router.get('/logout', isAuthenticated, authController.logout)
+router.get('/getUserLoginDetail', authController.getUserLoginDetail)
+router.post('/changePassword', authController.changePassword)
+router.get('/logout', authController.logout)
 
 module.exports = router
 
@@ -41,7 +36,7 @@ module.exports = router
  *             properties:
  *               username:
  *                 type: string
- *                 example: admin
+ *                 example: quantrivien
  *               password:
  *                 type: string
  *                 example: Admin123!@#
@@ -162,11 +157,11 @@ module.exports = router
  *                       type: string
  *                       format: date-time
  *                       example: 2025-06-09T07:02:15.834Z
- *                     roles:
+ *                     roleIds:
  *                       type: array
  *                       items:
  *                         type: string
- *                       example: [ admin ]
+ *                       example: [ 684927c871287f2ae7d8130b ]
  *       401:
  *         description: Chưa đăng nhập
  *         content:

@@ -1,4 +1,4 @@
-const { Schema, model } = require('mongoose')
+const { Schema, model, Types } = require('mongoose')
 
 const userSchema = new Schema(
     {
@@ -22,13 +22,19 @@ const userSchema = new Schema(
         },
         isActive: {
             type: Boolean,
-            require: true,
+            required: true,
             default: true,
         },
-        roles: [
+        roleIds: [
             {
-                type: String,
-                required: true,
+                type: Types.ObjectId,
+                ref: 'roles',
+                validate: {
+                    validator: function (v) {
+                        return v === null || Types.ObjectId.isValid(v)
+                    },
+                    message: 'Invalid roleId',
+                },
             },
         ],
     },
