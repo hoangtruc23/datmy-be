@@ -486,18 +486,19 @@ const productCategoryService = {
                 ]),
             )
 
-            const formatDateTime = (date) => {
-                if (!date) return null
-                const d = new Date(date)
-                const pad = (n) => n.toString().padStart(2, '0')
-                return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())} ${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} `
-            }
+            // const formatDateTime = (date) => {
+            //     if (!date) return null
+            //     const d = new Date(date)
+            //     const pad = (n) => n.toString().padStart(2, '0')
+            //     return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())} ${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} `
+            // }
+            
             const result = goodsIssueIds.map((id) => ({
                 goodsIssueId: id,
                 issueNumber: issueMap.get(id)?.issueNumber || null,
                 status: issueMap.get(id)?.status || null,
                 approvedBy: approvalMap.get(id) || null,
-                createdAt: formatDateTime(issueMap.get(id)?.createdAt) || null,
+                createdAt: issueMap.get(id)?.createdAt || null,
             }))
 
             return result
@@ -537,19 +538,19 @@ const productCategoryService = {
                 users.map((user) => [user._id.toString(), user.fullname]),
             )
 
-            const formatDateTime = (date) => {
-                if (!date) return null
-                const d = new Date(date)
-                const pad = (n) => n.toString().padStart(2, '0')
-                return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())} ${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} `
-            }
+            // const formatDateTime = (date) => {
+            //     if (!date) return null
+            //     const d = new Date(date)
+            //     const pad = (n) => n.toString().padStart(2, '0')
+            //     return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())} ${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} `
+            // }
 
             const result = advances.map((a) => ({
                 goodsAdvanceId: a._id.toString(),
                 advanceNumber: a.advanceNumber,
                 status: a.status,
                 fullname: userMap.get(a.createdBy?.toString()) || null,
-                createdAt: formatDateTime(a.createdAt) || null,
+                createdAt: a.createdAt || null,
             }))
 
             return result
