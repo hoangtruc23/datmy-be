@@ -19,10 +19,16 @@ const contactPersonSchema = new Schema(
 )
 const debtReminderSchema = new Schema(
     {
-        debtId: {
+        customerId: {
             type: Types.ObjectId,
-            ref: 'debt',
+            ref: 'customers',
             required: true,
+        },
+
+        customerName: {
+            type: String,
+            required: true,
+            trim: true,
         },
         remindDate: { type: Date, required: true },
         method: {
