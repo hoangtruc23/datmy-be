@@ -1,6 +1,6 @@
-const { Schema, model, Types } = require('mongoose');
-const constant = require('../utils/constant/constant');
-const { required } = require('joi');
+const { Schema, model, Types } = require('mongoose')
+const constant = require('../utils/constant/constant')
+const { required } = require('joi')
 
 const contactPersonSchema = new Schema(
     {
@@ -18,29 +18,29 @@ const contactPersonSchema = new Schema(
     { _id: false },
 )
 const debtReminderSchema = new Schema(
-  {
-    debt: {
-      type: Types.ObjectId,
-      ref: 'debt',
-      required: true,
+    {
+        debtId: {
+            type: Types.ObjectId,
+            ref: 'debt',
+            required: true,
+        },
+        remindDate: { type: Date, required: true },
+        method: {
+            type: String,
+            enum: Object.values(constant.DEBT_REMINDER_METHOD),
+            required: true,
+            default: constant.DEBT_REMINDER_METHOD.NULL,
+        },
+        assignedTo: contactPersonSchema,
+        status: {
+            type: String,
+            enum: Object.values(constant.DEBT_REMINDER_STATUS),
+            default: constant.DEBT_REMINDER_STATUS.NULL,
+        },
+        notes: { type: String },
     },
-    remindDate: { type: Date, required: true },
-    method: {
-        type: String,
-        enum: Object.values(constant.DEBT_REMINDER_METHOD),
-        required: true,
-        default: constant.DEBT_REMINDER_METHOD.NULL,
-    },
-    assignedTo: contactPersonSchema,
-    status: {
-        type: String,
-        enum: Object.values(constant.DEBT_REMINDER_STATUS),
-        default: constant.DEBT_REMINDER_STATUS.NULL,
-    },
-    notes: { type: String },
-  },
-  { timestamps: true }
-);
+    { timestamps: true },
+)
 
-const DebtReminderModel = model('debt_reminders', debtReminderSchema);
-module.exports = DebtReminderModel;
+const DebtReminderModel = model('debt_reminders', debtReminderSchema)
+module.exports = DebtReminderModel
