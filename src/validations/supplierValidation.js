@@ -77,7 +77,25 @@ const supplierBaseSchema = {
                 'Mã số thuế phải có ít nhất 10 chữ số, và phải là chữ số',
             'any.required': 'Mã số thuế là bắt buộc',
         }),
-    fax: joi.string().allow('', null),
+    fax: joi.any().custom((value, helpers) => {
+        let finalValue = value;
+
+        if (typeof finalValue === 'number') {
+            finalValue = String(finalValue);
+        }
+
+        if (finalValue === null || finalValue === '') {
+            return finalValue;
+        }
+
+        if (typeof finalValue !== 'string') {
+            return helpers.error('string.base');
+        }
+
+        return finalValue;
+    }).messages({
+        'string.base': '"fax" must be a string or a number',
+    }),
     email: joi
         .string()
         .email({ tlds: { allow: false } })
