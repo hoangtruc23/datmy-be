@@ -35,18 +35,21 @@ const invoiceSchema = new Schema(
             unique: true,
         },
         totalAmount: { type: Number, required: true },
-        exportDate: { type: Date, required: true },
+        //đã có từ timeStamp
+        //exportDate: { type: Date, required: true },
+        //Cộng từ createdAt và  limitDue trong confgiDebt
         dueDate: { type: Date },
         isFullyPaid: { type: Boolean, default: false },
+        //người đặt hàng
         orderBy: contactPersonSchema,
+        //kế toán
         accountant: contactPersonSchema,
         status: {
             type: String,
             enum: Object.values(constant.INVOICE_STATUS),
             default: constant.INVOICE_STATUS.NULL,
-            required: true,
         },
-
+        //nguời nhắc
         reminderContact: contactPersonSchema,
 
         notes: { type: String },

@@ -405,6 +405,39 @@ async function permissionSeeder() {
             code: 'tam_ung-xuat_bao_cao',
             parentPermissionId: '684927c871287f2ae7d81309', // Parent is 'Tạm ứng'
         },
+
+        //hóa đơn
+        {
+            _id: new Types.ObjectId('686dd0b535512a73e076c3a7'),
+            name: 'Hóa đơn',
+            code: 'hoa_don',
+            parentPermissionId: null,
+        },
+
+        {
+            _id: new Types.ObjectId('686dd0b535512a73e076c3a8'),
+            name: 'Xem',
+            code: 'hoa_don-xem',
+            parentPermissionId: '686dd0b535512a73e076c3a7',
+        },
+        {
+            _id: new Types.ObjectId('686dd0b535512a73e076c3a9'),
+            name: 'Thêm',
+            code: 'hoa_don-them',
+            parentPermissionId: '686dd0b535512a73e076c3a7',
+        },
+        {
+            _id: new Types.ObjectId('686dd0b535512a73e076c3aa'),
+            name: 'Cập nhật',
+            code: 'hoa_don-cap_nhat',
+            parentPermissionId: '686dd0b535512a73e076c3a7',
+        },
+        {
+            _id: new Types.ObjectId('686dd0b535512a73e076c3ab'),
+            name: 'Xóa',
+            code: 'hoa_don-xoa',
+            parentPermissionId: '686dd0b535512a73e076c3a7',
+        },
     ])
     logger.info('Permissions seeded')
 }
