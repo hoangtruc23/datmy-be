@@ -1,5 +1,4 @@
 const { CronJob } = require('cron');
-const mongoose = require('mongoose');
 
 
 const GoodsAdvanceModel = require('../models/goodsAdvance');
@@ -49,6 +48,5 @@ const DeleteTemporaryGoodsJob = new CronJob(
   'Asia/Ho_Chi_Minh'
 );
 
-module.exports = {
-  DeleteTemporaryGoodsJob,
-};
+module.exports = DeleteTemporaryGoodsJob;
+
