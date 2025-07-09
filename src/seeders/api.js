@@ -480,7 +480,35 @@ async function apiSeeder() {
             api: '/goodsAdvance/export',
             note: 'Xuất báo cáo tạm ứng ra excel',
         },
+
+        //hóa đơn
+        {
+            _id: new Types.ObjectId('686dd0b535512a73e076c3a2'),
+            api: '/invoice/create',
+            note: 'Tạo hóa đơn',
+        },
+        {
+            _id: new Types.ObjectId('686dd0b535512a73e076c3a3'),
+            api: '/invoice/update',
+            note: 'Cập nhật hóa đơn',
+        },
+        {
+            _id: new Types.ObjectId('686dd0b535512a73e076c3a4'),
+            api: '/invoice/getById',
+            note: 'Xem chi tiết hóa đơn theo ID',
+        },
+        {
+            _id: new Types.ObjectId('686dd0b535512a73e076c3a5'),
+            api: '/invoice/getAll',
+            note: 'Lấy danh sách tất cả hóa đơn',
+        },
+        {
+            _id: new Types.ObjectId('686dd0b535512a73e076c3a6'),
+            api: '/invoice/delete',
+            note: 'Xoá hóa đơn',
+        },
     ])
+
     logger.info('apis seeded')
 }
 

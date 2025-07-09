@@ -233,6 +233,34 @@ const errorCode = {
         code: 60,
         message: 'Tải file không thành công',
     },
+    INVOICE_CODE_EXISTED: {
+        code: 61,
+        message: 'Mã hóa đơn đã tồn tại',
+    },
+    INVOICE_NOT_FOUND: {
+        code: 62,
+        message: 'Hóa đơn không tồn tại',
+    },
+    INVALID_ID: {
+        code: 63,
+        message: 'ID không hợp lệ',
+    },
+    PAYMENT_HISTORY_NOT_FOUND: {
+        code: 64,
+        message: 'Lịch sử thanh toán không tồn tại',
+    },
+    PAYMENT_HISTORY_EXISTED: {
+        code: 65,
+        message: 'Lịch sử thanh toán đã tồn tại',
+    },
+    DISCOUNT_REQUEST_NOT_FOUND: {
+        code: 66,
+        message: 'Yêu cầu chiết khấu không tồn tại',
+    },
+    DISCOUNT_REQUEST_EXISTED: {
+        code: 67,
+        message: 'Yêu cầu chiết khấu đã tồn tại',
+    },
 }
 
 module.exports = errorCode

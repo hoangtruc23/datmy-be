@@ -266,6 +266,27 @@ async function rolePermissionSeeder() {
             roleId: '684927c871287f2ae7d8130b', // Quản trị viên
             permissionId: '6864e6cd4c3c96b50ff0e104', // Grant 'Xuất báo cáo' permission
         },
+        //hoa don quan tri vien
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '686dd0b535512a73e076c3a7', // Hóa đơn
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '686dd0b535512a73e076c3a9', // Thêm hóa đơn
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '686dd0b535512a73e076c3a8', // Xem hóa đơn
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '686dd0b535512a73e076c3aa', // Cập nhật hóa đơn
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '686dd0b535512a73e076c3ab', // Xóa hóa đơn
+        },
 
         // Nhân viên kho =======================================================================================
         // {

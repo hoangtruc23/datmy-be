@@ -467,6 +467,28 @@ async function permissionApiSeeder() {
             permissionId: '6864e6cd4c3c96b50ff0e104', // Permission: Xuất báo cáo (Tạm ứng)
             apiId: '6864e6cd4c3c96b50ff0e105', // API: /goodsAdvance/export
         },
+
+        // Hóa đơn
+        {
+            permissionId: '686dd0b535512a73e076c3a8', // Xem hóa đơn
+            apiId: '686dd0b535512a73e076c3a5', // /invoice/getAll
+        },
+        {
+            permissionId: '686dd0b535512a73e076c3a8', // Xem hóa đơn
+            apiId: '686dd0b535512a73e076c3a4', // /invoice/getById
+        },
+        {
+            permissionId: '686dd0b535512a73e076c3a9', // Thêm hóa đơn
+            apiId: '686dd0b535512a73e076c3a2', // /invoice/create
+        },
+        {
+            permissionId: '686dd0b535512a73e076c3aa', // Cập nhật hóa đơn
+            apiId: '686dd0b535512a73e076c3a3', // /invoice/update
+        },
+        {
+            permissionId: '686dd0b535512a73e076c3ab', // Xoá hóa đơn
+            apiId: '686dd0b535512a73e076c3a6', // /invoice/delete
+        },
     ])
     logger.info('PermissionApis seeded')
 }
