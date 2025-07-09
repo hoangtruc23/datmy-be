@@ -6,6 +6,7 @@ const path = require('path')
 
 require('./config/mongodbConfig')
 require('./config/redisConfig')
+
 const route = require('./routes/index')
 const response = require('./utils/response/response')
 const { envConfig } = require('./config/envConfg')
@@ -15,9 +16,9 @@ const corsMiddleware = require('./middlewares/cors')
 const swaggerSpec = require('./docs/swaggerConfig')
 const BadReq = require('./utils/response/requestError')
 const { checkPermission, authenticated } = require('./middlewares/auth')
+const {DeleteTemporaryGoodsJob} = require('./middlewares/cron')
 
 const app = express()
-
 app.use(limiter)
 app.use(helmet())
 app.use(corsMiddleware)
@@ -29,6 +30,7 @@ app.use(authenticated)
 app.use(checkPermission)
 
 app.use(envConfig.BASE_URL, route)
+DeleteTemporaryGoodsJob.start()
 
 app.use((req, res, next) => {
     next(response.notFound())
