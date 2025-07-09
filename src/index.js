@@ -6,6 +6,7 @@ const path = require('path')
 
 require('./config/mongodbConfig')
 require('./config/redisConfig')
+require('./cronJob');
 const route = require('./routes/index')
 const response = require('./utils/response/response')
 const { envConfig } = require('./config/envConfg')
@@ -16,8 +17,8 @@ const swaggerSpec = require('./docs/swaggerConfig')
 const BadReq = require('./utils/response/requestError')
 const { checkPermission, authenticated } = require('./middlewares/auth')
 
-const app = express()
 
+const app = express()
 app.use(limiter)
 app.use(helmet())
 app.use(corsMiddleware)
