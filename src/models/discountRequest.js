@@ -23,6 +23,11 @@ const discountRequestSchema = new Schema(
             enum: Object.values(constant.APPROVAL_STATUS),
             default: constant.APPROVAL_STATUS.NULL,
         },
+        refundStatus: {
+            type: String,
+            enum: Object.values(constant.REFUND_STATUS),
+            default: constant.REFUND_STATUS.UNPAID,
+        },
     },
     { timestamps: true },
 )

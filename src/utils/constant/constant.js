@@ -59,6 +59,10 @@ const constant = {
         PAID: 'paid',
         PARTIALLY_PAID: 'partiallyPaid',
     },
+    REFUND_STATUS: {
+        PAID: 'paid',
+        UNPAID: 'unpaid'
+    },
     PAYMENT_METHOD: {
         CASH: 'cash',
         BANK_TRANSFER: 'bankTransfer',

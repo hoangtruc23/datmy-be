@@ -507,6 +507,58 @@ async function apiSeeder() {
             api: '/invoice/delete',
             note: 'Xoá hóa đơn',
         },
+
+        //chiết khấu
+        {
+            _id: new Types.ObjectId('687165240ac4b74840483515'),
+            api: '/discount/create',
+            note: 'Tạo phiếu chiết khấu',
+        },
+        {
+            _id: new Types.ObjectId('6871864935925a3d24f17a15'),
+            api: '/discount/getAll',
+            note: 'Xem tất cả phiếu chiết khấu',
+        },
+        {
+            _id: new Types.ObjectId('6871899346e790eda9a08c04'),
+            api: '/discount/getById',
+            note: 'Xem một phiếu chiết khấu',
+        },
+        {
+            _id: new Types.ObjectId('6871899346e790eda9a08c05'),
+            api: '/discount/getHistory',
+            note: 'Xem lịch sử tất cả phiếu chiết khấu',
+        },
+        {
+            _id: new Types.ObjectId('6871899346e790eda9a08c06'),
+            api: '/discount/getOverview',
+            note: 'Xem các thông tin thống kê',
+        },
+        {
+            _id: new Types.ObjectId('6871899346e790eda9a08c07'),
+            api: '/discount/update',
+            note: 'Sửa phiếu chiết khấu',
+        },
+        {
+            _id: new Types.ObjectId('6871899346e790eda9a08c08'),
+            api: '/discount/delete',
+            note: 'Xóa phiếu chiết khấu',
+        },
+        {
+            _id: new Types.ObjectId('68734efbffa7cc41b2858838'),
+            api: '/discount/approved',
+            note: 'Chấp nhận phiếu chiết khấu',
+        },
+        {
+            _id: new Types.ObjectId('68734efbffa7cc41b2858839'),
+            api: '/discount/rejected',
+            note: 'Từ chối phiếu chiết khấu',
+        },
+        {
+            _id: new Types.ObjectId('687415049898805f0639a2f4'),
+            api: '/discount/setRefund',
+            note: 'Cập nhật trạng thái đã hoàn tiền cho phiếu chiết khấu',
+        },
     ])
 
     logger.info('apis seeded')

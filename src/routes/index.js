@@ -15,6 +15,7 @@ const goodsReceiptRoute = require('./goodsReceiptRoute')
 const goodsIssueRoute = require('./goodsIssueRoute')
 const goodsAdvanceRoute = require('./goodsAdvanceRoute')
 const invoiceRoute = require('./invoiceRoute')
+const discountRoute = require('./discountRoute')
 
 router.use('/auth', authRoute)
 router.use('/user', userRoute)
@@ -29,5 +30,6 @@ router.use('/goodsReceipt', goodsReceiptRoute)
 router.use('/goodsIssue', goodsIssueRoute)
 router.use('/goodsAdvance', goodsAdvanceRoute)
 router.use('/invoice', invoiceRoute)
+router.use('/discount', discountRoute)
 
 module.exports = router
