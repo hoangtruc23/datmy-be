@@ -288,6 +288,28 @@ async function rolePermissionSeeder() {
             permissionId: '686dd0b535512a73e076c3ab', // Xóa hóa đơn
         },
 
+        //chiết khấu quản trị viên
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '687165240ac4b7484048357d', // chiết khấu
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '687165e2ee8406ca535d1ba3', // Thêm chiết khấu
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '687165e2ee8406ca535d1ba2', // Xem chiết khấu
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '687165e2ee8406ca535d1ba4', // Cập nhật chiết khấu
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '687165e2ee8406ca535d1ba5', // Xóa chiết khấu
+        },
+
         // Nhân viên kho =======================================================================================
         // {
         //     roleId: '684927c871287f2ae7d8130c',

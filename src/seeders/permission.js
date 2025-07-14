@@ -438,6 +438,39 @@ async function permissionSeeder() {
             code: 'hoa_don-xoa',
             parentPermissionId: '686dd0b535512a73e076c3a7',
         },
+
+        //chiết khấu
+        {
+            _id: new Types.ObjectId('687165240ac4b7484048357d'),
+            name: 'Chiết khấu',
+            code: 'chiet_khau',
+            parentPermissionId: null,
+        },
+
+        {
+            _id: new Types.ObjectId('687165e2ee8406ca535d1ba2'),
+            name: 'Xem',
+            code: 'chiet_khau-xem',
+            parentPermissionId: '687165240ac4b7484048357d',
+        },
+        {
+            _id: new Types.ObjectId('687165e2ee8406ca535d1ba3'),
+            name: 'Thêm',
+            code: 'chiet_khau-them',
+            parentPermissionId: '687165240ac4b7484048357d',
+        },
+        {
+            _id: new Types.ObjectId('687165e2ee8406ca535d1ba4'),
+            name: 'Cập nhật',
+            code: 'chiet_khau-cap_nhat',
+            parentPermissionId: '687165240ac4b7484048357d',
+        },
+        {
+            _id: new Types.ObjectId('687165e2ee8406ca535d1ba5'),
+            name: 'Xóa',
+            code: 'chiet_khau-xoa',
+            parentPermissionId: '687165240ac4b7484048357d',
+        },
     ])
     logger.info('Permissions seeded')
 }
