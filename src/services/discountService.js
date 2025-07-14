@@ -3,15 +3,15 @@ const constant = require('../utils/constant/constant')
 const errorCode = require('../utils/response/errorCode')
 const { Types } = require('mongoose')
 
-const discountRequestModel = require('../models/discountRequest')
-const invoiceModel = require('../models/invoice')
+const DiscountRequestModel = require('../models/discountRequest')
+const InvoiceModel = require('../models/invoice')
 
 const discountService = {
     create: async (reqData) => {
         try {
             const { invoice, type, value } = reqData
 
-            const checkInvoice = await invoiceModel.findById(invoice)
+            const checkInvoice = await InvoiceModel.findById(invoice)
             if (!checkInvoice) {
                 throw new BadReq(errorCode.INVOICE_NOT_FOUND)
             }
@@ -21,7 +21,7 @@ const discountService = {
                     ? value
                     : (value * checkInvoice.totalAmount) / 100
 
-            await discountRequestModel.create({ ...reqData, discountAmount })
+            await DiscountRequestModel.create({ ...reqData, discountAmount })
             return null
         } catch (error) {
             throw error
@@ -65,7 +65,7 @@ const discountService = {
             ]
 
             const [results, totalResults] = await Promise.all([
-                discountRequestModel.aggregate([
+                DiscountRequestModel.aggregate([
                     ...discountService.joinDiscountAndInvoice(),
                     ...match,
                     {
@@ -89,7 +89,7 @@ const discountService = {
                         $limit: limit,
                     },
                 ]),
-                discountRequestModel.aggregate([
+                DiscountRequestModel.aggregate([
                     ...discountService.joinDiscountAndInvoice(),
                     ...match,
                     {
@@ -112,7 +112,7 @@ const discountService = {
 
     getById: async (id) => {
         try {
-            const result = await discountRequestModel.aggregate([
+            const result = await DiscountRequestModel.aggregate([
                 ...discountService.joinDiscountAndInvoice(),
                 {
                     $match: { _id: new Types.ObjectId(id) },
@@ -164,7 +164,7 @@ const discountService = {
             ]
 
             const [results, totalResults] = await Promise.all([
-                discountRequestModel.aggregate([
+                DiscountRequestModel.aggregate([
                     ...discountService.joinDiscountAndInvoice(),
                     ...match,
                     {
@@ -187,7 +187,7 @@ const discountService = {
                     },
                 ]),
 
-                discountRequestModel.aggregate([
+                DiscountRequestModel.aggregate([
                     ...discountService.joinDiscountAndInvoice(),
                     ...match,
                     {
@@ -217,26 +217,24 @@ const discountService = {
                 totalRejected,
                 totalDiscount,
             ] = await Promise.all([
-                discountRequestModel.countDocuments({}),
-                discountRequestModel.countDocuments({
+                DiscountRequestModel.countDocuments({}),
+                DiscountRequestModel.countDocuments({
                     status: constant.APPROVAL_STATUS.NULL,
                 }),
-                discountRequestModel.countDocuments({
+                DiscountRequestModel.countDocuments({
                     status: constant.APPROVAL_STATUS.APPROVED,
                 }),
-                discountRequestModel.countDocuments({
+                DiscountRequestModel.countDocuments({
                     status: constant.APPROVAL_STATUS.REJECTED,
                 }),
-                discountRequestModel
-                    .aggregate([
-                        {
-                            $group: {
-                                _id: null,
-                                total: { $sum: '$discountAmount' },
-                            },
+                DiscountRequestModel.aggregate([
+                    {
+                        $group: {
+                            _id: null,
+                            total: { $sum: '$discountAmount' },
                         },
-                    ])
-                    .then((res) => (res[0] ? res[0].total : 0)),
+                    },
+                ]).then((res) => (res[0] ? res[0].total : 0)),
             ])
             return {
                 totalRequest,
@@ -252,7 +250,7 @@ const discountService = {
 
     approved: async (id) => {
         try {
-            const request = await discountRequestModel.findByIdAndUpdate(id, {
+            const request = await DiscountRequestModel.findByIdAndUpdate(id, {
                 status: constant.APPROVAL_STATUS.APPROVED,
             })
             if (!request) {
@@ -266,7 +264,7 @@ const discountService = {
 
     rejected: async (id) => {
         try {
-            const request = await discountRequestModel.findByIdAndUpdate(id, {
+            const request = await DiscountRequestModel.findByIdAndUpdate(id, {
                 status: constant.APPROVAL_STATUS.REJECTED,
             })
             if (!request) {
@@ -279,7 +277,7 @@ const discountService = {
     },
     setRefund: async (id) => {
         try {
-            const request = await discountRequestModel.findByIdAndUpdate(id, {
+            const request = await DiscountRequestModel.findByIdAndUpdate(id, {
                 refundStatus: constant.REFUND_STATUS.PAID,
             })
             if (!request) {
@@ -293,11 +291,11 @@ const discountService = {
 
     update: async (id, reqData) => {
         try {
-            const request = await discountRequestModel.findById(id)
+            const request = await DiscountRequestModel.findById(id)
             if (!request) {
                 throw new BadReq(errorCode.DISCOUNT_REQUEST_NOT_FOUND)
             }
-            const invoice = await invoiceModel.findById(request.invoice)
+            const invoice = await InvoiceModel.findById(request.invoice)
 
             const { requestDate, type, value, content } = reqData
             const discountAmount =
@@ -305,7 +303,7 @@ const discountService = {
                     ? value
                     : (value * invoice.totalAmount) / 100
 
-            await discountRequestModel.findByIdAndUpdate(id, {
+            await DiscountRequestModel.findByIdAndUpdate(id, {
                 requestDate,
                 type,
                 value,
@@ -320,7 +318,7 @@ const discountService = {
 
     delete: async (id) => {
         try {
-            const request = await discountRequestModel.findByIdAndDelete(id)
+            const request = await DiscountRequestModel.findByIdAndDelete(id)
             if (!request) {
                 throw new BadReq(errorCode.DISCOUNT_REQUEST_NOT_FOUND)
             }

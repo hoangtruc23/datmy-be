@@ -61,7 +61,7 @@ const constant = {
     },
     REFUND_STATUS: {
         PAID: 'paid',
-        UNPAID: 'unpaid'
+        UNPAID: 'unpaid',
     },
     PAYMENT_METHOD: {
         CASH: 'cash',
