@@ -84,15 +84,30 @@ const authService = {
                 throw new BadReq(errorCode.USER_NOT_FOUND)
             }
 
-            // Lấy tất cả các permission
-            const rolePermissions = await RolePermissionModel.find({
-                roleId: { $in: user.roleIds },
-            }).populate('permissionId', 'code')
-            const permissionCodeList = new Set()
-            rolePermissions.forEach((item) => {
-                permissionCodeList.add(item?.permissionId?.code)
-            })
-            user.permissionCodeList = [...permissionCodeList]
+            if (
+                user.username == constant.USER_ROOT ||
+                user.username == constant.USER_BGD
+            ) {
+                const permissions = await PermissionModel.find()
+
+                const permissionCodeList = new Set()
+                permissions.forEach((item) => {
+                    permissionCodeList.add(item?.code)
+                })
+                user.permissionCodeList = [...permissionCodeList]
+
+            } else {
+                // Lấy tất cả các permission
+                const rolePermissions = await RolePermissionModel.find({
+                    roleId: { $in: user.roleIds },
+                }).populate('permissionId', 'code')
+                const permissionCodeList = new Set()
+                rolePermissions.forEach((item) => {
+                    permissionCodeList.add(item?.permissionId?.code)
+                })
+                user.permissionCodeList = [...permissionCodeList]
+            }
+
             return user
         } catch (error) {
             throw error
