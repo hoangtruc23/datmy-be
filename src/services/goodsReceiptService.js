@@ -303,7 +303,7 @@ const goodsReceiptService = {
                 orderedQuantity,
                 price,
                 totalAmount,
-                warehouseName: checkWarehouse.warehouseName,
+                warehouseName: checkWarehouse.name,
                 note,
             })
             return null

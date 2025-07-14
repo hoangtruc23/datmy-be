@@ -464,7 +464,7 @@ const goodsAdvanceService = {
                         borrowedQuantity,
                         borrowStatus,
                         usageContent,
-                        borrowWarehouseName: checkWarehouse.warehouseName,
+                        borrowWarehouseName: checkWarehouse.name,
                         borrowStorages: storages,
                         // note,
                     },

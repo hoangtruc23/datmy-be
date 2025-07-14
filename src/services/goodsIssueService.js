@@ -432,7 +432,7 @@ const goodsIssueService = {
                         issuedQuantity,
                         price,
                         totalAmount,
-                        warehouseName: checkWarehouse.warehouseName,
+                        warehouseName: checkWarehouse.name,
                         storages,
                         note,
                     },
