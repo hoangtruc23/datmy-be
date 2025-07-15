@@ -428,40 +428,66 @@ const goodsReceiptService = {
                 throw new BadReq(errorCode.ACTUAL_QUANTITY_INVALID)
             }
 
-            // Kiểm tra các số serial/ số lô truyền xuống có trùng không
-            const duplicatesKey = findDuplicateTrackingCode(storages)
-            if (duplicatesKey.length > 0) {
-                throw new BadReq(errorCode.SERIAL_OR_BATCH_DUPLICATED)
-            }
-
-            let checkTotalProductStorage = 0
-            // Kiểm tra các số serial/số lô có tồn tại chưa
-            for (let storage of storages) {
-                const checkStorage = await ProductStorageModel.findOne({
-                    warehouseId,
-                    productId,
-                    trackingCode: storage.trackingCode,
-                })
-                if (checkStorage) {
-                    throw new BadReq(
-                        errorCode.GOODS_RECEIPT_SERIAL_OR_BATCH_EXISTED,
-                    )
+            // managementType là none
+            if (checkProduct.managementType === constant.PRODUCT_MANAGEMENT_TYPE.NONE) {
+                if (storages && storages.length > 0) {
+                    throw new BadReq(errorCode.SERIAL_NOT_ALLOWED_FOR_PRODUCT);
                 }
-                checkTotalProductStorage += storage.quantity
+                await GoodsReceiptDetaileModel.findByIdAndUpdate(
+                    goodsReceiptDetailId,
+                    {
+                        actualQuantity,
+                        storages: [], // type none thì luôn luôn empty
+                    },
+                    { session }
+                );
+            } else {  //code block khi managementType khác none
+                if (!storages || storages.length === 0) {
+                     throw new BadReq(errorCode.SERIAL_OR_BATCH_REQUIRED);
+                }
+                const duplicatesKey = findDuplicateTrackingCode(storages)
+                if (duplicatesKey.length > 0) {
+                    throw new BadReq(errorCode.SERIAL_OR_BATCH_DUPLICATED)
+                }
+    
+                let checkTotalProductStorage = 0
+                // Kiểm tra các số serial/số lô có tồn tại chưa
+                for (let storage of storages) {
+                    const checkStorage = await ProductStorageModel.findOne({
+                        warehouseId,
+                        productId,
+                        trackingCode: storage.trackingCode,
+                    })
+                    if (checkStorage) {
+                        throw new BadReq(
+                            errorCode.GOODS_RECEIPT_SERIAL_OR_BATCH_EXISTED,
+                        )
+                    }                    
+                    // serial thì quantity phải là 1
+                    if (
+                        checkProduct.managementType === constant.PRODUCT_MANAGEMENT_TYPE.SERIAL &&
+                        storage.quantity !== 1
+                    ) {
+                        const error = { ...errorCode.SERIAL_QUANTITY_MUST_BE_ONE };
+                        error.message = `${error.message} Lỗi tại serial: ${storage.trackingCode}`;
+                        throw new BadReq(error);
+                    }
+                    checkTotalProductStorage += storage.quantity
+                }
+                // Kiểm tra tổng số lượng của các số serial/ số lô có khớp với số lượng thực tế nhập hay không
+                if (checkTotalProductStorage != actualQuantity) {
+                    throw new BadReq(errorCode.SERIAL_OR_BATCH_QUANTITY_INVALID)
+                }
+    
+                await GoodsReceiptDetaileModel.findByIdAndUpdate(
+                    goodsReceiptDetailId,
+                    {
+                        actualQuantity,
+                        storages,
+                    },
+                    { session },
+                )
             }
-            // Kiểm tra tổng số lượng của các số serial/ số lô có khớp với số lượng thực tế nhập hay không
-            if (checkTotalProductStorage != actualQuantity) {
-                throw new BadReq(errorCode.SERIAL_OR_BATCH_QUANTITY_INVALID)
-            }
-
-            await GoodsReceiptDetaileModel.findByIdAndUpdate(
-                goodsReceiptDetailId,
-                {
-                    actualQuantity,
-                    storages,
-                },
-                { session },
-            )
 
             await GoodsReceiptModel.findByIdAndUpdate(
                 checkGoodsReceiptDetail.goodsReceiptId,

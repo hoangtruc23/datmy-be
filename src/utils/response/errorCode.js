@@ -261,6 +261,18 @@ const errorCode = {
         code: 67,
         message: 'Yêu cầu chiết khấu đã tồn tại',
     },
+    SERIAL_OR_BATCH_REQUIRED: {
+        code: 68,
+        message: 'Sản phẩm này yêu cầu phải có số serial hoặc số lô.',
+    },
+    SERIAL_NOT_ALLOWED_FOR_PRODUCT: {
+        code: 69,
+        message: 'Sản phẩm này không được quản lý theo serial/lô.',
+    },
+    SERIAL_QUANTITY_MUST_BE_ONE: {
+        code: 70,
+        message: 'Số lượng cho mỗi serial phải là 1.',
+    }
 }
 
 module.exports = errorCode
