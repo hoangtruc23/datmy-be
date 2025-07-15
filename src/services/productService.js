@@ -143,16 +143,24 @@ const productCategoryService = {
             if (categoryId && Types.ObjectId.isValid(categoryId)) {
                 filter.categoryId = categoryId
             }
-            const [items, total] = await Promise.all([
+            const [products, total] = await Promise.all([
                 ProductModel.find(filter)
+                    .populate('unit', 'name -_id')
                     .skip(skip)
                     .limit(limit)
                     .sort({ createdAt: -1 })
                     .select(
-                        ' code name shortname image safetyQuantity isActive ',
+                        'code name shortName image safetyQuantity isActive managementType unit',
                     ),
                 ProductModel.countDocuments(filter),
             ])
+            const items = products.map((product) => {
+                const plainProduct = product.toObject(); 
+                return {
+                    ...plainProduct,
+                    unit: plainProduct.unit ? plainProduct.unit.name : null, 
+                };
+            });
 
             const totalPages = Math.ceil(total / limit)
             return { items, total, page, limit, totalPages }
@@ -262,11 +270,12 @@ const productCategoryService = {
 
             const [products, total] = await Promise.all([
                 ProductModel.find(filter)
+                    .populate('unit', 'name -_id')
                     .skip(skip)
                     .limit(limit)
                     .sort({ createdAt: -1 })
                     .select(
-                        'code name shortName image safetyQuantity isActive',
+                        'code name shortName image safetyQuantity isActive managementType unit',
                     ),
                 ProductModel.countDocuments(filter),
             ])
@@ -305,6 +314,8 @@ const productCategoryService = {
                         image: product.image,
                         isActive: product.isActive,
                         safetyQuantity: product.safetyQuantity,
+                        managementType: product.managementType, 
+                        unit: product.unit ? product.unit.name : null,
                         totalQuantity,
                         isSafe,
                     }
