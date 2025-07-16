@@ -3,7 +3,7 @@ const constant = require('../utils/constant/constant')
 
 const discountRequestSchema = new Schema(
     {
-        invoice: {
+        invoiceId: {
             type: Types.ObjectId,
             ref: 'invoices',
             required: true,

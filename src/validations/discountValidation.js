@@ -34,7 +34,7 @@ const discountValidation = {
         body: joi
             .object({
                 ...discountSchema,
-                invoice: joi
+                invoiceId: joi
                     .string()
                     .pattern(/^[a-fA-F0-9]{24}$/)
                     .trim()
