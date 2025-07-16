@@ -4,7 +4,7 @@ const { REDISEARCH_LANGUAGE } = require('redis')
 
 const paymentHistorySchema = new Schema(
     {
-        invoice: {
+        invoiceId: {
             type: Types.ObjectId,
             ref: 'invoices',
             required: true,

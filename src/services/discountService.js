@@ -9,9 +9,9 @@ const InvoiceModel = require('../models/invoice')
 const discountService = {
     create: async (reqData) => {
         try {
-            const { invoice, type, value } = reqData
+            const { invoiceId, type, value } = reqData
 
-            const checkInvoice = await InvoiceModel.findById(invoice)
+            const checkInvoice = await InvoiceModel.findById(invoiceId)
             if (!checkInvoice) {
                 throw new BadReq(errorCode.INVOICE_NOT_FOUND)
             }
@@ -33,7 +33,7 @@ const discountService = {
             {
                 $lookup: {
                     from: 'invoices',
-                    localField: 'invoice',
+                    localField: 'invoiceId',
                     foreignField: '_id',
                     as: 'invoiceInfo',
                 },
@@ -71,7 +71,7 @@ const discountService = {
                     {
                         $project: {
                             _id: 1,
-                            invoice: 1,
+                            invoiceId: 1,
                             requestDate: 1,
                             type: 1,
                             value: 1,
@@ -120,7 +120,7 @@ const discountService = {
                 {
                     $project: {
                         _id: 1,
-                        invoice: 1,
+                        invoiceId: 1,
                         requestDate: 1,
                         type: 1,
                         value: 1,
@@ -170,7 +170,7 @@ const discountService = {
                     {
                         $project: {
                             _id: 1,
-                            invoice: 1,
+                            invoiceId: 1,
                             requestDate: 1,
                             discountAmount: 1,
                             content: 1,
@@ -295,7 +295,7 @@ const discountService = {
             if (!request) {
                 throw new BadReq(errorCode.DISCOUNT_REQUEST_NOT_FOUND)
             }
-            const invoice = await InvoiceModel.findById(request.invoice)
+            const invoice = await InvoiceModel.findById(request.invoiceId)
 
             const { requestDate, type, value, content } = reqData
             const discountAmount =

@@ -48,14 +48,14 @@ module.exports = router
  *           schema:
  *             type: object
  *             required:
- *               - invoice
+ *               - invoiceId
  *               - requestDate
  *               - type
  *               - value
  *             properties:
- *               invoice:
+ *               invoiceId:
  *                 type: string
- *                 description: ID của một hóa đơn (invoice)
+ *                 description: ID của một hóa đơn (invoiceId)
  *                 example: ""
  *               requestDate:
  *                 type: string
@@ -227,7 +227,7 @@ module.exports = router
  *                           _id:
  *                             type: string
  *                             example: 684c4cd3d1becf7806470255
- *                           invoice:
+ *                           invoiceId:
  *                             type: string
  *                             example: 684c4cd3d1becf7806470255
  *                           requestDate:
@@ -380,7 +380,7 @@ module.exports = router
  *                           _id:
  *                             type: string
  *                             example: 684c4cd3d1becf7806470255
- *                           invoice:
+ *                           invoiceId:
  *                             type: string
  *                             example: 684c4cd3d1becf7806470255
  *                           requestDate:
@@ -507,7 +507,7 @@ module.exports = router
  *                     _id:
  *                       type: string
  *                       example: 684c4cd3d1becf7806470255
- *                     invoice:
+ *                     invoiceId:
  *                       type: string
  *                       example: 684c4cd3d1becf7806470255
  *                     requestDate:
