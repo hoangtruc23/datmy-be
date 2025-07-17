@@ -17,7 +17,7 @@ const downloadService = require('./downloadService')
 const pdfService = require('./pdfService')
 
 const goodsIssueService = {
-    getAll: async (query) => {
+    getAll: async (query, currentUserId) => {
         try {
             let {
                 search,
@@ -28,19 +28,23 @@ const goodsIssueService = {
             page = Number(page)
             limit = Number(limit)
             search = new RegExp(search, 'i')
+            const matchConditions = {
+                status: { $in: statuses },
+                $or: [{ customer: search }],
+                isTemporary: false,
+                // draft chỉ hiển thị với user tạo ra nó 
+                $or: [
+                    { status: { $ne: constant.GOODS_ISSUE_STATUS.DRAFT } },
+                    { createdBy: new Types.ObjectId(String(currentUserId)) },
+                ],
+            }
+
             const [items, totalItem] = await Promise.all([
-                GoodsIssueModel.find({
-                    status: { $in: statuses },
-                    $or: [{ customer: search }],
-                    isTemporary: false,
-                })
+                GoodsIssueModel.find(matchConditions)
                     .skip((page - 1) * limit)
                     .limit(limit)
                     .populate('createdBy', 'fullname'),
-                GoodsIssueModel.countDocuments({
-                    status: { $in: statuses },
-                    $or: [{ customer: search }],
-                }),
+                GoodsIssueModel.countDocuments(matchConditions),
             ])
             return {
                 items,
