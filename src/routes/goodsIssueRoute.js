@@ -65,8 +65,8 @@ module.exports = router
  *         type: array
  *         items:
  *           type: string
- *           enum: [warehouseStaffApproval, warehouseAccountantApproval, debtAccountantApproval, billAccountApproval, reject, cancel, approved]
- *         example: [warehouseStaffApproval, warehouseAccountantApproval, debtAccountantApproval, billAccountApproval, reject, cancel, approved]
+ *           enum: [draft, warehouseStaffApproval, warehouseAccountantApproval, debtAccountantApproval, billAccountApproval, reject, cancel, approved]
+ *         example: [draft, warehouseStaffApproval, warehouseAccountantApproval, debtAccountantApproval, billAccountApproval, reject, cancel, approved]
  *         style: form
  *         explode: true
  *     responses:
