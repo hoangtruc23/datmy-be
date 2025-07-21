@@ -438,6 +438,37 @@ async function permissionSeeder() {
             code: 'hoa_don-xoa',
             parentPermissionId: '686dd0b535512a73e076c3a7',
         },
+        // Lịch sử thanh toán
+        {
+            _id: new Types.ObjectId('687df491fd5669a67e23a295'),
+            name: 'Lịch sử thanh toán',
+            code: 'payment_history',
+            parentPermissionId: null,
+        },
+        {
+            _id: new Types.ObjectId('687df491fd5669a67e23a296'),
+            name: 'Xem',
+            code: 'payment_history-xem',
+            parentPermissionId: '687df491fd5669a67e23a295',
+        },
+        {
+            _id: new Types.ObjectId('687df491fd5669a67e23a297'),
+            name: 'Thêm',
+            code: 'payment_history-them',
+            parentPermissionId: '687df491fd5669a67e23a295',
+        },
+        {
+            _id: new Types.ObjectId('687df491fd5669a67e23a298'),
+            name: 'Cập nhật',
+            code: 'payment_history-cap_nhat',
+            parentPermissionId: '687df491fd5669a67e23a295',
+        },
+        {
+            _id: new Types.ObjectId('687df491fd5669a67e23a299'),
+            name: 'Xóa',
+            code: 'payment_history-xoa',
+            parentPermissionId: '687df491fd5669a67e23a295',
+        },
 
         //chiết khấu
         {

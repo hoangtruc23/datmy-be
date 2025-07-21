@@ -288,6 +288,28 @@ async function rolePermissionSeeder() {
             permissionId: '686dd0b535512a73e076c3ab', // Xóa hóa đơn
         },
 
+        // lịch sử thanh toán quản trị viên
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '687df491fd5669a67e23a295', // lịch sử thanh toán
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '687df491fd5669a67e23a296', // Thêm lịch sử thanh toán
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '687df491fd5669a67e23a297', // Xem lịch sử thanh toán
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '687df491fd5669a67e23a298', // Cập nhật lịch sử thanh toán
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '687df491fd5669a67e23a299', // Xóa lịch sử thanh toán
+        },
+
         //chiết khấu quản trị viên
         {
             roleId: '684927c871287f2ae7d8130b', // Quản trị viên

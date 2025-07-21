@@ -272,7 +272,15 @@ const errorCode = {
     SERIAL_QUANTITY_MUST_BE_ONE: {
         code: 70,
         message: 'Số lượng cho mỗi serial phải là 1.',
-    }
+    },
+    PAYMENT_NOT_FOUND: {
+        code: 71,
+        message: 'Thanh toán không tồn tại',
+    },
+    PAYMENT_ALREADY_EXISTS: {
+        code: 72,
+        message: 'Thanh toán đã tồn tại',
+    },
 }
 
 module.exports = errorCode

@@ -95,7 +95,6 @@ const authService = {
                     permissionCodeList.add(item?.code)
                 })
                 user.permissionCodeList = [...permissionCodeList]
-
             } else {
                 // Lấy tất cả các permission
                 const rolePermissions = await RolePermissionModel.find({

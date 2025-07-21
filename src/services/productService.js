@@ -155,12 +155,12 @@ const productCategoryService = {
                 ProductModel.countDocuments(filter),
             ])
             const items = products.map((product) => {
-                const plainProduct = product.toObject(); 
+                const plainProduct = product.toObject()
                 return {
                     ...plainProduct,
-                    unit: plainProduct.unit ? plainProduct.unit.name : null, 
-                };
-            });
+                    unit: plainProduct.unit ? plainProduct.unit.name : null,
+                }
+            })
 
             const totalPages = Math.ceil(total / limit)
             return { items, total, page, limit, totalPages }
@@ -314,7 +314,7 @@ const productCategoryService = {
                         image: product.image,
                         isActive: product.isActive,
                         safetyQuantity: product.safetyQuantity,
-                        managementType: product.managementType, 
+                        managementType: product.managementType,
                         unit: product.unit ? product.unit.name : null,
                         totalQuantity,
                         isSafe,
