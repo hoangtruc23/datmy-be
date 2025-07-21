@@ -126,8 +126,9 @@ const goodsIssueService = {
             }
             if (!isDraft && checkGoodsIssue.isDraft) {
                 // Nếu phiếu tạo mà không phải nháp thì ta cập nhật lại productStorage (tồn kho)
-                const goodsIssueDetails =
-                    await GoodsIssueDetaileModel.findById(goodsIssueId)
+                const goodsIssueDetails = await GoodsIssueDetaileModel.find({
+                    goodsIssueId,
+                })
                 for (let goodsIssueDetail of goodsIssueDetails) {
                     if (goodsIssueDetail.storages.length > 0) {
                         for (let storage of goodsIssueDetail.storages) {
