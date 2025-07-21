@@ -32,7 +32,7 @@ const goodsIssueService = {
                 status: { $in: statuses },
                 $or: [{ customer: search }],
                 isTemporary: false,
-                // draft chỉ hiển thị với user tạo ra nó 
+                // draft chỉ hiển thị với user tạo ra nó
                 $or: [
                     { status: { $ne: constant.GOODS_ISSUE_STATUS.DRAFT } },
                     { createdBy: new Types.ObjectId(String(currentUserId)) },
@@ -127,7 +127,7 @@ const goodsIssueService = {
             if (!isDraft && checkGoodsIssue.isDraft) {
                 // Nếu phiếu tạo mà không phải nháp thì ta cập nhật lại productStorage (tồn kho)
                 const goodsIssueDetails =
-                    await GoodsIssueDetaileModel.find(goodsIssueId)
+                    await GoodsIssueDetaileModel.findById(goodsIssueId)
                 for (let goodsIssueDetail of goodsIssueDetails) {
                     if (goodsIssueDetail.storages.length > 0) {
                         for (let storage of goodsIssueDetail.storages) {
