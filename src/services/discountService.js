@@ -59,7 +59,10 @@ const discountService = {
                 {
                     $match: {
                         ...statusCondition,
-                        $or: [{ 'invoiceInfo.customerName': search }],
+                        $or: [
+                            { 'invoiceInfo.customerName': search },
+                            { 'invoiceInfo.invoiceCode': search },
+                        ],
                     },
                 },
             ]
