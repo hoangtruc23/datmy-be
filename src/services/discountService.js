@@ -80,6 +80,7 @@ const discountService = {
                             status: 1,
                             'invoiceInfo.customerName': 1,
                             'invoiceInfo.totalAmount': 1,
+                            'invoiceInfo.invoiceCode': 1,
                         },
                     },
                     {

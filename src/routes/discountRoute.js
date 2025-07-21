@@ -257,6 +257,9 @@ module.exports = router
  *                               totalAmount:
  *                                 type: number
  *                                 example: 500000
+ *                               invoiceCode:
+ *                                 type: string
+ *                                 example: L001234
  *                     page:
  *                       type: number
  *                       example: 1
@@ -402,7 +405,7 @@ module.exports = router
  *                                 type: string
  *                                 example: Công ty ABC
  *                               invoiceCode:
- *                                 type: number
+ *                                 type: string
  *                                 example: L001234
  *                     page:
  *                       type: number
