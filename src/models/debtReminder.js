@@ -48,5 +48,5 @@ const debtReminderSchema = new Schema(
     { timestamps: true },
 )
 
-const DebtReminderModel = model('debt_reminders', debtReminderSchema)
+const DebtReminderModel = model('debtreminders', debtReminderSchema)
 module.exports = DebtReminderModel

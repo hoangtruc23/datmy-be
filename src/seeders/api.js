@@ -508,6 +508,33 @@ async function apiSeeder() {
             note: 'Xoá hóa đơn',
         },
 
+        // Lịch sử thanh toán
+        {
+            _id: new Types.ObjectId('687df491fd5669a67e23a290'),
+            api: '/paymentHistory/create',
+            note: 'Tạo lịch sử thanh toán',
+        },
+        {
+            _id: new Types.ObjectId('687df491fd5669a67e23a291'),
+            api: '/paymentHistory/update',
+            note: 'Cập nhật lịch sử thanh toán',
+        },
+        {
+            _id: new Types.ObjectId('687df491fd5669a67e23a292'),
+            api: '/paymentHistory/getById',
+            note: 'Xem chi tiết lịch sử thanh toán theo ID',
+        },
+        {
+            _id: new Types.ObjectId('687df491fd5669a67e23a293'),
+            api: '/paymentHistory/getAll',
+            note: 'Lấy danh sách tất cả lịch sử thanh toán',
+        },
+        {
+            _id: new Types.ObjectId('687df491fd5669a67e23a294'),
+            api: '/paymentHistory/delete',
+            note: 'Xóa lịch sử thanh toán',
+        },
+
         //chiết khấu
         {
             _id: new Types.ObjectId('687165240ac4b74840483515'),

@@ -1,6 +1,5 @@
 const { Schema, model, Types } = require('mongoose')
 const constant = require('../utils/constant/constant')
-const { REDISEARCH_LANGUAGE } = require('redis')
 
 const paymentHistorySchema = new Schema(
     {
@@ -32,5 +31,5 @@ const paymentHistorySchema = new Schema(
     { timestamps: true },
 )
 
-const PaymentHistoryModel = model('payment_histories', paymentHistorySchema)
+const PaymentHistoryModel = model('paymenthistories', paymentHistorySchema)
 module.exports = PaymentHistoryModel

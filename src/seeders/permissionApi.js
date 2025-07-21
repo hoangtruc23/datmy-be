@@ -490,6 +490,28 @@ async function permissionApiSeeder() {
             apiId: '686dd0b535512a73e076c3a6', // /invoice/delete
         },
 
+        // Lịch sử thanh toán
+        {
+            permissionId: '687df491fd5669a67e23a296', // Xem lịch sử thanh toán
+            apiId: '687df491fd5669a67e23a293', // /paymentHistory/getAll
+        },
+        {
+            permissionId: '687df491fd5669a67e23a296', // Xem lịch sử thanh toán
+            apiId: '687df491fd5669a67e23a292', // /paymentHistory/getById
+        },
+        {
+            permissionId: '687df491fd5669a67e23a297', // Thêm lịch sử thanh toán
+            apiId: '687df491fd5669a67e23a290', // /paymentHistory/create
+        },
+        {
+            permissionId: '687df491fd5669a67e23a298', // Cập nhật lịch sử thanh toán
+            apiId: '687df491fd5669a67e23a291', // /paymentHistory/update
+        },
+        {
+            permissionId: '687df491fd5669a67e23a299', // Xoá lịch sử thanh toán
+            apiId: '687df491fd5669a67e23a294', // /paymentHistory/delete
+        },
+
         //Chiết khấu
         {
             permissionId: '687165e2ee8406ca535d1ba3', // Tạo phiếu chiết khấu
