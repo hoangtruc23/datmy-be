@@ -685,11 +685,7 @@ const goodsIssueService = {
                         await GoodsIssueModel.findByIdAndUpdate(
                             checkGoodsIssueApproval.goodsIssueId,
                             {
-                                status:
-                                    status == constant.APPROVAL_STATUS.APPROVED
-                                        ? constant.GOODS_ISSUE_STATUS
-                                              .WAREHOUSE_ACCOUNTANT_APPROVAL
-                                        : status,
+                                status: constant.GOODS_ISSUE_STATUS.APPROVED,
                             },
                             { session },
                         )
@@ -714,11 +710,7 @@ const goodsIssueService = {
                         await GoodsIssueModel.findByIdAndUpdate(
                             checkGoodsIssueApproval.goodsIssueId,
                             {
-                                status:
-                                    status == constant.APPROVAL_STATUS.APPROVED
-                                        ? constant.GOODS_ISSUE_STATUS
-                                              .DEBT_ACCOUNTANT_APPROVAL
-                                        : status,
+                                status: constant.GOODS_ISSUE_STATUS.APPROVED,
                             },
                             { session },
                         )
@@ -743,11 +735,7 @@ const goodsIssueService = {
                         await GoodsIssueModel.findByIdAndUpdate(
                             checkGoodsIssueApproval.goodsIssueId,
                             {
-                                status:
-                                    status == constant.APPROVAL_STATUS.APPROVED
-                                        ? constant.GOODS_ISSUE_STATUS
-                                              .BILL_ACCOUNTANT_APPROVAL
-                                        : status,
+                                status: constant.GOODS_ISSUE_STATUS.APPROVED,
                             },
                             { session },
                         )
@@ -777,16 +765,25 @@ const goodsIssueService = {
                         await GoodsIssueModel.findByIdAndUpdate(
                             checkGoodsIssueApproval.goodsIssueId,
                             {
-                                status:
-                                    status == constant.APPROVAL_STATUS.APPROVED
-                                        ? constant.GOODS_ISSUE_STATUS.APPROVED
-                                        : status,
+                                status: constant.GOODS_ISSUE_STATUS.APPROVED,
                             },
                             { session },
                         )
                         break
                     }
                 }
+            }
+            if (
+                status == constant.APPROVAL_STATUS.CANCEL ||
+                status == constant.APPROVAL_STATUS.REJECTED
+            ) {
+                await GoodsIssueModel.findByIdAndUpdate(
+                    checkGoodsIssueApproval.goodsIssueId,
+                    {
+                        status,
+                    },
+                    { session },
+                )
             }
             await session.commitTransaction()
             return null
