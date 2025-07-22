@@ -271,31 +271,6 @@ const goodsIssueService = {
                     }
                 }
             }
-            if (isDraft && !checkGoodsIssue.isDraft) {
-                const goodsIssueDetails = await GoodsIssueDetaileModel.find({
-                    goodsIssueId,
-                })
-                if (!goodsIssueDetails) {
-                    throw new BadReq(errorCode.GOODS_ISSUE_DETAIL_NOT_FOUND)
-                }
-                for (let goodsIssueDetail of goodsIssueDetails) {
-                    if (goodsIssueDetail.storages.length > 0) {
-                        for (let storage of goodsIssueDetail.storages) {
-                            await ProductStorageModel.findOneAndUpdate(
-                                {
-                                    warehouseId: goodsIssueDetail.warehouseId,
-                                    productId: goodsIssueDetail.productId,
-                                    trackingCode: storage.trackingCode,
-                                },
-                                {
-                                    $inc: { quantity: storage.quantity },
-                                },
-                                { session },
-                            )
-                        }
-                    }
-                }
-            }
             await GoodsIssueModel.findByIdAndUpdate(
                 goodsIssueId,
                 {
@@ -627,6 +602,7 @@ const goodsIssueService = {
             session.startTransaction()
             const { goodsIssueApprovalId, status, invoiceNumber, content } =
                 input
+            //lấy ra phiếu duyệt
             const checkGoodsIssueApproval =
                 await GoodsIssueApprovalModel.findById(goodsIssueApprovalId)
             if (!checkGoodsIssueApproval) {
@@ -635,10 +611,12 @@ const goodsIssueService = {
             if (!checkGoodsIssueApproval.nextApprovalRoleId) {
                 throw new BadReq(errorCode.GOODS_ISSUE_APPROVAL_APPROVED)
             }
+            //lấy ra phiếu xuất kho
             const checkGoodsIssue = await GoodsIssueModel.findById(
                 checkGoodsIssueApproval.goodsIssueId,
             )
             if (status == constant.APPROVAL_STATUS.APPROVED) {
+                //lấy ra phiếu sản phẩm
                 const checkGoodsIssueDetails =
                     await GoodsIssueDetaileModel.find({
                         goodsIssueId: checkGoodsIssue._id,
@@ -664,7 +642,7 @@ const goodsIssueService = {
             ) {
                 // Cập nhật lại số lượng sản phẩm khi bị từ chối hoặc hủy
                 const goodsIssueDetails = await GoodsIssueDetaileModel.find({
-                    goodsIssueId: checkGoodsIssue.goodsIssueId,
+                    goodsIssueId: checkGoodsIssue._id,
                 })
                 for (let goodsIssueDetail of goodsIssueDetails) {
                     if (goodsIssueDetail.storages.length > 0) {
@@ -685,11 +663,7 @@ const goodsIssueService = {
                 }
             }
 
-            if (
-                status == constant.APPROVAL_STATUS.APPROVED ||
-                status == constant.APPROVAL_STATUS.REJECTED ||
-                status == constant.APPROVAL_STATUS.CANCEL
-            ) {
+            if (status == constant.APPROVAL_STATUS.APPROVED) {
                 const user = await UserModel.findById(currentUserId)
                 switch (checkGoodsIssueApproval.nextApprovalRoleId) {
                     case constant.ROLES.warehouseStaff: {
