@@ -129,6 +129,9 @@ const goodsIssueService = {
                 const goodsIssueDetails = await GoodsIssueDetaileModel.find({
                     goodsIssueId,
                 })
+                if (!goodsIssueDetails) {
+                    throw new BadReq(errorCode.GOODS_ISSUE_DETAIL_NOT_FOUND)
+                }
                 for (let goodsIssueDetail of goodsIssueDetails) {
                     if (goodsIssueDetail.storages.length > 0) {
                         for (let storage of goodsIssueDetail.storages) {
@@ -231,9 +234,27 @@ const goodsIssueService = {
                 const goodsIssueDetails = await GoodsIssueDetaileModel.find({
                     goodsIssueId,
                 })
+                if (!goodsIssueDetails) {
+                    throw new BadReq(errorCode.GOODS_ISSUE_DETAIL_NOT_FOUND)
+                }
                 for (let goodsIssueDetail of goodsIssueDetails) {
                     if (goodsIssueDetail.storages.length > 0) {
                         for (let storage of goodsIssueDetail.storages) {
+                            const checkProduct =
+                                await ProductStorageModel.findById(
+                                    storage.productStorageId,
+                                )
+                            if (!checkProduct) {
+                                throw new BadReq(
+                                    errorCode.PRODUCT_STORAGE_NOT_FOUND,
+                                )
+                            }
+                            if (product.quantity < storage.quantity) {
+                                throw new BadReq(
+                                    errorCode.SERIAL_OR_BATCH_QUANTITY_INVALID,
+                                )
+                            }
+
                             await ProductStorageModel.findOneAndUpdate(
                                 {
                                     warehouseId: goodsIssueDetail.warehouseId,
@@ -243,6 +264,31 @@ const goodsIssueService = {
                                 // nhớ check lại khi nó trừ số lượng âm thì có throw lỗi không
                                 {
                                     $inc: { quantity: -storage.quantity },
+                                },
+                                { session },
+                            )
+                        }
+                    }
+                }
+            }
+            if (isDraft && !checkGoodsIssue.isDraft) {
+                const goodsIssueDetails = await GoodsIssueDetaileModel.find({
+                    goodsIssueId,
+                })
+                if (!goodsIssueDetails) {
+                    throw new BadReq(errorCode.GOODS_ISSUE_DETAIL_NOT_FOUND)
+                }
+                for (let goodsIssueDetail of goodsIssueDetails) {
+                    if (goodsIssueDetail.storages.length > 0) {
+                        for (let storage of goodsIssueDetail.storages) {
+                            await ProductStorageModel.findOneAndUpdate(
+                                {
+                                    warehouseId: goodsIssueDetail.warehouseId,
+                                    productId: goodsIssueDetail.productId,
+                                    trackingCode: storage.trackingCode,
+                                },
+                                {
+                                    $inc: { quantity: storage.quantity },
                                 },
                                 { session },
                             )
@@ -411,6 +457,9 @@ const goodsIssueService = {
                 )
                 if (!checkProductStorage) {
                     throw new BadReq(errorCode.PRODUCT_STORAGE_NOT_FOUND)
+                }
+                if (storage.quantity <= 0) {
+                    throw new BadReq(errorCode.SERIAL_OR_BATCH_QUANTITY_INVALID)
                 }
                 if (storage.quantity > checkProductStorage.quantity) {
                     throw new BadReq(errorCode.SERIAL_OR_BATCH_QUANTITY_INVALID)
