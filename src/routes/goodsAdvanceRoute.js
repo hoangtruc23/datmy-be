@@ -9,6 +9,7 @@ router.post('/create/:goodsAdvanceId', goodsAdvanceController.create)
 router.post('/update/:goodsAdvanceId', goodsAdvanceController.update)
 router.post('/cancel/:goodsAdvanceId', goodsAdvanceController.cancel)
 router.post('/extend/:goodsAdvanceId', goodsAdvanceController.extend)
+router.post('/receiveBack/:goodsAdvanceId',goodsAdvanceController.receiveBack,)
 router.post('/addProduct', goodsAdvanceController.addProduct)
 router.post(
     '/updateProduct/:goodsAdvanceDetailId',
@@ -1279,6 +1280,221 @@ module.exports = router
  *                   type: string
  *                   example: null
  */
+
+/**
+ * @swagger
+ * /goodsAdvance/receiveBack/{goodsAdvanceId}:
+ *   post:
+ *     summary: Nhận lại hàng từ phiếu tạm ứng (Chỉ thực hiện được 1 lần khi phiếu ở trạng thái 'approved')
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [GoodsAdvance]
+ *     parameters:
+ *     - name: goodsAdvanceId
+ *       in: path
+ *       required: true
+ *       schema:
+ *         type: string
+ *       description: ID của phiếu tạm ứng cần xử lý.
+ *     requestBody:
+ *       required: true
+ *       description: Dữ liệu chi tiết về việc nhận lại hàng.
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - returner
+ *               - returnDate
+ *               - details
+ *             properties:
+ *               returner:
+ *                 type: string
+ *                 description: "Tên người thực hiện trả hàng."
+ *                 example: "Nhân viên Nguyễn Văn Tường"
+ *               returnDate:
+ *                 type: string
+ *                 format: date
+ *                 description: "Ngày thực tế trả hàng."
+ *                 example: "2025-07-22"
+ *               details:
+ *                 type: array
+ *                 description: "Danh sách chi tiết các sản phẩm được xử lý."
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                      - goodsAdvanceDetailId
+ *                      - returnWarehouseId
+ *                      - declaredQuantity
+ *                   properties:
+ *                     goodsAdvanceDetailId:
+ *                       type: string
+ *                       description: "ID của dòng sản phẩm trong phiếu tạm ứng."
+ *                       example: "687a08ce43d7e6c16ee8b587"
+ *                     returnWarehouseId:
+ *                       type: string
+ *                       description: "ID của kho nhận lại hàng."
+ *                       example: "684c41f3ae24ff427ec487ea"
+ *                     declaredQuantity:
+ *                       type: number
+ *                       description: "Tổng số lượng người dùng khai báo xử lý (giá trị từ ô 'Số lượng trả lại')."
+ *                       example: 5
+ *                     returnStatus:
+ *                       type: string
+ *                       description: "Trạng thái của hàng trả về (e.g., 'mới', 'trầy xước')."
+ *                       example: "Còn mới, nguyên vẹn"
+ *                     returnStorages:
+ *                       type: array
+ *                       description: "Danh sách các serial/lô hàng được trả lại kho."
+ *                       items:
+ *                          type: object
+ *                          properties:
+ *                              trackingCode:
+ *                                  type: string
+ *                                  example: "SERIAL-001"
+ *                              quantity:
+ *                                  type: number
+ *                                  example: 1
+ *                     lostStorages:
+ *                       type: array
+ *                       description: "Danh sách các serial/lô hàng bị báo mất."
+ *                       items:
+ *                          type: object
+ *                          properties:
+ *                              trackingCode:
+ *                                  type: string
+ *                                  example: "SERIAL-002"
+ *                              quantity:
+ *                                  type: number
+ *                                  example: 1
+ *                     lostReason:
+ *                        type: string
+ *                        description: "Lý do cho các sản phẩm bị mất."
+ *                        example: "Thất lạc trong quá trình vận chuyển"
+ *                     purchaseStorages:
+ *                       type: array
+ *                       description: "Danh sách các serial/lô hàng khách hàng muốn mua lại."
+ *                       items:
+ *                          type: object
+ *                          properties:
+ *                              trackingCode:
+ *                                  type: string
+ *                                  example: "SERIAL-003"
+ *                              quantity:
+ *                                  type: number
+ *                                  example: 1
+ *                     purchaseReason:
+ *                        type: string
+ *                        description: "Lý do cho việc chuyển sang mua."
+ *                        example: "Khách hàng có nhu cầu sử dụng luôn"
+ *     responses:
+ *       '200':
+ *         description: Nhận lại hàng thành công. Trạng thái phiếu tạm ứng đã được cập nhật thành 'inDebt' (Đang nợ) hoặc 'returned' (Đã trả).
+ *         content:
+ *           application/json:
+ *             schema:
+ *                type: object
+ *                properties:
+ *                  status: { type: integer, example: 200 }
+ *                  code: { type: integer, example: 1 }
+ *                  message: { type: string, example: "OK!" }
+ *                  data: { type: 'null', example: null }
+ *       '400':
+ *         description: Lỗi từ dữ liệu đầu vào không hợp lệ.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                 code:
+ *                   type: integer
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: 'null'
+ *             examples:
+ *               InvalidState:
+ *                 summary: "Lỗi sai trạng thái phiếu"
+ *                 value:
+ *                   status: 400
+ *                   code: 73
+ *                   message: "Không thể nhận lại hàng cho phiếu tạm ứng ở trạng thái này."
+ *                   data: null
+ *               QuantityMismatch:
+ *                 summary: "Lỗi không khớp số lượng"
+ *                 value:
+ *                   status: 400
+ *                   code: 75
+ *                   message: "Tổng số lượng sản phẩm (4) không khớp với Số lượng đã khai báo (5)."
+ *                   data: null
+ *               OverReturn:
+ *                 summary: "Lỗi trả quá số lượng mượn"
+ *                 value:
+ *                   status: 400
+ *                   code: 74
+ *                   message: "Số lượng xử lý (6) vượt quá số lượng đã mượn (5) cho sản phẩm X."
+ *                   data: null
+ *       401:
+ *         description: Chưa đăng nhập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 401
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có token
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       403:
+ *         description: Không có quyền truy cập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 403
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có quyền
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       500:
+ *         description: Lỗi server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 500
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Lỗi server!
+ *                 data:
+ *                   type: string
+ *                   example: null
+ */
+
 
 /**
  * @swagger

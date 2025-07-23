@@ -19,8 +19,7 @@ const errorCode = {
         message: 'Nhà cung cấp không tồn tại!',
     },
     CUSTOMER_NOT_FOUND: {
-        // <-- ADD THIS
-        code: 12, // Use an available code
+        code: 12,
         message: 'Khách hàng không tồn tại!',
     },
 
@@ -280,6 +279,18 @@ const errorCode = {
     PAYMENT_ALREADY_EXISTS: {
         code: 72,
         message: 'Thanh toán đã tồn tại',
+    },
+    GOODS_ADVANCE_INVALID_STATE_FOR_RETURN: {
+        code: 73,
+        message: 'Không thể nhận lại hàng cho phiếu tạm ứng ở trạng thái này.',
+    },
+    GOODS_ADVANCE_RETURN_QUANTITY_INVALID: {
+        code: 74,
+        message: 'Số lượng trả lại vượt quá số lượng đã mượn.',
+    },
+    GOODS_ADVANCE_SERIAL_COUNT_MISMATCH: {
+        code: 75,
+        message: 'Tổng số serial không khớp với số lượng đã khai báo.',
     },
 }
 

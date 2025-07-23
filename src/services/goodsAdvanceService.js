@@ -711,6 +711,134 @@ const goodsAdvanceService = {
             session.endSession()
         }
     },
+    receiveBack: async (goodsAdvanceId, input, currentUserId) => {
+        const session = await mongoose.startSession();
+        try {
+            session.startTransaction();
+            const { returner, returnDate, details } = input;
+
+            const goodsAdvance = await GoodsAdvanceModel.findById(
+                goodsAdvanceId,
+            ).session(session);
+
+            if (!goodsAdvance) {
+                throw new BadReq(errorCode.GOODS_ADVANCE_NOT_FOUND);
+            }
+
+            if (goodsAdvance.status !== constant.GOODS_ADVANCE_STATUS.APPROVED) {
+                throw new BadReq(
+                    errorCode.GOODS_ADVANCE_INVALID_STATE_FOR_RETURN,
+                );
+            }
+
+            //loop các sản phẩm trong phiếu
+            for (const detail of details) { 
+                const {
+                    goodsAdvanceDetailId,
+                    returnWarehouseId,
+                    declaredQuantity,
+                    returnStatus,
+                    returnStorages = [],
+                    lostStorages = [],
+                    lostReason = '',
+                    purchaseStorages = [],
+                    purchaseReason = '',
+                } = detail;
+
+                const sumQuantities = (items) => items.reduce((total, item) => total + item.quantity, 0);
+
+                const totalItemCount = sumQuantities(returnStorages) + sumQuantities(lostStorages) + sumQuantities(purchaseStorages);
+                
+                if (totalItemCount !== declaredQuantity) {
+                    throw new BadReq({
+                        ...errorCode.GOODS_ADVANCE_SERIAL_COUNT_MISMATCH,
+                        message: `Tổng số lượng sản phẩm (${totalItemCount}) không khớp với Số lượng đã khai báo (${declaredQuantity}).`,
+                    });
+                }
+
+                const advanceDetail = await GoodsAdvanceDetaileModel.findById(
+                    goodsAdvanceDetailId,
+                ).session(session);
+
+                if (!advanceDetail) {
+                    throw new BadReq(errorCode.GOODS_ADVANCE_DETAIL_NOT_FOUND);
+                }
+
+                if (declaredQuantity > advanceDetail.borrowedQuantity) {
+                    throw new BadReq({
+                        ...errorCode.GOODS_ADVANCE_RETURN_QUANTITY_INVALID,
+                        message: `Số lượng xử lý (${declaredQuantity}) vượt quá số lượng đã mượn (${advanceDetail.borrowedQuantity}) cho sản phẩm ${advanceDetail.productName}.`,
+                    });
+                }
+
+                advanceDetail.returnWarehouseId = returnWarehouseId;
+                const warehouse = await WarehouseModel.findById(returnWarehouseId);
+                if (!warehouse) throw new BadReq(errorCode.WAREHOUSE_NOT_FOUND);
+                advanceDetail.returnWarehouseName = warehouse.name;
+                
+                advanceDetail.returnStorages = returnStorages;
+                advanceDetail.lostStorages = lostStorages;
+                advanceDetail.purchaseStorages = purchaseStorages;
+                advanceDetail.lostReason = lostReason;
+                advanceDetail.returnStatus =returnStatus;
+                advanceDetail.purchaseReason = purchaseReason;
+                advanceDetail.returnedQuantity = sumQuantities(returnStorages);
+
+                for (const storage of returnStorages) {
+                    await ProductStorageModel.findOneAndUpdate(
+                        {
+                            warehouseId: returnWarehouseId,
+                            productId: advanceDetail.productId,
+                            trackingCode: storage.trackingCode,
+                        },
+                        { $inc: { quantity: storage.quantity } },
+                        { upsert: true, session }, //nếu ko có thì tạo mới
+                    );
+                }
+
+                await advanceDetail.save({ session });
+            }
+
+            const allDetails = await GoodsAdvanceDetaileModel.find({
+                goodsAdvanceId,
+            }).session(session);
+            
+            //detail này từ database, ktra tất cả các sản phẩm
+
+            const isEverythingPhysicallyReturned = allDetails.every(detail => {
+                const sumQuantities = (items) => items.reduce((total, item) => total + item.quantity, 0);
+                const totalReturned = sumQuantities(detail.returnStorages);
+                return totalReturned >= detail.borrowedQuantity;
+            });
+
+            goodsAdvance.status = isEverythingPhysicallyReturned
+                ? constant.GOODS_ADVANCE_STATUS.RETURNED // Đã trả
+                : constant.GOODS_ADVANCE_STATUS.IN_DEBT;   // Đang nợ                
+            goodsAdvance.updatedBy = currentUserId;
+            goodsAdvance.returner = returner;
+            goodsAdvance.returnDate = returnDate;
+
+            await goodsAdvance.save({ session });
+            await GoodsAdvanceProcessModel.create(
+                [{
+                    goodsAdvanceId,
+                    title: constant.GOODS_ADVANCE_PROCESS_TITLE.RECEIVE_BACK,
+                    createdBy: currentUserId,
+                    status: true,
+                    note: 'Đã nhận lại hàng tạm ứng.',
+                },],
+                { session },
+            );
+
+            await session.commitTransaction();
+            return null;
+        } catch (error) {
+            await session.abortTransaction();
+            throw error;
+        } finally {
+            session.endSession();
+        }
+    },
     exportReport: async (filters) => {
         try {
             const { startDate, endDate, statuses, warehouseIds } = filters

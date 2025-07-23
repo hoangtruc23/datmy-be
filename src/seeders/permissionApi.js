@@ -464,6 +464,10 @@ async function permissionApiSeeder() {
             apiId: '685cf633e0e45d397c4ca195', // /goodsAdvance/approval
         },
         {
+            permissionId: '687a08ce43d7e6c16ee8b585', // Nhận lại hàng (Tạm ứng)
+            apiId: '687a08ce43d7e6c16ee8b586', // /goodsAdvance/receiveBack
+        },
+        {
             permissionId: '6864e6cd4c3c96b50ff0e104', // Permission: Xuất báo cáo (Tạm ứng)
             apiId: '6864e6cd4c3c96b50ff0e105', // API: /goodsAdvance/export
         },
