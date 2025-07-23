@@ -400,6 +400,12 @@ async function permissionSeeder() {
             parentPermissionId: '684927c871287f2ae7d81309',
         },
         {
+            _id: new Types.ObjectId('687a08ce43d7e6c16ee8b585'),
+            name: 'Nhận lại hàng',
+            code: 'tam_ung-nhan_lai_hang',
+            parentPermissionId: '684927c871287f2ae7d81309',
+        },
+        {
             _id: new Types.ObjectId('6864e6cd4c3c96b50ff0e104'),
             name: 'Xuất báo cáo',
             code: 'tam_ung-xuat_bao_cao',

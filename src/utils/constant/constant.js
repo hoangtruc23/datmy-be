@@ -40,6 +40,8 @@ const constant = {
         WAREHOUSE_STAFF_APPROVAL: 'warehouseStaffApproval',
         APPROVED: 'approved',
         WAITING_FOR_EXTENSION: 'waitingForExtension',
+        IN_DEBT: 'inDebt',
+        RETURNED: 'returned',
         REJECT: 'reject',
         CANCEL: 'cancel',
     },
@@ -47,6 +49,7 @@ const constant = {
         CREATE: 'create',
         APPROVAL: 'approval',
         EXTEND: 'extend',
+        RECEIVE_BACK: 'receiveBack',
         CANCEL: 'cancel',
     },
     APPROVAL_STATUS: {

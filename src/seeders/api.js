@@ -476,6 +476,11 @@ async function apiSeeder() {
             note: 'Xác nhận phiếu tạm ứng',
         },
         {
+            _id: new Types.ObjectId('687a08ce43d7e6c16ee8b586'),
+            api: '/goodsAdvance/receiveBack',
+            note: 'Nhận lại hàng tạm ứng',
+        },
+        {
             _id: new Types.ObjectId('6864e6cd4c3c96b50ff0e105'),
             api: '/goodsAdvance/export',
             note: 'Xuất báo cáo tạm ứng ra excel',

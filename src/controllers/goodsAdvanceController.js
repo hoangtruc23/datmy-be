@@ -85,6 +85,20 @@ const goodsAdvanceController = {
             next(error)
         }
     },
+    receiveBack: async (req, res, next) => {
+        try {
+            const currentUserId = req.userId
+            const { goodsAdvanceId } = req.params
+            const result = await goodsAdvanceService.receiveBack(
+                goodsAdvanceId,
+                req.body,
+                currentUserId,
+            )
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
     addProduct: async (req, res, next) => {
         try {
             const result = await goodsAdvanceService.addProduct(req.body)

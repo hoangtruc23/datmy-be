@@ -264,6 +264,10 @@ async function rolePermissionSeeder() {
         // },
         {
             roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '687a08ce43d7e6c16ee8b585', // Nhận lại hàng (Tạm ứng)
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
             permissionId: '6864e6cd4c3c96b50ff0e104', // Grant 'Xuất báo cáo' permission
         },
         //hoa don quan tri vien
@@ -561,6 +565,10 @@ async function rolePermissionSeeder() {
         {
             roleId: '684927c871287f2ae7d8130c',
             permissionId: '685cf633e0e45d397c4ca19a', // Xác nhận phiếu tạm ứng
+        },
+        {
+            roleId: '684927c871287f2ae7d8130c',
+            permissionId: '687a08ce43d7e6c16ee8b585', // Nhận lại hàng (Tạm ứng)
         },
 
         // Kế toán kho =======================================================================================
