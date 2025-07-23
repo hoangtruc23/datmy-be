@@ -13,7 +13,7 @@ const debtService = {
             page = parseInt(page)
             limit = parseInt(limit)
             const skip = (page - 1) * limit
-            const currentDate = new Date('2025-07-23T10:49:00+07:00')
+            const currentDate = new Date()
 
             const pipeline = [
                 {
@@ -244,7 +244,6 @@ const debtService = {
                 { $skip: skip },
                 { $limit: limit },
             ]
-            console.log('Pipeline:', JSON.stringify(pipeline, null, 2))
             const [items, total] = await Promise.all([
                 InvoiceModel.aggregate(pipeline),
 
