@@ -9,7 +9,7 @@ router.post('/create/:goodsAdvanceId', goodsAdvanceController.create)
 router.post('/update/:goodsAdvanceId', goodsAdvanceController.update)
 router.post('/cancel/:goodsAdvanceId', goodsAdvanceController.cancel)
 router.post('/extend/:goodsAdvanceId', goodsAdvanceController.extend)
-router.post('/receiveBack/:goodsAdvanceId',goodsAdvanceController.receiveBack,)
+router.post('/receiveBack/:goodsAdvanceId', goodsAdvanceController.receiveBack)
 router.post('/addProduct', goodsAdvanceController.addProduct)
 router.post(
     '/updateProduct/:goodsAdvanceDetailId',
@@ -1494,7 +1494,6 @@ module.exports = router
  *                   type: string
  *                   example: null
  */
-
 
 /**
  * @swagger
