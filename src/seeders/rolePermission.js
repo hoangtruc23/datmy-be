@@ -314,6 +314,12 @@ async function rolePermissionSeeder() {
             permissionId: '687df491fd5669a67e23a299', // Xóa lịch sử thanh toán
         },
 
+        // công nợ quản trị viên
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '6880936c160be16212361ba2', // Xem công nợ
+        },
+
         //chiết khấu quản trị viên
         {
             roleId: '684927c871287f2ae7d8130b', // Quản trị viên

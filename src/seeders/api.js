@@ -540,6 +540,13 @@ async function apiSeeder() {
             note: 'Xóa lịch sử thanh toán',
         },
 
+        // Công nợ
+        {
+            _id: new Types.ObjectId('6880936c160be16212361ba0'),
+            api: '/debt/getAll',
+            note: 'Lấy danh sách tất cả công nợ',
+        },
+
         //chiết khấu
         {
             _id: new Types.ObjectId('687165240ac4b74840483515'),

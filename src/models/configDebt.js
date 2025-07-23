@@ -8,16 +8,18 @@ const debtSchema = new Schema(
             required: true,
         },
         customerName: { type: String, required: true, trim: true },
+        //giới hạn tiền cho nợ
         limitDebt: { type: Number, required: true },
+        //hạn trả tiền
         limitDue: { type: Number, default: 30 },
-        //giới hạn ngày nhắc nợ, giới hạn số ngày cho phép quá hạn
+        //hạn cho phép nợ
         limitOverdue: { type: Number, default: 7 },
-        //số ngày trước thời limitDue để nhân viên nhắc nợ
+        //limitRemindDay ngày trước khi hết hạn trả tiền, dùng để nhắc nợ
         limitRemindDay: { type: Number, required: true },
         notes: { type: String },
     },
     { timestamps: true },
 )
 
-const DebtTaskModel = model('debt', debtSchema)
-module.exports = DebtTaskModel
+const ConfigDebtModel = model('configdebt', debtSchema)
+module.exports = ConfigDebtModel

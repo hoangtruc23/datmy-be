@@ -476,6 +476,19 @@ async function permissionSeeder() {
             parentPermissionId: '687df491fd5669a67e23a295',
         },
 
+        // Công nợ
+        {
+            _id: new Types.ObjectId('6880936c160be16212361ba1'),
+            name: 'Công nợ',
+            code: 'cong_no',
+            parentPermissionId: null,
+        },
+        {
+            _id: new Types.ObjectId('6880936c160be16212361ba2'),
+            name: 'Xem',
+            code: 'cong_no-xem',
+            parentPermissionId: '6880936c160be16212361ba1',
+        },
         //chiết khấu
         {
             _id: new Types.ObjectId('687165240ac4b7484048357d'),

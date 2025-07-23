@@ -47,7 +47,7 @@ const invoiceSchema = new Schema(
         status: {
             type: String,
             enum: Object.values(constant.INVOICE_STATUS),
-            default: constant.INVOICE_STATUS.NULL,
+            default: constant.INVOICE_STATUS.PENDING,
         },
         //nguời nhắc
         reminderContact: contactPersonSchema,
