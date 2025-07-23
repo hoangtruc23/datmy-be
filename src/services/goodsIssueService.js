@@ -663,7 +663,11 @@ const goodsIssueService = {
                 }
             }
 
-            if (status == constant.APPROVAL_STATUS.APPROVED) {
+            if (
+                status == constant.APPROVAL_STATUS.APPROVED ||
+                status == constant.APPROVAL_STATUS.CANCEL ||
+                status == constant.APPROVAL_STATUS.REJECTED
+            ) {
                 const user = await UserModel.findById(currentUserId)
                 switch (checkGoodsIssueApproval.nextApprovalRoleId) {
                     case constant.ROLES.warehouseStaff: {
@@ -676,7 +680,9 @@ const goodsIssueService = {
                                     content,
                                 },
                                 nextApprovalRoleId:
-                                    constant.ROLES.warehouseAccountant,
+                                    status == constant.APPROVAL_STATUS.APPROVED
+                                        ? constant.ROLES.warehouseAccountant
+                                        : null,
                             },
                             {
                                 session,
@@ -685,7 +691,11 @@ const goodsIssueService = {
                         await GoodsIssueModel.findByIdAndUpdate(
                             checkGoodsIssueApproval.goodsIssueId,
                             {
-                                status: constant.GOODS_ISSUE_STATUS.WAREHOUSE_ACCOUNTANT_APPROVAL,
+                                status:
+                                    status == constant.APPROVAL_STATUS.APPROVED
+                                        ? constant.GOODS_ISSUE_STATUS
+                                              .WAREHOUSE_ACCOUNTANT_APPROVAL
+                                        : status,
                             },
                             { session },
                         )
@@ -701,7 +711,9 @@ const goodsIssueService = {
                                     content,
                                 },
                                 nextApprovalRoleId:
-                                    constant.ROLES.debtAccountant,
+                                    status == constant.APPROVAL_STATUS.APPROVED
+                                        ? constant.ROLES.debtAccountant
+                                        : null,
                             },
                             {
                                 session,
@@ -710,7 +722,11 @@ const goodsIssueService = {
                         await GoodsIssueModel.findByIdAndUpdate(
                             checkGoodsIssueApproval.goodsIssueId,
                             {
-                                status: constant.GOODS_ISSUE_STATUS.DEBT_ACCOUNTANT_APPROVAL,
+                                status:
+                                    status == constant.APPROVAL_STATUS.APPROVED
+                                        ? constant.GOODS_ISSUE_STATUS
+                                              .DEBT_ACCOUNTANT_APPROVAL
+                                        : status,
                             },
                             { session },
                         )
@@ -726,7 +742,9 @@ const goodsIssueService = {
                                     content,
                                 },
                                 nextApprovalRoleId:
-                                    constant.ROLES.billAccountant,
+                                    status == constant.APPROVAL_STATUS.APPROVED
+                                        ? constant.ROLES.billAccountant
+                                        : null,
                             },
                             {
                                 session,
@@ -735,7 +753,11 @@ const goodsIssueService = {
                         await GoodsIssueModel.findByIdAndUpdate(
                             checkGoodsIssueApproval.goodsIssueId,
                             {
-                                status: constant.GOODS_ISSUE_STATUS.BILL_ACCOUNTANT_APPROVAL,
+                                status:
+                                    status == constant.APPROVAL_STATUS.APPROVED
+                                        ? constant.GOODS_ISSUE_STATUS
+                                              .BILL_ACCOUNTANT_APPROVAL
+                                        : status,
                             },
                             { session },
                         )
@@ -765,26 +787,16 @@ const goodsIssueService = {
                         await GoodsIssueModel.findByIdAndUpdate(
                             checkGoodsIssueApproval.goodsIssueId,
                             {
-                                status: constant.GOODS_ISSUE_STATUS.APPROVED,
+                                status:
+                                    status == constant.APPROVAL_STATUS.APPROVED
+                                        ? constant.GOODS_ISSUE_STATUS.APPROVED
+                                        : status,
                             },
                             { session },
                         )
                         break
                     }
                 }
-            }
-            if (
-                status == constant.APPROVAL_STATUS.CANCEL ||
-                status == constant.APPROVAL_STATUS.REJECTED
-            ) {
-                await GoodsIssueModel.findByIdAndUpdate(
-                    checkGoodsIssueApproval.goodsIssueId,
-                    {
-                        nextApprovalRoleId: null,
-                        status,
-                    },
-                    { session },
-                )
             }
             await session.commitTransaction()
             return null
