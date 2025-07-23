@@ -94,6 +94,15 @@ const constant = {
         PENDING: 'pending',
         OVERDUE: 'overdue',
     },
+    DEBT_STATUS: {
+        NO_DEBT: 'noDebt',
+        NORMAL: 'normal', // còn trong hạn nợ
+        OVERDUE: 'overdue', //mới quá hạn
+        BAD_DEBT: 'badDebt', // nợ lâu
+    },
+    DEBT_STATUS_PERIOD: {
+        BAD_DEBT: 30, //
+    },
 }
 
 module.exports = constant

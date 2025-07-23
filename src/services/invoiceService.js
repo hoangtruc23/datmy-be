@@ -1,6 +1,6 @@
 const { Types } = require('mongoose')
 const InvoiceModel = require('../models/invoice')
-const DebtTaskModel = require('../models/configDebt')
+const ConfigDebtModel = require('../models/configDebt')
 const BadReq = require('../utils/response/requestError')
 const errorCode = require('../utils/response/errorCode')
 
@@ -21,7 +21,9 @@ const invoiceService = {
             const existed = await InvoiceModel.findOne({ invoiceCode })
             if (existed) throw new BadReq(errorCode.INVOICE_CODE_EXISTED)
 
-            const config = await DebtTaskModel.findOne().sort({ createdAt: -1 })
+            const config = await ConfigDebtModel.findOne().sort({
+                createdAt: -1,
+            })
             const limitDue = config?.limitDue ?? 30
             const exportDate = new Date()
             const dueDate = new Date(exportDate)

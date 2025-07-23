@@ -512,6 +512,12 @@ async function permissionApiSeeder() {
             apiId: '687df491fd5669a67e23a294', // /paymentHistory/delete
         },
 
+        //Công nợ
+        {
+            permissionId: '6880936c160be16212361ba2', // xem công nợ
+            apiId: '6880936c160be16212361ba0', // /debt/getAll
+        },
+
         //Chiết khấu
         {
             permissionId: '687165e2ee8406ca535d1ba3', // Tạo phiếu chiết khấu
