@@ -522,6 +522,29 @@ async function permissionApiSeeder() {
             apiId: '6880936c160be16212361ba0', // /debt/getAll
         },
 
+        //Cài đặt công nợ 
+        {
+            permissionId: '6882fdc36f95b8b522848806', // Xem
+            apiId: '6882fdc36f95b8b522848802',       // /configDebt/getAll
+        },
+        {
+            permissionId: '6882fdc36f95b8b522848807', // Thêm
+            apiId: '6882fdc36f95b8b522848800',       // /configDebt/create
+        },
+        {
+            permissionId: '6882fdc36f95b8b522848808', // Cập nhật
+            apiId: '6882fdc36f95b8b522848801',       // /configDebt/update/:id
+        },
+        {
+            permissionId: '6882fdc36f95b8b522848806', // Xem 
+            apiId: '6882fdc36f95b8b522848803',       // /configDebt/getById/:id
+        },
+        {
+            permissionId: '6882fdc36f95b8b522848809', // Xóa
+            apiId: '6882fdc36f95b8b522848804',       // /configDebt/delete/:id
+        },
+
+
         //Chiết khấu
         {
             permissionId: '687165e2ee8406ca535d1ba3', // Tạo phiếu chiết khấu

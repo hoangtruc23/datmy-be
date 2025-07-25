@@ -44,11 +44,12 @@ const invoiceSchema = new Schema(
         orderBy: contactPersonSchema,
         //kế toán
         accountant: contactPersonSchema,
-        status: {
-            type: String,
-            enum: Object.values(constant.INVOICE_STATUS),
-            default: constant.INVOICE_STATUS.PENDING,
-        },
+        //trạng thái động
+        // status: {
+        //     type: String,
+        //     enum: Object.values(constant.INVOICE_STATUS),
+        //     default: constant.INVOICE_STATUS.PENDING,
+        // },
         //nguời nhắc
         reminderContact: contactPersonSchema,
 
