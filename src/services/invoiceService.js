@@ -96,22 +96,23 @@ const invoiceService = {
     },
 
 
-    getAll: async (page = 1, limit = 10, search = '') => {
+    getAll: async (page = 1, limit = 10, search = '', status = '') => {
         try {
             page = parseInt(page);
             limit = parseInt(limit);
             const skip = (page - 1) * limit;
             const currentDate = new Date();
-
+            const matchCond = [];
+            if (search.trim()) {
+                matchCond.push({
+                    $or: [
+                        { invoiceCode: { $regex: search.trim(), $options: 'i' } },
+                        { customerName: { $regex: search.trim(), $options: 'i' } },
+                    ],
+                });
+            }
             const pipeline = [
-                {
-                    $match: {
-                        $or: [
-                            { invoiceCode: { $regex: search.trim(), $options: 'i' } },
-                            { customerName: { $regex: search.trim(), $options: 'i' } },
-                        ],
-                    },
-                },
+                ...(matchCond.length > 0 ? [{ $match: matchCond[0] }] : []),
                 {
                     $lookup: {
                         from: 'paymenthistories',
@@ -172,6 +173,7 @@ const invoiceService = {
                         },
                     },
                 },
+                ...(status ? [{ $match: { status: { $eq: status } } }] : []),
                 {
                     $sort: { createdAt: 1 },
                 },
@@ -200,31 +202,90 @@ const invoiceService = {
                         _id: 1,
                         invoiceCode: 1,
                         customerName: 1,
-                        customerId: 1,
+                        totalAmount: 1,
                         totalPaid: 1,
                         remainingDebt: 1,
+                        dueDate: 1,
                         status: 1,
-                        'customer.name': 1,
-                        'customer.code': 1,
-                        createdAt: 1,
-                        totalAmount: 1,
-                        dueDate: 1, 
+                        orderBy: 1,
+                        accountant: 1,
+                        reminderContact: 1, 
+                        notes: 1,
                     },
                 },
             ];
-
-            const [result] = await InvoiceModel.aggregate([
+            
+            const totalPipeline = [
+                ...(matchCond.length > 0 ? [{ $match: matchCond[0] }] : []),
                 {
-                    $facet: {
-                        items: pipeline,
-                        total: [{ $match: pipeline[0].$match }, { $count: 'count' }],
+                    $lookup: {
+                        from: 'paymenthistories',
+                        let: { invoiceId: '$_id' },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: { $eq: ['$invoiceId', '$$invoiceId'] },
+                                    status: constant.PAYMENT_STATUS.PAID,
+                                },
+                            },
+                            {
+                                $group: {
+                                    _id: null,
+                                    paidAmount: { $sum: '$amount' },
+                                },
+                            },
+                        ],
+                        as: 'payments',
                     },
                 },
+                {
+                    $addFields: {
+                        totalPaid: {
+                            $ifNull: [{ $arrayElemAt: ['$payments.paidAmount', 0] }, 0],
+                        },
+                        status: {
+                            $cond: {
+                                if: {
+                                    $eq: [
+                                        '$totalAmount',
+                                        { $ifNull: [{ $arrayElemAt: ['$payments.paidAmount', 0] }, 0] },
+                                    ],
+                                },
+                                then: constant.INVOICE_STATUS.PAID,
+                                else: {
+                                    $cond: {
+                                        if: { $lt: ['$dueDate', currentDate] },
+                                        then: constant.INVOICE_STATUS.OVERDUE,
+                                        else: {
+                                            $cond: {
+                                                if: {
+                                                    $gt: [
+                                                        { $ifNull: [{ $arrayElemAt: ['$payments.paidAmount', 0] }, 0] },
+                                                        0,
+                                                    ],
+                                                },
+                                                then: constant.INVOICE_STATUS.PARTIALLY_PAID,
+                                                else: constant.INVOICE_STATUS.PENDING,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+                ...(status ? [{ $match: { status: { $eq: status } } }] : []),
+                { $count: 'count' },
+            ];
+            const [result, totalResult] = await Promise.all([
+                    InvoiceModel.aggregate(pipeline),
+                    InvoiceModel.aggregate(totalPipeline),
             ]);
 
-            const items = result.items || [];
-            const total = result.total[0]?.count || 0;
-            const totalPages = Math.ceil(total / limit);
+
+        const items = result || [];
+        const total = totalResult[0]?.count || 0;
+        const totalPages = Math.ceil(total / limit);
 
             return { items, total, page, limit, totalPages };
         } catch (err) {
@@ -252,6 +313,164 @@ const invoiceService = {
             return null
         } catch (err) {
             throw err
+        }
+    },
+
+    getSummary: async () => {
+        try {
+            const currentDate = new Date();
+
+            const pipeline = [
+                {
+                    $lookup: {
+                        from: 'paymenthistories',
+                        let: { invoiceId: '$_id' },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $eq: ['$invoiceId', '$$invoiceId'],
+                                    },
+
+                                },
+                            },
+                            {
+                                $group: {
+                                    _id: null,
+                                    paidAmount: { $sum: '$amount' },
+                                },
+                            },
+                        ],
+                        as: 'payments',
+                    },
+                },
+                {
+                    $addFields: {
+                        totalPaid: {
+                            $ifNull: [{ $arrayElemAt: ['$payments.paidAmount', 0] }, 0],
+                        },
+                        remainingDebt: {
+                            $subtract: [
+                                '$totalAmount',
+                                { $ifNull: [{ $arrayElemAt: ['$payments.paidAmount', 0] }, 0] },
+                            ],
+                        },
+                        status: {
+                            $cond: {
+                                if: { $eq: ['$totalAmount', { $arrayElemAt: ['$payments.paidAmount', 0] }] },
+                                then: constant.INVOICE_STATUS.PAID,
+                                else: {
+                                     $cond: {
+                                        if: { $lt: ['$dueDate', currentDate] },
+                                        then: constant.INVOICE_STATUS.OVERDUE,
+                                        else: {
+                                            $cond: {
+                                                if: {
+                                                    $gt: [
+                                                        { $ifNull: [{ $arrayElemAt: ['$payments.paidAmount', 0] }, 0] },
+                                                        0,
+                                                    ],
+                                                },
+                                                then: constant.INVOICE_STATUS.PARTIALLY_PAID,
+                                                else: constant.INVOICE_STATUS.PENDING,
+                                            },
+                                        },
+                                    },
+                                }
+                            },
+                            
+                        },
+                    },
+                },
+                {
+                    $group: {
+                        _id: null,
+                        totalInvoices: { $sum: 1 },
+                        totalAmount: { $sum: '$totalAmount' },
+                        paidInvoices: {
+                            $sum: {
+                                $cond: {
+                                    if: { $eq: ['$status', constant.INVOICE_STATUS.PAID] },
+                                    then: 1,
+                                    else: 0,
+                                },
+                            },
+                        },
+                        paidAmount: {
+                            $sum: {
+                                $cond: {
+                                    if: { $eq: ['$status', constant.INVOICE_STATUS.PAID] },
+                                    then: '$totalPaid',
+                                    else: 0,
+                                },
+                            },
+                        },
+                        pendingInvoices: {
+                            $sum: {
+                                $cond: {
+                                    if: { $eq: ['$status', constant.INVOICE_STATUS.PENDING || constant.INVOICE_STATUS.PARTIALLY_PAID] },
+                                    then: 1,
+                                    else: 0,
+                                },
+                            },
+                        },
+                        pendingAmount: {
+                            $sum: {
+                                $cond: {
+                                    if: { $in: ['$status', [constant.INVOICE_STATUS.PENDING, constant.INVOICE_STATUS.PARTIALLY_PAID]] },
+                                    then: '$remainingDebt',
+                                    else: 0,
+                                },
+                            },
+                        },
+                        overdueInvoices: {
+                            $sum: {
+                                $cond: {
+                                    if: { $eq: ['$status', constant.INVOICE_STATUS.OVERDUE] },
+                                    then: 1,
+                                    else: 0,
+                                },
+                            },
+                        },
+                        overdueAmount: {
+                            $sum: {
+                                $cond: {
+                                    if: { $eq: ['$status', constant.INVOICE_STATUS.OVERDUE] },
+                                    then: '$remainingDebt',
+                                    else: 0,
+                                },
+                            },
+                        },
+                    },
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        totalInvoices: 1,
+                        totalAmount: 1,
+                        paidInvoices: 1,
+                        paidAmount: 1,
+                        pendingInvoices: 1,
+                        pendingAmount: 1,
+                        overdueInvoices: 1,
+                        overdueAmount: 1,
+                    },
+                },
+            ];
+
+            const [result] = await InvoiceModel.aggregate(pipeline);
+            return {
+                totalInvoices: result?.totalInvoices || 0,
+                totalAmount: result?.totalAmount || 0,
+                paidInvoices: result?.paidInvoices || 0,
+                paidAmount: result?.paidAmount || 0,
+                pendingInvoices: result?.pendingInvoices || 0,
+                pendingAmount: result?.pendingAmount || 0,
+                overdueInvoices: result?.overdueInvoices || 0,
+                overdueAmount: result?.overdueAmount || 0,
+            };
+        } catch (err) {
+            throw err;
         }
     },
 }

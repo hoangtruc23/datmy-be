@@ -18,7 +18,7 @@ router.post(
 router.get('/getAll', invoiceController.getAll)
 router.get('/getById/:id', invoiceController.getById)
 router.delete('/delete/:id', invoiceController.delete)
-
+router.get('/summary', invoiceController.getSummary)
 module.exports = router
 
 /**
@@ -214,6 +214,12 @@ module.exports = router
  *         schema:
  *           type: string
  *         description: Từ khóa tìm kiếm mã hoặc tên khách hàng
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: enum
+ *           enum: [pending, partiallyPaid, paid, overdue]
+ *           description: Trạng thái hóa đơn (pending, partiallyPaid, paid, overdue)
  *     responses:
  *       200:
  *         description: Lấy danh sách thành công
@@ -258,4 +264,17 @@ module.exports = router
  *     responses:
  *       200:
  *         description: Xóa thành công
+ */
+
+/**
+ * @swagger
+ * /invoice/summary:
+ *   get:
+ *     summary: Lấy tổng hợp thông tin hóa đơn
+ *     tags: [Invoice]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lấy tổng hợp thông tin thành công
  */
