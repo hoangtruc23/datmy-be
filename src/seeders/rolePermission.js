@@ -320,6 +320,26 @@ async function rolePermissionSeeder() {
             permissionId: '6880936c160be16212361ba2', // Xem công nợ
         },
 
+        // Cài đặt công nợ quản trị viên
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '6882fdc36f95b8b522848806', // Xem
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b',  // Quản trị viên
+            permissionId: '6882fdc36f95b8b522848807', // Thêm
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b',  // Quản trị viên
+            permissionId: '6882fdc36f95b8b522848808', // Cập nhật
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '6882fdc36f95b8b522848809', // Xóa
+        },
+
+
+
         //chiết khấu quản trị viên
         {
             roleId: '684927c871287f2ae7d8130b', // Quản trị viên

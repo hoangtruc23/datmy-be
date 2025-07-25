@@ -64,6 +64,10 @@ module.exports = router
  *                 type: number
  *                 description: Tổng giá trị hóa đơn
  *                 example: 1500000
+ *               limitDue:
+ *                 type: number
+ *                 description: Số ngày đáo hạn (tính từ ngày tạo hóa đơn)
+ *                 example: 30
  *               orderBy:
  *                 type: object
  *                 description: Người đặt hàng
@@ -141,6 +145,10 @@ module.exports = router
  *                 type: number
  *                 description: Tổng giá trị hóa đơn
  *                 example: 3000000
+ *               limitDue:
+ *                 type: number
+ *                 description: Số ngày đáo hạn (tính từ ngày tạo hóa đơn)
+ *                 example: 45
  *               orderBy:
  *                 type: object
  *                 description: Người đặt hàng
@@ -161,10 +169,6 @@ module.exports = router
  *                   phone:
  *                     type: string
  *                     example: "0987654321"
- *               status:
- *                 type: string
- *                 description: Trạng thái hóa đơn
- *                 enum: [ "paid", "partiallyPaid", "pending", "overdue" ]
  *               reminderContact:
  *                 type: object
  *                 description: Người liên hệ nhắc nợ

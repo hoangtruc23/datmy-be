@@ -547,6 +547,33 @@ async function apiSeeder() {
             note: 'Lấy danh sách tất cả công nợ',
         },
 
+        //Cài đặt công nợ
+        {
+            _id: new Types.ObjectId('6882fdc36f95b8b522848800'),
+            api: '/configDebt/create',
+            note: 'Tạo cài đặt công nợ',
+        },
+        {
+            _id: new Types.ObjectId('6882fdc36f95b8b522848801'),
+            api: '/configDebt/update/:id',
+            note: 'Cập nhật cài đặt công nợ',
+        },
+        {
+            _id: new Types.ObjectId('6882fdc36f95b8b522848802'),
+            api: '/configDebt/getAll',
+            note: 'Xem danh sách tất cả cài đặt công nợ',
+        },
+        {
+            _id: new Types.ObjectId('6882fdc36f95b8b522848803'),
+            api: '/configDebt/getById/:id',
+            note: 'Xem chi tiết cài đặt công nợ',
+        },
+        {
+            _id: new Types.ObjectId('6882fdc36f95b8b522848804'),
+            api: '/configDebt/delete/:id',
+            note: 'Xóa cài đặt công nợ',
+        },
+
         //chiết khấu
         {
             _id: new Types.ObjectId('687165240ac4b74840483515'),

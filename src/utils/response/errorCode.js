@@ -292,6 +292,14 @@ const errorCode = {
         code: 75,
         message: 'Tổng số serial không khớp với số lượng đã khai báo.',
     },
+    DEBT_CONFIG_EXISTS: {
+        code: 76,
+        message: 'Cấu hình nợ đã tồn tại cho khách hàng này.',
+    },
+    DEBT_CONFIG_NOT_FOUND: {
+        code: 77,
+        message: 'Cấu hình nợ không tồn tại.',
+    },
 }
 
 module.exports = errorCode

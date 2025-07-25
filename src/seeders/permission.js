@@ -489,6 +489,39 @@ async function permissionSeeder() {
             code: 'cong_no-xem',
             parentPermissionId: '6880936c160be16212361ba1',
         },
+
+        //cài đặt công nợ
+        {
+            _id: new Types.ObjectId('6882fdc36f95b8b522848805'),
+            name: 'Cài đặt công nợ',
+            code: 'cai_dat_cong_no',
+            parentPermissionId: null,
+        },
+        {
+            _id: new Types.ObjectId('6882fdc36f95b8b522848806'),
+            name: 'Xem',
+            code: 'cai_dat_cong_no-xem',
+            parentPermissionId: '6882fdc36f95b8b522848805',
+        },
+        {
+            _id: new Types.ObjectId('6882fdc36f95b8b522848807'),
+            name: 'Thêm',
+            code: 'cai_dat_cong_no-them',
+            parentPermissionId: '6882fdc36f95b8b522848805',
+        },
+        {
+            _id: new Types.ObjectId('6882fdc36f95b8b522848808'),
+            name: 'Cập nhật',
+            code: 'cai_dat_cong_no-cap_nhat',
+            parentPermissionId: '6882fdc36f95b8b522848805',
+        },
+        {
+            _id: new Types.ObjectId('6882fdc36f95b8b522848809'),
+            name: 'Xóa',
+            code: 'cai_dat_cong_no-xoa',
+            parentPermissionId: '6882fdc36f95b8b522848805',
+        },
+
         //chiết khấu
         {
             _id: new Types.ObjectId('687165240ac4b7484048357d'),
