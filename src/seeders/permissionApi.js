@@ -493,6 +493,10 @@ async function permissionApiSeeder() {
             permissionId: '686dd0b535512a73e076c3ab', // Xoá hóa đơn
             apiId: '686dd0b535512a73e076c3a6', // /invoice/delete
         },
+        {
+            permissionId: '6882fdc36f95b8b522848815', // Tổng hợp hóa đơn
+            apiId: '6882fdc36f95b8b522848816', // /invoice/summary
+        },
 
         // Lịch sử thanh toán
         {
