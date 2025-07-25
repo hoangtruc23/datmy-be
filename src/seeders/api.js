@@ -512,6 +512,11 @@ async function apiSeeder() {
             api: '/invoice/delete',
             note: 'Xoá hóa đơn',
         },
+        {
+            _id: new Types.ObjectId('6882fdc36f95b8b522848816'),
+            api: '/invoice/summary',
+            note: 'Lấy tổng hợp hóa đơn',
+        },
 
         // Lịch sử thanh toán
         {
