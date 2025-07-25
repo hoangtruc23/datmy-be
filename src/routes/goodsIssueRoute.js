@@ -1,12 +1,22 @@
 const express = require('express')
 const goodsIssueController = require('../controllers/goodsIssueController')
 const router = express.Router()
+const validate = require('../middlewares/validation')
+const goodsIssueValidation = require('../validations/goodsIssueValidation')
 
 router.get('/getAll', goodsIssueController.getAll)
 router.get('/getById/:goodsIssueId', goodsIssueController.getById)
 router.post('/createTemporary', goodsIssueController.createTemporary)
-router.post('/create/:goodsIssueId', goodsIssueController.create)
-router.post('/update/:goodsIssueId', goodsIssueController.update)
+router.post(
+    '/create/:goodsIssueId',
+    validate(goodsIssueValidation.create),
+    goodsIssueController.create,
+)
+router.post(
+    '/update/:goodsIssueId',
+    validate(goodsIssueValidation.update),
+    goodsIssueController.update,
+)
 router.post('/cancel/:goodsIssueId', goodsIssueController.cancel)
 router.post('/addProduct', goodsIssueController.addProduct)
 router.post(

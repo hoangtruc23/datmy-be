@@ -72,11 +72,70 @@ const goodsAdvanceService = {
                         foreignField: 'goodsAdvanceId',
                     },
                 },
+                //add fullname for createdBy
+                {
+                    $unwind: {
+                        path: '$processes',
+                        preserveNullAndEmptyArrays: true,
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField: 'processes.createdBy',
+                        foreignField: '_id',
+                        as: 'processes.createdByUser',
+                    },
+                },
+                //unwind because lookup always return an array
+                {
+                    $unwind: {
+                        path: '$processes.createdByUser',
+                        preserveNullAndEmptyArrays: true,
+                    },
+                },
+                {
+                    $group: {
+                        _id: '$_id',
+                        root: { $first: '$$ROOT' },
+                        processes: { $push: '$processes' },
+                    },
+                },
+                {
+                    $replaceRoot: {
+                        newRoot: {
+                            $mergeObjects: [
+                                '$root',
+                                { processes: '$processes' },
+                            ],
+                        },
+                    },
+                },
             ])
             if (!goodsAdvance[0]) {
                 throw new BadReq(errorCode.GOODS_ADVANCE_NOT_FOUND)
             }
-            return goodsAdvance[0]
+
+            const finalResult = goodsAdvance[0]
+            if (
+                finalResult.processes &&
+                finalResult.processes[0] &&
+                finalResult.processes[0]._id
+            ) {
+                //check for sure
+                finalResult.processes.forEach((process) => {
+                    if (process.createdByUser) {
+                        // overwrite original 'createdBy' field
+                        process.createdBy = {
+                            _id: process.createdByUser._id,
+                            fullname: process.createdByUser.fullname,
+                        }
+                        delete process.createdByUser
+                    }
+                })
+            }
+
+            return finalResult
         } catch (error) {
             throw error
         }
