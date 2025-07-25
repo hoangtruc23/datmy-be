@@ -1,14 +1,28 @@
 const express = require('express')
 const goodsAdvanceController = require('../controllers/goodsAdvanceController')
 const router = express.Router()
+const validate = require('../middlewares/validation')
+const goodsAdvanceValidation = require('../validations/goodsAdvanceValidation')
 
 router.get('/getAll', goodsAdvanceController.getAll)
 router.get('/getById/:goodsAdvanceId', goodsAdvanceController.getById)
 router.post('/createTemporary', goodsAdvanceController.createTemporary)
-router.post('/create/:goodsAdvanceId', goodsAdvanceController.create)
-router.post('/update/:goodsAdvanceId', goodsAdvanceController.update)
+router.post(
+    '/create/:goodsAdvanceId',
+    validate(goodsAdvanceValidation.create),
+    goodsAdvanceController.create,
+)
+router.post(
+    '/update/:goodsAdvanceId',
+    validate(goodsAdvanceValidation.update),
+    goodsAdvanceController.update,
+)
 router.post('/cancel/:goodsAdvanceId', goodsAdvanceController.cancel)
-router.post('/extend/:goodsAdvanceId', goodsAdvanceController.extend)
+router.post(
+    '/extend/:goodsAdvanceId',
+    validate(goodsAdvanceValidation.extend),
+    goodsAdvanceController.extend,
+)
 router.post('/receiveBack/:goodsAdvanceId', goodsAdvanceController.receiveBack)
 router.post('/addProduct', goodsAdvanceController.addProduct)
 router.post(

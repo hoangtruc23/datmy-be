@@ -14,7 +14,6 @@ const invoiceService = {
                 createdAt: -1,
             })
 
-
             const {
                 customerId,
                 customerName,
@@ -24,7 +23,7 @@ const invoiceService = {
                 accountant,
                 reminderContact,
                 notes,
-                limitDue = config?.limitDue ?? 30
+                limitDue = config?.limitDue ?? 30,
             } = data
 
             const customer = await CustomerModel.findById(customerId)
@@ -32,7 +31,6 @@ const invoiceService = {
 
             const existed = await InvoiceModel.findOne({ invoiceCode })
             if (existed) throw new BadReq(errorCode.INVOICE_CODE_EXISTED)
-
 
             //const limitDue = config?.limitDue ?? 30
             const exportDate = new Date()
@@ -68,8 +66,8 @@ const invoiceService = {
                 })
                 if (conflict) throw new BadReq(errorCode.INVOICE_CODE_EXISTED)
             }
-            
-            if(data.limitDue) {
+
+            if (data.limitDue) {
                 const limitDue = data.limitDue
                 const exportDate = invoice.createdAt
                 const dueDate = new Date(exportDate)
@@ -95,21 +93,30 @@ const invoiceService = {
         }
     },
 
-
     getAll: async (page = 1, limit = 10, search = '', status = '') => {
         try {
-            page = parseInt(page);
-            limit = parseInt(limit);
-            const skip = (page - 1) * limit;
-            const currentDate = new Date();
-            const matchCond = [];
+            page = parseInt(page)
+            limit = parseInt(limit)
+            const skip = (page - 1) * limit
+            const currentDate = new Date()
+            const matchCond = []
             if (search.trim()) {
                 matchCond.push({
                     $or: [
-                        { invoiceCode: { $regex: search.trim(), $options: 'i' } },
-                        { customerName: { $regex: search.trim(), $options: 'i' } },
+                        {
+                            invoiceCode: {
+                                $regex: search.trim(),
+                                $options: 'i',
+                            },
+                        },
+                        {
+                            customerName: {
+                                $regex: search.trim(),
+                                $options: 'i',
+                            },
+                        },
                     ],
-                });
+                })
             }
             const pipeline = [
                 ...(matchCond.length > 0 ? [{ $match: matchCond[0] }] : []),
@@ -137,39 +144,74 @@ const invoiceService = {
                 },
                 {
                     $addFields: {
-                        totalPaid:  {
-                             $ifNull: [{ $arrayElemAt: ['$payments.paidAmount', 0] }, 0] 
+                        totalPaid: {
+                            $ifNull: [
+                                { $arrayElemAt: ['$payments.paidAmount', 0] },
+                                0,
+                            ],
                         },
                         remainingDebt: {
                             $subtract: [
                                 '$totalAmount',
-                                { $ifNull: [{ $arrayElemAt: ['$payments.paidAmount', 0] }, 0] },
+                                {
+                                    $ifNull: [
+                                        {
+                                            $arrayElemAt: [
+                                                '$payments.paidAmount',
+                                                0,
+                                            ],
+                                        },
+                                        0,
+                                    ],
+                                },
                             ],
                         },
                         status: {
                             $cond: {
-                                if: { $eq: ['$totalAmount', { $arrayElemAt: ['$payments.paidAmount', 0] }] },
+                                if: {
+                                    $eq: [
+                                        '$totalAmount',
+                                        {
+                                            $arrayElemAt: [
+                                                '$payments.paidAmount',
+                                                0,
+                                            ],
+                                        },
+                                    ],
+                                },
                                 then: constant.INVOICE_STATUS.PAID,
                                 else: {
-                                     $cond: {
+                                    $cond: {
                                         if: { $lt: ['$dueDate', currentDate] },
                                         then: constant.INVOICE_STATUS.OVERDUE,
                                         else: {
                                             $cond: {
                                                 if: {
                                                     $gt: [
-                                                        { $ifNull: [{ $arrayElemAt: ['$payments.paidAmount', 0] }, 0] },
+                                                        {
+                                                            $ifNull: [
+                                                                {
+                                                                    $arrayElemAt:
+                                                                        [
+                                                                            '$payments.paidAmount',
+                                                                            0,
+                                                                        ],
+                                                                },
+                                                                0,
+                                                            ],
+                                                        },
                                                         0,
                                                     ],
                                                 },
-                                                then: constant.INVOICE_STATUS.PARTIALLY_PAID,
-                                                else: constant.INVOICE_STATUS.PENDING,
+                                                then: constant.INVOICE_STATUS
+                                                    .PARTIALLY_PAID,
+                                                else: constant.INVOICE_STATUS
+                                                    .PENDING,
                                             },
                                         },
                                     },
-                                }
+                                },
                             },
-                            
                         },
                     },
                 },
@@ -209,12 +251,12 @@ const invoiceService = {
                         status: 1,
                         orderBy: 1,
                         accountant: 1,
-                        reminderContact: 1, 
+                        reminderContact: 1,
                         notes: 1,
                     },
                 },
-            ];
-            
+            ]
+
             const totalPipeline = [
                 ...(matchCond.length > 0 ? [{ $match: matchCond[0] }] : []),
                 {
@@ -224,7 +266,9 @@ const invoiceService = {
                         pipeline: [
                             {
                                 $match: {
-                                    $expr: { $eq: ['$invoiceId', '$$invoiceId'] },
+                                    $expr: {
+                                        $eq: ['$invoiceId', '$$invoiceId'],
+                                    },
                                     status: constant.PAYMENT_STATUS.PAID,
                                 },
                             },
@@ -241,14 +285,27 @@ const invoiceService = {
                 {
                     $addFields: {
                         totalPaid: {
-                            $ifNull: [{ $arrayElemAt: ['$payments.paidAmount', 0] }, 0],
+                            $ifNull: [
+                                { $arrayElemAt: ['$payments.paidAmount', 0] },
+                                0,
+                            ],
                         },
                         status: {
                             $cond: {
                                 if: {
                                     $eq: [
                                         '$totalAmount',
-                                        { $ifNull: [{ $arrayElemAt: ['$payments.paidAmount', 0] }, 0] },
+                                        {
+                                            $ifNull: [
+                                                {
+                                                    $arrayElemAt: [
+                                                        '$payments.paidAmount',
+                                                        0,
+                                                    ],
+                                                },
+                                                0,
+                                            ],
+                                        },
                                     ],
                                 },
                                 then: constant.INVOICE_STATUS.PAID,
@@ -260,12 +317,25 @@ const invoiceService = {
                                             $cond: {
                                                 if: {
                                                     $gt: [
-                                                        { $ifNull: [{ $arrayElemAt: ['$payments.paidAmount', 0] }, 0] },
+                                                        {
+                                                            $ifNull: [
+                                                                {
+                                                                    $arrayElemAt:
+                                                                        [
+                                                                            '$payments.paidAmount',
+                                                                            0,
+                                                                        ],
+                                                                },
+                                                                0,
+                                                            ],
+                                                        },
                                                         0,
                                                     ],
                                                 },
-                                                then: constant.INVOICE_STATUS.PARTIALLY_PAID,
-                                                else: constant.INVOICE_STATUS.PENDING,
+                                                then: constant.INVOICE_STATUS
+                                                    .PARTIALLY_PAID,
+                                                else: constant.INVOICE_STATUS
+                                                    .PENDING,
                                             },
                                         },
                                     },
@@ -276,20 +346,19 @@ const invoiceService = {
                 },
                 ...(status ? [{ $match: { status: { $eq: status } } }] : []),
                 { $count: 'count' },
-            ];
+            ]
             const [result, totalResult] = await Promise.all([
-                    InvoiceModel.aggregate(pipeline),
-                    InvoiceModel.aggregate(totalPipeline),
-            ]);
+                InvoiceModel.aggregate(pipeline),
+                InvoiceModel.aggregate(totalPipeline),
+            ])
 
+            const items = result || []
+            const total = totalResult[0]?.count || 0
+            const totalPages = Math.ceil(total / limit)
 
-        const items = result || [];
-        const total = totalResult[0]?.count || 0;
-        const totalPages = Math.ceil(total / limit);
-
-            return { items, total, page, limit, totalPages };
+            return { items, total, page, limit, totalPages }
         } catch (err) {
-            throw err;
+            throw err
         }
     },
 
@@ -318,7 +387,7 @@ const invoiceService = {
 
     getSummary: async () => {
         try {
-            const currentDate = new Date();
+            const currentDate = new Date()
 
             const pipeline = [
                 {
@@ -331,7 +400,6 @@ const invoiceService = {
                                     $expr: {
                                         $eq: ['$invoiceId', '$$invoiceId'],
                                     },
-
                                 },
                             },
                             {
@@ -347,38 +415,73 @@ const invoiceService = {
                 {
                     $addFields: {
                         totalPaid: {
-                            $ifNull: [{ $arrayElemAt: ['$payments.paidAmount', 0] }, 0],
+                            $ifNull: [
+                                { $arrayElemAt: ['$payments.paidAmount', 0] },
+                                0,
+                            ],
                         },
                         remainingDebt: {
                             $subtract: [
                                 '$totalAmount',
-                                { $ifNull: [{ $arrayElemAt: ['$payments.paidAmount', 0] }, 0] },
+                                {
+                                    $ifNull: [
+                                        {
+                                            $arrayElemAt: [
+                                                '$payments.paidAmount',
+                                                0,
+                                            ],
+                                        },
+                                        0,
+                                    ],
+                                },
                             ],
                         },
                         status: {
                             $cond: {
-                                if: { $eq: ['$totalAmount', { $arrayElemAt: ['$payments.paidAmount', 0] }] },
+                                if: {
+                                    $eq: [
+                                        '$totalAmount',
+                                        {
+                                            $arrayElemAt: [
+                                                '$payments.paidAmount',
+                                                0,
+                                            ],
+                                        },
+                                    ],
+                                },
                                 then: constant.INVOICE_STATUS.PAID,
                                 else: {
-                                     $cond: {
+                                    $cond: {
                                         if: { $lt: ['$dueDate', currentDate] },
                                         then: constant.INVOICE_STATUS.OVERDUE,
                                         else: {
                                             $cond: {
                                                 if: {
                                                     $gt: [
-                                                        { $ifNull: [{ $arrayElemAt: ['$payments.paidAmount', 0] }, 0] },
+                                                        {
+                                                            $ifNull: [
+                                                                {
+                                                                    $arrayElemAt:
+                                                                        [
+                                                                            '$payments.paidAmount',
+                                                                            0,
+                                                                        ],
+                                                                },
+                                                                0,
+                                                            ],
+                                                        },
                                                         0,
                                                     ],
                                                 },
-                                                then: constant.INVOICE_STATUS.PARTIALLY_PAID,
-                                                else: constant.INVOICE_STATUS.PENDING,
+                                                then: constant.INVOICE_STATUS
+                                                    .PARTIALLY_PAID,
+                                                else: constant.INVOICE_STATUS
+                                                    .PENDING,
                                             },
                                         },
                                     },
-                                }
+                                },
                             },
-                            
                         },
                     },
                 },
@@ -390,7 +493,12 @@ const invoiceService = {
                         paidInvoices: {
                             $sum: {
                                 $cond: {
-                                    if: { $eq: ['$status', constant.INVOICE_STATUS.PAID] },
+                                    if: {
+                                        $eq: [
+                                            '$status',
+                                            constant.INVOICE_STATUS.PAID,
+                                        ],
+                                    },
                                     then: 1,
                                     else: 0,
                                 },
@@ -399,7 +507,12 @@ const invoiceService = {
                         paidAmount: {
                             $sum: {
                                 $cond: {
-                                    if: { $eq: ['$status', constant.INVOICE_STATUS.PAID] },
+                                    if: {
+                                        $eq: [
+                                            '$status',
+                                            constant.INVOICE_STATUS.PAID,
+                                        ],
+                                    },
                                     then: '$totalPaid',
                                     else: 0,
                                 },
@@ -408,7 +521,14 @@ const invoiceService = {
                         pendingInvoices: {
                             $sum: {
                                 $cond: {
-                                    if: { $eq: ['$status', constant.INVOICE_STATUS.PENDING || constant.INVOICE_STATUS.PARTIALLY_PAID] },
+                                    if: {
+                                        $eq: [
+                                            '$status',
+                                            constant.INVOICE_STATUS.PENDING ||
+                                                constant.INVOICE_STATUS
+                                                    .PARTIALLY_PAID,
+                                        ],
+                                    },
                                     then: 1,
                                     else: 0,
                                 },
@@ -417,7 +537,16 @@ const invoiceService = {
                         pendingAmount: {
                             $sum: {
                                 $cond: {
-                                    if: { $in: ['$status', [constant.INVOICE_STATUS.PENDING, constant.INVOICE_STATUS.PARTIALLY_PAID]] },
+                                    if: {
+                                        $in: [
+                                            '$status',
+                                            [
+                                                constant.INVOICE_STATUS.PENDING,
+                                                constant.INVOICE_STATUS
+                                                    .PARTIALLY_PAID,
+                                            ],
+                                        ],
+                                    },
                                     then: '$remainingDebt',
                                     else: 0,
                                 },
@@ -426,7 +555,12 @@ const invoiceService = {
                         overdueInvoices: {
                             $sum: {
                                 $cond: {
-                                    if: { $eq: ['$status', constant.INVOICE_STATUS.OVERDUE] },
+                                    if: {
+                                        $eq: [
+                                            '$status',
+                                            constant.INVOICE_STATUS.OVERDUE,
+                                        ],
+                                    },
                                     then: 1,
                                     else: 0,
                                 },
@@ -435,7 +569,12 @@ const invoiceService = {
                         overdueAmount: {
                             $sum: {
                                 $cond: {
-                                    if: { $eq: ['$status', constant.INVOICE_STATUS.OVERDUE] },
+                                    if: {
+                                        $eq: [
+                                            '$status',
+                                            constant.INVOICE_STATUS.OVERDUE,
+                                        ],
+                                    },
                                     then: '$remainingDebt',
                                     else: 0,
                                 },
@@ -456,9 +595,9 @@ const invoiceService = {
                         overdueAmount: 1,
                     },
                 },
-            ];
+            ]
 
-            const [result] = await InvoiceModel.aggregate(pipeline);
+            const [result] = await InvoiceModel.aggregate(pipeline)
             return {
                 totalInvoices: result?.totalInvoices || 0,
                 totalAmount: result?.totalAmount || 0,
@@ -468,9 +607,9 @@ const invoiceService = {
                 pendingAmount: result?.pendingAmount || 0,
                 overdueInvoices: result?.overdueInvoices || 0,
                 overdueAmount: result?.overdueAmount || 0,
-            };
+            }
         } catch (err) {
-            throw err;
+            throw err
         }
     },
 }
