@@ -30,6 +30,7 @@ const paymentHistorySchema = new Schema(
     },
     { timestamps: true },
 )
-
 const PaymentHistoryModel = model('paymenthistories', paymentHistorySchema)
+PaymentHistoryModel.createIndexes({ invoiceId: 1 });
+
 module.exports = PaymentHistoryModel
