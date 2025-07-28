@@ -39,6 +39,7 @@ const invoiceSchema = new Schema(
         //exportDate: { type: Date, required: true },
         //Cộng từ createdAt và  limitDue trong confgiDebt
         dueDate: { type: Date },
+        limitDue: { type: Number, default: 0 },
         isFullyPaid: { type: Boolean, default: false },
         //người đặt hàng
         orderBy: contactPersonSchema,

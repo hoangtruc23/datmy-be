@@ -82,7 +82,7 @@ const constant = {
         PENDING: 'scheduled',
         SENT: 'completed',
         OVERDUE: 'late',
-        PAID: 'paid',
+        LOSE: 'lose',
     },
     DEBT_REMINDER_METHOD: {
         NULL: '',
