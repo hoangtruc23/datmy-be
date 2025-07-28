@@ -101,7 +101,7 @@ const constant = {
         NO_DEBT: 'noDebt',
         NORMAL: 'normal', // còn trong hạn nợ
         OVERDUE: 'overdue', //mới quá hạn
-        BAD_DEBT: 'badDebt', // nợ lâu
+        BAD_DEBT: 'badDebt', // nợ lâu nợ xấu
     },
     DEBT_STATUS_PERIOD: {
         BAD_DEBT: 30, //

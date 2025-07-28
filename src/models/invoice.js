@@ -58,6 +58,6 @@ const invoiceSchema = new Schema(
     { timestamps: true },
 )
 const InvoiceModel = model('invoices', invoiceSchema)
-InvoiceModel.createIndexes({ totalAmount: 1, dueDate: 1 });
+InvoiceModel.createIndexes({ totalAmount: 1, dueDate: 1 })
 
 module.exports = InvoiceModel

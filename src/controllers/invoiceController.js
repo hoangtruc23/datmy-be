@@ -23,7 +23,12 @@ const invoiceController = {
     getAll: async (req, res, next) => {
         try {
             const { page, limit, search, status } = req.query
-            const data = await invoiceService.getAll(page, limit, search, status)
+            const data = await invoiceService.getAll(
+                page,
+                limit,
+                search,
+                status,
+            )
             return res.status(200).json(response.success(data))
         } catch (err) {
             next(err)

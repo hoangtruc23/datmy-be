@@ -30,16 +30,11 @@ const invoiceBaseSchema = {
         'string.empty': 'Tên khách hàng là bắt buộc',
         'any.required': 'Tên khách hàng  là bắt buộc',
     }),
-    limitDue: joi
-        .number()
-        .integer()
-        .min(0)
-        .optional()
-        .messages({
-            'number.base': 'Số ngày đáo hạn phải là số nguyên',
-            'number.integer': 'Số ngày đáo hạn phải là số nguyên',
-            'number.min': 'Số ngày đáo hạn không được nhỏ hơn 0',
-        }),
+    limitDue: joi.number().integer().min(0).optional().messages({
+        'number.base': 'Số ngày đáo hạn phải là số nguyên',
+        'number.integer': 'Số ngày đáo hạn phải là số nguyên',
+        'number.min': 'Số ngày đáo hạn không được nhỏ hơn 0',
+    }),
     invoiceCode: joi.string().trim().required().messages({
         'string.empty': 'Mã hóa đơn là bắt buộc',
         'any.required': 'Mã hóa đơn là bắt buộc',

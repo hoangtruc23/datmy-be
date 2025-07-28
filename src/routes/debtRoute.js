@@ -6,6 +6,7 @@ const debtController = require('../controllers/debtController')
 const router = express.Router()
 
 router.get('/getAll', debtController.getAll)
+router.get('/getSummary/', debtController.getSummary)
 
 /**
  * @swagger
@@ -41,6 +42,12 @@ router.get('/getAll', debtController.getAll)
  *           type: string
  *         description: Từ khóa tìm kiếm theo tên khách hàng
  *         example: "Công ty Dược ABC"
+ *       - in: query
+ *         name: debtStatus
+ *         schema:
+ *           type: enum
+ *           enum: [noDebt, normal, overdue, badDebt]
+ *           description: Trạng thái hóa đơn (noDebt, normal, overdue, badDebt)
  *     responses:
  *       200:
  *         description: Lấy danh sách công nợ thành công
@@ -114,4 +121,16 @@ router.get('/getAll', debtController.getAll)
  *         description: Lỗi máy chủ
  */
 
+/**
+ * @swagger
+ * /debt/getSummary:
+ *   get:
+ *     summary: Lấy tổng hợp thông tin công nợ
+ *     tags: [Debt]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lấy tổng hợp thông tin thành công
+ */
 module.exports = router

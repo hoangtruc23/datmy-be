@@ -525,29 +525,32 @@ async function permissionApiSeeder() {
             permissionId: '6880936c160be16212361ba2', // xem công nợ
             apiId: '6880936c160be16212361ba0', // /debt/getAll
         },
+        {
+            permissionId: '6880936c160be16212361ba2', // xem công nợ
+            apiId: '68871438cb1a5fd3aadc0570', // /debt/getSummary
+        },
 
-        //Cài đặt công nợ 
+        //Cài đặt công nợ
         {
             permissionId: '6882fdc36f95b8b522848806', // Xem
-            apiId: '6882fdc36f95b8b522848802',       // /configDebt/getAll
+            apiId: '6882fdc36f95b8b522848802', // /configDebt/getAll
         },
         {
             permissionId: '6882fdc36f95b8b522848807', // Thêm
-            apiId: '6882fdc36f95b8b522848800',       // /configDebt/create
+            apiId: '6882fdc36f95b8b522848800', // /configDebt/create
         },
         {
             permissionId: '6882fdc36f95b8b522848808', // Cập nhật
-            apiId: '6882fdc36f95b8b522848801',       // /configDebt/update/:id
+            apiId: '6882fdc36f95b8b522848801', // /configDebt/update/:id
         },
         {
-            permissionId: '6882fdc36f95b8b522848806', // Xem 
-            apiId: '6882fdc36f95b8b522848803',       // /configDebt/getById/:id
+            permissionId: '6882fdc36f95b8b522848806', // Xem
+            apiId: '6882fdc36f95b8b522848803', // /configDebt/getById/:id
         },
         {
             permissionId: '6882fdc36f95b8b522848809', // Xóa
-            apiId: '6882fdc36f95b8b522848804',       // /configDebt/delete/:id
+            apiId: '6882fdc36f95b8b522848804', // /configDebt/delete/:id
         },
-
 
         //Chiết khấu
         {
