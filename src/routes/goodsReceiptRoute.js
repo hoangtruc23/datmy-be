@@ -1,12 +1,21 @@
 const express = require('express')
 const goodsReceiptController = require('../controllers/goodsReceiptController')
 const router = express.Router()
-
+const validate = require('../middlewares/validation')
+const goodsReceiptValidation = require('../validations/goodsReceiptValidation')
 router.get('/getAll', goodsReceiptController.getAll)
 router.get('/getById/:goodsReceiptId', goodsReceiptController.getById)
 router.post('/createTemporary', goodsReceiptController.createTemporary)
-router.post('/create/:goodsReceiptId', goodsReceiptController.create)
-router.post('/update/:goodsReceiptId', goodsReceiptController.update)
+router.post(
+    '/create/:goodsReceiptId',
+    validate(goodsReceiptValidation.create),
+    goodsReceiptController.create,
+)
+router.post(
+    '/update/:goodsReceiptId',
+    validate(goodsReceiptValidation.update),
+    goodsReceiptController.update,
+)
 router.post('/cancel/:goodsReceiptId', goodsReceiptController.cancel)
 router.post('/addProduct', goodsReceiptController.addProduct)
 router.post(
