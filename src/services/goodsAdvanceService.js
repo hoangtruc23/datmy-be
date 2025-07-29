@@ -182,7 +182,7 @@ const goodsAdvanceService = {
                     for (let storage of goodsAdvanceDetail.borrowStorages) {
                         await ProductStorageModel.findOneAndUpdate(
                             {
-                                warehouseId: goodsAdvanceDetail.warehouseId,
+                                warehouseId: goodsAdvanceDetail.borrowWarehouseId,
                                 productId: goodsAdvanceDetail.productId,
                                 trackingCode: storage.trackingCode,
                             },
@@ -499,7 +499,7 @@ const goodsAdvanceService = {
                     throw new BadReq(errorCode.PRODUCT_STORAGE_NOT_FOUND)
                 }
                 if (storage.quantity > checkProductStorage.quantity) {
-                    throw new BadReq(errorCode.SERIAL_OR_BATCH_QUANTITY_INVALID)
+                    throw new BadReq(errorCode.BATCH_QUANTITY_EXCEEDS_STOCK)
                 }
                 batchQuantityTotal += storage.quantity
             }
@@ -544,7 +544,7 @@ const goodsAdvanceService = {
             const {
                 goodsAdvanceId,
                 productId,
-                warehouseId,
+                borrowWarehouseId,
                 origin,
                 borrowedQuantity,
                 borrowStatus,
@@ -557,7 +557,7 @@ const goodsAdvanceService = {
                     _id: { $ne: goodsAdvanceDetailId },
                     goodsAdvanceId,
                     productId,
-                    warehouseId,
+                    borrowWarehouseId,
                 })
             if (checkGoodsAdvanceDetailExist) {
                 throw new BadReq(errorCode.GOODS_ADVANCE_DETAIL_EXISTED)
@@ -575,7 +575,7 @@ const goodsAdvanceService = {
             ] = await Promise.all([
                 GoodsAdvanceDetaileModel.findById(goodsAdvanceDetailId),
                 GoodsAdvanceModel.findById(goodsAdvanceId),
-                WarehouseModel.findById(warehouseId),
+                WarehouseModel.findById(borrowWarehouseId),
                 ProductModel.findById(productId),
             ])
 
@@ -595,7 +595,7 @@ const goodsAdvanceService = {
             }
             // Check số lượng xuất có lớn hơn số lượng tồn kho không
             const productStorages = await ProductStorageModel.find({
-                warehouseId,
+                warehouseId: borrowWarehouseId,
                 productId,
             })
             const totalProduct = productStorages.reduce(
@@ -613,7 +613,7 @@ const goodsAdvanceService = {
                     storage.productStorageId,
                 )
                 if (storage.quantity > checkProductStorage.quantity) {
-                    throw new BadReq(errorCode.SERIAL_OR_BATCH_QUANTITY_INVALID)
+                    throw new BadReq(errorCode.BATCH_QUANTITY_EXCEEDS_STOCK)
                 }
                 batchQuantityTotal += storage.quantity
             }
@@ -629,16 +629,16 @@ const goodsAdvanceService = {
                 {
                     goodsAdvanceId,
                     productId,
-                    warehouseId,
-                    productCode: checkProduct?.productCode,
-                    productName: checkProduct?.productName,
+                    borrowWarehouseId,
+                    productCode: checkProduct?.code,
+                    productName: checkProduct?.name,
                     managementType: checkProduct?.managementType,
-                    unit: checkProduct?.checkProduct,
+                    unit: checkProduct?.unit,
                     origin,
                     borrowedQuantity,
                     borrowStatus,
                     usageContent,
-                    borrowWarehouseName: checkWarehouse.warehouseName,
+                    borrowWarehouseName: checkWarehouse.name,
                     borrowStorages: storages,
                     note,
                 },
