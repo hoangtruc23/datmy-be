@@ -525,6 +525,10 @@ async function permissionApiSeeder() {
             permissionId: '6880936c160be16212361ba2', // xem công nợ
             apiId: '6880936c160be16212361ba0', // /debt/getAll
         },
+        {
+            permissionId: '6880936c160be16212361ba2', // xem công nợ
+            apiId: '68871438cb1a5fd3aadc0570', // /debt/getSummary
+        },
 
         //Cài đặt công nợ
         {

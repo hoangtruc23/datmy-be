@@ -551,6 +551,11 @@ async function apiSeeder() {
             api: '/debt/getAll',
             note: 'Lấy danh sách tất cả công nợ',
         },
+        {
+            _id: new Types.ObjectId('68871438cb1a5fd3aadc0570'),
+            api: '/debt/getSummary',
+            note: 'Lấy công nợ theo ID',
+        },
 
         //Cài đặt công nợ
         {
@@ -560,7 +565,7 @@ async function apiSeeder() {
         },
         {
             _id: new Types.ObjectId('6882fdc36f95b8b522848801'),
-            api: '/configDebt/update/:id',
+            api: '/configDebt/update',
             note: 'Cập nhật cài đặt công nợ',
         },
         {
@@ -570,12 +575,12 @@ async function apiSeeder() {
         },
         {
             _id: new Types.ObjectId('6882fdc36f95b8b522848803'),
-            api: '/configDebt/getById/:id',
+            api: '/configDebt/getById',
             note: 'Xem chi tiết cài đặt công nợ',
         },
         {
             _id: new Types.ObjectId('6882fdc36f95b8b522848804'),
-            api: '/configDebt/delete/:id',
+            api: '/configDebt/delete',
             note: 'Xóa cài đặt công nợ',
         },
 
