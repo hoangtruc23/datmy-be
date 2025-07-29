@@ -706,12 +706,19 @@ const goodsAdvanceService = {
                     },
                     { session },
                 )
+                
+                const updatePayload = {
+                    status: constant.GOODS_ADVANCE_STATUS.APPROVED,
+                    updatedBy: currentUserId,
+                };
+
+                if (checkGoodsAdvance.status === constant.GOODS_ADVANCE_STATUS.WAITING_FOR_EXTENSION) {
+                    updatePayload.expectedReturnDate = checkGoodsAdvance.extendedReturnDate;
+                    updatePayload.extendedReturnDate = null; 
+                }
                 await GoodsAdvanceModel.findByIdAndUpdate(
                     checkGoodsAdvance._id,
-                    {
-                        status: constant.GOODS_ADVANCE_STATUS.APPROVED,
-                        updatedBy: currentUserId,
-                    },
+                    updatePayload,
                     { session },
                 )
             }
