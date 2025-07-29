@@ -257,7 +257,6 @@ const discountService = {
         try {
             const request = await DiscountRequestModel.findByIdAndUpdate(id, {
                 status: constant.APPROVAL_STATUS.APPROVED,
-                refundStatus: constant.REFUND_STATUS.UNPAID,
             })
             if (!request) {
                 throw new BadReq(errorCode.DISCOUNT_REQUEST_NOT_FOUND)
