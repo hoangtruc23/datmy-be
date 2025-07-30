@@ -79,10 +79,8 @@ const constant = {
     },
     DEBT_REMINDER_STATUS: {
         NULL: '',
-        PENDING: 'scheduled',
-        SENT: 'completed',
-        OVERDUE: 'late',
-        LOSE: 'lose',
+        SCHEDULED: 'scheduled',
+        COMPLETED: 'completed',
     },
     DEBT_REMINDER_METHOD: {
         NULL: '',
@@ -105,6 +103,18 @@ const constant = {
     },
     DEBT_STATUS_PERIOD: {
         BAD_DEBT: 30, //
+    },
+    DEBT_REMINDER_PRIORITY: {
+        LOW: 'low',
+        MEDIUM: 'medium',
+        HIGH: 'high',
+        URGENT: 'urgent',
+    },
+    DEBT_RESULT: {
+        NULL: '',
+        PROMISE_PAID: 'promisePaid',
+        PARTIALLY_PAID: 'partiallyPaid',
+        NO_RESPONSE: 'noResponse',
     },
 }
 

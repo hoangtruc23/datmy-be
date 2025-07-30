@@ -303,7 +303,11 @@ const errorCode = {
     NON_POSITIVE_QUANTITY_NOT_ALLOWED:{
         code: 78,
         message: 'Số lượng sản phẩm phải là một số dương.', 
-    }
+    },
+    DEBT_REMINDER_NOT_FOUND: {
+        code: 79,
+        message: 'Nhắc nhở nợ không tồn tại.',
+    },
 }
 
 module.exports = errorCode

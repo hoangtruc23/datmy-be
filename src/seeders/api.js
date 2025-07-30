@@ -584,6 +584,62 @@ async function apiSeeder() {
             note: 'Xóa cài đặt công nợ',
         },
 
+        // Nhắc nợ
+        {
+            _id: new Types.ObjectId('68899f050e446ab39960923a'),
+            api: '/debtReminder/create',
+            note: 'Tạo nhắc nợ',
+        },
+        {
+            _id: new Types.ObjectId('68899f050e446ab39960923b'),
+            api: '/debtReminder/update',
+            note: 'Cập nhật nhắc nợ',
+        },
+        {
+            _id: new Types.ObjectId('68899f050e446ab39960923c'),
+            api: '/debtReminder/getAll',
+            note: 'Lấy tất cả nhắc nợ',
+        },
+        {
+            _id: new Types.ObjectId('68899f050e446ab39960923d'),
+            api: '/debtReminder/getAllHistory',
+            note: 'Lấy tất cả lịch sử nhắc nợ',
+        },
+        {
+            _id: new Types.ObjectId('68899f050e446ab39960923e'),
+            api: '/debtReminder/getById',
+            note: 'Lấy nhắc nợ theo ID',
+        },
+        {
+            _id: new Types.ObjectId('68899f050e446ab39960923f'),
+            api: '/debtReminder/delete',
+            note: 'Xóa nhắc nợ',
+        },
+        {
+            _id: new Types.ObjectId('68899f050e446ab399609240'),
+            api: '/debtReminder/getDebtReminderPriority',
+            note: 'Lấy độ ưu tiên nhắc nợ',
+        },
+        {
+            _id: new Types.ObjectId('68899f050e446ab399609241'),
+            api: '/debtReminder/getDebtResult',
+            note: 'Lấy kết quả nhắc nợ',
+        },
+        {
+            _id: new Types.ObjectId('68899f050e446ab399609242'),
+            api: '/debtReminder/getDebtReminderMethod',
+            note: 'Lấy phương thức nhắc nợ',
+        },
+        {
+            _id: new Types.ObjectId('68899f050e446ab399609243'),
+            api: '/debtReminder/checkCompleted',
+            note: 'Kiểm tra hoàn thành nhắc nợ',
+        },
+        {
+            _id: new Types.ObjectId('68899f050e446ab399609244'),
+            api: '/debtReminder/getSumHistory',
+            note: 'Lấy tổng lịch sử nhắc nợ',
+        },
         //chiết khấu
         {
             _id: new Types.ObjectId('687165240ac4b74840483515'),
