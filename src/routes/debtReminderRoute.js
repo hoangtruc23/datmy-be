@@ -327,7 +327,7 @@ module.exports = router
  *         name: priority
  *         schema:
  *           type: string
- *           enum: ["high", "medium", "low"]
+ *           enum: ["urgent", "high", "medium", "low"]
  *         description: Mức độ ưu tiên
  *         example: "medium"
  *     responses:

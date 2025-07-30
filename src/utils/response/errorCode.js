@@ -150,7 +150,7 @@ const errorCode = {
         code: 39,
         message: 'Số lượng xuất lớn hơn số lượng tồn kho',
     },
-    SERIAL_OR_BATCH_QUANTITY_INVALID: {
+    BATCH_QUANTITY_EXCEEDS_STOCK: {
         code: 40,
         message: 'Số lượng sản phẩm trong lô lớn hơn số lượng tồn kho',
     },
@@ -300,8 +300,12 @@ const errorCode = {
         code: 77,
         message: 'Cấu hình nợ không tồn tại.',
     },
-    DEBT_REMINDER_NOT_FOUND: {
+    NON_POSITIVE_QUANTITY_NOT_ALLOWED:{
         code: 78,
+        message: 'Số lượng sản phẩm phải là một số dương.', 
+    },
+    DEBT_REMINDER_NOT_FOUND: {
+        code: 79,
         message: 'Nhắc nhở nợ không tồn tại.',
     },
 }

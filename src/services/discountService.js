@@ -163,6 +163,7 @@ const discountService = {
                             { 'invoiceInfo.customerName': search },
                             { 'invoiceInfo.invoiceCode': search },
                         ],
+                        status: constant.APPROVAL_STATUS.APPROVED,
                     },
                 },
             ]

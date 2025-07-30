@@ -251,7 +251,7 @@ const goodsIssueService = {
                             }
                             if (checkProduct.quantity < storage.quantity) {
                                 throw new BadReq(
-                                    errorCode.SERIAL_OR_BATCH_QUANTITY_INVALID,
+                                    errorCode.BATCH_QUANTITY_EXCEEDS_STOCK,
                                 )
                             }
 
@@ -434,10 +434,10 @@ const goodsIssueService = {
                     throw new BadReq(errorCode.PRODUCT_STORAGE_NOT_FOUND)
                 }
                 if (storage.quantity <= 0) {
-                    throw new BadReq(errorCode.SERIAL_OR_BATCH_QUANTITY_INVALID)
+                    throw new BadReq(errorCode.NON_POSITIVE_QUANTITY_NOT_ALLOWED)
                 }
                 if (storage.quantity > checkProductStorage.quantity) {
-                    throw new BadReq(errorCode.SERIAL_OR_BATCH_QUANTITY_INVALID)
+                    throw new BadReq(errorCode.BATCH_QUANTITY_EXCEEDS_STOCK)
                 }
                 batchQuantityTotal += storage.quantity
             }
@@ -551,7 +551,7 @@ const goodsIssueService = {
                     storage.productStorageId,
                 )
                 if (storage.quantity > checkProductStorage.quantity) {
-                    throw new BadReq(errorCode.SERIAL_OR_BATCH_QUANTITY_INVALID)
+                    throw new BadReq(errorCode.BATCH_QUANTITY_EXCEEDS_STOCK)
                 }
                 batchQuantityTotal += storage.quantity
             }
