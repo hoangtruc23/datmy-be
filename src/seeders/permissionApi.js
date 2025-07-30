@@ -551,7 +551,51 @@ async function permissionApiSeeder() {
             permissionId: '6882fdc36f95b8b522848809', // Xóa
             apiId: '6882fdc36f95b8b522848804', // /configDebt/delete/:id
         },
-
+        // nhắc nợ
+        {
+            permissionId: '68899f050e446ab399609247', // Tạo
+            apiId: '68899f050e446ab39960923a', // /debtReminder/create
+        },
+        {
+            permissionId: '68899f050e446ab399609248', // Cập nhật
+            apiId: '68899f050e446ab39960923b', // /debtReminder/update
+        },
+        {
+            permissionId: '68899f050e446ab399609246', // Xem
+            apiId: '68899f050e446ab39960923c', // /debtReminder/getAll
+        },
+        {
+            permissionId: '68899f050e446ab399609246', // Xem
+            apiId: '68899f050e446ab39960923d', // /debtReminder/getAllHistory
+        },
+        {
+            permissionId: '68899f050e446ab399609246', // Xem
+            apiId: '68899f050e446ab39960923e', // /debtReminder/getById
+        },
+        {
+            permissionId: '68899f050e446ab399609249', // Xóa
+            apiId: '68899f050e446ab39960923f', // /debtReminder/delete
+        },
+        {
+            permissionId: '68899f050e446ab399609246',
+            apiId: '68899f050e446ab399609240', // getDebtReminderPriority
+        },
+        {
+            permissionId: '68899f050e446ab399609246',
+            apiId: '68899f050e446ab399609241', // getDebtResult
+        },
+        {
+            permissionId: '68899f050e446ab399609246',
+            apiId: '68899f050e446ab399609242', // getDebtReminderMethod
+        },
+        {
+            permissionId: '68899f050e446ab399609246',
+            apiId: '68899f050e446ab399609243', // checkCompleted
+        },
+        {
+            permissionId: '68899f050e446ab399609246',
+            apiId: '68899f050e446ab399609244', // getSumHistory
+        },
         //Chiết khấu
         {
             permissionId: '687165e2ee8406ca535d1ba3', // Tạo phiếu chiết khấu
