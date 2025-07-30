@@ -342,6 +342,23 @@ async function rolePermissionSeeder() {
             permissionId: '6882fdc36f95b8b522848809', // Xóa
         },
 
+        // nhắc nợ quản trị viên
+        {
+            roleId: '684927c871287f2ae7d8130b',
+            permissionId: '68899f050e446ab399609246', // Xem
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b',
+            permissionId: '68899f050e446ab399609247', //  Tạo
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b',
+            permissionId: '68899f050e446ab399609248', //Cập nhật
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b',
+            permissionId: '68899f050e446ab399609249', //  Xóa
+        },
         //chiết khấu quản trị viên
         {
             roleId: '684927c871287f2ae7d8130b', // Quản trị viên

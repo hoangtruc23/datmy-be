@@ -1,17 +1,14 @@
 const { Schema, model, Types } = require('mongoose')
 const constant = require('../utils/constant/constant')
-const { required } = require('joi')
 
 const contactPersonSchema = new Schema(
     {
         name: {
             type: String,
-            required: true,
             trim: true,
         },
         phone: {
             type: String,
-            required: true,
             trim: true,
         },
     },
@@ -30,20 +27,50 @@ const debtReminderSchema = new Schema(
             required: true,
             trim: true,
         },
-        remindDate: { type: Date, required: true },
+        // remindDate: -> dueDate
+        dueDate: { type: Date, required: true },
         method: {
             type: String,
             enum: Object.values(constant.DEBT_REMINDER_METHOD),
             required: true,
             default: constant.DEBT_REMINDER_METHOD.NULL,
         },
+
+        tryCount: { type: Number, default: 1 },
         assignedTo: contactPersonSchema,
+        priority: {
+            type: String,
+            enum: Object.values(constant.DEBT_REMINDER_PRIORITY),
+            default: constant.DEBT_REMINDER_PRIORITY.MEDIUM,
+        },
         status: {
             type: String,
             enum: Object.values(constant.DEBT_REMINDER_STATUS),
             default: constant.DEBT_REMINDER_STATUS.NULL,
         },
-        notes: { type: String },
+
+        // result of the reminder
+        result: {
+            type: String,
+            enum: Object.values(constant.DEBT_RESULT),
+            default: constant.DEBT_RESULT.NULL,
+        },
+        contactDate: {
+            type: Date,
+            default: () => null,
+        },
+        followUpDate: {
+            type: Date,
+            default: () => null,
+        },
+        timeContact: {
+            type: String,
+            default: 'null',
+        },
+        notes: {
+            type: String,
+            default: 'null',
+        },
     },
     { timestamps: true },
 )

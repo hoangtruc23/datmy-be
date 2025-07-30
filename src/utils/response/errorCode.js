@@ -300,6 +300,10 @@ const errorCode = {
         code: 77,
         message: 'Cấu hình nợ không tồn tại.',
     },
+    DEBT_REMINDER_NOT_FOUND: {
+        code: 78,
+        message: 'Nhắc nhở nợ không tồn tại.',
+    },
 }
 
 module.exports = errorCode
