@@ -7,12 +7,10 @@ const router = express.Router()
 
 router.post(
     '/create',
-    validate(invoiceValidation.create),
     invoiceController.create,
 )
 router.post(
     '/update/:id',
-    validate(invoiceValidation.update),
     invoiceController.update,
 )
 router.get('/getAll', invoiceController.getAll)
@@ -47,6 +45,8 @@ module.exports = router
  *               - customerName
  *               - invoiceCode
  *               - totalAmount
+ *               - invoiceDate
+ *               - invoiceDetails
  *             properties:
  *               customerId:
  *                 type: string
@@ -58,19 +58,37 @@ module.exports = router
  *                 example: "Công ty Dược ABC"
  *               invoiceCode:
  *                 type: string
- *                 description: Mã hóa đơn (L/T + số)
+ *                 description: Mã hóa đơn 
  *                 example: "L00123"
  *               totalAmount:
  *                 type: number
- *                 description: Tổng giá trị hóa đơn
- *                 example: 1500000
- *               limitDue:
- *                 type: number
- *                 description: Số ngày đáo hạn (tính từ ngày tạo hóa đơn)
- *                 example: 30
+ *                 description: Tổng giá trị hóa đơn (bao gồm thuế, 10% VAT)
+ *                 example: 1315000
+ *               invoiceDate:
+ *                 type: string
+ *                 format: date
+ *                 description: Ngày lập hóa đơn, mặc dịnh ngày hiện tại
+ *                 example: "2025-08-04"
+ *               dueDate:
+ *                 type: string
+ *                 format: date
+ *                 description: Ngày đáo hạn
+ *                 example: "2025-08-30"
+ *               invoiceLink:
+ *                 type: string
+ *                 description: Đường dẫn đến hóa đơn (nếu có)
+ *                 example: "https://example.com/invoice/L00123"
+ *               paymentBy:
+ *                 type: string
+ *                 enum: [transfer, cash, other]
+ *                 description: Phương thức thanh toán
+ *                 example: "transfer"
  *               orderBy:
  *                 type: object
- *                 description: Người đặt hàng
+ *                 description: Người đặt hàng, không bắt buộc
+ *                 required:
+ *                   - name
+ *                   - phone
  *                 properties:
  *                   name:
  *                     type: string
@@ -81,6 +99,9 @@ module.exports = router
  *               accountant:
  *                 type: object
  *                 description: Thông tin kế toán
+ *                 required:
+ *                   - name
+ *                   - phone
  *                 properties:
  *                   name:
  *                     type: string
@@ -91,13 +112,60 @@ module.exports = router
  *               reminderContact:
  *                 type: object
  *                 description: Người liên hệ nhắc nợ
+ *                 required:
+ *                   - name
+ *                   - phone
  *                 properties:
  *                   name:
  *                     type: string
- *                     example: "Lê  C"
+ *                     example: "Lê C"
  *                   phone:
  *                     type: string
  *                     example: "0909123456"
+ *               invoiceDetails:
+ *                 type: array
+ *                 description: Danh sách sản phẩm trong hóa đơn
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - productId
+ *                   properties:
+ *                     productId:
+ *                       type: string
+ *                       description: ID sản phẩm
+ *                       example: "64fce248a67d3e4d93db7390"
+ *                     quantity:
+ *                       type: number
+ *                       minimum: 1
+ *                       example: 5
+ *                     price:
+ *                       type: number
+ *                       minimum: 0
+ *                       example: 100000
+ *                     discount:
+ *                       type: number
+ *                       minimum: 0
+ *                       example: 5000
+ *                     totalAmountProduct:
+ *                       type: number
+ *                       minimum: 0
+ *                       example: 475000
+ *                 example:
+ *                   - productId: "64fce248a67d3e4d93db7390"
+ *                     quantity: 5
+ *                     price: 100000
+ *                     discount: 5000
+ *                     totalAmountProduct: 475000
+ *                   - productId: "64fce248a67d3e4d93db7391"
+ *                     quantity: 2
+ *                     price: 200000
+ *                     discount: 10000
+ *                     totalAmountProduct: 390000
+ *                   - productId: "64fce248a67d3e4d93db7392"
+ *                     quantity: 1
+ *                     price: 500000
+ *                     discount: 50000
+ *                     totalAmountProduct: 450000
  *               notes:
  *                 type: string
  *                 description: Ghi chú thêm
@@ -111,7 +179,8 @@ module.exports = router
  * @swagger
  * /invoice/update/{id}:
  *   post:
- *     summary: Cập nhật hóa đơn
+ *     summary: Cập nhật hóa đơn, chỉ update các trường cần thiết
+ *     description: Cập nhật hóa đơn theo ID, chỉ các trường cần thiết sẽ được cập nhật. Không cập nhật các trường phụ thuộc như tổng tiền, sản phẩm.
  *     tags: [Invoice]
  *     security:
  *       - bearerAuth: []
@@ -141,14 +210,15 @@ module.exports = router
  *                 type: string
  *                 description: Mã hóa đơn (L/T + số)
  *                 example: "L00123"
- *               totalAmount:
- *                 type: number
- *                 description: Tổng giá trị hóa đơn
- *                 example: 3000000
- *               limitDue:
- *                 type: number
- *                 description: Số ngày đáo hạn (tính từ ngày tạo hóa đơn)
- *                 example: 45
+ *               dueDate:
+ *                 type: string
+ *                 format: date
+ *                 description: Ngày đáo hạn (tính ngược ra limitDue nếu có)
+ *                 example: "2025-09-15"
+ *               invoiceLink:
+ *                 type: string
+ *                 description: Đường dẫn đến hóa đơn (nếu có)
+ *                 example: "https://example.com/invoice/L00123"
  *               orderBy:
  *                 type: object
  *                 description: Người đặt hàng

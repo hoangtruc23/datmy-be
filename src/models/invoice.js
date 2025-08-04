@@ -16,6 +16,38 @@ const contactPersonSchema = new Schema(
     },
     { _id: false },
 )
+
+const invoiceDetail = new Schema(
+    {
+         productId: {
+            type: Types.ObjectId,
+            ref: 'products',
+            required: true,
+        },
+        quantity: {
+            type: Number,
+            min: 1,
+            default: 1,
+        },
+        price: {
+            type: Number,
+            min: 0,
+            default: 0,
+        },
+        discount: {
+            type: Number,
+            min: 0,
+            default: 0,
+        },
+        totalAmountProduct: {
+            type: Number,
+            min: 0,
+            default: 0,
+       },
+    },
+    { _id: false },
+)
+
 const invoiceSchema = new Schema(
     {
         customerId: {
@@ -29,15 +61,17 @@ const invoiceSchema = new Schema(
             required: true,
             trim: true,
         },
+        invoiceLink: {
+            type: String,
+        },
         invoiceCode: {
             type: String,
             required: true,
             unique: true,
         },
         totalAmount: { type: Number, required: true },
-        //đã có từ timeStamp
-        //exportDate: { type: Date, required: true },
-        //Cộng từ createdAt và  limitDue trong confgiDebt
+        invoiceDate: { type: Date },
+        //Cộng từ createdAt và  limitDue trong configDebt
         dueDate: { type: Date },
         limitDue: { type: Number, default: 0 },
         isFullyPaid: { type: Boolean, default: false },
@@ -45,15 +79,14 @@ const invoiceSchema = new Schema(
         orderBy: contactPersonSchema,
         //kế toán
         accountant: contactPersonSchema,
-        //trạng thái động
-        // status: {
-        //     type: String,
-        //     enum: Object.values(constant.INVOICE_STATUS),
-        //     default: constant.INVOICE_STATUS.PENDING,
-        // },
+        paymentBy:{
+            type: String,
+            enum: Object.values(constant.CONDITION_PAYMENT),
+            default: constant.CONDITION_PAYMENT.TRANSFER,
+        },
         //nguời nhắc
         reminderContact: contactPersonSchema,
-
+        invoiceDetails: [invoiceDetail],
         notes: { type: String },
     },
     { timestamps: true },
