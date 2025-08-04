@@ -1,8 +1,7 @@
 const { Types } = require('mongoose')
 const InvoiceModel = require('../models/invoice')
-const ConfigDebtModel = require('../models/configDebt')
 const CustomerModel = require('../models/customer')
-const PaymentHistoryModel = require('../models/paymentHistory')
+// const PaymentHistoryModel = require('../models/paymentHistory')
 const BadReq = require('../utils/response/requestError')
 const constant = require('../utils/constant/constant')
 const errorCode = require('../utils/response/errorCode')
@@ -10,9 +9,7 @@ const errorCode = require('../utils/response/errorCode')
 const invoiceService = {
     create: async (data) => {
         try {
-            const config = await ConfigDebtModel.findOne().sort({
-                createdAt: -1,
-            })
+
 
             const {
                 customerId,
@@ -22,8 +19,12 @@ const invoiceService = {
                 orderBy,
                 accountant,
                 reminderContact,
+                invoiceDate = new Date(),
                 notes,
-                limitDue = config?.limitDue ?? 30,
+                invoiceDetails,
+                invoiceLink,
+                paymentBy,
+                dueDate,
             } = data
 
             const customer = await CustomerModel.findById(customerId)
@@ -32,12 +33,11 @@ const invoiceService = {
             const existed = await InvoiceModel.findOne({ invoiceCode })
             if (existed) throw new BadReq(errorCode.INVOICE_CODE_EXISTED)
 
-            //const limitDue = config?.limitDue ?? 30
-            const exportDate = new Date()
-            const dueDate = new Date(exportDate)
-            dueDate.setDate(dueDate.getDate() + limitDue)
+            
+            const limitDue = Math.ceil((new Date(dueDate) - new Date(invoiceDate)) / (1000 * 60 * 60 * 24))
 
-            await InvoiceModel.create({
+
+            const invoice = await InvoiceModel.create({
                 customerId,
                 customerName,
                 invoiceCode,
@@ -45,12 +45,16 @@ const invoiceService = {
                 dueDate,
                 limitDue,
                 orderBy,
+                invoiceDate,
+                invoiceDetails,
                 accountant,
                 reminderContact,
+                invoiceLink,
+                paymentBy,
                 notes,
             })
 
-            return null
+            return invoice
         } catch (err) {
             throw err
         }
@@ -67,23 +71,21 @@ const invoiceService = {
                 })
                 if (conflict) throw new BadReq(errorCode.INVOICE_CODE_EXISTED)
             }
-
-            if (data.limitDue) {
-                const limitDue = data.limitDue
+            if(data.dueDate && data.dueDate !== invoice.dueDate) {
+                const dueDate = new Date(data.dueDate)
                 const exportDate = invoice.createdAt
-                const dueDate = new Date(exportDate)
-                dueDate.setDate(dueDate.getDate() + limitDue)
-                invoice.dueDate = dueDate
+                const limitDue = Math.ceil((dueDate - exportDate) / (1000 * 60 * 60 * 24))
+                invoice.limitDue = limitDue
             }
             Object.assign(invoice, {
                 customerId: data.customerId,
                 customerName: data.customerName,
                 invoiceCode: data.invoiceCode,
-                totalAmount: data.totalAmount,
                 orderBy: data.orderBy,
                 accountant: data.accountant,
-                limitDue: data.limitDue,
-                //status: data.status,
+                limitDue: invoice.limitDue,
+                invoiceDetails: data.invoiceDetails,
+                invoiceLink: data.invoiceLink,
                 reminderContact: data.reminderContact,
                 notes: data.notes,
             })
