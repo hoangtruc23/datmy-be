@@ -691,6 +691,18 @@ async function apiSeeder() {
             api: '/discount/setRefund',
             note: 'Cập nhật trạng thái đã hoàn tiền cho phiếu chiết khấu',
         },
+                
+        // Báo cáo
+        {
+            _id: new Types.ObjectId('688c7f601bb97636f19d6ac5'),
+            api: '/reports/debt-comparison/summary',
+            note: 'Xem báo cáo đối chiếu công nợ cuối kỳ',
+        },
+        {
+            _id: new Types.ObjectId('688c7f601bb97636f19d6ac6'),
+            api: '/reports/debt-comparison/detail',
+            note: 'Xem báo cáo đối chiếu công nợ chi tiết',
+        },
     ])
 
     logger.info('apis seeded')

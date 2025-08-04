@@ -560,6 +560,20 @@ async function permissionSeeder() {
             code: 'chiet_khau-xoa',
             parentPermissionId: '687165240ac4b7484048357d',
         },
+
+        // Báo cáo
+        {
+            _id: new Types.ObjectId('688c7f601bb97636f19d6ac3'),
+            name: 'Báo cáo',
+            code: 'bao_cao',
+            parentPermissionId: null,
+        },
+        {
+            _id: new Types.ObjectId('688c7f601bb97636f19d6ac4'),
+            name: 'Xem',
+            code: 'bao_cao-xem',
+            parentPermissionId: '688c7f601bb97636f19d6ac3',
+        },
     ])
     logger.info('Permissions seeded')
 }
