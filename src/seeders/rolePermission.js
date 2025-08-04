@@ -110,6 +110,10 @@ async function rolePermissionSeeder() {
             roleId: '684927c871287f2ae7d8130b',
             permissionId: '685247989820dda77e2e7272', // cập nhật trạng thái
         },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '688c7f601bb97636f19d6ac4', // Xem báo cáo
+        },
         ////////// Danh mục
         {
             roleId: '684927c871287f2ae7d8130b',
