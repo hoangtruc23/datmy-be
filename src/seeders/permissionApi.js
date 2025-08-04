@@ -637,6 +637,16 @@ async function permissionApiSeeder() {
             permissionId: '687165e2ee8406ca535d1ba5', // Xóa phiếu chiết khấu
             apiId: '6871899346e790eda9a08c08', // /discount/delete
         },
+        
+        // Báo cáo
+        {
+            permissionId: '688c7f601bb97636f19d6ac4', // Xem Báo cáo
+            apiId: '688c7f601bb97636f19d6ac5', // /reports/debt-comparison/summary
+        },
+        {
+            permissionId: '688c7f601bb97636f19d6ac4', // Xem Báo cáo
+            apiId: '688c7f601bb97636f19d6ac6', // /reports/debt-comparison/detail
+        },
     ])
     logger.info('PermissionApis seeded')
 }

@@ -117,6 +117,12 @@ const constant = {
         NO_RESPONSE: 'noResponse',
         FULLY_PAID: 'fullyPaid',
     },
+    CONDITION_PAYMENT: {
+        NULL: '',
+        TRANSFER: 'transfer',
+        CASH: 'cash',
+        DEBT: 'debt',
+    },
 }
 
 module.exports = constant
