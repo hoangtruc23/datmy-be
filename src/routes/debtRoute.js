@@ -7,7 +7,10 @@ const router = express.Router()
 
 router.get('/getAll', debtController.getAll)
 router.get('/getSummary/', debtController.getSummary)
+router.post('/generateReport', debtController.generateReport);
+router.post('/generatePaymentRequest', debtController.generatePaymentRequest);
 
+module.exports = router
 /**
  * @swagger
  * tags:
@@ -133,4 +136,77 @@ router.get('/getSummary/', debtController.getSummary)
  *       200:
  *         description: Lấy tổng hợp thông tin thành công
  */
-module.exports = router
+
+
+
+/**
+ * @swagger
+ * /debt/generateReport:
+ *   post:
+ *     summary: Sinh báo cáo đối chiếu công nợ
+ *     description: Sinh file docx mẫu bb đối chiếu công nợ
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Debt]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - startDate
+ *               - endDate
+ *               - customerId
+ *             properties:
+ *               startDate:
+ *                 type: string
+ *                 format: date
+ *                 example: "2024-01-01"
+ *                 description: Start date of the debt reconciliation period (YYYY-MM-DD).
+ *               endDate:
+ *                 type: string
+ *                 format: date
+ *                 example: "2024-12-31"
+ *                 description: End date of the debt reconciliation period (YYYY-MM-DD).
+ *               customerId:
+ *                 type: string
+ *                 example: "507f1f77bcf86cd799439011"
+ *                 description: ID of the customer for whom the report is generated.
+ *     responses:
+ *       200:
+ *         description: Debt reconciliation report generated successfully.
+ */
+
+
+/**
+ * @swagger
+ * /debt/generatePaymentRequest:
+ *   post:
+ *     summary: Sinh báo cáo đề nghị thanh toán
+ *     description: Sinh báo cáo đề nghị thanh toán
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Debt]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - customerId
+ *               - invoiceId
+ *             properties:
+ *               customerId:
+ *                 type: string
+ *                 example: "507f1f77bcf86cd799439011"
+ *                 description: ID of the customer for whom the report is generated.
+ *               invoiceId:
+ *                 type: string
+ *                 example: "507f1f77bcf86cd799439011"
+ *                 description: ID of the invoice for which the report is generated.
+ *     responses:
+ *       200:
+ *         description: Debt reconciliation report generated successfully.
+ */

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Giấy Đề Nghị Thanh Toán</title>
+  <style>
+    body {
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 14px;
+      margin: 40px;
+      line-height: 1.5;
+    }
+    .bold {
+      font-weight: bold;
+    }
+    .center {
+      text-align: center;
+    }
+    .right {
+      text-align: right;
+    }
+    .header-table, .info-table, .payment-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    .header-table td {
+      vertical-align: top;
+      padding-bottom: 8px;
+    }
+    .payment-table, .payment-table th, .payment-table td {
+      border: 1px solid black;
+      padding: 6px;
+    }
+    .signature {
+      margin-top: 60px;
+      width: fit-content;
+      margin-left: auto;
+    }
+    .signature td {
+      text-align: center;
+      vertical-align: top;
+    }
+  </style>
+</head>
+<body>
+
+  <table class="header-table">
+    <tr>
+      <td>
+        <div class="bold">Văn phòng chính TP HCM:</div>
+        Số 12-14 Đường số 16 KDC An Lạc<br>
+        P.Bình Trị Đông B, Q.Bình Tân, TpHCM<br>
+        Tel: 028-7.511.715 – Fax: 028-7.511.714
+      </td>
+      <td>
+        <div class="bold">Văn phòng giao dịch tại Hà Nội:</div>
+        Ô số 31 dãy 16B3, Làng Việt Kiều Châu Âu<br>
+        KĐT Mỗ Lao - P. Mỗ Lao - Hà Đông - Hà Nội<br>
+        Tel: 024-33.54.70.28 – Fax: 024-33.54.70.35
+      </td>
+    </tr>
+  </table>
+
+  <h2 class="center bold">GIẤY ĐỀ NGHỊ THANH TOÁN</h2>
+  <h2 class="center bold">Kính gởi: {{receiverCompany}}</h2>
+
+  <p>
+    Công ty TNHH Thương Mại Dịch Vụ Đạt Mỹ xin gửi tới Quý Công ty lời chào trân trọng và lời cảm ơn sâu sắc nhất
+    về sự hợp tác trong thời gian vừa qua.
+  </p>
+  <p>
+    Căn cứ vào hóa đơn tài chính của công ty chúng tôi về việc cung cấp nguyên liệu, linh kiện của 
+    <strong>{{productName}}</strong>, đề nghị Quý Công ty thanh toán số tiền sau:
+  </p>
+
+  <table class="payment-table">
+    <thead>
+      <tr>
+        <th colspan="2">CHỨNG TỪ</th>
+        <th rowspan="2">Tên hàng</th>
+        <th rowspan="2">Số lượng</th>
+        <th rowspan="2">Đơn giá</th>
+        <th rowspan="2">Thành tiền</th>
+      </tr>
+      <tr>
+        <th>Số hóa đơn</th>
+        <th>Ngày</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{{invoiceNumber}}</td>
+        <td>{{invoiceDate}}</td>
+        <td>{{productName}}</td>
+        <td>{{quantity}}</td>
+        <td>{{unitPrice}}</td>
+        <td>{{lineTotal}}</td>
+      </tr>
+      <tr>
+        <td colspan="5" class="right bold">Cộng tiền hàng</td>
+        <td>{{subtotal}}</td>
+      </tr>
+      <tr>
+        <td colspan="5" class="right bold">Thuế GTGT 10%</td>
+        <td>{{vat}}</td>
+      </tr>
+      <tr>
+        <td colspan="5" class="right bold">Thành tiền</td>
+        <td>{{total}}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Số tiền viết bằng chữ:</strong> {{totalInWords}}</p>
+
+  <p>
+    Công nợ của quý công ty được tính <strong>{{debtDueDays}}</strong> ngày sau khi nhận được hàng hóa và hóa đơn tài chính.
+  </p>
+
+  <p><strong>Thông tin chuyển khoản:</strong></p>
+  <p>
+    Công ty: TNHH Thương Mại Dịch Vụ Đạt Mỹ<br>
+    Địa chỉ: 12-14, KDC An Lạc, Đường số 16, P. Bình Trị Đông B, Q. Bình Tân, TPHCM<br>
+    Tài khoản số: <strong>2000 14851 035 075</strong><br>
+    Ngân hàng: <strong>Eximbank - Chi nhánh TP.HCM</strong>
+  </p>
+
+  <p>Trân trọng cảm ơn sự hợp tác của Quý Công ty!</p>
+
+  <table class="signature right">
+    <tr>
+      <td >TP HCM, ngày {{day}} tháng {{month}} năm {{year}}</td>
+    </tr>
+    <tr>
+      <td class=" bold">P. Kế toán</td>
+    </tr>
+    <tr>
+      <td style="height: 80px;"></td>
+    </tr>
+    <tr>
+      
+      <td ">{{accountantName}}</td>
+    </tr>
+  </table>
+
+</body>
+</html>

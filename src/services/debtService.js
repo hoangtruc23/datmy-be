@@ -1,7 +1,11 @@
 const InvoiceModel = require('../models/invoice')
 
 const constant = require('../utils/constant/constant')
-
+const convertNumberToVietnameseWords = require('../middlewares/numberToWords')
+const CustomerModel = require('../models/customer')
+const BadReq = require('../utils/response/requestError')
+const errorCode = require('../utils/response/errorCode')
+const { ObjectId } = require('mongodb')
 const debtService = {
     getAll: async (page = 1, limit = 20, search = '', debtStatus = '') => {
         try {
@@ -14,7 +18,7 @@ const debtService = {
                 {
                     $match: {
                         isFullyPaid: false,
-                        dueDate: { $lt: currentDate },
+                        //dueDate: { $lt: currentDate },
                         ...(search.trim()
                             ? {
                                   customerName: {
@@ -247,7 +251,7 @@ const debtService = {
                 {
                     $match: {
                         isFullyPaid: false,
-                        dueDate: { $lt: currentDate },
+                        //dueDate: { $lt: currentDate },
                         ...(search.trim()
                             ? {
                                   customerName: {
@@ -408,7 +412,7 @@ const debtService = {
                 {
                     $match: {
                         isFullyPaid: false,
-                        dueDate: { $lt: currentDate },
+                        //dueDate: { $lt: currentDate },
                     },
                 },
                 {
@@ -647,6 +651,90 @@ const debtService = {
             }
         } catch (err) {
             throw err
+        }
+    },
+    generateReport: async (startDate, endDate, customerId) => {
+        try {
+            const currentDate = new Date();
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+
+            const customer = await CustomerModel.findById(customerId)
+            if (!customer) {
+                throw new BadReq(errorCode.CUSTOMER_NOT_FOUND)
+            }
+            const pipeline = [
+                {
+                    $match: {
+                        customerId: new ObjectId(customerId),
+                        isFullyPaid: false,
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'paymenthistories',
+                        let: { invoiceId: '$_id' },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: { $eq: ['$invoiceId', '$$invoiceId'] },
+                                    status: 'partiallyPaid'
+                                }
+                            },
+                            {
+                                $group: {
+                                    _id: null,
+                                    paidAmount: { $sum: '$amount' }
+                                }
+                            }
+                        ],
+                        as: 'payments'
+                    }
+                },
+                {
+                    $addFields: {
+                        remainingDebt: {
+                            $subtract: [
+                                '$totalAmount',
+                                { $ifNull: [{ $sum: '$payments.paidAmount' }, 0] }
+                            ]
+                        }
+                    }
+                },
+                {
+                    $group: {
+                        _id: '$customerId',
+                        totalDebt: { $sum: '$remainingDebt' }
+                    }
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        totalDebt: 1
+                    }
+                }
+            ];
+
+            const result = await InvoiceModel.aggregate(pipeline);
+            const data = result[0] || {};
+            const totalDebtInWords = convertNumberToVietnameseWords(data.totalDebt || 0);
+            const dataToWrite = {
+                currentDate,
+                officialName: customer.officialName,
+                deliveryAddress: customer.deliveryAddresses|| null,
+                taxCode: customer.taxCode,
+                representative: customer.representative || null,
+
+                totalDebt: data.totalDebt || 0,
+                totalDebtInWords,
+
+                startDate: start,
+                endDate: end,
+            };
+            //console.log('dataToWrite', dataToWrite)
+            return dataToWrite;
+        } catch (err) {
+            throw err;
         }
     },
 }

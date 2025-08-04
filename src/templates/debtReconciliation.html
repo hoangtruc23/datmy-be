@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Biên Bản Đối Chiếu Công Nợ</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 20px;
+        }
+        .header {
+            text-align: center;
+            text-transform: uppercase;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .bold {
+            font-weight: bold;
+        }
+        .signature-table {
+            width: 100%;
+            margin-top: 40px;
+        }
+        .signature-table td {
+            width: 50%;
+            text-align: center;
+            vertical-align: top;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM<br>
+        ĐỘC LẬP - TỰ DO - HẠNH PHÚC
+    </div>
+    <div class="divider">-----☼-----</div>
+    <div class="header">BIÊN BẢN ĐỐI CHIẾU CÔNG NỢ</div>
+    <div class="section">
+        Hôm nay, ngày {{currentDate}}, chúng tôi gồm có:
+    </div>
+    <div class="section">
+        <p class="bold">BÊN MUA (BÊN A): {{buyerName}}</p>
+        <p>Địa chỉ: {{buyerAddress}}</p>
+        <p>Mã số thuế: {{buyerTaxCode}}</p>
+        <p>Do Ông/Bà: {{buyerRepresentative}} <span style="margin-left: 150px;">Chức vụ: {{buyerTitle}}</span></p>
+    </div>
+    <div class="section">
+        <p class="bold">BÊN BÁN (BÊN B): {{sellerName}}</p>
+        <p>Địa chỉ: {{sellerAddress}}</p>
+        <p>Điện thoại: {{sellerPhone}}  <span style="margin-left: 150px;">Chức vụ: {{sellerFax}}</span></p>
+        <p>Mã số thuế: {{sellerTaxCode}}</p>
+        <p>Do Bà: {{sellerRepresentative}} <span style="margin-left: 150px;">Chức vụ: {{sellerTitle}}</span></p>
+        <p>Số tài khoản: {{sellerBankAccount}}</p>
+    </div>
+    <div class="section">
+        <p>Cùng tiến hành đối chiếu công nợ từ ngày {{startDate}} đến ngày {{endDate}} cụ thể như sau:</p>
+        <p class="bold">Tính đến hết ngày {{endDate}} Bên A còn nợ Bên B số tiền là: {{totalDebt}}</p>
+        <p class="bold">Bằng chữ: {{totalDebtInWords}}</p>
+    </div>
+    <div class="section">
+        <p>Nếu phát hiện sai sót, vui lòng thông báo đến chúng tôi để kịp thời điều chỉnh.</p>
+        <p>Biên bản này được lập thành 02 bản. Kính mong Quý Khách hàng xác nhận gửi về cho Công ty chúng tôi 01 bản.</p>
+    </div>
+    <table class="signature-table">
+        <tr>
+            <td class="bold">ĐẠI DIỆN BÊN A</td>
+            <td class="bold">ĐẠI DIỆN BÊN B</td>
+        </tr>
+        <tr>
+            <td><div style="padding-top: 90px;"></div></td>
+            <td><div style="padding-top: 90px;"></div></td>
+        </tr>
+    </table>
+</body>
+</html>
