@@ -4,11 +4,9 @@ const CustomerModel = require('../models/customer')
 const constant = require('../utils/constant/constant')
 const BadReq = require('../utils/response/requestError')
 const errorCode = require('../utils/response/errorCode')
-
 const debtReminderService = {
     create: async (data) => {
         try {
-            constant.DEBT_REMINDER_PRIORITY.HIGH
             const {
                 customerId,
                 customerName,
@@ -101,7 +99,6 @@ const debtReminderService = {
             limit = parseInt(limit)
             const skip = (page - 1) * limit
             const currentDate = new Date()
-
             const pipeline = [
                 {
                     $match: {
@@ -111,10 +108,11 @@ const debtReminderService = {
                                       $regex: search.trim(),
                                       $options: 'i',
                                   },
-                                  ...(status ? { status: status } : {}),
-                                  ...(priority ? { priority: priority } : {}),
                               }
                             : {}),
+
+                        ...(status ? { status: status } : {}),
+                        ...(priority ? { priority: priority } : {}),
                     },
                 },
                 {
@@ -128,7 +126,7 @@ const debtReminderService = {
                                         $eq: ['$customerId', '$$customerId'],
                                     },
                                     isFullyPaid: false,
-                                    dueDate: { $lt: currentDate },
+                                    //dueDate: { $lt: currentDate },
                                 },
                             },
                             {
@@ -302,10 +300,10 @@ const debtReminderService = {
                                       $regex: search.trim(),
                                       $options: 'i',
                                   },
-                                  ...(status ? { status: status } : {}),
-                                  ...(priority ? { priority: priority } : {}),
                               }
                             : {}),
+                        ...(status ? { status: status } : {}),
+                        ...(priority ? { priority: priority } : {}),
                     },
                 },
                 { $count: 'total' },
@@ -461,6 +459,20 @@ const debtReminderService = {
                                         $eq: [
                                             '$result',
                                             constant.DEBT_RESULT.NO_RESPONSE,
+                                        ],
+                                    },
+                                    1,
+                                    0,
+                                ],
+                            },
+                        },
+                        fullyPaid: {
+                            $sum: {
+                                $cond: [
+                                    {
+                                        $eq: [
+                                            '$result',
+                                            constant.DEBT_RESULT.FULLY_PAID,
                                         ],
                                     },
                                     1,

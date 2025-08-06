@@ -1,7 +1,12 @@
 const InvoiceModel = require('../models/invoice')
 
 const constant = require('../utils/constant/constant')
-
+const convertNumberToVietnameseWords = require('../middlewares/numberToWords')
+const CustomerModel = require('../models/customer')
+const ConfigDebtModel = require('../models/configDebt')
+const BadReq = require('../utils/response/requestError')
+const errorCode = require('../utils/response/errorCode')
+const { ObjectId } = require('mongodb')
 const debtService = {
     getAll: async (page = 1, limit = 20, search = '', debtStatus = '') => {
         try {
@@ -14,7 +19,7 @@ const debtService = {
                 {
                     $match: {
                         isFullyPaid: false,
-                        dueDate: { $lt: currentDate },
+                        //dueDate: { $lt: currentDate },
                         ...(search.trim()
                             ? {
                                   customerName: {
@@ -247,7 +252,7 @@ const debtService = {
                 {
                     $match: {
                         isFullyPaid: false,
-                        dueDate: { $lt: currentDate },
+                        //dueDate: { $lt: currentDate },
                         ...(search.trim()
                             ? {
                                   customerName: {
@@ -408,7 +413,7 @@ const debtService = {
                 {
                     $match: {
                         isFullyPaid: false,
-                        dueDate: { $lt: currentDate },
+                        //dueDate: { $lt: currentDate },
                     },
                 },
                 {
@@ -647,6 +652,177 @@ const debtService = {
             }
         } catch (err) {
             throw err
+        }
+    },
+    generateReport: async (startDate, endDate, customerId) => {
+        try {
+            const currentDate = new Date()
+            const start = new Date(startDate)
+            const end = new Date(endDate)
+
+            const customer = await CustomerModel.findById(customerId)
+            if (!customer) {
+                throw new BadReq(errorCode.CUSTOMER_NOT_FOUND)
+            }
+            const pipeline = [
+                {
+                    $match: {
+                        customerId: new ObjectId(customerId),
+                        isFullyPaid: false,
+                        createdAt: {
+                            $lte: end,
+                        },
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'paymenthistories',
+                        let: { invoiceId: '$_id' },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $eq: ['$invoiceId', '$$invoiceId'],
+                                    },
+                                    status: 'partiallyPaid',
+                                },
+                            },
+                            {
+                                $group: {
+                                    _id: null,
+                                    paidAmount: { $sum: '$amount' },
+                                },
+                            },
+                        ],
+                        as: 'payments',
+                    },
+                },
+                {
+                    $addFields: {
+                        remainingDebt: {
+                            $subtract: [
+                                '$totalAmount',
+                                {
+                                    $ifNull: [
+                                        { $sum: '$payments.paidAmount' },
+                                        0,
+                                    ],
+                                },
+                            ],
+                        },
+                    },
+                },
+                {
+                    $group: {
+                        _id: '$customerId',
+                        totalDebt: { $sum: '$remainingDebt' },
+                    },
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        totalDebt: 1,
+                    },
+                },
+            ]
+
+            const result = await InvoiceModel.aggregate(pipeline)
+            const data = result[0] || {}
+            const totalDebtInWords = convertNumberToVietnameseWords(
+                data.totalDebt || 0,
+            )
+            const dataToWrite = {
+                currentDate,
+                officialName: customer.officialName,
+                deliveryAddress: customer.deliveryAddresses || null,
+                taxCode: customer.taxCode,
+                representative: customer.representative || null,
+
+                totalDebt: data.totalDebt || 0,
+                totalDebtInWords,
+
+                startDate: start,
+                endDate: end,
+            }
+            //console.log('dataToWrite', dataToWrite)
+            return dataToWrite
+        } catch (err) {
+            throw err
+        }
+    },
+
+    generatePaymentRequest: async (customerId, invoiceId, accountName) => {
+        try {
+            const customer = await CustomerModel.findById(customerId)
+            if (!customer) {
+                throw new BadReq(errorCode.CUSTOMER_NOT_FOUND)
+            }
+
+            const invoice = await InvoiceModel.findById(invoiceId).populate(
+                'invoiceDetails.productId',
+                'name',
+            )
+            if (!invoice) {
+                throw new BadReq(errorCode.INVOICE_NOT_FOUND)
+            }
+
+            const configDebt = await ConfigDebtModel.findOne({
+                customerId: customerId,
+            })
+            if (!configDebt) {
+                throw new BadReq(errorCode.CONFIG_DEBT_NOT_FOUND)
+            }
+
+            const products = invoice.invoiceDetails.map((detail) => ({
+                productName: detail.productId?.name || 'Nguyên liệu, linh kiện',
+                quantity: detail.quantity || 1,
+                unitPrice: detail.price || 0,
+                discount: detail.discount || 0,
+                lineTotal: detail.totalAmountProduct || 0,
+            }))
+
+            const subtotal = products.reduce(
+                (acc, item) => acc + item.lineTotal,
+                0,
+            )
+            const vat = subtotal * 0.1
+
+            const total = subtotal + vat
+
+            if (subtotal !== invoice.totalAmount) {
+                throw new BadReq(errorCode.INVOICE_TOTAL_AMOUNT_MISMATCH)
+            }
+            const totalDebtInWords = convertNumberToVietnameseWords(total)
+
+            const invoiceDate = new Date(invoice.invoiceDate)
+            const currentDate = new Date()
+
+            const data = {
+                officialName: customer.officialName,
+
+                invoiceNumber: invoice.invoiceCode,
+                invoiceDate: invoiceDate.toLocaleDateString('vi-VN'),
+
+                products: products,
+
+                subtotal: subtotal,
+                vat: vat,
+                total: total,
+                totalDebtInWords: totalDebtInWords,
+
+                limitOverdue: configDebt.limitOverdue,
+
+                day: currentDate.getDate(),
+                month: currentDate.getMonth() + 1,
+                year: currentDate.getFullYear(),
+
+                accountantName: accountName || '', // viết tên tay
+            }
+
+            return data
+        } catch (error) {
+            console.error('Lỗi trong generatePaymentRequest:', error)
+            throw error
         }
     },
 }

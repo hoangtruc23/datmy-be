@@ -5,14 +5,8 @@ const invoiceValidation = require('../validations/invoiceValidation')
 
 const router = express.Router()
 
-router.post(
-    '/create',
-    invoiceController.create,
-)
-router.post(
-    '/update/:id',
-    invoiceController.update,
-)
+router.post('/create', invoiceController.create)
+router.post('/update/:id', invoiceController.update)
 router.get('/getAll', invoiceController.getAll)
 router.get('/getById/:id', invoiceController.getById)
 router.delete('/delete/:id', invoiceController.delete)
@@ -58,12 +52,12 @@ module.exports = router
  *                 example: "Công ty Dược ABC"
  *               invoiceCode:
  *                 type: string
- *                 description: Mã hóa đơn 
+ *                 description: Mã hóa đơn
  *                 example: "L00123"
  *               totalAmount:
  *                 type: number
- *                 description: Tổng giá trị hóa đơn (bao gồm thuế, 10% VAT)
- *                 example: 1315000
+ *                 description: Tổng giá trị hóa đơn (Lưu ý không bao gồm thuế. Có bao gồm phí đã giảm, xem ví dụ)
+ *                 example: 1335000
  *               invoiceDate:
  *                 type: string
  *                 format: date
@@ -155,7 +149,7 @@ module.exports = router
  *                     quantity: 5
  *                     price: 100000
  *                     discount: 5000
- *                     totalAmountProduct: 475000
+ *                     totalAmountProduct: 495000
  *                   - productId: "64fce248a67d3e4d93db7391"
  *                     quantity: 2
  *                     price: 200000

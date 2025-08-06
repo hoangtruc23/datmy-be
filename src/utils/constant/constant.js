@@ -115,6 +115,7 @@ const constant = {
         PROMISE_PAID: 'promisePaid',
         PARTIALLY_PAID: 'partiallyPaid',
         NO_RESPONSE: 'noResponse',
+        FULLY_PAID: 'fullyPaid',
     },
     CONDITION_PAYMENT: {
         NULL: '',

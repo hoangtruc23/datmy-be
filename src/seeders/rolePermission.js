@@ -327,7 +327,14 @@ async function rolePermissionSeeder() {
             roleId: '684927c871287f2ae7d8130b', // Quản trị viên
             permissionId: '6880936c160be16212361ba2', // Xem công nợ
         },
-
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '6892ceaeee639479e26a93b3', // Tạo biên bản đối chiếu
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '6892ceaeee639479e26a93b4', // Tạo giấy đề nghị thanh toán
+        },
         // Cài đặt công nợ quản trị viên
         {
             roleId: '684927c871287f2ae7d8130b', // Quản trị viên
