@@ -142,7 +142,6 @@ const debtReminderService = {
                                                         '$$invoiceId',
                                                     ],
                                                 },
-                                                status: 'partiallyPaid',
                                             },
                                         },
                                         {

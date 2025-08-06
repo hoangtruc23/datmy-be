@@ -40,7 +40,6 @@ const debtService = {
                                     $expr: {
                                         $eq: ['$invoiceId', '$$invoiceId'],
                                     },
-                                    status: 'partiallyPaid',
                                 },
                             },
                             {
@@ -273,7 +272,6 @@ const debtService = {
                                     $expr: {
                                         $eq: ['$invoiceId', '$$invoiceId'],
                                     },
-                                    status: 'partiallyPaid',
                                 },
                             },
                             {
@@ -426,7 +424,6 @@ const debtService = {
                                     $expr: {
                                         $eq: ['$invoiceId', '$$invoiceId'],
                                     },
-                                    status: 'partiallyPaid',
                                 },
                             },
                             {
@@ -684,7 +681,6 @@ const debtService = {
                                     $expr: {
                                         $eq: ['$invoiceId', '$$invoiceId'],
                                     },
-                                    status: 'partiallyPaid',
                                 },
                             },
                             {
