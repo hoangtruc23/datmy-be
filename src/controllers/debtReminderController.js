@@ -24,7 +24,13 @@ const debtReminderController = {
     getAll: async (req, res, next) => {
         try {
             const { page, limit, search, status, priority } = req.query
-            const data = await debtReminderService.getAll(page, limit, search, status, priority)
+            const data = await debtReminderService.getAll(
+                page,
+                limit,
+                search,
+                status,
+                priority,
+            )
             return res.status(200).json(response.success(data))
         } catch (err) {
             next(err)

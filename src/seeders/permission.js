@@ -495,6 +495,18 @@ async function permissionSeeder() {
             code: 'cong_no-xem',
             parentPermissionId: '6880936c160be16212361ba1',
         },
+        {
+            _id: new Types.ObjectId('6892ceaeee639479e26a93b3'),
+            name: 'Tạo báo cáo',
+            code: 'cong_no-tao_bao_cao',
+            parentPermissionId: '6880936c160be16212361ba1',
+        },
+        {
+            _id: new Types.ObjectId('6892ceaeee639479e26a93b4'),
+            name: 'Tạo giấy thanh toán',
+            code: 'cong_no-tao_giay_thanh_toan',
+            parentPermissionId: '6880936c160be16212361ba1',
+        },
 
         //cài đặt công nợ
         {

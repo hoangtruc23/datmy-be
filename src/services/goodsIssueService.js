@@ -434,7 +434,9 @@ const goodsIssueService = {
                     throw new BadReq(errorCode.PRODUCT_STORAGE_NOT_FOUND)
                 }
                 if (storage.quantity <= 0) {
-                    throw new BadReq(errorCode.NON_POSITIVE_QUANTITY_NOT_ALLOWED)
+                    throw new BadReq(
+                        errorCode.NON_POSITIVE_QUANTITY_NOT_ALLOWED,
+                    )
                 }
                 if (storage.quantity > checkProductStorage.quantity) {
                     throw new BadReq(errorCode.BATCH_QUANTITY_EXCEEDS_STOCK)

@@ -108,7 +108,6 @@ const debtReminderService = {
                                       $regex: search.trim(),
                                       $options: 'i',
                                   },
-
                               }
                             : {}),
 
@@ -301,7 +300,6 @@ const debtReminderService = {
                                       $regex: search.trim(),
                                       $options: 'i',
                                   },
-
                               }
                             : {}),
                         ...(status ? { status: status } : {}),
@@ -507,8 +505,6 @@ const debtReminderService = {
             throw error
         }
     },
-
-
 }
 
 module.exports = debtReminderService

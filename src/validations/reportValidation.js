@@ -9,12 +9,17 @@ const reportValidation = {
                 'date.format': 'Ngày bắt đầu phải có định dạng ISO 8601',
                 'any.required': 'Ngày bắt đầu là bắt buộc',
             }),
-            endDate: joi.date().iso().min(joi.ref('startDate')).required().messages({
-                'date.base': 'Ngày kết thúc phải là ngày hợp lệ',
-                'date.format': 'Ngày kết thúc phải có định dạng ISO 8601',
-                'date.min': 'Ngày kết thúc phải sau hoặc bằng ngày bắt đầu',
-                'any.required': 'Ngày kết thúc là bắt buộc',
-            }),
+            endDate: joi
+                .date()
+                .iso()
+                .min(joi.ref('startDate'))
+                .required()
+                .messages({
+                    'date.base': 'Ngày kết thúc phải là ngày hợp lệ',
+                    'date.format': 'Ngày kết thúc phải có định dạng ISO 8601',
+                    'date.min': 'Ngày kết thúc phải sau hoặc bằng ngày bắt đầu',
+                    'any.required': 'Ngày kết thúc là bắt buộc',
+                }),
             customerId: joi
                 .string()
                 .pattern(/^[0-9a-fA-F]{24}$/)
@@ -31,12 +36,17 @@ const reportValidation = {
                 'date.format': 'Ngày bắt đầu phải có định dạng ISO 8601',
                 'any.required': 'Ngày bắt đầu là bắt buộc',
             }),
-            endDate: joi.date().iso().min(joi.ref('startDate')).required().messages({
-                'date.base': 'Ngày kết thúc phải là ngày hợp lệ',
-                'date.format': 'Ngày kết thúc phải có định dạng ISO 8601',
-                'date.min': 'Ngày kết thúc phải sau hoặc bằng ngày bắt đầu',
-                'any.required': 'Ngày kết thúc là bắt buộc',
-            }),
+            endDate: joi
+                .date()
+                .iso()
+                .min(joi.ref('startDate'))
+                .required()
+                .messages({
+                    'date.base': 'Ngày kết thúc phải là ngày hợp lệ',
+                    'date.format': 'Ngày kết thúc phải có định dạng ISO 8601',
+                    'date.min': 'Ngày kết thúc phải sau hoặc bằng ngày bắt đầu',
+                    'any.required': 'Ngày kết thúc là bắt buộc',
+                }),
             customerId: joi
                 .string()
                 .pattern(/^[0-9a-fA-F]{24}$/)

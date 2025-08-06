@@ -7,8 +7,8 @@ const router = express.Router()
 
 router.get('/getAll', debtController.getAll)
 router.get('/getSummary/', debtController.getSummary)
-router.post('/generateReport', debtController.generateReport);
-router.post('/generatePaymentRequest', debtController.generatePaymentRequest);
+router.post('/generateReport', debtController.generateReport)
+router.post('/generatePaymentRequest', debtController.generatePaymentRequest)
 
 module.exports = router
 /**
@@ -134,17 +134,15 @@ module.exports = router
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Lấy tổng hợp thông tin thành công
+ *         description: OK
  */
-
-
 
 /**
  * @swagger
  * /debt/generateReport:
  *   post:
  *     summary: Sinh báo cáo đối chiếu công nợ
- *     description: Sinh file docx mẫu bb đối chiếu công nợ
+ *     description: Sinh file docx mẫu biên bản đối chiếu công nợ
  *     security:
  *       - bearerAuth: []
  *     tags: [Debt]
@@ -163,21 +161,20 @@ module.exports = router
  *                 type: string
  *                 format: date
  *                 example: "2024-01-01"
- *                 description: Start date of the debt reconciliation period (YYYY-MM-DD).
+ *                 description: Ngày bắt đầu của kỳ đối chiếu công nợ (YYYY-MM-DD).
  *               endDate:
  *                 type: string
  *                 format: date
  *                 example: "2024-12-31"
- *                 description: End date of the debt reconciliation period (YYYY-MM-DD).
+ *                 description: Ngày kết thúc của kỳ đối chiếu công nợ (YYYY-MM-DD).
  *               customerId:
  *                 type: string
  *                 example: "507f1f77bcf86cd799439011"
- *                 description: ID of the customer for whom the report is generated.
+ *                 description: ID khách hàng
  *     responses:
  *       200:
- *         description: Debt reconciliation report generated successfully.
+ *         description: OK
  */
-
 
 /**
  * @swagger
@@ -201,12 +198,35 @@ module.exports = router
  *               customerId:
  *                 type: string
  *                 example: "507f1f77bcf86cd799439011"
- *                 description: ID of the customer for whom the report is generated.
+ *                 description: ID khách hàng
  *               invoiceId:
  *                 type: string
  *                 example: "507f1f77bcf86cd799439011"
- *                 description: ID of the invoice for which the report is generated.
+ *                 description: ID hóa đơn
+ *               accountName:
+ *                 type: string
+ *                 example: "Nguyễn Văn A"
+ *                 description: Tên P. Kế toán, người ký tên. Nếu không điền, sẽ để trống và viết tay.
  *     responses:
  *       200:
- *         description: Debt reconciliation report generated successfully.
+ *         description: Tạo giấy đề nghị thanh toán thành công.
+ *       400:
+ *         description: Tổng số tiền lưu trong hóa đơn và tổng số tiền (Cộng tiền hàng) sau khi tính trong đề nghị thanh toán không khớp.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 400
+ *                 code:
+ *                   type: integer
+ *                   example: 81
+ *                 message:
+ *                   type: string
+ *                   example: "Tổng số tiền hóa đơn không khớp."
+ *                 data:
+ *                   type: "null"
+ *                   example: null
  */

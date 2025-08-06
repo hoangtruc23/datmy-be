@@ -182,7 +182,8 @@ const goodsAdvanceService = {
                     for (let storage of goodsAdvanceDetail.borrowStorages) {
                         await ProductStorageModel.findOneAndUpdate(
                             {
-                                warehouseId: goodsAdvanceDetail.borrowWarehouseId,
+                                warehouseId:
+                                    goodsAdvanceDetail.borrowWarehouseId,
                                 productId: goodsAdvanceDetail.productId,
                                 trackingCode: storage.trackingCode,
                             },
@@ -706,15 +707,19 @@ const goodsAdvanceService = {
                     },
                     { session },
                 )
-                
+
                 const updatePayload = {
                     status: constant.GOODS_ADVANCE_STATUS.APPROVED,
                     updatedBy: currentUserId,
-                };
+                }
 
-                if (checkGoodsAdvance.status === constant.GOODS_ADVANCE_STATUS.WAITING_FOR_EXTENSION) {
-                    updatePayload.expectedReturnDate = checkGoodsAdvance.extendedReturnDate;
-                    updatePayload.extendedReturnDate = null; 
+                if (
+                    checkGoodsAdvance.status ===
+                    constant.GOODS_ADVANCE_STATUS.WAITING_FOR_EXTENSION
+                ) {
+                    updatePayload.expectedReturnDate =
+                        checkGoodsAdvance.extendedReturnDate
+                    updatePayload.extendedReturnDate = null
                 }
                 await GoodsAdvanceModel.findByIdAndUpdate(
                     checkGoodsAdvance._id,

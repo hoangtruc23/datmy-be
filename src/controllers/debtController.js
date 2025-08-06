@@ -26,30 +26,42 @@ const debtController = {
     },
     generateReport: async (req, res, next) => {
         try {
-            const { startDate, endDate, customerId } = req.body;
-            const data = await debtService.generateReport(startDate, endDate, customerId);
-            const pdfBuffer = await pdfService.debtReconciliationForm(data);
-            
-            res.setHeader('Content-Type', 'application/pdf');
-            res.setHeader('Content-Disposition', 'attachment; filename="Doi-chieu-cong-no".pdf');
-            res.send(pdfBuffer);
+            const { startDate, endDate, customerId } = req.body
+            const data = await debtService.generateReport(
+                startDate,
+                endDate,
+                customerId,
+            )
+            const pdfBuffer = await pdfService.debtReconciliationForm(data)
+
+            res.setHeader('Content-Type', 'application/pdf')
+            res.setHeader(
+                'Content-Disposition',
+                'attachment; filename="Doi-chieu-cong-no".pdf',
+            )
+            res.send(pdfBuffer)
         } catch (err) {
-            next(err);
+            next(err)
         }
     },
     generatePaymentRequest: async (req, res, next) => {
         try {
-            //const { startDate, endDate, customerId } = req.body;
-            //const data = await debtService.generateReport(startDate, endDate, customerId);
-            const data = {
-            };
-            const pdfBuffer = await pdfService.paymentRequestForm(data);
-            
-            res.setHeader('Content-Type', 'application/pdf');
-            res.setHeader('Content-Disposition', 'attachment; filename="De-nghi-thanh-toan".pdf');
-            res.send(pdfBuffer);
+            const { customerId, invoiceId, accountName } = req.body
+            const data = await debtService.generatePaymentRequest(
+                customerId,
+                invoiceId,
+                accountName,
+            )
+            const pdfBuffer = await pdfService.paymentRequestForm(data)
+
+            res.setHeader('Content-Type', 'application/pdf')
+            res.setHeader(
+                'Content-Disposition',
+                'attachment; filename="De-nghi-thanh-toan".pdf',
+            )
+            res.send(pdfBuffer)
         } catch (err) {
-            next(err);
+            next(err)
         }
     },
 }

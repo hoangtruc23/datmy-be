@@ -8,7 +8,7 @@
       font-family: 'Times New Roman', Times, serif;
       font-size: 14px;
       margin: 40px;
-      line-height: 1.5;
+      line-height: 1.1;
     }
     .bold {
       font-weight: bold;
@@ -63,15 +63,14 @@
   </table>
 
   <h2 class="center bold">GIẤY ĐỀ NGHỊ THANH TOÁN</h2>
-  <h2 class="center bold">Kính gởi: {{receiverCompany}}</h2>
+  <h2 class="center bold">Kính gởi: {{officialName}}</h2>
 
   <p>
     Công ty TNHH Thương Mại Dịch Vụ Đạt Mỹ xin gửi tới Quý Công ty lời chào trân trọng và lời cảm ơn sâu sắc nhất
     về sự hợp tác trong thời gian vừa qua.
   </p>
   <p>
-    Căn cứ vào hóa đơn tài chính của công ty chúng tôi về việc cung cấp nguyên liệu, linh kiện của 
-    <strong>{{productName}}</strong>, đề nghị Quý Công ty thanh toán số tiền sau:
+    Căn cứ vào hóa đơn tài chính của công ty chúng tôi về việc cung cấp nguyên liệu, linh kiện, đề nghị Quý Công ty thanh toán số tiền sau:
   </p>
 
   <table class="payment-table">
@@ -81,6 +80,7 @@
         <th rowspan="2">Tên hàng</th>
         <th rowspan="2">Số lượng</th>
         <th rowspan="2">Đơn giá</th>
+        <th rowspan="2">Giảm giá</th>
         <th rowspan="2">Thành tiền</th>
       </tr>
       <tr>
@@ -89,33 +89,26 @@
       </tr>
     </thead>
     <tbody>
+      {{productRows}}
       <tr>
-        <td>{{invoiceNumber}}</td>
-        <td>{{invoiceDate}}</td>
-        <td>{{productName}}</td>
-        <td>{{quantity}}</td>
-        <td>{{unitPrice}}</td>
-        <td>{{lineTotal}}</td>
-      </tr>
-      <tr>
-        <td colspan="5" class="right bold">Cộng tiền hàng</td>
+        <td colspan="6" class="right bold">Cộng tiền hàng</td>
         <td>{{subtotal}}</td>
       </tr>
       <tr>
-        <td colspan="5" class="right bold">Thuế GTGT 10%</td>
+        <td colspan="6" class="right bold">Thuế GTGT 10%</td>
         <td>{{vat}}</td>
       </tr>
       <tr>
-        <td colspan="5" class="right bold">Thành tiền</td>
+        <td colspan="6" class="right bold">Thành tiền</td>
         <td>{{total}}</td>
       </tr>
     </tbody>
   </table>
 
-  <p><strong>Số tiền viết bằng chữ:</strong> {{totalInWords}}</p>
+  <p><strong>Số tiền viết bằng chữ:</strong> {{totalDebtInWords}}</p>
 
   <p>
-    Công nợ của quý công ty được tính <strong>{{debtDueDays}}</strong> ngày sau khi nhận được hàng hóa và hóa đơn tài chính.
+    Công nợ của quý công ty được tính <strong>{{limitOverdue}}</strong> ngày sau khi nhận được hàng hóa và hóa đơn tài chính.
   </p>
 
   <p><strong>Thông tin chuyển khoản:</strong></p>
