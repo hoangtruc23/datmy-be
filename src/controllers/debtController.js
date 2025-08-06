@@ -77,14 +77,64 @@ const debtController = {
             // }
 
             //const data = await debtService.getSalesDetailData(fromDate, toDate, customerId);
-            const data ={
-                
-            }
-            const excelBuffer = excelService.createSalesDetailExcel(data);
+            const data = {
+            fromDate: '2025-07-01',
+            toDate: '2025-07-31',
+            customerName: 'Công ty TNHH ABC',
+            salesData: [
+                {
+                customerName: 'Công ty TNHH ABC',
+                invoiceNumber: 'HD001',
+                invoiceDate: '2025-07-05',
+                taxCode: '0101234567',
+                productCode: 'SP001',
+                productName: 'Sản phẩm A',
+                unit: 'Cái',
+                quantity: 10,
+                unitPrice: 150000,
+                totalAmount: 1500000,
+                vatAmount: 150000,
+                totalPayment: 1650000,
+                address: '123 Nguyễn Văn Cừ, Hà Nội'
+                },
+                {
+                customerName: 'Công ty TNHH ABC',
+                invoiceNumber: 'HD002',
+                invoiceDate: '2025-07-10',
+                taxCode: '0101234567',
+                productCode: 'SP002',
+                productName: 'Sản phẩm B',
+                unit: 'Hộp',
+                quantity: 5,
+                unitPrice: 300000,
+                totalAmount: 1500000,
+                vatAmount: 150000,
+                totalPayment: 1650000,
+                address: '123 Nguyễn Văn Cừ, Hà Nội'
+                },
+                {
+                customerName: 'Công ty TNHH ABC',
+                invoiceNumber: 'HD003',
+                invoiceDate: '2025-07-20',
+                taxCode: '0101234567',
+                productCode: 'SP003',
+                productName: 'Sản phẩm C',
+                unit: 'Bộ',
+                quantity: 2,
+                unitPrice: 750000,
+                totalAmount: 1500000,
+                vatAmount: 150000,
+                totalPayment: 1650000,
+                address: '123 Nguyễn Văn Cừ, Hà Nội'
+                }
+            ]
+            };
 
+            const buffer = await excelService.createSalesDetailExcel(data);
             res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            res.setHeader('Content-Disposition', 'attachment; filename="So-chi-tiet-ban-hang.xlsx"');
-            res.send(excelBuffer);
+            res.setHeader('Content-Disposition', 'attachment; filename=So-chi-tiet-ban-hang.xlsx');
+            res.send(buffer);
+
 
         } catch (err) {
             console.error('Lỗi trong generateSalesDetailReport:', err);
