@@ -34,10 +34,13 @@ const dashBoardService = {
             const invoiceResult = await InvoiceModel.aggregate([
                 {
                     $match: {
-                        invoiceDate: {
-                            $gte: startDate,
-                            $lt: endDate,
-                        },
+                        $or: [
+                            { invoiceDate: { $gte: startDate, $lt: endDate } }, // Hóa đơn được tạo ra trong tháng
+                            {
+                                dueDate: { $gte: startDate, $lt: endDate }, // Hóa đơn còn công nợ
+                                isFullyPaid: false,
+                            },
+                        ],
                     },
                 },
                 {
@@ -54,7 +57,7 @@ const dashBoardService = {
             const monthTotalDept = monthTotalInvoiceAmount - monthRevenue
 
             // Số lượng khách hàng hoạt động trong tháng
-            const activeCustomersInMonth = await InvoiceModel.aggregate([
+            const activeCustomersInMonthInvoice = await InvoiceModel.aggregate([
                 {
                     $match: {
                         invoiceDate: { $gte: startDate, $lt: endDate },
@@ -65,13 +68,41 @@ const dashBoardService = {
                         _id: '$customerId',
                     },
                 },
-                {
-                    $count: 'activeCustomerCount',
-                },
             ])
 
-            const activeCustomerCount =
-                activeCustomersInMonth[0]?.activeCustomerCount || 0
+            const activeCustomersInMonthPayment =
+                await PaymentHistoryModel.aggregate([
+                    {
+                        $match: {
+                            paymentDate: { $gte: startDate, $lt: endDate },
+                        },
+                    },
+                    {
+                        $lookup: {
+                            from: 'invoices',
+                            localField: 'invoiceId',
+                            foreignField: '_id',
+                            as: 'invoice',
+                        },
+                    },
+                    {
+                        $unwind: '$invoice',
+                    },
+                    {
+                        $group: {
+                            _id: '$invoice.customerId',
+                        },
+                    },
+                ])
+            // Tìm khách hàng duy nhất từ cả hai mảng để lay ra số lượng khách hàng hoạt động
+            const allActiveCustomers = new Set([
+                ...activeCustomersInMonthInvoice.map((item) =>
+                    item._id.toString(),
+                ),
+                ...activeCustomersInMonthPayment.map((item) =>
+                    item._id.toString(),
+                ),
+            ])
 
             // Tổng số hóa đơn trong tháng
             const totalInvoicesInMonth = await InvoiceModel.aggregate([
