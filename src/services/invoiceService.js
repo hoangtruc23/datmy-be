@@ -9,8 +9,6 @@ const errorCode = require('../utils/response/errorCode')
 const invoiceService = {
     create: async (data) => {
         try {
-
-
             const {
                 customerId,
                 customerName,
@@ -33,9 +31,10 @@ const invoiceService = {
             const existed = await InvoiceModel.findOne({ invoiceCode })
             if (existed) throw new BadReq(errorCode.INVOICE_CODE_EXISTED)
 
-            
-            const limitDue = Math.ceil((new Date(dueDate) - new Date(invoiceDate)) / (1000 * 60 * 60 * 24))
-
+            const limitDue = Math.ceil(
+                (new Date(dueDate) - new Date(invoiceDate)) /
+                    (1000 * 60 * 60 * 24),
+            )
 
             const invoice = await InvoiceModel.create({
                 customerId,
@@ -71,10 +70,12 @@ const invoiceService = {
                 })
                 if (conflict) throw new BadReq(errorCode.INVOICE_CODE_EXISTED)
             }
-            if(data.dueDate && data.dueDate !== invoice.dueDate) {
+            if (data.dueDate && data.dueDate !== invoice.dueDate) {
                 const dueDate = new Date(data.dueDate)
                 const exportDate = invoice.createdAt
-                const limitDue = Math.ceil((dueDate - exportDate) / (1000 * 60 * 60 * 24))
+                const limitDue = Math.ceil(
+                    (dueDate - exportDate) / (1000 * 60 * 60 * 24),
+                )
                 invoice.limitDue = limitDue
             }
             Object.assign(invoice, {

@@ -65,7 +65,7 @@ module.exports = router
  *               status:
  *                 type: string
  *                 description: Trạng thái thanh toán
- *                 enum: [ "completed", "pending", "failed" ]
+ *                 enum: [ "paid", "partiallyPaid"]
  *               method:
  *                 type: string
  *                 description: Phương thức thanh toán
@@ -125,7 +125,7 @@ module.exports = router
  *               status:
  *                 type: string
  *                 description: Trạng thái thanh toán
- *                 enum: [ "completed", "pending", "failed" ]
+ *                 enum: [ "paid", "partiallyPaid" ]
  *               method:
  *                 type: string
  *                 description: Phương thức thanh toán

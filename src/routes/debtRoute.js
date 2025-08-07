@@ -7,7 +7,10 @@ const router = express.Router()
 
 router.get('/getAll', debtController.getAll)
 router.get('/getSummary/', debtController.getSummary)
+router.post('/generateReport', debtController.generateReport)
+router.post('/generatePaymentRequest', debtController.generatePaymentRequest)
 
+module.exports = router
 /**
  * @swagger
  * tags:
@@ -131,6 +134,99 @@ router.get('/getSummary/', debtController.getSummary)
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Lấy tổng hợp thông tin thành công
+ *         description: OK
  */
-module.exports = router
+
+/**
+ * @swagger
+ * /debt/generateReport:
+ *   post:
+ *     summary: Sinh báo cáo đối chiếu công nợ
+ *     description: Sinh file docx mẫu biên bản đối chiếu công nợ
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Debt]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - startDate
+ *               - endDate
+ *               - customerId
+ *             properties:
+ *               startDate:
+ *                 type: string
+ *                 format: date
+ *                 example: "2024-01-01"
+ *                 description: Ngày bắt đầu của kỳ đối chiếu công nợ (YYYY-MM-DD).
+ *               endDate:
+ *                 type: string
+ *                 format: date
+ *                 example: "2024-12-31"
+ *                 description: Ngày kết thúc của kỳ đối chiếu công nợ (YYYY-MM-DD).
+ *               customerId:
+ *                 type: string
+ *                 example: "507f1f77bcf86cd799439011"
+ *                 description: ID khách hàng
+ *     responses:
+ *       200:
+ *         description: OK
+ */
+
+/**
+ * @swagger
+ * /debt/generatePaymentRequest:
+ *   post:
+ *     summary: Sinh báo cáo đề nghị thanh toán
+ *     description: Sinh báo cáo đề nghị thanh toán
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Debt]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - customerId
+ *               - invoiceId
+ *             properties:
+ *               customerId:
+ *                 type: string
+ *                 example: "507f1f77bcf86cd799439011"
+ *                 description: ID khách hàng
+ *               invoiceId:
+ *                 type: string
+ *                 example: "507f1f77bcf86cd799439011"
+ *                 description: ID hóa đơn
+ *               accountName:
+ *                 type: string
+ *                 example: "Nguyễn Văn A"
+ *                 description: Tên P. Kế toán, người ký tên. Nếu không điền, sẽ để trống và viết tay.
+ *     responses:
+ *       200:
+ *         description: Tạo giấy đề nghị thanh toán thành công.
+ *       400:
+ *         description: Tổng số tiền lưu trong hóa đơn và tổng số tiền (Cộng tiền hàng) sau khi tính trong đề nghị thanh toán không khớp.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 400
+ *                 code:
+ *                   type: integer
+ *                   example: 81
+ *                 message:
+ *                   type: string
+ *                   example: "Tổng số tiền hóa đơn không khớp."
+ *                 data:
+ *                   type: "null"
+ *                   example: null
+ */

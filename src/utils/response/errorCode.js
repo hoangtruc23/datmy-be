@@ -300,13 +300,21 @@ const errorCode = {
         code: 77,
         message: 'Cấu hình nợ không tồn tại.',
     },
-    NON_POSITIVE_QUANTITY_NOT_ALLOWED:{
+    NON_POSITIVE_QUANTITY_NOT_ALLOWED: {
         code: 78,
-        message: 'Số lượng sản phẩm phải là một số dương.', 
+        message: 'Số lượng sản phẩm phải là một số dương.',
     },
     DEBT_REMINDER_NOT_FOUND: {
         code: 79,
         message: 'Nhắc nhở nợ không tồn tại.',
+    },
+    CONFIG_DEBT_NOT_FOUND: {
+        code: 80,
+        message: 'Cấu hình nợ không tồn tại.',
+    },
+    INVOICE_TOTAL_AMOUNT_MISMATCH: {
+        code: 81,
+        message: 'Tổng số tiền hóa đơn không khớp.',
     },
 }
 

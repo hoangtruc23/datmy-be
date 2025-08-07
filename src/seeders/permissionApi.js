@@ -529,6 +529,14 @@ async function permissionApiSeeder() {
             permissionId: '6880936c160be16212361ba2', // xem công nợ
             apiId: '68871438cb1a5fd3aadc0570', // /debt/getSummary
         },
+        {
+            permissionId: '6892ceaeee639479e26a93b3', // Tạo biên bản đối chiếu
+            apiId: '6892ceaeee639479e26a93b1', // /debt/generateReport
+        },
+        {
+            permissionId: '6892ceaeee639479e26a93b4', // Tạo giấy đề nghị thanh toán
+            apiId: '6892ceaeee639479e26a93b2', // /debt/generatePaymentRequest
+        },
 
         //Cài đặt công nợ
         {
@@ -637,7 +645,7 @@ async function permissionApiSeeder() {
             permissionId: '687165e2ee8406ca535d1ba5', // Xóa phiếu chiết khấu
             apiId: '6871899346e790eda9a08c08', // /discount/delete
         },
-        
+
         // Báo cáo
         {
             permissionId: '688c7f601bb97636f19d6ac4', // Xem Báo cáo

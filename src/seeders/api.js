@@ -556,6 +556,16 @@ async function apiSeeder() {
             api: '/debt/getSummary',
             note: 'Lấy công nợ theo ID',
         },
+        {
+            _id: new Types.ObjectId('6892ceaeee639479e26a93b1'),
+            api: '/debt/generateReport',
+            note: 'Tạo biên bản đối chiếu công nợ',
+        },
+        {
+            _id: new Types.ObjectId('6892ceaeee639479e26a93b2'),
+            api: '/debt/generatePaymentRequest',
+            note: 'Tạo giấy đề nghị thanh toán',
+        },
 
         //Cài đặt công nợ
         {
@@ -691,7 +701,7 @@ async function apiSeeder() {
             api: '/discount/setRefund',
             note: 'Cập nhật trạng thái đã hoàn tiền cho phiếu chiết khấu',
         },
-                
+
         // Báo cáo
         {
             _id: new Types.ObjectId('688c7f601bb97636f19d6ac5'),

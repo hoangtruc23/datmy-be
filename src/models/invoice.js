@@ -19,7 +19,7 @@ const contactPersonSchema = new Schema(
 
 const invoiceDetail = new Schema(
     {
-         productId: {
+        productId: {
             type: Types.ObjectId,
             ref: 'products',
             required: true,
@@ -43,7 +43,7 @@ const invoiceDetail = new Schema(
             type: Number,
             min: 0,
             default: 0,
-       },
+        },
     },
     { _id: false },
 )
@@ -79,7 +79,7 @@ const invoiceSchema = new Schema(
         orderBy: contactPersonSchema,
         //kế toán
         accountant: contactPersonSchema,
-        paymentBy:{
+        paymentBy: {
             type: String,
             enum: Object.values(constant.CONDITION_PAYMENT),
             default: constant.CONDITION_PAYMENT.TRANSFER,
