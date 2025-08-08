@@ -30,17 +30,15 @@ const dashBoardService = {
             ])
             const monthRevenue = revenueResult[0]?.totalAmount || 0
 
+
             // Tổng totalAmount của invoice trong khoảng thời gian
             const invoiceResult = await InvoiceModel.aggregate([
                 {
                     $match: {
-                        $or: [
-                            { invoiceDate: { $gte: startDate, $lt: endDate } }, // Hóa đơn được tạo ra trong tháng
-                            {
-                                dueDate: { $gte: startDate, $lt: endDate }, // Hóa đơn còn công nợ
-                                isFullyPaid: false,
-                            },
-                        ],
+                        invoiceDate: {
+                            $gte: startDate,
+                            $lt: endDate,
+                        },
                     },
                 },
                 {
@@ -55,6 +53,8 @@ const dashBoardService = {
 
             // Công nợ = Tổng invoice - doanh thu
             const monthTotalDept = monthTotalInvoiceAmount - monthRevenue
+
+
 
             // Số lượng khách hàng hoạt động trong tháng
             const activeCustomersInMonthInvoice = await InvoiceModel.aggregate([
@@ -102,19 +102,22 @@ const dashBoardService = {
                 ...activeCustomersInMonthPayment.map((item) =>
                     item._id.toString(),
                 ),
-            ])
+            ]).size
 
-            // Tổng số hóa đơn trong tháng
+            // Tổng số hóa đơn trong tháng   
             const totalInvoicesInMonth = await InvoiceModel.aggregate([
                 {
                     $match: {
-                        invoiceDate: {
-                            $gte: startDate,
-                            $lt: endDate,
-                        },
+                        $or: [
+                            { invoiceDate: { $gte: startDate, $lt: endDate } }, // Hóa đơn được tạo ra trong tháng
+                            {
+                                dueDate: { $gte: startDate, $lt: endDate }, // Hóa đơn còn công nợ
+                                isFullyPaid: false,
+                            },
+                        ],
                     },
                 },
-                {
+              {
                     $count: 'invoiceCount',
                 },
             ])
@@ -125,7 +128,7 @@ const dashBoardService = {
                 monthRevenue,
                 monthTotalInvoiceAmount,
                 monthTotalDept,
-                activeCustomerCount,
+                allActiveCustomers,
                 invoiceCount,
                 startDate,
                 endDate,

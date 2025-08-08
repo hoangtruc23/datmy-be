@@ -34,11 +34,11 @@ module.exports = router
  *                       example: 15000000
  *                     monthTotalInvoiceAmount:
  *                       type: number
- *                       example: 18000000
+ *                       example: 30000000
  *                     monthTotalDept:
  *                       type: number
- *                       example: 3000000
- *                     activeCustomerCount:
+ *                       example: 15000000
+ *                     allActiveCustomers:
  *                       type: integer
  *                       example: 12
  *                     invoiceCount:

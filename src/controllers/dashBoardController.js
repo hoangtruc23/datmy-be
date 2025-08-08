@@ -11,7 +11,7 @@ const dashBoardController = {
                     monthRevenue: summary.monthRevenue,
                     monthTotalInvoiceAmount: summary.monthTotalInvoiceAmount,
                     monthTotalDept: summary.monthTotalDept,
-                    activeCustomerCount: summary.activeCustomerCount,
+                    allActiveCustomers: summary.allActiveCustomers,
                     invoiceCount: summary.invoiceCount,
                     startDate: summary.startDate,
                     endDate: summary.endDate,
