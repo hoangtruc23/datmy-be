@@ -42,7 +42,6 @@ const debtService = {
                                     $expr: {
                                         $eq: ['$invoiceId', '$$invoiceId'],
                                     },
-                                    status: 'partiallyPaid',
                                 },
                             },
                             {
@@ -275,7 +274,6 @@ const debtService = {
                                     $expr: {
                                         $eq: ['$invoiceId', '$$invoiceId'],
                                     },
-                                    status: 'partiallyPaid',
                                 },
                             },
                             {
@@ -428,7 +426,6 @@ const debtService = {
                                     $expr: {
                                         $eq: ['$invoiceId', '$$invoiceId'],
                                     },
-                                    status: 'partiallyPaid',
                                 },
                             },
                             {
@@ -686,7 +683,6 @@ const debtService = {
                                     $expr: {
                                         $eq: ['$invoiceId', '$$invoiceId'],
                                     },
-                                    status: 'partiallyPaid',
                                 },
                             },
                             {
@@ -791,7 +787,7 @@ const debtService = {
 
             const total = subtotal + vat
 
-            if (subtotal !== invoice.totalAmount) {
+            if (total !== invoice.totalAmount) {
                 throw new BadReq(errorCode.INVOICE_TOTAL_AMOUNT_MISMATCH)
             }
             const totalDebtInWords = convertNumberToVietnameseWords(total)

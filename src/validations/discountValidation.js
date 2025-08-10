@@ -2,15 +2,6 @@ const joi = require('joi')
 const constant = require('../utils/constant/constant')
 
 const discountSchema = {
-    requestDate: joi
-        .string()
-        .pattern(/^(0[1-9]|1[0-2])\/(0[1-9]|1[0-9]|2[0-9]|3[0-1])\/\d{4}$/)
-        .required()
-        .messages({
-            'string.empty': 'Ngày đề xuất không được bỏ trống',
-            'string.pattern.base': 'Ngày đề xuất phải có dạng MM/DD/YYYY',
-            'any.required': 'Ngày đề xuất không được bỏ trông',
-        }),
     type: joi
         .string()
         .valid(...Object.values(constant.DISCOUNT_TYPE))

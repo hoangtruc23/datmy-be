@@ -56,8 +56,8 @@ module.exports = router
  *                 example: "L00123"
  *               totalAmount:
  *                 type: number
- *                 description: Tổng giá trị hóa đơn (Lưu ý không bao gồm thuế. Có bao gồm phí đã giảm, xem ví dụ)
- *                 example: 1335000
+ *                 description: Tổng giá trị hóa đơn (Có bao gồm thuế))
+ *                 example: 1468500
  *               invoiceDate:
  *                 type: string
  *                 format: date
