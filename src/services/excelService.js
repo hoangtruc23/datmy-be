@@ -31,6 +31,7 @@ const excelService = {
         'ĐVT',
         'Số lượng bán',
         'Đơn giá',
+        'Giảm giá',
         'Doanh số bán',
         'Thuế GTGT',
         'Tổng thanh toán',
@@ -55,10 +56,10 @@ const excelService = {
         };
       });
 
-      (data.salesData || []).forEach(sale => {
-        worksheet.addRow([
+       (data.salesData || []).forEach(sale => {
+        const dataRow = worksheet.addRow([
           sale.customerName || '',
-          sale.invoiceNumber || '',
+          sale.invoiceCode || '',
           sale.invoiceDate || '',
           sale.taxCode || '',
           sale.productCode || '',
@@ -66,20 +67,72 @@ const excelService = {
           sale.unit || '',
           sale.quantity || 0,
           sale.unitPrice || 0,
+          sale.discount || 0,
           sale.totalAmount || 0,
           sale.vatAmount || 0,
           sale.totalPayment || 0,
           sale.address || ''
         ]);
-      });
-
-      worksheet.columns.forEach(column => {
-        let maxLength = 10;
-        column.eachCell({ includeEmpty: true }, cell => {
-          const text = cell.value ? cell.value.toString() : '';
-          if (text.length > maxLength) maxLength = text.length;
+        dataRow.height = 50; 
+        dataRow.eachCell(cell => {
+          cell.alignment = { 
+            vertical: 'middle',
+            horizontal: 'left',
+            wrapText: true 
+          };
         });
-        column.width = maxLength + 2;
+      });
+      const summaryRow = worksheet.addRow([
+        'TỔNG CỘNG',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        data.summary.totalQuantity || 0,
+        '',
+        '',
+        data.summary.totalSalesAmount || 0,
+        data.summary.totalVatAmount || 0,
+        data.summary.totalPaymentAmount || 0,
+        '',
+      ]);
+      summaryRow.font = { bold: true };
+      summaryRow.alignment = { 
+        horizontal: 'right', vertical: 'middle' 
+      };
+      summaryRow.eachCell((cell, colNumber )=> {
+        if (colNumber === 1) {
+            cell.alignment = { horizontal: 'left', vertical: 'middle' };
+          }
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'D3D3D3' }
+        };
+        cell.border = {
+          top: { style: 'thin' },
+          bottom: { style: 'thin' },
+          left: { style: 'thin' },
+          right: { style: 'thin' },
+        };
+      });
+      // worksheet.addRow([]);
+      // worksheet.addRow([]);
+
+      worksheet.columns.forEach((column, index) => {
+        let maxLength = 6;
+
+        for (let rowIndex = 4; rowIndex < worksheet.rowCount; rowIndex++) {
+          const cell = worksheet.getRow(rowIndex + 1).getCell(index + 1); 
+          const text = cell.value ? cell.value.toString() : '';
+          const length = text.length;
+          if (length > maxLength) maxLength = length;
+        }
+
+        const suggested = maxLength + 6;
+        column.width = Math.min(suggested, 40);
       });
 
       const buffer = await workbook.xlsx.writeBuffer();

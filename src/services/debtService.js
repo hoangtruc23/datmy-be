@@ -3,7 +3,9 @@ const InvoiceModel = require('../models/invoice')
 const constant = require('../utils/constant/constant')
 const convertNumberToVietnameseWords = require('../middlewares/numberToWords')
 const CustomerModel = require('../models/customer')
+const ProductModel = require('../models/product')
 const ConfigDebtModel = require('../models/configDebt')
+const UnitModel = require('../models/unit')
 const BadReq = require('../utils/response/requestError')
 const errorCode = require('../utils/response/errorCode')
 const { ObjectId } = require('mongodb')
@@ -825,6 +827,105 @@ const debtService = {
             throw error
         }
     },
+
+    generateSalesDetailReport: async (fromDate, toDate, customerId) => {
+        try {
+            const formatDateToVietnamese = (dateString) => {
+                const date = new Date(dateString);
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const year = date.getFullYear();
+                return `${day}/${month}/${year}`;
+            };
+
+            let invoiceQuery = {
+                invoiceDate: {
+                    $gte: new Date(fromDate),
+                    $lte: new Date(toDate)
+                }
+            };
+
+            if (customerId) {
+                invoiceQuery.customerId = customerId;
+            }
+
+            const invoices = await InvoiceModel.find(invoiceQuery).lean();
+
+            let customerName = '';
+            
+            if (customerId) {
+                const customer = await CustomerModel.findById(customerId).lean();
+                customerName = customer ? customer.name : '';
+            }
+
+            const salesData = [];
+
+            for (const invoice of invoices) {
+                const customer = await CustomerModel.findById(invoice.customerId).lean();
+                
+                for (const detail of invoice.invoiceDetails) {
+                    const product = await ProductModel.findById(detail.productId).lean();
+                    
+                    const unit = await UnitModel.findById(product.unit).lean();
+                    
+                    const totalAmount = detail.totalAmountProduct;
+                    const vatAmount = Math.round(totalAmount * 0.1); 
+                    const totalPayment = totalAmount + vatAmount;
+
+                    const salesItem = {
+                        customerName: customer ? customer.name : invoice.customerName,
+                        invoiceCode: invoice.invoiceCode,
+                        invoiceDate: formatDateToVietnamese(invoice.invoiceDate),
+                        taxCode: customer ? customer.taxCode : '',
+                        productCode: product ? product.code : '',
+                        productName: product ? product.name : '',
+                        unit: unit ? unit.name : '',
+                        quantity: detail.quantity,
+                        unitPrice: detail.price,
+                        discount: detail.discount || 0,
+                        totalAmount: totalAmount,
+                        vatAmount: vatAmount,
+                        totalPayment: totalPayment,
+                        address: customer ? customer.billingAddress : ''
+                    };
+
+                    salesData.push(salesItem);
+                }
+            }
+            const summary = salesData.reduce((acc, item) => {
+                acc.totalQuantity += item.quantity;
+                acc.totalSalesAmount += item.totalAmount;
+                acc.totalVatAmount += item.vatAmount;
+                acc.totalPaymentAmount += item.totalPayment;
+                return acc;
+            }, {
+                totalQuantity: 0,
+                totalSalesAmount: 0,
+                totalVatAmount: 0,
+                totalPaymentAmount: 0
+            });
+            const data = {
+                fromDate: formatDateToVietnamese(fromDate),
+                toDate: formatDateToVietnamese(toDate),
+                customerName: customerName,
+                salesData: salesData,
+                summary: {
+                    totalQuantity: summary.totalQuantity,
+                    totalSalesAmount: summary.totalSalesAmount,
+                    totalVatAmount: summary.totalVatAmount,
+                    totalPaymentAmount: summary.totalPaymentAmount
+                }
+            };
+
+            return data;
+
+        } catch (error) {
+            console.error('Lỗi khi tạo báo cáo chi tiết bán hàng:', error);
+            throw error;
+        }
+    }
+
+
 }
 
 module.exports = debtService
