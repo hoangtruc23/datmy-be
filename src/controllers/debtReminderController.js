@@ -106,6 +106,15 @@ const debtReminderController = {
             next(err)
         }
     },
+
+    getSummary: async (req, res, next) => {
+        try {
+            const summary = await debtReminderService.getSummary();
+            return res.status(200).json(response.success(summary));
+        } catch (err) {
+            next(err);
+        }
+    }
 }
 
 module.exports = debtReminderController
