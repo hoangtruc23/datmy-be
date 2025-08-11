@@ -18,6 +18,8 @@ router.post(
 )
 router.get('/getById/:id', customerController.getById)
 router.get('/getAll', customerController.getAll)
+router.get('/cities', customerController.getAllCities)
+router.get('/districts', customerController.getAllDistricts)
 router.post('/lockUnlock/:id', customerController.changeActiveStatus)
 router.delete('/delete/:id', customerController.delete)
 module.exports = router
@@ -666,6 +668,32 @@ module.exports = router
  *               code: -1
  *               message: "Không có quyền"
  *               data: null
+ */
+
+/**
+ * @swagger
+ * /customer/cities:
+ *   get:
+ *     summary: Lấy danh sách tất cả thành phố
+ *     tags: [Customer]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lấy danh sách thành phố thành công
+ */
+
+/**
+ * @swagger
+ * /customer/districts:
+ *   get:
+ *     summary: Lấy danh sách tất cả quận/huyện
+ *     tags: [Customer]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lấy danh sách quận/huyện thành công
  */
 
 /**

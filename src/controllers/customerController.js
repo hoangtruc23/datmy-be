@@ -1,7 +1,9 @@
 // src/controllers/customerController.js
 
+const { error } = require('winston')
 const customerService = require('../services/customerService')
 const response = require('../utils/response/response')
+const { getAllDistricts } = require('./supplierController')
 
 const customerController = {
     create: async (req, res, next) => {
@@ -34,6 +36,23 @@ const customerController = {
     getAll: async (req, res, next) => {
         try {
             const result = await customerService.getAll(req.query)
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
+    getAllCities: async (req, res, next) => {
+        try {
+            const result = await customerService.getAllCities()
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
+
+    getAllDistricts: async (req, res, next) => {
+        try {
+            const result = await customerService.getAllDistricts()
             return res.status(200).json(response.success(result))
         } catch (error) {
             next(error)
