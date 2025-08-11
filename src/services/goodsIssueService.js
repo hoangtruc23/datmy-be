@@ -30,12 +30,30 @@ const goodsIssueService = {
             search = new RegExp(search, 'i')
             const matchConditions = {
                 status: { $in: statuses },
-                $or: [{ customer: search }],
+
                 isTemporary: false,
-                // draft chỉ hiển thị với user tạo ra nó
-                $or: [
-                    { status: { $ne: constant.GOODS_ISSUE_STATUS.DRAFT } },
-                    { createdBy: new Types.ObjectId(String(currentUserId)) },
+                $and: [
+                    {
+                        $or: [
+                            { customer: search },
+                            { invoiceOrContractNumber: search },
+                        ],
+                    },
+                    {
+                        // draft chỉ hiển thị với user tạo ra nó
+                        $or: [
+                            {
+                                status: {
+                                    $ne: constant.GOODS_ISSUE_STATUS.DRAFT,
+                                },
+                            },
+                            {
+                                createdBy: new Types.ObjectId(
+                                    String(currentUserId),
+                                ),
+                            },
+                        ],
+                    },
                 ],
             }
 
