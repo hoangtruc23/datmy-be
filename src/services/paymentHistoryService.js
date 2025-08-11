@@ -79,6 +79,13 @@ const paymentHistoryService = {
             if (search.trim()) {
                 const research = new RegExp(search.trim(), 'i')
                 filter.$or = [{ customerName: research }, { content: research }]
+
+                const invoiceSearch = await InvoiceModel.findOne({
+                    invoiceCode: research,
+                })
+                if (invoiceSearch) {
+                    filter.$or.push({ invoiceId: invoiceSearch._id })
+                }
             }
 
             const [items, total] = await Promise.all([
