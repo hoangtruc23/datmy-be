@@ -24,6 +24,8 @@ router.get(
 
 router.post('/checkCompleted/:id', debtReminderController.checkCompleted)
 router.get('/getSumHistory', debtReminderController.getSumHistory)
+router.get('/getSummary', debtReminderController.getSummary);
+
 module.exports = router
 
 /**
@@ -507,4 +509,53 @@ module.exports = router
  *                       type: string
  *                       description: không phản hồi
  *                       example: "số lượng không phản hồi"
+ */
+
+/**
+ * @swagger
+ * /debtReminder/getSummary:
+ *   get:
+ *     summary: Lấy thông tin tổng quan về nhiệm vụ nhắc nhở nợ
+ *     tags: [DebtReminder]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lấy thông tin tổng quan thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: number
+ *                   example: 200
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     totalTasks:
+ *                       type: number
+ *                       description: Tổng số nhiệm vụ nhắc nhở nợ từ trước đến nay
+ *                       example: 45
+ *                     completedTasks:
+ *                       type: number
+ *                       description: Tổng số nhiệm vụ nhắc nhở nợ đã hoàn thành
+ *                       example: 28
+ *                     scheduledTasks:
+ *                       type: number
+ *                       description: Tổng số nhiệm vụ nhắc nhở nợ đã lên lịch
+ *                       example: 17
+ *                     successRate:
+ *                       type: number
+ *                       format: float
+ *                       description: Tỷ lệ thành công trong successMonth (không có xét +15.3% so với tháng trước)
+ *                       example: 62.2
+ *                     successMonth:
+ *                       type: number
+ *                       description: Tháng đang xét tỷ lệ thành công
+ *                       example: 7
+ *                     activeStaff:
+ *                       type: number
+ *                       description: Tổng số nhân viên đang hoạt động
+ *                       example: 8
  */

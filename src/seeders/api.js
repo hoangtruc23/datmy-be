@@ -660,6 +660,11 @@ async function apiSeeder() {
             api: '/debtReminder/getSumHistory',
             note: 'Lấy tổng lịch sử nhắc nợ',
         },
+        {
+            _id: new Types.ObjectId('6898697b630fdba8a091c0eb'),
+            api: '/debtReminder/getSummary',
+            note: 'Lấy tổngnhắc nợ',
+        },
         //chiết khấu
         {
             _id: new Types.ObjectId('687165240ac4b74840483515'),

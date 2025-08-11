@@ -612,6 +612,10 @@ async function permissionApiSeeder() {
             permissionId: '68899f050e446ab399609246',
             apiId: '68899f050e446ab399609244', // getSumHistory
         },
+        {
+            permissionId: '68899f050e446ab399609246',
+            apiId: '6898697b630fdba8a091c0eb', // getSumHistory
+        },
         //Chiết khấu
         {
             permissionId: '687165e2ee8406ca535d1ba3', // Tạo phiếu chiết khấu
