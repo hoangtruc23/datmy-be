@@ -1,9 +1,6 @@
 // src/controllers/customerController.js
-
-const { error } = require('winston')
 const customerService = require('../services/customerService')
 const response = require('../utils/response/response')
-const { getAllDistricts } = require('./supplierController')
 
 const customerController = {
     create: async (req, res, next) => {
