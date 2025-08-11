@@ -180,6 +180,28 @@ const customerService = {
         }
     },
 
+    getAllCities: async () => {
+        try {
+            const cities = await CustomerModel.distinct(
+                'deliveryAddresses.city',
+            )
+            return cities
+        } catch (error) {
+            throw error
+        }
+    },
+
+    getAllDistricts: async () => {
+        try {
+            const districts = await CustomerModel.distinct(
+                'deliveryAddresses.district',
+            )
+            return districts
+        } catch (error) {
+            throw error
+        }
+    },
+
     changeActiveStatus: async (id) => {
         try {
             const customer = await CustomerModel.findById(id)
