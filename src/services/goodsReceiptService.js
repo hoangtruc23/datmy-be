@@ -29,7 +29,10 @@ const goodsReceiptService = {
             const [items, totalItem] = await Promise.all([
                 GoodsReceiptModel.find({
                     status: { $in: statuses },
-                    $or: [{ supplier: search }],
+                    $or: [
+                        { supplier: search },
+                        { invoiceOrContractNumber: search },
+                    ],
                     isTemporary: false,
                 })
                     .skip((page - 1) * limit)
