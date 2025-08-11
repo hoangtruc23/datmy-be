@@ -64,6 +64,16 @@ async function apiSeeder() {
             note: 'Xem khách hàng',
         },
         {
+            _id: new Types.ObjectId('689973596c78b8d2879bb340'),
+            api: '/customer/cities',
+            note: 'Lấy danh sách tất cả thành phố',
+        },
+        {
+            _id: new Types.ObjectId('689973596c78b8d2879bb341'),
+            api: '/customer/districts',
+            note: 'Lấy danh sách tất cả quận/huyện',
+        },
+        {
             _id: new Types.ObjectId('6853d1b6fa10ea77cf67990e'),
             api: '/customer/lockUnlock',
             note: 'Khóa hoặc mở khóa khách hàng',
