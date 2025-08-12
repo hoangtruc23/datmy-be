@@ -139,6 +139,15 @@ const goodsReceiptService = {
             if (!checkSupplier) {
                 throw new BadReq(errorCode.SUPPLIER_NOT_FOUND)
             }
+
+            const checkGoodsReceiptDetail =
+                await GoodsReceiptDetaileModel.findOne({
+                    goodsReceiptId,
+                })
+            if (!checkGoodsReceiptDetail) {
+                throw new BadReq(errorCode.GOODS_RECEIPT_DETAIL_NOT_FOUND)
+            }
+
             await GoodsReceiptModel.findByIdAndUpdate(
                 goodsReceiptId,
                 {
