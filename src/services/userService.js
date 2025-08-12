@@ -4,6 +4,7 @@ const UserModel = require('../models/user')
 const errorCode = require('../utils/response/errorCode')
 const BadReq = require('../utils/response/requestError')
 const RoleModel = require('../models/role')
+const { pipeline } = require('winston-daily-rotate-file')
 
 const userService = {
     getAll: async (query) => {
@@ -13,15 +14,36 @@ const userService = {
             limit = Number(limit)
             search = new RegExp(search, 'i')
             const [items, totalItem] = await Promise.all([
-                UserModel.find(
+                UserModel.aggregate([
                     {
-                        username: { $nin: 'root' },
-                        $or: [{ fullname: search }, { username: search }],
+                        $match: {
+                            username: { $nin: ['root'] },
+                            $or: [{ fullname: search }, { username: search }],
+                        },
                     },
-                    { password: 0 },
-                )
-                    .skip((page - 1) * limit)
-                    .limit(limit),
+                    {
+                        $lookup: {
+                            from: 'roles',
+                            localField: 'roleIds',
+                            foreignField: '_id',
+                            pipeline: [{ $project: { _id: 0, name: 1 } }],
+                            as: 'rolesName',
+                        },
+                    },
+                    {
+                        $set: {
+                            rolesName: {
+                                $map: {
+                                    input: '$rolesName',
+                                    as: 'role',
+                                    in: '$$role.name',
+                                },
+                            },
+                        },
+                    },
+                    { $skip: (page - 1) * limit },
+                    { $limit: limit },
+                ]),
                 UserModel.countDocuments({
                     $or: [{ fullname: search }, { username: search }],
                 }),
