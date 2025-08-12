@@ -8,98 +8,133 @@ async function unitSeeder() {
         //unit
         {
             _id: new Types.ObjectId('6858ba9390e28f169336d106'),
-            name: 'miếng',
+            name: 'Miếng',
             note: 'miếng',
         },
         {
             _id: new Types.ObjectId('6858ba9390e28f169336d107'),
-            name: 'kg',
+            name: 'Kilogram',
             note: 'kilogram',
         },
         {
             _id: new Types.ObjectId('6858ba9390e28f169336d108'),
-            name: 'lít',
+            name: 'Lít',
             note: 'lít',
         },
         {
             _id: new Types.ObjectId('6858ba9390e28f169336d109'),
-            name: 'hộp',
+            name: 'Hộp',
             note: 'hộp',
         },
         {
             _id: new Types.ObjectId('6858ba9390e28f169336d10a'),
-            name: 'm',
+            name: 'Mét',
             note: 'mét',
         },
         {
             _id: new Types.ObjectId('6858ba9390e28f169336d10b'),
-            name: 'bộ',
+            name: 'Bộ',
             note: 'bộ',
         },
         {
             _id: new Types.ObjectId('6858ba9390e28f169336d10c'),
-            name: 'đôi',
+            name: 'Đôi',
             note: 'đôi',
         },
         {
             _id: new Types.ObjectId('6858ba9390e28f169336d10d'),
-            name: 'cuộn',
+            name: 'Cuộn',
             note: 'cuộn',
         },
         {
             _id: new Types.ObjectId('6858ba9390e28f169336d10e'),
-            name: 'gói',
+            name: 'Gói',
             note: 'gói',
         },
         {
             _id: new Types.ObjectId('6858ba9390e28f169336d10f'),
-            name: 'tấm',
+            name: 'Tấm',
             note: 'tấm',
         },
         {
             _id: new Types.ObjectId('6858ba9390e28f169336d110'),
-            name: 'chai',
+            name: 'Chai',
             note: 'chai',
         },
         {
             _id: new Types.ObjectId('6858ba9390e28f169336d111'),
-            name: 'lon',
+            name: 'Lon',
             note: 'lon',
         },
         {
             _id: new Types.ObjectId('6858ba9390e28f169336d112'),
-            name: 'ống',
+            name: 'Ống',
             note: 'ống',
         },
         {
             _id: new Types.ObjectId('6858ba9390e28f169336d114'),
-            name: 'món',
+            name: 'Món',
             note: 'món',
         },
         {
             _id: new Types.ObjectId('6858ba9390e28f169336d115'),
-            name: 'lần',
+            name: 'Lần',
             note: 'lần',
         },
         {
             _id: new Types.ObjectId('6858ba9390e28f169336d118'),
-            name: 'máy',
+            name: 'Máy',
             note: 'máy',
         },
         {
             _id: new Types.ObjectId('6858ba9390e28f169336d120'),
-            name: 'lọ',
+            name: 'Lọ',
             note: 'lọ',
         },
         {
             _id: new Types.ObjectId('6858ba9390e28f169336d121'),
-            name: 'sợi',
+            name: 'Sợi',
             note: 'sợi',
         },
         {
             _id: new Types.ObjectId('6858ba9390e28f169336d122'),
-            name: 'con',
+            name: 'Con',
             note: 'con',
+        },
+        {
+            _id: new Types.ObjectId('687080ca818f89182bcf122c'),
+            name: 'Cái',
+            note: 'cái',
+        },
+        {
+            _id: new Types.ObjectId('687080ca818f89182bcf122b'),
+            name: 'Thùng',
+            note: 'thùng',
+        },
+        {
+            _id: new Types.ObjectId('687080ca818f89182bcf122a'),
+            name: 'Túi',
+            note: 'túi',
+        },
+        {
+            _id: new Types.ObjectId('687080ca818f89182bcf1229'),
+            name: 'Bình',
+            note: 'bình',
+        },
+        {
+            _id: new Types.ObjectId('687080ca818f89182bcf1228'),
+            name: 'Thẻ',
+            note: 'thẻ',
+        },
+        {
+            _id: new Types.ObjectId('687080ca818f89182bcf1227'),
+            name: 'Cây',
+            note: 'cây',
+        },
+        {
+            _id: new Types.ObjectId('687080ca818f89182bcf1226'),
+            name: 'Viên',
+            note: 'viên',
         },
     ])
     logger.info('Unit seeded')

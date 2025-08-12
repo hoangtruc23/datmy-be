@@ -545,6 +545,10 @@ async function permissionApiSeeder() {
             permissionId: '6892ceaeee639479e26a93b4', // Tạo giấy đề nghị thanh toán
             apiId: '6892ceaeee639479e26a93b2', // /debt/generatePaymentRequest
         },
+        {
+            permissionId: '6898697b630fdba8a091c0f3', // Sinh báo cáo chi tiết khách hàng
+            apiId: '6898697b630fdba8a091c0f4', // /debt/generateCustomerDetailReport
+        },
 
         //Cài đặt công nợ
         {
