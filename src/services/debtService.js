@@ -21,7 +21,7 @@ const debtService = {
                 {
                     $match: {
                         isFullyPaid: false,
-                        //dueDate: { $lt: currentDate },
+                        dueDate: { $lt: currentDate },
                         ...(search.trim()
                             ? {
                                   customerName: {
@@ -253,7 +253,7 @@ const debtService = {
                 {
                     $match: {
                         isFullyPaid: false,
-                        //dueDate: { $lt: currentDate },
+                        dueDate: { $lt: currentDate },
                         ...(search.trim()
                             ? {
                                   customerName: {
@@ -413,7 +413,7 @@ const debtService = {
                 {
                     $match: {
                         isFullyPaid: false,
-                        //dueDate: { $lt: currentDate },
+                        dueDate: { $lt: currentDate },
                     },
                 },
                 {
