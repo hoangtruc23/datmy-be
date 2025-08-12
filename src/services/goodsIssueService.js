@@ -88,6 +88,26 @@ const goodsIssueService = {
                         as: 'products',
                         localField: '_id',
                         foreignField: 'goodsIssueId',
+                        pipeline: [
+                            {
+                                $lookup: {
+                                    from: 'units',
+                                    localField: 'unit',
+                                    foreignField: '_id',
+                                    as: 'unitInfo',
+                                },
+                            },
+                            {
+                                $set: {
+                                    unit: {
+                                        $arrayElemAt: ['$unitInfo.name', 0],
+                                    },
+                                },
+                            },
+                            {
+                                $unset: 'unitInfo',
+                            },
+                        ],
                     },
                 },
                 {
@@ -476,7 +496,7 @@ const goodsIssueService = {
                         productCode: checkProduct?.code,
                         productName: checkProduct?.name,
                         managementType: checkProduct?.managementType,
-                        unit: checkProduct?.unit?.name,
+                        unit: checkProduct?.unit,
                         origin,
                         issuedQuantity,
                         price,
@@ -589,7 +609,7 @@ const goodsIssueService = {
                 productCode: checkProduct?.productCode,
                 productName: checkProduct?.productName,
                 managementType: checkProduct?.managementType,
-                unit: checkProduct?.unit?.name,
+                unit: checkProduct?.unit,
                 origin,
                 issuedQuantity,
                 price,
