@@ -59,6 +59,14 @@ async function permissionApiSeeder() {
             permissionId: '6853d1b6fa10ea77cf67990b', // Xem khách hàng
             apiId: '6853d1b6fa10ea77cf679910', // /customer/getAll
         },
+        {
+            permissionId: '6853d1b6fa10ea77cf67990b', // Xem khách hàng
+            apiId: '689973596c78b8d2879bb340', // /customer/cities
+        },
+        {
+            permissionId: '6853d1b6fa10ea77cf67990b', // Xem khách hàng
+            apiId: '689973596c78b8d2879bb341', // /customer/districts
+        },
         // {
         //     permissionId: '6853d1b6fa10ea77cf67990f', // The existing 'Xem khách hàng' permission ID
         //     apiId: '6853d1b6fa10ea77cf679910', // /customer/getAll
@@ -607,6 +615,10 @@ async function permissionApiSeeder() {
         {
             permissionId: '68899f050e446ab399609246',
             apiId: '68899f050e446ab399609244', // getSumHistory
+        },
+        {
+            permissionId: '68899f050e446ab399609246',
+            apiId: '6898697b630fdba8a091c0eb', // getSumHistory
         },
         //Chiết khấu
         {

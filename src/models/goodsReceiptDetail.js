@@ -39,7 +39,13 @@ const goodsReceiptDetailSchema = new Schema({
         enum: Object.values(constant.PRODUCT_MANAGEMENT_TYPE),
     },
     unit: {
-        type: String,
+        type: Types.ObjectId,
+        ref: 'units',
+        required: true,
+        validate: {
+            validator: Types.ObjectId.isValid,
+            message: 'Invalid unit id',
+        },
     },
     origin: {
         type: String,

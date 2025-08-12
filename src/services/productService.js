@@ -129,7 +129,6 @@ const productCategoryService = {
             page = parseInt(page, 10)
             limit = parseInt(limit, 10)
             const skip = (page - 1) * limit
-
             const filter = {}
             if (search && typeof search === 'string' && search.trim() !== '') {
                 const regex = new RegExp(search.trim(), 'i')
@@ -139,7 +138,6 @@ const productCategoryService = {
                     { code: regex },
                 ]
             }
-
             if (categoryId && Types.ObjectId.isValid(categoryId)) {
                 filter.categoryId = categoryId
             }
@@ -154,13 +152,26 @@ const productCategoryService = {
                     ),
                 ProductModel.countDocuments(filter),
             ])
-            const items = products.map((product) => {
-                const plainProduct = product.toObject()
+
+            const items = await Promise.all(products.map(async (product) => {
+                const simpleProduct = product.toObject()
+                
+                const productStorages = await ProductStorageModel.find({ 
+                    productId: simpleProduct._id 
+                })
+                const totalQuantity = productStorages.reduce((sum, item) => {
+                    return sum + (item.quantity || 0)
+                }, 0)
+                
+                const isSafe = totalQuantity >= (simpleProduct.safetyQuantity || 0)
+                
                 return {
-                    ...plainProduct,
-                    unit: plainProduct.unit ? plainProduct.unit.name : null,
+                    ...simpleProduct,
+                    unit: simpleProduct.unit ? simpleProduct.unit.name : null,
+                    totalQuantity,
+                    isSafe
                 }
-            })
+            }))
 
             const totalPages = Math.ceil(total / limit)
             return { items, total, page, limit, totalPages }

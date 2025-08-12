@@ -546,6 +546,38 @@ async function permissionSeeder() {
             parentPermissionId: '6882fdc36f95b8b522848805',
         },
 
+        // nhắc nợ
+        {
+            _id: new Types.ObjectId('68899f050e446ab399609245'),
+            name: 'Nhắc nợ',
+            code: 'debt_reminder',
+            parentPermissionId: null,
+        },
+        {
+            _id: new Types.ObjectId('68899f050e446ab399609247'),
+            name: 'Tạo',
+            code: 'debt_reminder-tao',
+            parentPermissionId: '68899f050e446ab399609245',
+        },
+        {
+            _id: new Types.ObjectId('68899f050e446ab399609248'),
+            name: 'Cập nhật',
+            code: 'debt_reminder-cap_nhat',
+            parentPermissionId: '68899f050e446ab399609245',
+        },
+        {
+            _id: new Types.ObjectId('68899f050e446ab399609246'),
+            name: 'Xem',
+            code: 'debt_reminder-xem',
+            parentPermissionId: '68899f050e446ab399609245',
+        },
+        {
+            _id: new Types.ObjectId('68899f050e446ab399609249'),
+            name: 'Xóa',
+            code: 'debt_reminder-xoa',
+            parentPermissionId: '68899f050e446ab399609245',
+        },
+      
         //chiết khấu
         {
             _id: new Types.ObjectId('687165240ac4b7484048357d'),
