@@ -486,19 +486,19 @@ async function permissionApiSeeder() {
             apiId: '689c01a260903c30215b25c2', // /dashboard/getTopCustomersDebt
         },
         {
-            permissionId: '689c01a260903c30215b25a1', // Xem tóm tắt dashboard
+            permissionId: '689c01a260903c30215b25c0', // Xem tóm tắt dashboard
             apiId: '689c01a260903c30215b25c3', // /dashboard/summary
         },
         {
-            permissionId: '689c01a260903c30215b25c8', // Xuất báo cáo doanh thu và công nợ theo tháng 
+            permissionId: '689c01a260903c30215b25c0', // Xuất báo cáo doanh thu và công nợ theo tháng 
             apiId: '689c01a260903c30215b25c4', // /dashboard/getRevenueMonthly
         },
         {
-            permissionId: '689c01a260903c30215b25c9', // Xem các hóa đơn gần đây
+            permissionId: '689c01a260903c30215b25c0', // Xem các hóa đơn gần đây
             apiId: '689c01a260903c30215b25c5', // /dashboard/getInvoiceRecent
         },
         {
-            permissionId: '689c01a260903c30215b25d4', //Xem Top khách hàng có doanh thu cao nhất
+            permissionId: '689c01a260903c30215b25c0', //Xem Top khách hàng có doanh thu cao nhất
             apiId: '689c01a260903c30215b25c6', // /dashboard/getTopCustomerRevenue
         },
 

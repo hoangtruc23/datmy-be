@@ -426,30 +426,7 @@ async function permissionSeeder() {
             code: 'dashboard_cong_no-xem',
             parentPermissionId: '689c01a260903c30215b25c1',
         },
-        {
-            _id: new Types.ObjectId('689c01a260903c30215b25a1'),
-            name: 'Xem',
-            code: 'dashboard_tom_tat-xem',
-            parentPermissionId: '689c01a260903c30215b25c1',
-        },
-        {
-            _id: new Types.ObjectId('689c01a260903c30215b25c8'),
-            name: 'Xem',
-            code: 'dashboard_doanh_thu-xem',
-            parentPermissionId: '689c01a260903c30215b25c1',
-        },
-        {
-            _id: new Types.ObjectId('689c01a260903c30215b25c9'),
-            name: 'Xem',
-            code: 'dashboard_hoa_don_gan_day-xem',
-            parentPermissionId: '689c01a260903c30215b25c1',
-        },
-        {
-            _id: new Types.ObjectId('689c01a260903c30215b25d4'),
-            name: 'Xem',
-            code: 'dashboard_top_khach_hang-xem',
-            parentPermissionId: '689c01a260903c30215b25c1',
-        },
+       
 
         //hóa đơn
         {
