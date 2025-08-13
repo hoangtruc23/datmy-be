@@ -274,6 +274,34 @@ async function rolePermissionSeeder() {
             roleId: '684927c871287f2ae7d8130b', // Quản trị viên
             permissionId: '6864e6cd4c3c96b50ff0e104', // Grant 'Xuất báo cáo' permission
         },
+
+        // dashboard công nợ quản trị viên
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '689c01a260903c30215b25c0', // dashboard
+        },
+         {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '689c01a260903c30215b25c1', // dashboard
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '689c01a260903c30215b25c8', // Xem
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '689c01a260903c30215b25c9', // Xem
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '689c01a260903c30215b25d4', // Xem
+        },
+
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '689c01a260903c30215b25a1', // Xem
+        },
+
         //hoa don quan tri vien
         {
             roleId: '684927c871287f2ae7d8130b', // Quản trị viên

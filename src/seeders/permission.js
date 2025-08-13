@@ -412,6 +412,45 @@ async function permissionSeeder() {
             parentPermissionId: '684927c871287f2ae7d81309', // Parent is 'Tạm ứng'
         },
 
+        //dashboard công nợ
+        {
+            _id: new Types.ObjectId('689c01a260903c30215b25c1'),
+            name: 'Dashboar công nợ',
+            code: 'dashboard_cong_no',
+            parentPermissionId: null,
+        },
+
+        {
+            _id: new Types.ObjectId('689c01a260903c30215b25c0'),
+            name: 'Xem',
+            code: 'dashboard_cong_no-xem',
+            parentPermissionId: '689c01a260903c30215b25c1',
+        },
+        {
+            _id: new Types.ObjectId('689c01a260903c30215b25a1'),
+            name: 'Xem',
+            code: 'dashboard_tom_tat-xem',
+            parentPermissionId: '689c01a260903c30215b25c1',
+        },
+        {
+            _id: new Types.ObjectId('689c01a260903c30215b25c8'),
+            name: 'Xem',
+            code: 'dashboard_doanh_thu-xem',
+            parentPermissionId: '689c01a260903c30215b25c1',
+        },
+        {
+            _id: new Types.ObjectId('689c01a260903c30215b25c9'),
+            name: 'Xem',
+            code: 'dashboard_hoa_don_gan_day-xem',
+            parentPermissionId: '689c01a260903c30215b25c1',
+        },
+        {
+            _id: new Types.ObjectId('689c01a260903c30215b25d4'),
+            name: 'Xem',
+            code: 'dashboard_top_khach_hang-xem',
+            parentPermissionId: '689c01a260903c30215b25c1',
+        },
+
         //hóa đơn
         {
             _id: new Types.ObjectId('686dd0b535512a73e076c3a7'),

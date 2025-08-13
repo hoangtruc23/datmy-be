@@ -135,7 +135,7 @@ const dashBoardService = {
             throw err
         }
     },
-    getTopCustomersWithDebt: async () => {
+    getTopCustomersDebt: async () => {
         try {
             const customersWithDebt = await InvoiceModel.aggregate([
                 {
@@ -179,9 +179,8 @@ const dashBoardService = {
                 },
             ])
 
-            return {
-                customersWithDebt,
-            }
+            return customersWithDebt
+            
         } catch (err) {
             throw err
         }

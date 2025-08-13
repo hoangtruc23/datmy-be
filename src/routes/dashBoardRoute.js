@@ -4,13 +4,10 @@ const router = express.Router()
 
 const dashBoardController = require('../controllers/dashBoardController')
 router.get('/summary', dashBoardController.getSumaryDashBoard)
-
-router.get('/get-top-customers-debt', dashBoardController.getTopCustomersWithDebt)
-router.get('/get-revenue-monthly', dashBoardController.getRevenueMonthly)
-router.get('/invoice-recent', dashBoardController.getRecentInvoices)
-router.get('/top-customer-revenue', dashBoardController.getTopCustomerRevenue)
-
-
+router.get('/getTopCustomersDebt', dashBoardController.getTopCustomersDebt)
+router.get('/getRevenueMonthly', dashBoardController.getRevenueMonthly)
+router.get('/getInvoiceRecent', dashBoardController.getRecentInvoices)
+router.get('/getTopCustomerRevenue', dashBoardController.getTopCustomerRevenue)
 
 module.exports = router
 
@@ -89,13 +86,13 @@ module.exports = router
  *             example:
  *               status: 403
  *               code: -1
-*               message: "Không có quyền"
+ *               message: "Không có quyền"
  *               data: null
  */
 
 /**
  * @swagger
- * /dashborad/get-top-customers-debt:
+ * /dashboard/getTopCustomersDebt:
  *   get:
  *     summary: Lấy top khách hàng có công nợ cao nhất
  *     tags: [Dashboard]
@@ -122,14 +119,11 @@ module.exports = router
  *                   type: object
  *                   properties:
  *                     result:
- *                       type: object
- *                       properties:
- *                         customersWithDebt:
- *                           type: array
- *                           description: Danh sách khách hàng có công nợ cao nhất
- *                           items:
- *                             type: object
- *                             properties:
+ *                       type: array
+ *                       description: Danh sách khách hàng có công nợ cao nhất
+ *                       items:
+ *                         type: object
+ *                         properties:
  *                               customerName:
  *                                 type: string
  *                                 example: "Nguyễn Văn A"
@@ -170,12 +164,9 @@ module.exports = router
  *               data: null
  */
 
-
-
-
 /**
  * @swagger
- * /dashboard/get-revenue-monthly:
+ * /dashboard/getRevenueMonthly:
  *   get:
  *     summary: Lấy doanh thu và công nợ theo từng tháng trong năm
  *     tags: [Dashboard]
@@ -266,11 +257,9 @@ module.exports = router
  *               data: null
  */
 
-
-
 /**
  * @swagger
- * /dashboard/top-customer-revenue:
+ * /dashboard/getTopCustomerRevenue:
  *   get:
  *     summary: Lấy top khách hàng có doanh thu cao nhất, kèm công nợ
  *     tags: [Dashboard]
@@ -359,10 +348,9 @@ module.exports = router
  *               data: null
  */
 
-
 /**
  * @swagger
- * /dashboard/invoice-recent:
+ * /dashboard/getInvoiceRecent:
  *   get:
  *     summary: Lấy 4 hóa đơn gần nhất
  *     tags: [Dashboard]

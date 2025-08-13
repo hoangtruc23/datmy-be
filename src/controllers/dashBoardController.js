@@ -21,9 +21,9 @@ const dashBoardController = {
             next(err)
         }
     },
-    getTopCustomersWithDebt: async (req, res, next) => {
+    getTopCustomersDebt: async (req, res, next) => {
         try {
-            const result = await dashBoardService.getTopCustomersWithDebt()
+            const result = await dashBoardService.getTopCustomersDebt()
 
             return res.status(200).json(
                 response.success({
