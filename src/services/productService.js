@@ -153,25 +153,33 @@ const productCategoryService = {
                 ProductModel.countDocuments(filter),
             ])
 
-            const items = await Promise.all(products.map(async (product) => {
-                const simpleProduct = product.toObject()
-                
-                const productStorages = await ProductStorageModel.find({ 
-                    productId: simpleProduct._id 
-                })
-                const totalQuantity = productStorages.reduce((sum, item) => {
-                    return sum + (item.quantity || 0)
-                }, 0)
-                
-                const isSafe = totalQuantity >= (simpleProduct.safetyQuantity || 0)
-                
-                return {
-                    ...simpleProduct,
-                    unit: simpleProduct.unit ? simpleProduct.unit.name : null,
-                    totalQuantity,
-                    isSafe
-                }
-            }))
+            const items = await Promise.all(
+                products.map(async (product) => {
+                    const simpleProduct = product.toObject()
+
+                    const productStorages = await ProductStorageModel.find({
+                        productId: simpleProduct._id,
+                    })
+                    const totalQuantity = productStorages.reduce(
+                        (sum, item) => {
+                            return sum + (item.quantity || 0)
+                        },
+                        0,
+                    )
+
+                    const isSafe =
+                        totalQuantity >= (simpleProduct.safetyQuantity || 0)
+
+                    return {
+                        ...simpleProduct,
+                        unit: simpleProduct.unit
+                            ? simpleProduct.unit.name
+                            : null,
+                        totalQuantity,
+                        isSafe,
+                    }
+                }),
+            )
 
             const totalPages = Math.ceil(total / limit)
             return { items, total, page, limit, totalPages }

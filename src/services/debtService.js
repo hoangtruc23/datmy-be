@@ -827,51 +827,59 @@ const debtService = {
     generateSalesDetailReport: async (fromDate, toDate, customerId) => {
         try {
             const formatDateToVietnamese = (dateString) => {
-                const date = new Date(dateString);
-                const day = date.getDate().toString().padStart(2, '0');
-                const month = (date.getMonth() + 1).toString().padStart(2, '0');
-                const year = date.getFullYear();
-                return `${day}/${month}/${year}`;
-            };
+                const date = new Date(dateString)
+                const day = date.getDate().toString().padStart(2, '0')
+                const month = (date.getMonth() + 1).toString().padStart(2, '0')
+                const year = date.getFullYear()
+                return `${day}/${month}/${year}`
+            }
 
             let invoiceQuery = {
                 invoiceDate: {
                     $gte: new Date(fromDate),
-                    $lte: new Date(toDate)
-                }
-            };
-
-            if (customerId) {
-                invoiceQuery.customerId = customerId;
+                    $lte: new Date(toDate),
+                },
             }
 
-            const invoices = await InvoiceModel.find(invoiceQuery).lean();
-
-            let customerName = '';
-            
             if (customerId) {
-                const customer = await CustomerModel.findById(customerId).lean();
-                customerName = customer ? customer.name : '';
+                invoiceQuery.customerId = customerId
             }
 
-            const salesData = [];
+            const invoices = await InvoiceModel.find(invoiceQuery).lean()
+
+            let customerName = ''
+
+            if (customerId) {
+                const customer = await CustomerModel.findById(customerId).lean()
+                customerName = customer ? customer.name : ''
+            }
+
+            const salesData = []
 
             for (const invoice of invoices) {
-                const customer = await CustomerModel.findById(invoice.customerId).lean();
-                
+                const customer = await CustomerModel.findById(
+                    invoice.customerId,
+                ).lean()
+
                 for (const detail of invoice.invoiceDetails) {
-                    const product = await ProductModel.findById(detail.productId).lean();
-                    
-                    const unit = await UnitModel.findById(product.unit).lean();
-                    
-                    const totalAmount = detail.totalAmountProduct;
-                    const vatAmount = Math.round(totalAmount * 0.1); 
-                    const totalPayment = totalAmount + vatAmount;
+                    const product = await ProductModel.findById(
+                        detail.productId,
+                    ).lean()
+
+                    const unit = await UnitModel.findById(product.unit).lean()
+
+                    const totalAmount = detail.totalAmountProduct
+                    const vatAmount = Math.round(totalAmount * 0.1)
+                    const totalPayment = totalAmount + vatAmount
 
                     const salesItem = {
-                        customerName: customer ? customer.name : invoice.customerName,
+                        customerName: customer
+                            ? customer.name
+                            : invoice.customerName,
                         invoiceCode: invoice.invoiceCode,
-                        invoiceDate: formatDateToVietnamese(invoice.invoiceDate),
+                        invoiceDate: formatDateToVietnamese(
+                            invoice.invoiceDate,
+                        ),
                         taxCode: customer ? customer.taxCode : '',
                         productCode: product ? product.code : '',
                         productName: product ? product.name : '',
@@ -882,24 +890,27 @@ const debtService = {
                         totalAmount: totalAmount,
                         vatAmount: vatAmount,
                         totalPayment: totalPayment,
-                        address: customer ? customer.billingAddress : ''
-                    };
+                        address: customer ? customer.billingAddress : '',
+                    }
 
-                    salesData.push(salesItem);
+                    salesData.push(salesItem)
                 }
             }
-            const summary = salesData.reduce((acc, item) => {
-                acc.totalQuantity += item.quantity;
-                acc.totalSalesAmount += item.totalAmount;
-                acc.totalVatAmount += item.vatAmount;
-                acc.totalPaymentAmount += item.totalPayment;
-                return acc;
-            }, {
-                totalQuantity: 0,
-                totalSalesAmount: 0,
-                totalVatAmount: 0,
-                totalPaymentAmount: 0
-            });
+            const summary = salesData.reduce(
+                (acc, item) => {
+                    acc.totalQuantity += item.quantity
+                    acc.totalSalesAmount += item.totalAmount
+                    acc.totalVatAmount += item.vatAmount
+                    acc.totalPaymentAmount += item.totalPayment
+                    return acc
+                },
+                {
+                    totalQuantity: 0,
+                    totalSalesAmount: 0,
+                    totalVatAmount: 0,
+                    totalPaymentAmount: 0,
+                },
+            )
             const data = {
                 fromDate: formatDateToVietnamese(fromDate),
                 toDate: formatDateToVietnamese(toDate),
@@ -909,19 +920,16 @@ const debtService = {
                     totalQuantity: summary.totalQuantity,
                     totalSalesAmount: summary.totalSalesAmount,
                     totalVatAmount: summary.totalVatAmount,
-                    totalPaymentAmount: summary.totalPaymentAmount
-                }
-            };
+                    totalPaymentAmount: summary.totalPaymentAmount,
+                },
+            }
 
-            return data;
-
+            return data
         } catch (error) {
-            console.error('Lỗi khi tạo báo cáo chi tiết bán hàng:', error);
-            throw error;
+            console.error('Lỗi khi tạo báo cáo chi tiết bán hàng:', error)
+            throw error
         }
-    }
-
-
+    },
 }
 
 module.exports = debtService

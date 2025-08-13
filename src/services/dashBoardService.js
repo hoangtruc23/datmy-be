@@ -30,7 +30,6 @@ const dashBoardService = {
             ])
             const monthRevenue = revenueResult[0]?.totalAmount || 0
 
-
             // Tổng totalAmount của invoice trong khoảng thời gian
             const invoiceResult = await InvoiceModel.aggregate([
                 {
@@ -53,8 +52,6 @@ const dashBoardService = {
 
             // Công nợ = Tổng invoice - doanh thu
             const monthTotalDept = monthTotalInvoiceAmount - monthRevenue
-
-
 
             // Số lượng khách hàng hoạt động trong tháng
             const activeCustomersInMonthInvoice = await InvoiceModel.aggregate([
@@ -104,7 +101,7 @@ const dashBoardService = {
                 ),
             ]).size
 
-            // Tổng số hóa đơn trong tháng   
+            // Tổng số hóa đơn trong tháng
             const totalInvoicesInMonth = await InvoiceModel.aggregate([
                 {
                     $match: {
@@ -117,7 +114,7 @@ const dashBoardService = {
                         ],
                     },
                 },
-              {
+                {
                     $count: 'invoiceCount',
                 },
             ])
