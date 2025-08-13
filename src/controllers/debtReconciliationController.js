@@ -1,10 +1,10 @@
-const reportService = require('../services/reportService')
+const debtReconciliationService  = require('../services/debtReconciliationService')
 const response = require('../utils/response/response')
 
-const reportController = {
+const debtReconciliationController  = {
     getDebtComparisonSummary: async (req, res, next) => {
         try {
-            const data = await reportService.getDebtComparisonSummary(req.query)
+            const data = await debtReconciliationService.getDebtComparisonSummary(req.query)
             return res.status(200).json(response.success(data))
         } catch (err) {
             next(err)
@@ -13,7 +13,7 @@ const reportController = {
 
     getDebtComparisonDetail: async (req, res, next) => {
         try {
-            const data = await reportService.getDebtComparisonDetail(req.query)
+            const data = await debtReconciliationService.getDebtComparisonDetail(req.query)
             return res.status(200).json(response.success(data))
         } catch (err) {
             next(err)
@@ -21,4 +21,4 @@ const reportController = {
     },
 }
 
-module.exports = reportController
+module.exports = debtReconciliationController
