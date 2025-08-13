@@ -582,7 +582,6 @@ async function apiSeeder() {
             note: 'Tạo báo cáo chi tiết bán hàng',
         },
 
-
         //Cài đặt công nợ
         {
             _id: new Types.ObjectId('6882fdc36f95b8b522848800'),
@@ -733,6 +732,18 @@ async function apiSeeder() {
             _id: new Types.ObjectId('688c7f601bb97636f19d6ac6'),
             api: '/reports/debt-comparison/detail',
             note: 'Xem báo cáo đối chiếu công nợ chi tiết',
+        },
+
+        //System
+        {
+            _id: new Types.ObjectId('689c1a210dcf117a9db3a0aa'),
+            api: '/system/getAllApi',
+            note: 'Lấy ra tất cả Api',
+        },
+        {
+            _id: new Types.ObjectId('689c1a210dcf117a9db3a0ab'),
+            api: '/system/getAllPermission',
+            note: 'Lấy ra tất cả Permission',
         },
     ])
 
