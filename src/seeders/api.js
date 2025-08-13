@@ -582,7 +582,6 @@ async function apiSeeder() {
             note: 'Tạo báo cáo chi tiết bán hàng',
         },
 
-
         //Cài đặt công nợ
         {
             _id: new Types.ObjectId('6882fdc36f95b8b522848800'),

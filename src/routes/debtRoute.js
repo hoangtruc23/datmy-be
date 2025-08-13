@@ -9,7 +9,10 @@ router.get('/getAll', debtController.getAll)
 router.get('/getSummary/', debtController.getSummary)
 router.post('/generateReport', debtController.generateReport)
 router.post('/generatePaymentRequest', debtController.generatePaymentRequest)
-router.get('/generateSalesDetailReport', debtController.generateSalesDetailReport)
+router.get(
+    '/generateSalesDetailReport',
+    debtController.generateSalesDetailReport,
+)
 
 module.exports = router
 /**
@@ -257,7 +260,7 @@ module.exports = router
  *           type: string
  *           format: date
  *           example: "2025-01-31"
- *         description: Ngày kết thúc 
+ *         description: Ngày kết thúc
  *       - in: query
  *         name: customerId
  *         required: false

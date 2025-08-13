@@ -24,7 +24,7 @@ router.get(
 
 router.post('/checkCompleted/:id', debtReminderController.checkCompleted)
 router.get('/getSumHistory', debtReminderController.getSumHistory)
-router.get('/getSummary', debtReminderController.getSummary);
+router.get('/getSummary', debtReminderController.getSummary)
 
 module.exports = router
 

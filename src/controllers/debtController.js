@@ -68,23 +68,29 @@ const debtController = {
 
     generateSalesDetailReport: async (req, res, next) => {
         try {
-            const { fromDate, toDate, customerId } = req.query;
+            const { fromDate, toDate, customerId } = req.query
 
-            const data = await debtService.generateSalesDetailReport(fromDate, toDate, customerId);
+            const data = await debtService.generateSalesDetailReport(
+                fromDate,
+                toDate,
+                customerId,
+            )
 
-
-            const buffer = await excelService.createSalesDetailExcel(data);
-            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            res.setHeader('Content-Disposition', 'attachment; filename=So-chi-tiet-ban-hang.xlsx');
-            res.send(buffer);
-
-
+            const buffer = await excelService.createSalesDetailExcel(data)
+            res.setHeader(
+                'Content-Type',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            )
+            res.setHeader(
+                'Content-Disposition',
+                'attachment; filename=So-chi-tiet-ban-hang.xlsx',
+            )
+            res.send(buffer)
         } catch (err) {
-            console.error('Lỗi trong generateSalesDetailReport:', err);
-            next(err);
+            console.error('Lỗi trong generateSalesDetailReport:', err)
+            next(err)
         }
     },
-
 }
 
 module.exports = debtController

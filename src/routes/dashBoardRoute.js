@@ -6,7 +6,6 @@ const dashBoardController = require('../controllers/dashBoardController')
 router.get('/summary', dashBoardController.getSumaryDashBoard)
 module.exports = router
 
-
 /**
  * @swagger
  * /dashboard/summary:

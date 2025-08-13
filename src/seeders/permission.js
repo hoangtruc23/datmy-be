@@ -577,7 +577,7 @@ async function permissionSeeder() {
             code: 'debt_reminder-xoa',
             parentPermissionId: '68899f050e446ab399609245',
         },
-      
+
         //chiết khấu
         {
             _id: new Types.ObjectId('687165240ac4b7484048357d'),

@@ -505,73 +505,88 @@ const debtReminderService = {
         }
     },
 
-    getSummary:  async () => {
-        const totalTasks = await DebtReminderModel.countDocuments({});
+    getSummary: async () => {
+        const totalTasks = await DebtReminderModel.countDocuments({})
         const completedTasks = await DebtReminderModel.countDocuments({
-            status: constant.DEBT_REMINDER_STATUS.COMPLETED
-        });
+            status: constant.DEBT_REMINDER_STATUS.COMPLETED,
+        })
         const scheduledTasks = await DebtReminderModel.countDocuments({
-            status: constant.DEBT_REMINDER_STATUS.SCHEDULED
-        });
+            status: constant.DEBT_REMINDER_STATUS.SCHEDULED,
+        })
 
-        const now = new Date();
+        const now = new Date()
 
-        const prevMonth = now.getMonth() - 1;
-        const prevMonthYear = prevMonth < 0 ? now.getFullYear() - 1 : now.getFullYear();
-        const prevMonthIndex = (prevMonth + 12) % 12;
+        const prevMonth = now.getMonth() - 1
+        const prevMonthYear =
+            prevMonth < 0 ? now.getFullYear() - 1 : now.getFullYear()
+        const prevMonthIndex = (prevMonth + 12) % 12
 
-        const dayStart = new Date(prevMonthYear, prevMonthIndex, 1, 0, 0, 0, 0);
-        const dayEnd = new Date(prevMonthYear, prevMonthIndex + 1, 0, 23, 59, 59, 999);
-        
+        const dayStart = new Date(prevMonthYear, prevMonthIndex, 1, 0, 0, 0, 0)
+        const dayEnd = new Date(
+            prevMonthYear,
+            prevMonthIndex + 1,
+            0,
+            23,
+            59,
+            59,
+            999,
+        )
+
         // xét các nhắc nợ đã thực hiện ~ contactDate trong khoảng
         // đã liên hệ != hoàn thành
         const totalPrevMonth = await DebtReminderModel.countDocuments({
-            contactDate: { 
-                $gte: dayStart, $lte: dayEnd 
-            }
-        });
+            contactDate: {
+                $gte: dayStart,
+                $lte: dayEnd,
+            },
+        })
 
         const successPrevMonth = await DebtReminderModel.countDocuments({
-            contactDate: { 
-                $gte: dayStart, $lte: dayEnd 
+            contactDate: {
+                $gte: dayStart,
+                $lte: dayEnd,
             },
-            result: { 
-                $in: [constant.DEBT_RESULT.PROMISE_PAID, constant.DEBT_RESULT.PARTIALLY_PAID] 
-            }
-        });
+            result: {
+                $in: [
+                    constant.DEBT_RESULT.PROMISE_PAID,
+                    constant.DEBT_RESULT.PARTIALLY_PAID,
+                ],
+            },
+        })
 
-        const successRate = totalPrevMonth > 0 ? (successPrevMonth / totalPrevMonth) * 100 : 0;
+        const successRate =
+            totalPrevMonth > 0 ? (successPrevMonth / totalPrevMonth) * 100 : 0
 
         const activeStaff = await DebtReminderModel.aggregate([
-            { 
-                $match: { 
-                    status: constant.DEBT_REMINDER_STATUS.SCHEDULED 
-                } 
+            {
+                $match: {
+                    status: constant.DEBT_REMINDER_STATUS.SCHEDULED,
+                },
             },
-            { 
-                $match: { 
-                    "assignedTo.name": { $ne: null, $ne: "" } 
-                } 
+            {
+                $match: {
+                    'assignedTo.name': { $ne: null, $ne: '' },
+                },
             },
-            { 
-                $group: { 
-                    _id: "$assignedTo.name" 
-                } 
+            {
+                $group: {
+                    _id: '$assignedTo.name',
+                },
             },
-            { 
-                $count: "count" 
-            }
-        ]);
+            {
+                $count: 'count',
+            },
+        ])
 
         return {
             totalTasks,
             completedTasks,
             scheduledTasks,
             successRate: parseFloat(successRate.toFixed(1)),
-            successMonth: dayStart.getMonth() + 1, 
-            activeStaff: activeStaff.length > 0 ? activeStaff[0].count : 0
-        };
-    }
+            successMonth: dayStart.getMonth() + 1,
+            activeStaff: activeStaff.length > 0 ? activeStaff[0].count : 0,
+        }
+    },
 }
 
 module.exports = debtReminderService

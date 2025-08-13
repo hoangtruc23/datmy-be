@@ -5,13 +5,13 @@ const authValidation = {
         body: joi.object({
             username: joi
                 .string()
-                .alphanum()
+                .pattern(/^[a-zA-Z0-9_]+$/)
                 .min(3)
                 .max(50)
                 .required()
                 .messages({
                     'string.empty': 'Tên đăng nhập là bắt buộc',
-                    'string.alphanum':
+                    'string.pattern.base':
                         'Tên đăng nhập chỉ được chứa chữ cái và số',
                     'string.min': 'Tên đăng nhập phải có ít nhất 3 ký tự',
                     'string.max': 'Tên đăng nhập không được vượt quá 50 ký tự',
