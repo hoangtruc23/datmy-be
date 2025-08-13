@@ -7,11 +7,11 @@ const contactPersonSchema = joi.object({
     }),
     phone: joi
         .string()
-        .pattern(/^[0-9]{10,15}$/)
+        .pattern(/^[0-9]{4,15}$/)
         .required()
         .messages({
             'string.empty': 'Số điện thoại người liên hệ là bắt buộc',
-            'string.pattern.base': 'Số điện thoại phải có từ 10 đến 15 chữ số',
+            'string.pattern.base': 'Số điện thoại phải có từ 4 đến 15 chữ số',
             'any.required': 'Số điện thoại người liên hệ là bắt buộc',
         }),
 })
@@ -37,23 +37,6 @@ const deliveryAddressSchema = joi.object({
         'string.empty': 'Quốc gia là bắt buộc',
         'any.required': 'Quốc gia là bắt buộc',
     }),
-})
-
-const representativeSchema = joi.object({
-    name: joi.string().required().messages({
-        'string.empty': 'Tên người đại diện là bắt buộc',
-        'any.required': 'Tên người đại diện là bắt buộc',
-    }),
-    title: joi.string().required().messages({
-        'string.empty': 'Chức danh người đại diện là bắt buộc',
-        'any.required': 'Chức danh người đại diện là bắt buộc',
-    }),
-    phone: joi
-        .string()
-        .pattern(/^[0-9]{10,15}$/)
-        .messages({
-            'string.pattern.base': 'Số điện thoại phải có từ 10 đến 15 chữ số',
-        }),
 })
 
 const supplierBaseSchema = {
@@ -105,10 +88,10 @@ const supplierBaseSchema = {
         .allow('', null),
     phone: joi
         .string()
-        .pattern(/^[0-9]{10,15}$/)
+        .pattern(/^[0-9]{4,15}$/)
         .allow('', null)
         .messages({
-            'string.pattern.base': 'Số điện thoại phải có từ 10 đến 15 chữ số',
+            'string.pattern.base': 'Số điện thoại phải có từ 4 đến 15 chữ số',
         }),
     billingAddress: joi.string().required().messages({
         'string.empty': 'Địa chỉ xuất hóa đơn là bắt buộc',
@@ -127,7 +110,6 @@ const supplierBaseSchema = {
             'any.required': 'Danh sách địa chỉ giao hàng là bắt buộc',
         }),
 
-    representative: representativeSchema,
     contactPersons: joi.object({
         warehouseAccountant: joi.array().items(contactPersonSchema),
         sale: joi.array().items(contactPersonSchema),
@@ -146,15 +128,19 @@ const supplierBaseSchema = {
 
 const supplierValidation = {
     create: {
-        body: joi.object({
-            ...supplierBaseSchema,
-        }),
+        body: joi
+            .object({
+                ...supplierBaseSchema,
+            })
+            .unknown(true),
     },
     update: {
-        body: joi.object({
-            ...supplierBaseSchema,
-            code: joi.forbidden(),
-        }),
+        body: joi
+            .object({
+                ...supplierBaseSchema,
+                code: joi.forbidden(),
+            })
+            .unknown(true),
     },
 }
 

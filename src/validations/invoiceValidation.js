@@ -8,11 +8,11 @@ const contactPersonSchema = joi.object({
     }),
     phone: joi
         .string()
-        .pattern(/^[0-9]{10,15}$/)
+        .pattern(/^[0-9]{4,15}$/)
         .required()
         .messages({
             'string.empty': 'Số điện thoại người liên hệ là bắt buộc',
-            'string.pattern.base': 'Số điện thoại phải có từ 10 đến 15 chữ số',
+            'string.pattern.base': 'Số điện thoại phải có từ 4 đến 15 chữ số',
             'any.required': 'Số điện thoại người liên hệ là bắt buộc',
         }),
 })
