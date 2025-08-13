@@ -496,6 +496,33 @@ async function apiSeeder() {
             note: 'Xuất báo cáo tạm ứng ra excel',
         },
 
+        //dashboard quản lý công nợ
+        {
+            _id: new Types.ObjectId('689c01a260903c30215b25c2'),
+            api: '/dashboard/getTopCustomersDebt',
+            note: 'Xuất báo cáo công nợ theo khách hàng',
+        },
+        {
+            _id: new Types.ObjectId('689c01a260903c30215b25c3'),
+            api: '/dashboard/summary',
+            note: 'Xem tóm tắt công nợ và doanh thu',
+        },
+        {
+            _id: new Types.ObjectId('689c01a260903c30215b25c4'),
+            api: '/dashboard/getRevenueMonthly',
+            note: 'Xuất báo cáo doanh thu và công nợ theo tháng',
+        },
+        {
+            _id: new Types.ObjectId('689c01a260903c30215b25c5'),
+            api: '/dashboard/getInvoiceRecent',
+            note: 'Xem các hóa đơn gần đây',
+        },
+        {
+            _id: new Types.ObjectId('689c01a260903c30215b25c6'),
+            api: '/dashboard/getTopCustomerRevenue',
+            note: 'Xem Top khách hàng có doanh thu cao nhất',
+        },
+
         //hóa đơn
         {
             _id: new Types.ObjectId('686dd0b535512a73e076c3a2'),

@@ -274,6 +274,13 @@ async function rolePermissionSeeder() {
             roleId: '684927c871287f2ae7d8130b', // Quản trị viên
             permissionId: '6864e6cd4c3c96b50ff0e104', // Grant 'Xuất báo cáo' permission
         },
+
+        // dashboard công nợ quản trị viên
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '689c01a260903c30215b25c0', // dashboard
+        },
+
         //hoa don quan tri vien
         {
             roleId: '684927c871287f2ae7d8130b', // Quản trị viên

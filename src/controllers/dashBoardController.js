@@ -21,5 +21,60 @@ const dashBoardController = {
             next(err)
         }
     },
+    getTopCustomersDebt: async (req, res, next) => {
+        try {
+            const result = await dashBoardService.getTopCustomersDebt()
+
+            return res.status(200).json(
+                response.success({
+                    result,
+                }),
+            )
+        } catch (err) {
+            next(err)
+        }
+    },
+    getRevenueMonthly: async (req, res, next) => {
+        try {
+            const year = req.query.year
+                ? parseInt(req.query.year, 10)
+                : new Date().getFullYear()
+            const result = await dashBoardService.getRevenueMonthly(year)
+            return res.status(200).json(
+                response.success({
+                    monthRevenue: result,
+                }),
+            )
+        } catch (err) {
+            next(err)
+        }
+    },
+    getRecentInvoices: async (req, res, next) => {
+        try {
+            const result = await dashBoardService.getRecentInvoices()
+
+            return res.status(200).json(
+                response.success({
+                    result,
+                }),
+            )
+        } catch (err) {
+            next(err)
+        }
+    },
+
+    getTopCustomerRevenue: async (req, res, next) => {
+        try {
+            const result = await dashBoardService.getTopCustomerRevenue()
+
+            return res.status(200).json(
+                response.success({
+                    result,
+                }),
+            )
+        } catch (err) {
+            next(err)
+        }
+    },
 }
 module.exports = dashBoardController
