@@ -10,11 +10,11 @@ const contactPersonSchema = joi.object({
     }),
     phone: joi
         .string()
-        .pattern(/^[0-9]{10,15}$/)
+        .pattern(/^[0-9]{4,15}$/)
         .required()
         .messages({
             'string.empty': 'Số điện thoại người liên hệ là bắt buộc',
-            'string.pattern.base': 'Số điện thoại phải có từ 10 đến 15 chữ số',
+            'string.pattern.base': 'Số điện thoại phải có từ 4 đến 15 chữ số',
             'any.required': 'Số điện thoại người liên hệ là bắt buộc',
         }),
 })
@@ -40,26 +40,6 @@ const deliveryAddressSchema = joi.object({
         'string.empty': 'Quốc gia là bắt buộc',
         'any.required': 'Quốc gia là bắt buộc',
     }),
-})
-
-const representativeSchema = joi.object({
-    name: joi.string().required().messages({
-        'string.empty': 'Tên người đại diện là bắt buộc',
-        'any.required': 'Tên người đại diện là bắt buộc',
-    }),
-    title: joi.string().required().messages({
-        'string.empty': 'Chức danh người đại diện là bắt buộc',
-        'any.required': 'Chức danh người đại diện là bắt buộc',
-    }),
-    phone: joi
-        .string()
-        .pattern(/^[0-9]{10,15}$/)
-        .required()
-        .messages({
-            'string.empty': 'Số điện thoại người đại diện là bắt buộc',
-            'string.pattern.base': 'Số điện thoại phải có từ 10 đến 15 chữ số',
-            'any.required': 'Số điện thoại người đại diện là bắt buộc',
-        }),
 })
 
 const customerBaseSchema = {
@@ -96,8 +76,6 @@ const customerBaseSchema = {
             'array.max': 'Không được nhiều hơn 5 địa chỉ giao hàng',
             'any.required': 'Danh sách địa chỉ giao hàng là bắt buộc',
         }),
-    // Optional fields
-    representative: representativeSchema,
     fax: joi
         .any()
         .custom((value, helpers) => {
@@ -126,10 +104,10 @@ const customerBaseSchema = {
         .allow('', null),
     phone: joi
         .string()
-        .pattern(/^[0-9]{10,15}$/)
+        .pattern(/^[0-9]{4,15}$/)
         .allow('', null)
         .messages({
-            'string.pattern.base': 'Số điện thoại phải có từ 10 đến 15 chữ số',
+            'string.pattern.base': 'Số điện thoại phải có từ 4 đến 15 chữ số',
         }),
     garageAddress: joi.string().allow('', null),
     contactPersons: joi.object({
@@ -151,14 +129,18 @@ const customerBaseSchema = {
 
 const customerValidation = {
     create: {
-        body: joi.object({
-            ...customerBaseSchema,
-        }),
+        body: joi
+            .object({
+                ...customerBaseSchema,
+            })
+            .unknown(true),
     },
     update: {
-        body: joi.object({
-            ...customerBaseSchema,
-        }),
+        body: joi
+            .object({
+                ...customerBaseSchema,
+            })
+            .unknown(true),
     },
 }
 
