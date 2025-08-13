@@ -45,12 +45,12 @@ const userValidation = {
                 }),
             phoneNumber: joi
                 .string()
-                .pattern(/^[0-9]{10,15}$/)
+                .pattern(/^[0-9]{4,15}$/)
                 .required()
                 .messages({
                     'string.empty': 'Số điện thoại là bắt buộc',
                     'string.pattern.base':
-                        'Số điện thoại phải có từ 10 đến 15 chữ số',
+                        'Số điện thoại phải có từ 4 đến 15 chữ số',
                     'any.required': 'Số điện thoại là bắt buộc',
                 }),
             password: joi
@@ -103,10 +103,10 @@ const userValidation = {
                 }),
             phoneNumber: joi
                 .string()
-                .pattern(/^[0-9]{10,15}$/)
+                .pattern(/^[0-9]{4,15}$/)
                 .messages({
                     'string.pattern.base':
-                        'Số điện thoại phải có từ 10 đến 15 chữ số',
+                        'Số điện thoại phải có từ 4 đến 15 chữ số',
                 }),
             roleIds: joi
                 .array()
