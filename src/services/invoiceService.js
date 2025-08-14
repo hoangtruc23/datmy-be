@@ -1,11 +1,11 @@
 const { Types } = require('mongoose')
 const InvoiceModel = require('../models/invoice')
 const CustomerModel = require('../models/customer')
-// const PaymentHistoryModel = require('../models/paymentHistory')
+const DiscountRequestModel = require('../models/discountRequest')
+const PaymentHistoryModel = require('../models/paymentHistory')
 const BadReq = require('../utils/response/requestError')
 const constant = require('../utils/constant/constant')
 const errorCode = require('../utils/response/errorCode')
-
 const invoiceService = {
     create: async (data) => {
         try {
@@ -382,11 +382,22 @@ const invoiceService = {
 
     delete: async (id) => {
         try {
-            const invoice = await InvoiceModel.findByIdAndDelete(id)
-            if (!invoice) throw new BadReq(errorCode.INVOICE_NOT_FOUND)
-            return null
+            // Kiểm tra invoice có tồn tại không
+            const invoice = await InvoiceModel.findById(id);
+            if (!invoice) throw new BadReq(errorCode.INVOICE_NOT_FOUND);
+
+            // Xóa dữ liệu liên quan trước
+            await Promise.all([
+                PaymentHistoryModel.deleteMany({ invoiceId: id }),
+                DiscountRequestModel.deleteMany({ invoiceId: id })
+            ]);
+
+            // Xóa invoice cuối cùng
+            await InvoiceModel.findByIdAndDelete(id);
+            
+            return null;
         } catch (err) {
-            throw err
+            throw err;
         }
     },
 
