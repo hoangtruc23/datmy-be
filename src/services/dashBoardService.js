@@ -1,5 +1,6 @@
 const PaymentHistoryModel = require('../models/paymentHistory')
 const InvoiceModel = require('../models/invoice')
+
 const dashBoardService = {
     getSumaryDashBoard: async () => {
         try {
@@ -130,6 +131,183 @@ const dashBoardService = {
                 startDate,
                 endDate,
             }
+        } catch (err) {
+            throw err
+        }
+    },
+    getTopCustomersDebt: async () => {
+        try {
+            const customersWithDebt = await InvoiceModel.aggregate([
+                {
+                    $match: {
+                        isFullyPaid: false, 
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'paymenthistories',
+                        localField: '_id',
+                        foreignField: 'invoiceId',
+                        as: 'payments',
+                    },
+                },
+                {
+                    $addFields: {
+                        totalPaid: { $sum: '$payments.amount' },
+                    },
+                },
+                {
+                    $group: {
+                        _id: '$customerName',
+                        totalDebt: {
+                            $sum: { $subtract: ['$totalAmount', '$totalPaid'] },
+                        },
+                    },
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        customerName: '$_id',
+                        totalDebt: 1,
+                    },
+                },
+                {
+                    $sort: { totalDebt: -1 }, 
+                },
+                {
+                    $limit: 5, 
+                },
+            ])
+
+            return customersWithDebt
+            
+        } catch (err) {
+            throw err
+        }
+    },
+    getRevenueMonthly: async (year = new Date().getFullYear()) => {
+        try {
+            const results = []
+
+            for (let month = 0; month < 12; month++) {
+                const startDate = new Date(Date.UTC(year, month, 1))
+                const endDate = new Date(Date.UTC(year, month + 1, 1))
+
+                // Tính doanh thu tháng: tổng amount trong paymentHistory
+                const revenueResult = await PaymentHistoryModel.aggregate([
+                    {
+                        $match: {
+                            paymentDate: { $gte: startDate, $lt: endDate },
+                        },
+                    },
+                    {
+                        $group: {
+                            _id: null,
+                            totalRevenue: { $sum: '$amount' },
+                        },
+                    },
+                ])
+                const revenue = revenueResult[0]?.totalRevenue || 0
+
+                // Tổng amount trong invoices của tháng
+                const invoiceResult = await InvoiceModel.aggregate([
+                    {
+                        $match: {
+                            invoiceDate: { $gte: startDate, $lt: endDate },
+                        },
+                    },
+                    {
+                        $group: {
+                            _id: null,
+                            totalInvoiceAmount: { $sum: '$totalAmount' },
+                        },
+                    },
+                ])
+                const totalInvoiceAmount =
+                    invoiceResult[0]?.totalInvoiceAmount || 0
+
+                // Công nợ = Tổng hóa đơn - doanh thu
+                const totalDept = totalInvoiceAmount - revenue
+
+                results.push({
+                    month: month + 1,
+                    revenue,
+                    totalDept,
+                })
+            }
+
+            return results
+        } catch (err) {
+            throw err
+        }
+    },
+    getRecentInvoices: async () => {
+        try {
+            const invoices = await InvoiceModel.find({})
+                .sort({ invoiceDate: -1 })
+                .limit(4)
+                .exec()
+
+            return invoices
+        } catch (err) {
+            throw err
+        }
+    },
+    getTopCustomerRevenue: async (limit = 4) => {
+        try {
+            const result = await InvoiceModel.aggregate([
+                {
+                    $group: {
+                        _id: '$customerId',
+                        customerName: { $first: '$customerName' },
+                        totalInvoiceAmount: { $sum: '$totalAmount' },
+                        invoiceIds: { $push: '$_id' },
+                    },
+                },
+
+                {
+                    $lookup: {
+                        from: 'paymenthistories',
+                        localField: 'invoiceIds',
+                        foreignField: 'invoiceId',
+                        as: 'payments',
+                    },
+                },
+                // Tính tổng tiền thanh toán của khách
+                {
+                    $addFields: {
+                        totalPaid: { $sum: '$payments.amount' },
+                    },
+                },
+                // Tính công nợ
+                {
+                    $addFields: {
+                        totalDebt: {
+                            $subtract: ['$totalInvoiceAmount', '$totalPaid'],
+                        },
+                    },
+                },
+                // Sắp xếp theo doanh thu (tổng thanh toán) giảm dần
+                {
+                    $sort: { totalPaid: -1 },
+                },
+                // Giới hạn lấy top 5 khách
+                {
+                    $limit: 5,
+                },
+                // Chọn trường cần trả về
+                {
+                    $project: {
+                        _id: 0,
+                        customerId: '$_id',
+                        customerName: 1,
+                        totalInvoiceAmount: 1,
+                        totalPaid: 1,
+                        totalDebt: 1,
+                    },
+                },
+            ])
+            return result
         } catch (err) {
             throw err
         }

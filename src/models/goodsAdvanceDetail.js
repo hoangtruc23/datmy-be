@@ -54,7 +54,7 @@ const goodsAdvanceDetailSchema = new Schema({
     },
     returnedQuantity: {
         type: Number,
-        min: 1,
+        min: 0,
     },
     borrowStatus: {
         type: String,
