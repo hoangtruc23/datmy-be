@@ -18,6 +18,35 @@ const systemController = {
             next(error)
         }
     },
+    getAllPermissionApi: async (req, res, next) => {
+        try {
+            const result = await systemService.getAllPermissionApi(req.query)
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
+    getPermissionApiById: async (req, res, next) => {
+        try {
+            const result = await systemService.getPermissionApiById(
+                req.params.permissionId,
+            )
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
+    updatePermissionApi: async (req, res, next) => {
+        try {
+            const result = await systemService.updatePermissionApi(
+                req.params.permissionId,
+                req.body,
+            )
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
 }
 
 module.exports = systemController
