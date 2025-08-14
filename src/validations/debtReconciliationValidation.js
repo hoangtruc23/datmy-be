@@ -1,8 +1,7 @@
-// src/validations/reportValidation.js
 const joi = require('joi')
 
-const reportValidation = {
-    getDebtComparison: {
+const debtReconciliationValidation  = {
+    getDebtSummary: {
         query: joi.object({
             startDate: joi.date().iso().required().messages({
                 'date.base': 'Ngày bắt đầu phải là ngày hợp lệ',
@@ -24,9 +23,12 @@ const reportValidation = {
                 .string()
                 .pattern(/^[0-9a-fA-F]{24}$/)
                 .optional()
+                .allow('')
                 .messages({
                     'string.pattern.base': 'Mã khách hàng không hợp lệ',
                 }),
+            page: joi.number().integer().min(1).default(1),
+            limit: joi.number().integer().min(1).default(10),
         }),
     },
     getDebtDetail: {
@@ -55,8 +57,11 @@ const reportValidation = {
                     'string.pattern.base': 'Mã khách hàng không hợp lệ',
                     'any.required': 'Mã khách hàng là bắt buộc',
                 }),
+            // --- ADDED PAGINATION VALIDATION FOR TRANSACTIONS ---
+            page: joi.number().integer().min(1).default(1),
+            limit: joi.number().integer().min(1).default(10),
         }),
     },
 }
 
-module.exports = reportValidation
+module.exports = debtReconciliationValidation 
