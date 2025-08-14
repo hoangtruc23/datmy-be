@@ -752,13 +752,18 @@ async function apiSeeder() {
         // Báo cáo
         {
             _id: new Types.ObjectId('688c7f601bb97636f19d6ac5'),
-            api: '/reports/debt-comparison/summary',
-            note: 'Xem báo cáo đối chiếu công nợ cuối kỳ',
+            api: '/reports/reconciliation/summary',
+            note: 'Xem đối chiếu công nợ cuối kỳ',
         },
         {
             _id: new Types.ObjectId('688c7f601bb97636f19d6ac6'),
-            api: '/reports/debt-comparison/detail',
-            note: 'Xem báo cáo đối chiếu công nợ chi tiết',
+            api: '/reports/reconciliation/detail',
+            note: 'Xem đối chiếu công nợ chi tiết',
+        },
+        {
+            _id: new Types.ObjectId('689d8f1028227ebb51e520e6'),
+            api: '/reports/sales',
+            note: 'Xem đối chiếu công nợ chi tiết',
         },
 
         //System

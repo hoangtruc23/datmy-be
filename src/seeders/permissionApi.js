@@ -692,6 +692,10 @@ async function permissionApiSeeder() {
         {
             permissionId: '688c7f601bb97636f19d6ac4', // Xem Báo cáo
             apiId: '688c7f601bb97636f19d6ac6', // /reports/debt-comparison/detail
+        },        
+        {
+            permissionId: '688c7f601bb97636f19d6ac4', // Xem Báo cáo
+            apiId: '689d8f1028227ebb51e520e6', // /reports/sales
         },
     ])
     logger.info('PermissionApis seeded')
