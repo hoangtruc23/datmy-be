@@ -316,6 +316,14 @@ const errorCode = {
         code: 81,
         message: 'Tổng số tiền hóa đơn không khớp.',
     },
+    PERMISSION_NOT_FOUND: {
+        code: 82,
+        message: 'Permission không tồn tại',
+    },
+    API_NOT_FOUND: {
+        code: 83,
+        message: 'Api không tồn tại',
+    },
 }
 
 module.exports = errorCode

@@ -695,7 +695,7 @@ async function apiSeeder() {
         {
             _id: new Types.ObjectId('6898697b630fdba8a091c0eb'),
             api: '/debtReminder/getSummary',
-            note: 'Lấy tổngnhắc nợ',
+            note: 'Lấy tổng nhắc nợ',
         },
         //chiết khấu
         {
@@ -776,6 +776,21 @@ async function apiSeeder() {
             _id: new Types.ObjectId('689c1a210dcf117a9db3a0ab'),
             api: '/system/getAllPermission',
             note: 'Lấy ra tất cả Permission',
+        },
+        {
+            _id: new Types.ObjectId('689c5eb22657ca8d968a1ab6'),
+            api: '/system/getAllPermissionApi',
+            note: 'Lấy ra tất cả PermissionApi',
+        },
+        {
+            _id: new Types.ObjectId(),
+            api: '/system/getPermissionApiById',
+            note: 'Lấy ra PermissionApi theo PermissionId',
+        },
+        {
+            _id: new Types.ObjectId(),
+            api: '/system/updatePermissionApi',
+            note: 'Chỉnh sửa PermissionApi theo PermissionId',
         },
     ])
 
