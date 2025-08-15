@@ -31,18 +31,15 @@ const invoiceDetail = new Schema(
         },
         price: {
             type: Number,
-            min: 0,
-            default: 0,
+            required: true,
         },
         discount: {
             type: Number,
-            min: 0,
             default: 0,
         },
         totalAmountProduct: {
             type: Number,
-            min: 0,
-            default: 0,
+            required: true,
         },
     },
     { _id: false },
