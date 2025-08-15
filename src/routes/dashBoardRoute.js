@@ -303,6 +303,10 @@ module.exports = router
  *                           totalDebt:
  *                             type: number
  *                             example: 1700000
+ *                           lastPaymentDate:
+ *                             type: string
+ *                             format: date-time
+ *                             example: "2025-07-15T10:30:00.000Z"
  *                           customerId:
  *                             type: string
  *                             example: "64f1a4000000000000000001"
@@ -348,6 +352,8 @@ module.exports = router
  *               data: null
  */
 
+
+
 /**
  * @swagger
  * /dashboard/getInvoiceRecent:
@@ -358,7 +364,7 @@ module.exports = router
  *       - bearerAuth: []
  *     responses:
  *       '200':
- *         description: OK - Lấy dữ liệu hóa đơn gần nhất thành công.
+ *         description: OK - Lấy dữ liệu 4 hóa đơn gần nhất thành công.
  *         content:
  *           application/json:
  *             schema:
@@ -378,7 +384,7 @@ module.exports = router
  *                   properties:
  *                     result:
  *                       type: array
- *                       description: Danh sách hóa đơn gần nhất
+ *                       description: Danh sách 4 hóa đơn gần nhất
  *                       items:
  *                         type: object
  *                         properties:
@@ -444,26 +450,6 @@ module.exports = router
  *                               phone:
  *                                 type: string
  *                                 example: "0912345678"
- *                           invoiceDetails:
- *                             type: array
- *                             items:
- *                               type: object
- *                               properties:
- *                                 productId:
- *                                   type: string
- *                                   example: "64f1a4000000000000000020"
- *                                 quantity:
- *                                   type: integer
- *                                   example: 2
- *                                 price:
- *                                   type: number
- *                                   example: 250000
- *                                 discount:
- *                                   type: number
- *                                   example: 0
- *                                 totalAmountProduct:
- *                                   type: number
- *                                   example: 500000
  *                           notes:
  *                             type: string
  *                             example: "Thanh toán trả góp"
@@ -516,3 +502,4 @@ module.exports = router
  *               message: "Không có quyền"
  *               data: null
  */
+
