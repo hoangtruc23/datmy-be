@@ -373,6 +373,7 @@ const invoiceService = {
                 throw new BadReq(errorCode.INVALID_ID)
             const invoice = await InvoiceModel.findById(id)
             //.populate('customerId', 'name code')
+            .populate('invoiceDetails.productId', 'name shortName code')
             if (!invoice) throw new BadReq(errorCode.INVOICE_NOT_FOUND)
             return invoice
         } catch (err) {
@@ -382,17 +383,14 @@ const invoiceService = {
 
     delete: async (id) => {
         try {
-            // Kiểm tra invoice có tồn tại không
             const invoice = await InvoiceModel.findById(id);
             if (!invoice) throw new BadReq(errorCode.INVOICE_NOT_FOUND);
 
-            // Xóa dữ liệu liên quan trước
             await Promise.all([
                 PaymentHistoryModel.deleteMany({ invoiceId: id }),
                 DiscountRequestModel.deleteMany({ invoiceId: id })
             ]);
 
-            // Xóa invoice cuối cùng
             await InvoiceModel.findByIdAndDelete(id);
             
             return null;
