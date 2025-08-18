@@ -766,6 +766,11 @@ async function apiSeeder() {
             note: 'Xem đối chiếu công nợ chi tiết',
         },
 
+        {
+            _id: new Types.ObjectId('689d8f1028227ebb51e520e7'),
+            api: '/reports/generateSalesDetailReport',
+            note: 'Tạo báo cáo chi tiết bán hàng',
+        },
         //System
         {
             _id: new Types.ObjectId('689c1a210dcf117a9db3a0aa'),

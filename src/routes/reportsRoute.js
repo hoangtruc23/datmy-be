@@ -1,28 +1,31 @@
 const express = require('express')
 const validate = require('../middlewares/validation')
-const debtReconciliationController = require('../controllers/debtReconciliationController')
-const salesReportController = require('../controllers/salesReportController')
+const reportController = require('../controllers/reportController')
 const debtReconciliationValidation = require('../validations/debtReconciliationValidation')
-const salesReportValidation = require('../validations/salesReportValidation');
+const reportValidation = require('../validations/reportValidation');
 const router = express.Router()
 
 
 router.get(
     '/sales',
-    validate(salesReportValidation.getSalesReport),
-    salesReportController.getSalesReport,
+    validate(reportValidation.getSalesReport),
+    reportController.getSalesReport,
 )
 router.get(
     '/reconciliation/summary',
     validate(debtReconciliationValidation.getDebtSummary),
-    debtReconciliationController.getDebtComparisonSummary,
+    reportController.getDebtComparisonSummary,
 )
 router.get(
     '/reconciliation/detail',
     validate(debtReconciliationValidation.getDebtDetail),
-    debtReconciliationController.getDebtComparisonDetail,
+    reportController.getDebtComparisonDetail,
 )
 
+router.get(
+    '/generateSalesDetailReport',
+    reportController.generateSalesDetailReport,
+)
 module.exports = router
 
 /**
@@ -459,4 +462,44 @@ module.exports = router
  *                       trend:
  *                         type: string
  *                         example: "Tăng"
+ */
+
+
+
+/**
+ * @swagger
+ * /reports/generateSalesDetailReport:
+ *   get:
+ *     summary: Sinh báo cáo sổ chi tiết bán hàng
+ *     description: Tạo file Excel báo cáo chi tiết bán hàng theo khoảng thời gian và khách hàng
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Reports]
+ *     parameters:
+ *       - in: query
+ *         name: fromDate
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: date
+ *           example: "2025-01-01"
+ *         description: Ngày bắt đầu
+ *       - in: query
+ *         name: toDate
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: date
+ *           example: "2025-01-31"
+ *         description: Ngày kết thúc
+ *       - in: query
+ *         name: customerId
+ *         required: false
+ *         schema:
+ *           type: string
+ *           example: "507f1f77bcf86cd799439011"
+ *         description: ID khách hàng (không bắt buộc, nếu không có sẽ lấy tất cả khách hàng)
+ *     responses:
+ *       200:
+ *         description: OK
  */

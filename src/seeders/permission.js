@@ -426,7 +426,6 @@ async function permissionSeeder() {
             code: 'dashboard_cong_no-xem',
             parentPermissionId: '689c01a260903c30215b25c1',
         },
-       
 
         //hóa đơn
         {
@@ -638,6 +637,12 @@ async function permissionSeeder() {
             _id: new Types.ObjectId('688c7f601bb97636f19d6ac4'),
             name: 'Xem',
             code: 'bao_cao-xem',
+            parentPermissionId: '688c7f601bb97636f19d6ac3',
+        },
+        {
+            _id: new Types.ObjectId('688c7f601bb97636f19d6ad8'),
+            name: 'Sinh báo cáo chi tiết khách hàng',
+            code: 'bao_cao-sinh_bao_cao_chi_tiet_khach_hang',
             parentPermissionId: '688c7f601bb97636f19d6ac3',
         },
     ])
