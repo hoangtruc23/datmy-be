@@ -9,10 +9,10 @@ router.get('/getAll', debtController.getAll)
 router.get('/getSummary/', debtController.getSummary)
 router.post('/generateReport', debtController.generateReport)
 router.post('/generatePaymentRequest', debtController.generatePaymentRequest)
-router.get(
-    '/generateSalesDetailReport',
-    debtController.generateSalesDetailReport,
-)
+// router.get(
+//     '/generateSalesDetailReport',
+//     debtController.generateSalesDetailReport,
+// )
 
 module.exports = router
 /**
@@ -235,40 +235,3 @@ module.exports = router
  *                   example: null
  */
 
-/**
- * @swagger
- * /debt/generateSalesDetailReport:
- *   get:
- *     summary: Sinh báo cáo sổ chi tiết bán hàng
- *     description: Tạo file Excel báo cáo chi tiết bán hàng theo khoảng thời gian và khách hàng
- *     security:
- *       - bearerAuth: []
- *     tags: [Debt]
- *     parameters:
- *       - in: query
- *         name: fromDate
- *         required: true
- *         schema:
- *           type: string
- *           format: date
- *           example: "2025-01-01"
- *         description: Ngày bắt đầu
- *       - in: query
- *         name: toDate
- *         required: true
- *         schema:
- *           type: string
- *           format: date
- *           example: "2025-01-31"
- *         description: Ngày kết thúc
- *       - in: query
- *         name: customerId
- *         required: false
- *         schema:
- *           type: string
- *           example: "507f1f77bcf86cd799439011"
- *         description: ID khách hàng (không bắt buộc, nếu không có sẽ lấy tất cả khách hàng)
- *     responses:
- *       200:
- *         description: OK
- */

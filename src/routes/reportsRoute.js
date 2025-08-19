@@ -1,28 +1,31 @@
 const express = require('express')
 const validate = require('../middlewares/validation')
-const debtReconciliationController = require('../controllers/debtReconciliationController')
-const salesReportController = require('../controllers/salesReportController')
+const reportController = require('../controllers/reportController')
 const debtReconciliationValidation = require('../validations/debtReconciliationValidation')
-const salesReportValidation = require('../validations/salesReportValidation');
+const reportValidation = require('../validations/reportValidation');
 const router = express.Router()
 
 
 router.get(
     '/sales',
-    validate(salesReportValidation.getSalesReport),
-    salesReportController.getSalesReport,
+    validate(reportValidation.getSalesReport),
+    reportController.getSalesReport,
 )
 router.get(
     '/reconciliation/summary',
     validate(debtReconciliationValidation.getDebtSummary),
-    debtReconciliationController.getDebtComparisonSummary,
+    reportController.getDebtComparisonSummary,
 )
 router.get(
     '/reconciliation/detail',
     validate(debtReconciliationValidation.getDebtDetail),
-    debtReconciliationController.getDebtComparisonDetail,
+    reportController.getDebtComparisonDetail,
 )
 
+router.get(
+    '/generateSalesDetailReport',
+    reportController.generateSalesDetailReport,
+)
 module.exports = router
 
 /**
@@ -31,7 +34,6 @@ module.exports = router
  *   name: Reports
  *   description: Báo cáo tổng hợp
  */
-
 
 /**
  * @swagger
@@ -45,29 +47,37 @@ module.exports = router
  *       - in: query
  *         name: startDate
  *         required: true
- *         schema: { type: string, format: date }
- *         description: "Ngày bắt đầu (YYYY-MM-DD)"
- *         example: "2024-01-01"
+ *         schema:
+ *           type: string
+ *           example: "01/01/2024"
+ *         description: "Ngày bắt đầu (DD/MM/YYYY)"
  *       - in: query
  *         name: endDate
  *         required: true
- *         schema: { type: string, format: date }
- *         description: "Ngày kết thúc (YYYY-MM-DD)"
- *         example: "2026-02-29"
+ *         schema:
+ *           type: string
+ *           example: "02/02/2026"
+ *         description: "Ngày kết thúc (DD/MM/YYYY)"
  *       - in: query
- *         name: productId
+ *         name: customerName
  *         required: false
- *         schema: { type: string }
- *         description: "Lọc theo ID sản phẩm (ObjectId). Để trống để lấy tất cả."
+ *         schema:
+ *           type: string
+ *           example: ""
+ *         description: "Tên khách hàng để lọc"
  *       - in: query
  *         name: page
  *         required: false
- *         schema: { type: integer, default: 1 }
+ *         schema:
+ *           type: integer
+ *           default: 1
  *         description: "Số trang"
  *       - in: query
  *         name: limit
  *         required: false
- *         schema: { type: integer, default: 10 }
+ *         schema:
+ *           type: integer
+ *           default: 10
  *         description: "Số mục trên mỗi trang"
  *     responses:
  *       200:
@@ -89,63 +99,71 @@ module.exports = router
  *                 data:
  *                   type: object
  *                   properties:
- *                     summary:
- *                       type: object
- *                       properties:
- *                         totalProducts:
- *                           type: integer
- *                           description: "Tổng sản phẩm (số loại sản phẩm đã bán)"
- *                           example: 3
- *                         totalQuantity:
- *                           type: integer
- *                           description: "Tổng số lượng đã bán"
- *                           example: 430
- *                         totalRevenue:
- *                           type: number
- *                           description: "Tổng doanh thu"
- *                           example: 41000000
- *                     details:
+ *                     startDate:
+ *                       type: string
+ *                       example: "01/01/2024"
+ *                     endDate:
+ *                       type: string
+ *                       example: "02/02/2026"
+ *                     customerName:
+ *                       type: string
+ *                       example: ""
+ *                     page:
+ *                       type: integer
+ *                       example: 1
+ *                     limit:
+ *                       type: integer
+ *                       example: 10
+ *                     totalInvoices:
+ *                       type: integer
+ *                       example: 4
+ *                     salesData:
  *                       type: array
  *                       items:
  *                         type: object
  *                         properties:
+ *                           customerName:
+ *                             type: string
+ *                             example: "Nguyễn Văn A"
+ *                           invoiceCode:
+ *                             type: string
+ *                             example: "INV-20250715-001"
+ *                           invoiceDate:
+ *                             type: string
+ *                             example: "16/07/2025"
+ *                           taxCode:
+ *                             type: string
+ *                             example: ""
  *                           productCode:
  *                             type: string
- *                             example: "SP001"
+ *                             example: ""
  *                           productName:
  *                             type: string
- *                             example: "Sản phẩm A"
+ *                             example: ""
  *                           unit:
  *                             type: string
- *                             example: "Cái"
- *                           quantitySold:
+ *                             example: ""
+ *                           quantity:
  *                             type: integer
- *                             example: 150
- *                           revenue:
+ *                             example: 2
+ *                           unitPrice:
  *                             type: number
- *                             example: 15000000
- *                           averagePrice:
+ *                             example: 250000
+ *                           discount:
  *                             type: number
- *                             example: 100000
- *                           lastSale:
+ *                             example: 0
+ *                           totalAmount:
+ *                             type: number
+ *                             example: 500000
+ *                           vatAmount:
+ *                             type: number
+ *                             example: 50000
+ *                           totalPayment:
+ *                             type: number
+ *                             example: 550000
+ *                           address:
  *                             type: string
- *                             format: date-time
- *                             example: "2024-02-01T00:00:00.000Z"
- *                     pagination:
- *                       type: object
- *                       properties:
- *                         page:
- *                           type: integer
- *                           example: 1
- *                         limit:
- *                           type: integer
- *                           example: 10
- *                         totalItems:
- *                           type: integer
- *                           example: 3
- *                         totalPages:
- *                           type: integer
- *                           example: 1
+ *                             example: ""
  *       400:
  *         description: Lỗi đầu vào không hợp lệ
  *       401:
@@ -459,4 +477,44 @@ module.exports = router
  *                       trend:
  *                         type: string
  *                         example: "Tăng"
+ */
+
+
+
+/**
+ * @swagger
+ * /reports/generateSalesDetailReport:
+ *   get:
+ *     summary: Sinh báo cáo sổ chi tiết bán hàng
+ *     description: Tạo file Excel báo cáo chi tiết bán hàng theo khoảng thời gian và khách hàng
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Reports]
+ *     parameters:
+ *       - in: query
+ *         name: fromDate
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: date
+ *           example: "2025-01-01"
+ *         description: Ngày bắt đầu
+ *       - in: query
+ *         name: toDate
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: date
+ *           example: "2025-01-31"
+ *         description: Ngày kết thúc
+ *       - in: query
+ *         name: customerId
+ *         required: false
+ *         schema:
+ *           type: string
+ *           example: "507f1f77bcf86cd799439011"
+ *         description: ID khách hàng (không bắt buộc, nếu không có sẽ lấy tất cả khách hàng)
+ *     responses:
+ *       200:
+ *         description: OK
  */
