@@ -194,23 +194,33 @@ const systemServices = {
         session.startTransaction()
         try {
             const { apiIds } = reqData
-            const checkPermissionId =
-                await PermissionModel.findById(permissionId)
+            const checkPermissionId = await PermissionModel.findById(
+                permissionId,
+                null,
+                { session },
+            )
             if (!checkPermissionId) {
                 throw new BadReq(errorCode.PERMISSION_NOT_FOUND)
             }
 
-            const apis = await ApiModel.find({ _id: { $in: apiIds } })
+            const apis = await ApiModel.find({ _id: { $in: apiIds } }, null, {
+                session,
+            })
             if (apis.length !== apiIds.length) {
                 throw new BadReq(errorCode.API_NOT_FOUND)
             }
 
-            await PermissionApiModel.deleteMany({
-                permissionId,
-            })
+            await PermissionApiModel.deleteMany(
+                {
+                    permissionId,
+                },
+                { session },
+            )
 
             const dataInput = apiIds.map((apiId) => ({ permissionId, apiId }))
-            await PermissionApiModel.insertMany(dataInput)
+            await PermissionApiModel.insertMany(dataInput, { session })
+
+            await session.commitTransaction()
             session.endSession()
             return null
         } catch (error) {
@@ -220,29 +230,185 @@ const systemServices = {
         }
     },
     getAllRole: async (query) => {
-        let { page = 1, limit = 10, search } = query
-        page = Number(page)
-        limit = Number(limit)
-        search = new RegExp(search, 'i')
+        try {
+            let { page = 1, limit = 10, search } = query
+            page = Number(page)
+            limit = Number(limit)
+            search = new RegExp(search, 'i')
 
-        const [roles, totalRoles] = await Promise.all([
-            RoleModel.find({ name: search })
-                .skip((page - 1) * limit)
-                .limit(limit),
-            RoleModel.countDocuments({ name: search }),
-        ])
+            const [roles, totalRoles] = await Promise.all([
+                RoleModel.find({ name: search })
+                    .skip((page - 1) * limit)
+                    .limit(limit),
+                RoleModel.countDocuments({ name: search }),
+            ])
 
-        return {
-            roles,
-            page,
-            totalRoles,
-            totalPage: Math.ceil(totalRoles / limit),
+            return {
+                roles,
+                page,
+                totalRoles,
+                totalPage: Math.ceil(totalRoles / limit),
+            }
+        } catch (error) {
+            throw error
         }
     },
     getRoleById: async (id) => {
-        const role = await RoleModel.findById(id)
-        if (!role) {
-            throw new BadReq(errorCode.ROLE_NOT_FOUND)
+        try {
+            const checkRole = await RoleModel.findById(id)
+            if (!checkRole) {
+                throw new BadReq(errorCode.ROLE_NOT_FOUND)
+            }
+
+            const role = await RoleModel.aggregate([
+                {
+                    $match: {
+                        _id: new Types.ObjectId(id),
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'rolepermissions',
+                        localField: '_id',
+                        foreignField: 'roleId',
+                        as: 'permissionIds',
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'permissions',
+                        localField: 'permissionIds.permissionId',
+                        foreignField: '_id',
+                        pipeline: [
+                            {
+                                $match: {
+                                    parentPermissionId: null,
+                                },
+                            },
+                        ],
+                        as: 'parentPermissions',
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'permissions',
+                        localField: 'permissionIds.permissionId',
+                        foreignField: '_id',
+                        pipeline: [
+                            {
+                                $match: { parentPermissionId: { $ne: null } },
+                            },
+                        ],
+                        as: 'childrenPermissions',
+                    },
+                },
+                {
+                    $addFields: {
+                        permissions: {
+                            $map: {
+                                input: '$parentPermissions',
+                                as: 'parent',
+                                in: {
+                                    $mergeObjects: [
+                                        '$$parent',
+                                        {
+                                            children: {
+                                                $filter: {
+                                                    input: '$childrenPermissions',
+                                                    as: 'child',
+                                                    cond: {
+                                                        $eq: [
+                                                            '$$child.parentPermissionId',
+                                                            '$$parent._id',
+                                                        ],
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                    },
+                },
+                {
+                    $project: {
+                        __v: 0,
+                        permissionIds: 0,
+                        parentPermissions: 0,
+                        childrenPermissions: 0,
+                        'permissions.parentPermissionId': 0,
+                        'permissions.__v': 0,
+                        'permissions.children.parentPermissionId': 0,
+                        'permissions.children.__v': 0,
+                    },
+                },
+            ])
+
+            return role
+        } catch (error) {
+            throw error
+        }
+    },
+
+    updateRoleById: async (id, reqData) => {
+        const session = await mongoose.startSession()
+        session.startTransaction()
+        try {
+            const { parentPermissionIds } = reqData
+            const checkRole = await RoleModel.findById(id, null, { session })
+            if (!checkRole) {
+                throw new BadReq(errorCode.ROLE_NOT_FOUND)
+            }
+
+            const data = parentPermissionIds
+                .map((parent) => [parent._id, ...parent.childrenPermissionIds])
+                .flat()
+
+            const checkPermissionId = await PermissionModel.find(
+                {
+                    _id: { $in: data },
+                },
+                null,
+                { session },
+            )
+            if (checkPermissionId.length !== data.length) {
+                throw new BadReq(errorCode.PERMISSION_NOT_FOUND)
+            }
+
+            for (let parent of parentPermissionIds) {
+                const checks = await Promise.all(
+                    parent.childrenPermissionIds.map((child) =>
+                        PermissionModel.findOne(
+                            {
+                                _id: child,
+                                parentPermissionId: parent._id,
+                            },
+                            null,
+                            { session },
+                        ),
+                    ),
+                )
+
+                if (checks.some((e) => !e)) {
+                    throw new BadReq(errorCode.PERMISSION_NOT_SATISFIED)
+                }
+            }
+
+            const inputData = data.map((permissionId) => ({
+                roleId: id,
+                permissionId: permissionId,
+            }))
+            await RolePermissionModel.deleteMany({ roleId: id }, { session })
+            await RolePermissionModel.insertMany(inputData, { session })
+
+            await session.commitTransaction()
+            session.endSession()
+            return null
+        } catch (error) {
+            await session.abortTransaction()
+            session.endSession()
+            throw error
         }
     },
 }
