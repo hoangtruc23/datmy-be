@@ -1,6 +1,4 @@
 const { Types } = require('mongoose')
-const GoodsIssueModel = require('../models/goodsIssue')
-const constant = require('../utils/constant/constant')
 const InvoiceModel = require('../models/invoice')
 const CustomerModel = require('../models/customer')
 const ProductModel = require('../models/product')

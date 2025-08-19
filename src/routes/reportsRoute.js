@@ -499,7 +499,7 @@ module.exports = router
  *         schema:
  *           type: string
  *           format: date
- *           example: "2025-01-01"
+ *           example: "01/01/2025"
  *         description: Ngày bắt đầu
  *       - in: query
  *         name: toDate
@@ -507,7 +507,7 @@ module.exports = router
  *         schema:
  *           type: string
  *           format: date
- *           example: "2025-01-31"
+ *           example: "01/01/2026"
  *         description: Ngày kết thúc
  *       - in: query
  *         name: customerId
