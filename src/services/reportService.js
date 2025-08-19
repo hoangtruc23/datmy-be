@@ -80,6 +80,7 @@ const reportService = {
                                 invoice.invoiceDate,
                             ),
                             taxCode: customer ? customer.taxCode : '',
+                            productId: detail.productId,
                             productCode: product ? product.code : '',
                             productName: product ? product.name : '',
                             unit: unit ? unit.name : '',
@@ -432,8 +433,8 @@ const reportService = {
                 startDate: start.toISOString().split('T')[0],
                 endDate: end.toISOString().split('T')[0],
                 openingBalance,
-                incurredCredit, // Tổng thanh toán
-                incurredDebit, // Tổng phát sinh
+                incurredCredit,
+                incurredDebit,
                 closingBalance,
             },
             details: paginatedTransactions,
@@ -446,8 +447,6 @@ const reportService = {
         }
     },
     generateSalesDetailReport: async (fromDate, toDate, customerId) => {
-        console.log('fromDate:', fromDate)
-        console.log('toDate:', toDate)
         try {
             const formatDateToVietnamese = (dateString) => {
                 const date = new Date(dateString)
@@ -457,45 +456,63 @@ const reportService = {
                 return `${day}/${month}/${year}`
             }
 
-            let invoiceQuery = {
+            const invoiceQuery = {
                 invoiceDate: {
                     $gte: new Date(fromDate),
                     $lte: new Date(toDate),
                 },
             }
-
-            if (customerId) {
-                invoiceQuery.customerId = customerId
-            }
+            if (customerId) invoiceQuery.customerId = customerId
 
             const invoices = await InvoiceModel.find(invoiceQuery).lean()
 
             let customerName = ''
-
             if (customerId) {
                 const customer = await CustomerModel.findById(customerId).lean()
                 customerName = customer ? customer.name : ''
             }
 
+            const customerCache = {}
+            const productCache = {}
+            const unitCache = {}
+
             const salesData = []
 
             for (const invoice of invoices) {
-                const customer = await CustomerModel.findById(
-                    invoice.customerId,
-                ).lean()
+                let customer = null
+                if (invoice.customerId) {
+                    customer =
+                        customerCache[invoice.customerId] ||
+                        (await CustomerModel.findById(
+                            invoice.customerId,
+                        ).lean())
+                    customerCache[invoice.customerId] = customer
+                }
 
                 for (const detail of invoice.invoiceDetails) {
-                    const product = await ProductModel.findById(
-                        detail.productId,
-                    ).lean()
+                    let product = null
+                    if (detail.productId) {
+                        product =
+                            productCache[detail.productId] ||
+                            (await ProductModel.findById(
+                                detail.productId,
+                            ).lean())
+                        productCache[detail.productId] = product
+                    }
 
-                    const unit = await UnitModel.findById(product.unit).lean()
+                    let unit = null
+                    if (product && product.unit) {
+                        unit =
+                            unitCache[product.unit] ||
+                            (await UnitModel.findById(product.unit).lean())
+                        unitCache[product.unit] = unit
+                    }
 
-                    const totalAmount = detail.totalAmountProduct
+                    const totalAmount = detail.totalAmountProduct || 0
                     const vatAmount = Math.round(totalAmount * 0.1)
                     const totalPayment = totalAmount + vatAmount
 
-                    const salesItem = {
+                    salesData.push({
                         customerName: customer
                             ? customer.name
                             : invoice.customerName,
@@ -504,21 +521,21 @@ const reportService = {
                             invoice.invoiceDate,
                         ),
                         taxCode: customer ? customer.taxCode : '',
+                        productId: detail.productId,
                         productCode: product ? product.code : '',
                         productName: product ? product.name : '',
                         unit: unit ? unit.name : '',
-                        quantity: detail.quantity,
-                        unitPrice: detail.price,
+                        quantity: detail.quantity || 0,
+                        unitPrice: detail.price || 0,
                         discount: detail.discount || 0,
                         totalAmount: totalAmount,
                         vatAmount: vatAmount,
                         totalPayment: totalPayment,
                         address: customer ? customer.billingAddress : '',
-                    }
-
-                    salesData.push(salesItem)
+                    })
                 }
             }
+
             const summary = salesData.reduce(
                 (acc, item) => {
                     acc.totalQuantity += item.quantity
@@ -534,20 +551,14 @@ const reportService = {
                     totalPaymentAmount: 0,
                 },
             )
-            const data = {
+
+            return {
                 fromDate: formatDateToVietnamese(fromDate),
                 toDate: formatDateToVietnamese(toDate),
-                customerName: customerName,
-                salesData: salesData,
-                summary: {
-                    totalQuantity: summary.totalQuantity,
-                    totalSalesAmount: summary.totalSalesAmount,
-                    totalVatAmount: summary.totalVatAmount,
-                    totalPaymentAmount: summary.totalPaymentAmount,
-                },
+                customerName,
+                salesData,
+                summary,
             }
-
-            return data
         } catch (error) {
             console.error('Lỗi khi tạo báo cáo chi tiết bán hàng:', error)
             throw error
