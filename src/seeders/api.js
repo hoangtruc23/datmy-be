@@ -603,12 +603,6 @@ async function apiSeeder() {
             api: '/debt/generatePaymentRequest',
             note: 'Tạo giấy đề nghị thanh toán',
         },
-        {
-            _id: new Types.ObjectId('6898697b630fdba8a091c0f4'),
-            api: '/debt/generateSalesDetailReport',
-            note: 'Tạo báo cáo chi tiết bán hàng',
-        },
-
         //Cài đặt công nợ
         {
             _id: new Types.ObjectId('6882fdc36f95b8b522848800'),
