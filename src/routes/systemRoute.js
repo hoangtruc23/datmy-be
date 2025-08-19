@@ -14,6 +14,9 @@ router.post(
     '/updatePermissionApi/:permissionId',
     systemController.updatePermissionApi,
 )
+router.get('/getAllRole', systemController.getAllRole)
+router.get('/getRoleById/:roleId', systemController.getRoleById)
+router.post('/updateRoleById/:roleId', systemController.updateRoleById)
 
 module.exports = router
 
@@ -512,6 +515,392 @@ module.exports = router
  *               apiIds:
  *                 type: array
  *                 example: ["6854e30d6b90439ad8c00db7","6854e30d6b90439ad8c00db8"]
+ *     responses:
+ *       200:
+ *         description: Cập nhật Permission thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
+ *                 code:
+ *                   type: integer
+ *                   example: 1
+ *                 message:
+ *                   type: string
+ *                   example: OK!
+ *                 data:
+ *                   type: object
+ *                   example: null
+ *       400:
+ *         description: Lỗi input
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 400
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Tên kho là bắt buộc!
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       401:
+ *         description: Chưa đăng nhập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 401
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có token
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       403:
+ *         description: Không có quyền truy cập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 403
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có quyền
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       500:
+ *         description: Lỗi server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 500
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Lỗi server!
+ *                 data:
+ *                   type: string
+ *                   example: null
+ */
+
+/**
+ * @swagger
+ * /system/getAllRole:
+ *   get:
+ *     summary: Lấy danh sách các role
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [System]
+ *     parameters:
+ *     - name: search
+ *       in: query
+ *       schema:
+ *         type: string
+ *       description: Từ khóa tìm kiếm
+ *     - name: page
+ *       in: query
+ *       schema:
+ *         type: integer
+ *       description: Page muốn lấy
+ *     - name: limit
+ *       in: query
+ *       schema:
+ *         type: integer
+ *       description: Giới hạn số phần tử trong 1 page
+ *     responses:
+ *       200:
+ *         description: Lấy danh sách thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
+ *                 code:
+ *                   type: integer
+ *                   example: 1
+ *                 message:
+ *                   type: string
+ *                   example: OK!
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     apis:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           _id:
+ *                             type: string
+ *                             example: 684686f736b60123f03418dd
+ *                           name:
+ *                             type: string
+ *                             example: BGĐ
+ *                           note:
+ *                             type: string
+ *                             example: Ban giám đốc
+ *                     page:
+ *                       type: number
+ *                       example: 1
+ *                     totalItem:
+ *                       type: number
+ *                       example: 10
+ *                     totalPage:
+ *                       example: 1
+ *                       type: number
+ *       401:
+ *         description: Chưa đăng nhập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 401
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có token
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       403:
+ *         description: Không có quyền truy cập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 403
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có quyền
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       500:
+ *         description: Lỗi server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Lỗi server!
+ *                 data:
+ *                   type: string
+ *                   example: null
+ */
+
+/**
+ * @swagger
+ * /system/getRoleById/{roleId}:
+ *   get:
+ *     summary: Lấy thông tin 1 Role theo roleId
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [System]
+ *     parameters:
+ *       - in: path
+ *         name: roleId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID của role
+ *     responses:
+ *       200:
+ *         description: Lấy thông tin thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
+ *                 code:
+ *                   type: integer
+ *                   example: 1
+ *                 message:
+ *                   type: string
+ *                   example: OK!
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: 684686f736b60123f03418dd
+ *                     name:
+ *                       type: string
+ *                       example: Nhân viên kho
+ *                     note:
+ *                       type: string
+ *                       example: Nhân viên kho
+ *                     permissions:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           _id:
+ *                             type: string
+ *                             example: 684686f736b60123f03418dd
+ *                           name:
+ *                             type: string
+ *                             example: Khách hàng
+ *                           code:
+ *                             type: string
+ *                             example: Khach-hang
+ *                           children:
+ *                             type: array
+ *                             items:
+ *                               type: object
+ *                               properties:
+ *                                 _id:
+ *                                   type: string
+ *                                   example: 684686f736b60123f03418dd
+ *                                 name:
+ *                                   type: string
+ *                                   example: Thêm
+ *                                 code:
+ *                                   type: string
+ *                                   example: Khach_hang-them
+ *       401:
+ *         description: Chưa đăng nhập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 401
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có token
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       403:
+ *         description: Không có quyền truy cập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 403
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có quyền
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       500:
+ *         description: Lỗi server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Lỗi server!
+ *                 data:
+ *                   type: string
+ *                   example: null
+ */
+
+/**
+ * @swagger
+ * /system/updateRoleById/{roleId}:
+ *   post:
+ *     summary: Cập nhật permission cho role
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [System]
+ *     parameters:
+ *     - name: roleId
+ *       in: path
+ *       required: true
+ *       schema:
+ *         type: string
+ *       description: Id của role
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - parentPermissionIds
+ *             properties:
+ *               parentPermissionIds:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: 6854e30d6b90439ad8c00db7
+ *                     childrenPermissionIds:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                         example: 6854e30d6b90439ad8c00db7
  *     responses:
  *       200:
  *         description: Cập nhật Permission thành công
