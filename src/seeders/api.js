@@ -791,6 +791,11 @@ async function apiSeeder() {
             api: '/system/updatePermissionApi',
             note: 'Chỉnh sửa PermissionApi theo PermissionId',
         },
+        {
+            _id: new Types.ObjectId('68a4244513d3b1f6e7194363'),
+            api: '/system/getAllRole',
+            note: 'Lấy ra tất cả Role',
+        },
     ])
 
     logger.info('apis seeded')

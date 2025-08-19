@@ -324,6 +324,10 @@ const errorCode = {
         code: 83,
         message: 'Api không tồn tại',
     },
+    ROLE_NOT_FOUND: {
+        code: 84,
+        message: 'Role không tồn tại',
+    },
 }
 
 module.exports = errorCode

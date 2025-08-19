@@ -1,6 +1,8 @@
 const ApiModel = require('../models/api')
 const PermissionModel = require('../models/permission')
 const PermissionApiModel = require('../models/permissionApi')
+const RoleModel = require('../models/role')
+const RolePermissionModel = require('../models/rolePermission')
 const { Types } = require('mongoose')
 const mongoose = require('mongoose')
 
@@ -215,6 +217,32 @@ const systemServices = {
             await session.abortTransaction()
             session.endSession()
             throw error
+        }
+    },
+    getAllRole: async (query) => {
+        let { page = 1, limit = 10, search } = query
+        page = Number(page)
+        limit = Number(limit)
+        search = new RegExp(search, 'i')
+
+        const [roles, totalRoles] = await Promise.all([
+            RoleModel.find({ name: search })
+                .skip((page - 1) * limit)
+                .limit(limit),
+            RoleModel.countDocuments({ name: search }),
+        ])
+
+        return {
+            roles,
+            page,
+            totalRoles,
+            totalPage: Math.ceil(totalRoles / limit),
+        }
+    },
+    getRoleById: async (id) => {
+        const role = await RoleModel.findById(id)
+        if (!role) {
+            throw new BadReq(errorCode.ROLE_NOT_FOUND)
         }
     },
 }
