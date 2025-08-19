@@ -34,12 +34,11 @@ module.exports = router
  *   name: Reports
  *   description: Báo cáo tổng hợp
  */
-
 /**
  * @swagger
  * /reports/sales:
  *   get:
- *     summary: Lấy dữ liệu báo cáo bán hàng tổng hợp (Báo cáo bán hàng)
+ *     summary: Lấy dữ liệu báo cáo bán hàng chi tiết
  *     security:
  *       - bearerAuth: []
  *     tags: [Reports]
@@ -49,7 +48,7 @@ module.exports = router
  *         required: true
  *         schema:
  *           type: string
- *           example: "01/01/2024"
+ *           example: "01/01/2025"
  *         description: "Ngày bắt đầu (DD/MM/YYYY)"
  *       - in: query
  *         name: endDate
@@ -59,12 +58,12 @@ module.exports = router
  *           example: "02/02/2026"
  *         description: "Ngày kết thúc (DD/MM/YYYY)"
  *       - in: query
- *         name: customerName
+ *         name: customerId
  *         required: false
  *         schema:
  *           type: string
  *           example: ""
- *         description: "Tên khách hàng để lọc"
+ *         description: "ID khách hàng để lọc"
  *       - in: query
  *         name: page
  *         required: false
@@ -101,7 +100,7 @@ module.exports = router
  *                   properties:
  *                     startDate:
  *                       type: string
- *                       example: "01/01/2024"
+ *                       example: "01/01/2025"
  *                     endDate:
  *                       type: string
  *                       example: "02/02/2026"
@@ -134,12 +133,15 @@ module.exports = router
  *                           taxCode:
  *                             type: string
  *                             example: ""
+ *                           productId:
+ *                             type: string
+ *                             example: "64f1a4000000000000000020"
  *                           productCode:
  *                             type: string
- *                             example: ""
+ *                             example: "SP001"
  *                           productName:
  *                             type: string
- *                             example: ""
+ *                             example: "Sản phẩm A"
  *                           unit:
  *                             type: string
  *                             example: ""
@@ -148,19 +150,19 @@ module.exports = router
  *                             example: 2
  *                           unitPrice:
  *                             type: number
- *                             example: 250000
+ *                             example: 350000
  *                           discount:
  *                             type: number
  *                             example: 0
  *                           totalAmount:
  *                             type: number
- *                             example: 500000
+ *                             example: 700000
  *                           vatAmount:
  *                             type: number
- *                             example: 50000
+ *                             example: 70000
  *                           totalPayment:
  *                             type: number
- *                             example: 550000
+ *                             example: 770000
  *                           address:
  *                             type: string
  *                             example: ""
@@ -497,7 +499,7 @@ module.exports = router
  *         schema:
  *           type: string
  *           format: date
- *           example: "2025-01-01"
+ *           example: "01/01/2025"
  *         description: Ngày bắt đầu
  *       - in: query
  *         name: toDate
@@ -505,7 +507,7 @@ module.exports = router
  *         schema:
  *           type: string
  *           format: date
- *           example: "2025-01-31"
+ *           example: "01/01/2026"
  *         description: Ngày kết thúc
  *       - in: query
  *         name: customerId
