@@ -47,6 +47,14 @@ const systemController = {
             next(error)
         }
     },
+    getAllRole: async (req, res, next) => {
+        try {
+            const result = await systemService.getAllRole(req.query)
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
 }
 
 module.exports = systemController
