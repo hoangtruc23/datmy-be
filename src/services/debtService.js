@@ -405,17 +405,13 @@ const debtService = {
     getSummary: async () => {
         try {
             const currentDate = new Date()
-            // const oneMonthAgo = new Date(
-            //     currentDate.getTime() - 30 * 24 * 60 * 60 * 1000,
-            // )
 
             const pipeline = [
-                {
-                    $match: {
-                        isFullyPaid: false,
-                        dueDate: { $lt: currentDate },
-                    },
-                },
+                // {
+                //     $match: {
+                //         dueDate: { $lt: currentDate },
+                //     },
+                // },
                 {
                     $lookup: {
                         from: 'paymenthistories',
@@ -452,6 +448,11 @@ const debtService = {
                             ],
                         },
                     },
+                },
+                {
+                    $match: {
+                        remainingDebt: { $gt: 0 }
+                    }
                 },
                 {
                     $group: {
@@ -506,23 +507,30 @@ const debtService = {
                                     in: {
                                         $cond: {
                                             if: {
-                                                $lt: [
+                                                $and: [
                                                     {
-                                                        $add: [
-                                                            '$$invoice.dueDate',
+                                                        $lt: ['$$invoice.dueDate', currentDate]
+                                                    },
+                                                    {
+                                                        $lt: [
                                                             {
-                                                                $multiply: [
-                                                                    '$limitOverdue',
-                                                                    1000 *
-                                                                        60 *
-                                                                        60 *
-                                                                        24,
+                                                                $add: [
+                                                                    '$$invoice.dueDate',
+                                                                    {
+                                                                        $multiply: [
+                                                                            '$limitOverdue',
+                                                                            1000 *
+                                                                                60 *
+                                                                                60 *
+                                                                                24,
+                                                                        ],
+                                                                    },
                                                                 ],
                                                             },
+                                                            currentDate,
                                                         ],
-                                                    },
-                                                    currentDate,
-                                                ],
+                                                    }
+                                                ]
                                             },
                                             then: '$$invoice.remainingDebt',
                                             else: 0,
@@ -531,7 +539,6 @@ const debtService = {
                                 },
                             },
                         },
-
                         badDebt: {
                             $sum: {
                                 $map: {
@@ -540,34 +547,41 @@ const debtService = {
                                     in: {
                                         $cond: {
                                             if: {
-                                                $lt: [
+                                                $and: [
                                                     {
-                                                        $add: [
-                                                            '$$invoice.dueDate',
-                                                            {
-                                                                $multiply: [
-                                                                    '$limitOverdue',
-                                                                    1000 *
-                                                                        60 *
-                                                                        60 *
-                                                                        24,
-                                                                ],
-                                                            },
-                                                            {
-                                                                $multiply: [
-                                                                    constant
-                                                                        .DEBT_STATUS_PERIOD
-                                                                        .BAD_DEBT,
-                                                                    1000 *
-                                                                        60 *
-                                                                        60 *
-                                                                        24,
-                                                                ],
-                                                            },
-                                                        ],
+                                                        $lt: ['$$invoice.dueDate', currentDate]
                                                     },
-                                                    currentDate,
-                                                ],
+                                                    {
+                                                        $lt: [
+                                                            {
+                                                                $add: [
+                                                                    '$$invoice.dueDate',
+                                                                    {
+                                                                        $multiply: [
+                                                                            '$limitOverdue',
+                                                                            1000 *
+                                                                                60 *
+                                                                                60 *
+                                                                                24,
+                                                                        ],
+                                                                    },
+                                                                    {
+                                                                        $multiply: [
+                                                                            constant
+                                                                                .DEBT_STATUS_PERIOD
+                                                                                .BAD_DEBT,
+                                                                            1000 *
+                                                                                60 *
+                                                                                60 *
+                                                                                24,
+                                                                        ],
+                                                                    },
+                                                                ],
+                                                            },
+                                                            currentDate,
+                                                        ],
+                                                    }
+                                                ]
                                             },
                                             then: '$$invoice.remainingDebt',
                                             else: 0,
@@ -630,11 +644,9 @@ const debtService = {
 
             const [currentStats] = await Promise.all([
                 InvoiceModel.aggregate(pipeline),
-                //InvoiceModel.aggregate(lastMonthPipeline),
             ])
 
             const stats = currentStats[0] || {}
-            //const lastMonth = lastMonthStats[0] || { badDebtRatio: 0 }
 
             return {
                 totalDebt: stats.totalDebt || 0,
@@ -643,10 +655,8 @@ const debtService = {
                 //tròn 2 sau phẩy
                 overdueDebtRatio:
                     Math.round(stats.overdueDebtRatio * 100) / 100 || 0,
-
                 //tròn 2 sau phẩy
                 badDebtRatio: Math.round(stats.badDebtRatio * 100) / 100 || 0,
-
                 customerCount: stats.customerCount || 0,
             }
         } catch (err) {
