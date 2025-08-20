@@ -1,6 +1,6 @@
 const PaymentHistoryModel = require('../models/paymentHistory')
 const InvoiceModel = require('../models/invoice')
-
+const constant = require('../utils/constant/constant')
 const dashBoardService = {
     getSumaryDashBoard: async () => {
         try {
@@ -140,7 +140,7 @@ const dashBoardService = {
             const customersWithDebt = await InvoiceModel.aggregate([
                 {
                     $match: {
-                        isFullyPaid: false, 
+                        isFullyPaid: false,
                     },
                 },
                 {
@@ -172,15 +172,14 @@ const dashBoardService = {
                     },
                 },
                 {
-                    $sort: { totalDebt: -1 }, 
+                    $sort: { totalDebt: -1 },
                 },
                 {
-                    $limit: 5, 
+                    $limit: 5,
                 },
             ])
 
             return customersWithDebt
-            
         } catch (err) {
             throw err
         }
@@ -241,18 +240,153 @@ const dashBoardService = {
             throw err
         }
     },
+
     getRecentInvoices: async () => {
         try {
-            const invoices = await InvoiceModel.find({})
-                .sort({ invoiceDate: -1 })
-                .limit(4)
-                .exec()
+            const currentDate = new Date()
+            const pipeline = [
+                {
+                    $lookup: {
+                        from: 'paymenthistories',
+                        let: { invoiceId: '$_id' },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $eq: ['$invoiceId', '$$invoiceId'],
+                                    },
+                                },
+                            },
+                            {
+                                $group: {
+                                    _id: null,
+                                    paidAmount: { $sum: '$amount' },
+                                },
+                            },
+                        ],
+                        as: 'payments',
+                    },
+                },
+                {
+                    $addFields: {
+                        totalPaid: {
+                            $ifNull: [
+                                { $arrayElemAt: ['$payments.paidAmount', 0] },
+                                0,
+                            ],
+                        },
+                        remainingDebt: {
+                            $subtract: [
+                                '$totalAmount',
+                                {
+                                    $ifNull: [
+                                        {
+                                            $arrayElemAt: [
+                                                '$payments.paidAmount',
+                                                0,
+                                            ],
+                                        },
+                                        0,
+                                    ],
+                                },
+                            ],
+                        },
+                        status: {
+                            $cond: {
+                                if: {
+                                    $eq: [
+                                        '$totalAmount',
+                                        {
+                                            $ifNull: [
+                                                {
+                                                    $arrayElemAt: [
+                                                        '$payments.paidAmount',
+                                                        0,
+                                                    ],
+                                                },
+                                                0,
+                                            ],
+                                        },
+                                    ],
+                                },
+                                then: constant.INVOICE_STATUS.PAID,
+                                else: {
+                                    $cond: {
+                                        if: { $lt: ['$dueDate', currentDate] },
+                                        then: constant.INVOICE_STATUS.OVERDUE,
+                                        else: {
+                                            $cond: {
+                                                if: {
+                                                    $gt: [
+                                                        {
+                                                            $ifNull: [
+                                                                {
+                                                                    $arrayElemAt:
+                                                                        [
+                                                                            '$payments.paidAmount',
+                                                                            0,
+                                                                        ],
+                                                                },
+                                                                0,
+                                                            ],
+                                                        },
+                                                        0,
+                                                    ],
+                                                },
+                                                then: constant.INVOICE_STATUS
+                                                    .PARTIALLY_PAID,
+                                                else: constant.INVOICE_STATUS
+                                                    .PENDING,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+                { $sort: { invoiceDate: -1 } }, // mới nhất lên đầu
+                { $limit: 4 }, // chỉ lấy 4 hóa đơn
+                {
+                    $lookup: {
+                        from: 'customers',
+                        localField: 'customerId',
+                        foreignField: '_id',
+                        as: 'customer',
+                    },
+                },
+                {
+                    $unwind: {
+                        path: '$customer',
+                        preserveNullAndEmptyArrays: true,
+                    },
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        invoiceCode: 1,
+                        customerName: 1,
+                        totalAmount: 1,
+                        totalPaid: 1,
+                        remainingDebt: 1,
+                        invoiceDate: 1,
+                        dueDate: 1,
+                        status: 1,
+                        orderBy: 1,
+                        accountant: 1,
+                        reminderContact: 1,
+                        notes: 1,
+                    },
+                },
+            ]
 
-            return invoices
+            const recentInvoices = await InvoiceModel.aggregate(pipeline)
+            return recentInvoices
         } catch (err) {
             throw err
         }
     },
+
     getTopCustomerRevenue: async (limit = 4) => {
         try {
             const result = await InvoiceModel.aggregate([
@@ -277,6 +411,7 @@ const dashBoardService = {
                 {
                     $addFields: {
                         totalPaid: { $sum: '$payments.amount' },
+                        lastPaymentDate: { $max: '$payments.paymentDate' },
                     },
                 },
                 // Tính công nợ
@@ -293,7 +428,7 @@ const dashBoardService = {
                 },
                 // Giới hạn lấy top 5 khách
                 {
-                    $limit: 5,
+                    $limit: 4,
                 },
                 // Chọn trường cần trả về
                 {
@@ -302,6 +437,7 @@ const dashBoardService = {
                         customerId: '$_id',
                         customerName: 1,
                         totalInvoiceAmount: 1,
+                        lastPaymentDate: 1,
                         totalPaid: 1,
                         totalDebt: 1,
                     },

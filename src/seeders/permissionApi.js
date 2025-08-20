@@ -567,10 +567,6 @@ async function permissionApiSeeder() {
             permissionId: '6892ceaeee639479e26a93b4', // Tạo giấy đề nghị thanh toán
             apiId: '6892ceaeee639479e26a93b2', // /debt/generatePaymentRequest
         },
-        {
-            permissionId: '6898697b630fdba8a091c0f3', // Sinh báo cáo chi tiết khách hàng
-            apiId: '6898697b630fdba8a091c0f4', // /debt/generateCustomerDetailReport
-        },
 
         //Cài đặt công nợ
         {
@@ -697,6 +693,11 @@ async function permissionApiSeeder() {
             permissionId: '688c7f601bb97636f19d6ac4', // Xem Báo cáo
             apiId: '689d8f1028227ebb51e520e6', // /reports/sales
         },
+        {
+            permissionId: '688c7f601bb97636f19d6ac4', // Sinh báo cáo chi tiết khách hàng
+            apiId: '689d8f1028227ebb51e520e7', // /reports/generateCustomerDetailReport
+        },
+
     ])
     logger.info('PermissionApis seeded')
 }
