@@ -1,7 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 const puppeteer = require('puppeteer')
-
+const UnitModel = require('../models/unit')
 const pdfService = {
     generateGoodsIssuePdf: async (data) => {
         const templatePath = path.join(
@@ -38,21 +38,27 @@ const pdfService = {
 
             .replace('{{logoPath}}', logoDataUri)
 
-        let rows = ''
+       
+	    let rows = ''
         let total = 0
-        data.goodsIssueDetails.forEach((item, index) => {
+
+        for (const [index, item] of data.goodsIssueDetails.entries()) {
+            const unit = await UnitModel.findById(item.unit)
+            const unitName = unit ? unit.name : '—'
+
             total += item.issuedQuantity
             rows += `
             <tr>
                 <td>${index + 1}</td>
                 <td>${item.productName}</td>
                 <td>${item.origin || ''}</td>
-                <td>${item.unit || ''}</td>
+                <td>${unitName}</td>
                 <td>${item.issuedQuantity}</td>
                 <td>${item.note || ''}</td>
             </tr>
             `
-        })
+        }
+
         html = html.replace('{{goodsIssueDetails}}', rows)
         html = html.replace('{{totalIssuedQuantity}}', total)
         html = html.replace('{{goodsIssueNote}}', data.note || '')
@@ -261,6 +267,7 @@ const pdfService = {
                 .replace(/{{invoiceDate}}/g, data.invoiceDate || '')
                 .replace(/{{productRows}}/g, productRows)
                 .replace(/{{subtotal}}/g, formattedSubtotal)
+                .replace(/{{vatRate}}/g, data.vatRate || '')
                 .replace(/{{vat}}/g, formattedVat)
                 .replace(/{{total}}/g, formattedTotal)
                 .replace(/{{totalDebtInWords}}/g, data.totalDebtInWords || '')

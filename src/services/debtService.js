@@ -793,13 +793,9 @@ const debtService = {
                 (acc, item) => acc + item.lineTotal,
                 0,
             )
-            const vat = subtotal * 0.1
-
-            const total = subtotal + vat
-
-            if (total !== invoice.totalAmount) {
-                throw new BadReq(errorCode.INVOICE_TOTAL_AMOUNT_MISMATCH)
-            }
+            const vatRate = invoice.VATRate || 0
+            const vat = invoice.VATAmount
+            const total = invoice.totalAmount
             const totalDebtInWords = convertNumberToVietnameseWords(total)
 
             const invoiceDate = new Date(invoice.invoiceDate)
@@ -814,6 +810,7 @@ const debtService = {
                 products: products,
 
                 subtotal: subtotal,
+                vatRate: vatRate,
                 vat: vat,
                 total: total,
                 totalDebtInWords: totalDebtInWords,

@@ -66,6 +66,11 @@ const invoiceSchema = new Schema(
             required: true,
             unique: true,
         },
+        //theo phần trăm
+        VATRate: { type: Number, default: 10 },
+        //Tiền thuế GTGT
+        VATAmount: { type: Number, required: true },
+        
         totalAmount: { type: Number, required: true },
         invoiceDate: { type: Date },
         //Cộng từ createdAt và  limitDue trong configDebt
