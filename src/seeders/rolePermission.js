@@ -209,6 +209,10 @@ async function rolePermissionSeeder() {
             roleId: '684927c871287f2ae7d8130b', // Quản trị viên
             permissionId: '688c7f601bb97636f19d6ad8', // Xem báo cáo số chi tiết bán hàng
         },
+                {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '688c7f601bb97636f19d6ad9', // Xem báo cáo đối chiếu công nợ
+        },
         {
             roleId: '684927c871287f2ae7d8130b',
             permissionId: '684927c871287f2ae7d81308', // Xuất kho

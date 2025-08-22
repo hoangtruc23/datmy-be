@@ -3,7 +3,15 @@ const InvoiceModel = require('../models/invoice')
 const CustomerModel = require('../models/customer')
 const ProductModel = require('../models/product')
 const UnitModel = require('../models/unit')
+const debtCalculationService = require('../services/debtCalculationService')
+const ConfigDebtModel = require('../models/configDebt')
+const convertNumberToVietnameseWords = require('../middlewares/numberToWords')
+const PaymentHistoryModel = require('../models/paymentHistory')
+const BadReq = require('../utils/response/requestError')
+const errorCode = require('../utils/response/errorCode')
+const { ObjectId } = require('mongodb')
 const e = require('express')
+const { log } = require('winston')
 const reportService = {
     getSalesReport: async (
         startDate,
@@ -138,15 +146,23 @@ const reportService = {
 
         const start = new Date(startDate)
         const end = new Date(endDate)
-
         const customerMatch = {}
+        let allCustomers = []
         if (customerId) {
+
             customerMatch._id = new Types.ObjectId(String(customerId))
+            allCustomers = await CustomerModel.find(customerMatch)
+                .select('_id name')
+                .lean()
+            if (allCustomers.length === 0) {
+                throw new BadReq(USER_NOT_FOUND)
+            }
+        } else {
+            allCustomers = await CustomerModel.find(customerMatch)
+                .select('_id name')
+                .lean()
         }
 
-        const allCustomers = await CustomerModel.find(customerMatch)
-            .select('_id name')
-            .lean()
         if (allCustomers.length === 0) {
             return {
                 summary: {
@@ -160,26 +176,25 @@ const reportService = {
             }
         }
 
-        // 1. Calculate the detailed breakdown for ALL customers
         const allCustomerDetails = await Promise.all(
             allCustomers.map(async (customer) => {
                 const id = customer._id
                 const openingBalance =
-                    await debtCalculationService.getOpeningBalance(id, start)
+                    await debtCalculationService.getOpeningBalance(id, start) // Tính số nợ trước kì
                 const incurredDebit =
                     await debtCalculationService.getIncurredDebitForPeriod(
                         id,
                         start,
                         end,
-                    )
+                    ) // Nợ phát sinh trong kì (= tổng totalamount trong hóa đơn)
                 const incurredCredit =
                     await debtCalculationService.getIncurredCreditForPeriod(
                         id,
                         start,
                         end,
-                    )
+                    ) // tổng tiền thanh toán trong kì
                 const closingBalance =
-                    openingBalance + incurredDebit - incurredCredit
+                    openingBalance + incurredDebit - incurredCredit // số dư cuối kì
                 const configDebt = await ConfigDebtModel.findOne({
                     customerId: id,
                 })
@@ -560,6 +575,101 @@ const reportService = {
         } catch (error) {
             console.error('Lỗi khi tạo báo cáo chi tiết bán hàng:', error)
             throw error
+        }
+    },
+
+    fileDebtReconciliation: async (startDate, endDate, customerId) => {
+        try {
+            const currentDate = new Date()
+            const start = new Date(startDate)
+            const end = new Date(endDate)
+
+            const customer = await CustomerModel.findById(customerId)
+            if (!customer) {
+                throw new BadReq(errorCode.CUSTOMER_NOT_FOUND)
+            }
+            const pipeline = [
+                {
+                    $match: {
+                        customerId: new ObjectId(customerId),
+                        isFullyPaid: false,
+                        createdAt: {
+                            $lte: end,
+                        },
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'paymenthistories',
+                        let: { invoiceId: '$_id' },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $eq: ['$invoiceId', '$$invoiceId'],
+                                    },
+                                },
+                            },
+                            {
+                                $group: {
+                                    _id: null,
+                                    paidAmount: { $sum: '$amount' },
+                                },
+                            },
+                        ],
+                        as: 'payments',
+                    },
+                },
+                {
+                    $addFields: {
+                        remainingDebt: {
+                            $subtract: [
+                                '$totalAmount',
+                                {
+                                    $ifNull: [
+                                        { $sum: '$payments.paidAmount' },
+                                        0,
+                                    ],
+                                },
+                            ],
+                        },
+                    },
+                },
+                {
+                    $group: {
+                        _id: '$customerId',
+                        totalDebt: { $sum: '$remainingDebt' },
+                    },
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        totalDebt: 1,
+                    },
+                },
+            ]
+
+            const result = await InvoiceModel.aggregate(pipeline)
+            const data = result[0] || {}
+            const totalDebtInWords = convertNumberToVietnameseWords(
+                data.totalDebt || 0,
+            )
+            const dataToWrite = {
+                currentDate,
+                officialName: customer.officialName,
+                deliveryAddress: customer.deliveryAddresses || null,
+                taxCode: customer.taxCode,
+                representative: customer.representative || null,
+
+                totalDebt: data.totalDebt || 0,
+                totalDebtInWords,
+
+                startDate: start,
+                endDate: end,
+            }
+            return dataToWrite
+        } catch (err) {
+            throw err
         }
     },
 }

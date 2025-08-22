@@ -22,6 +22,8 @@ router.get(
     reportController.getDebtComparisonDetail,
 )
 
+router.post('/fileDebtReconciliation', reportController.fileDebtReconciliation)
+
 router.get(
     '/generateSalesDetailReport',
     reportController.generateSalesDetailReport,
@@ -516,6 +518,47 @@ module.exports = router
  *           type: string
  *           example: "507f1f77bcf86cd799439011"
  *         description: ID khách hàng (không bắt buộc, nếu không có sẽ lấy tất cả khách hàng)
+ *     responses:
+ *       200:
+ *         description: OK
+ */
+
+
+
+/**
+ * @swagger
+ * /reports/fileDebtReconciliation:
+ *   post:
+ *     summary: Sinh báo cáo đối chiếu công nợ
+ *     description: Sinh file docx mẫu biên bản đối chiếu công nợ
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Reports]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - startDate
+ *               - endDate
+ *               - customerId
+ *             properties:
+ *               startDate:
+ *                 type: string
+ *                 format: date
+ *                 example: "2025-01-01"
+ *                 description: Ngày bắt đầu của kỳ đối chiếu công nợ (YYYY-MM-DD).
+ *               endDate:
+ *                 type: string
+ *                 format: date
+ *                 example: "2025-12-31"
+ *                 description: Ngày kết thúc của kỳ đối chiếu công nợ (YYYY-MM-DD).
+ *               customerId:
+ *                 type: string
+ *                 example: "688b814c95d7387437055e33"
+ *                 description: ID khách hàng
  *     responses:
  *       200:
  *         description: OK

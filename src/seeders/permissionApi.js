@@ -490,7 +490,7 @@ async function permissionApiSeeder() {
             apiId: '689c01a260903c30215b25c3', // /dashboard/summary
         },
         {
-            permissionId: '689c01a260903c30215b25c0', // Xuất báo cáo doanh thu và công nợ theo tháng 
+            permissionId: '689c01a260903c30215b25c0', // Xuất báo cáo doanh thu và công nợ theo tháng
             apiId: '689c01a260903c30215b25c4', // /dashboard/getRevenueMonthly
         },
         {
@@ -558,10 +558,6 @@ async function permissionApiSeeder() {
         {
             permissionId: '6880936c160be16212361ba2', // xem công nợ
             apiId: '68871438cb1a5fd3aadc0570', // /debt/getSummary
-        },
-        {
-            permissionId: '6892ceaeee639479e26a93b3', // Tạo biên bản đối chiếu
-            apiId: '6892ceaeee639479e26a93b1', // /debt/generateReport
         },
         {
             permissionId: '6892ceaeee639479e26a93b4', // Tạo giấy đề nghị thanh toán
@@ -688,7 +684,7 @@ async function permissionApiSeeder() {
         {
             permissionId: '688c7f601bb97636f19d6ac4', // Xem Báo cáo
             apiId: '688c7f601bb97636f19d6ac6', // /reports/debt-comparison/detail
-        },        
+        },
         {
             permissionId: '688c7f601bb97636f19d6ac4', // Xem Báo cáo
             apiId: '689d8f1028227ebb51e520e6', // /reports/sales
@@ -697,7 +693,10 @@ async function permissionApiSeeder() {
             permissionId: '688c7f601bb97636f19d6ac4', // Sinh báo cáo chi tiết khách hàng
             apiId: '689d8f1028227ebb51e520e7', // /reports/generateCustomerDetailReport
         },
-
+        {
+            permissionId: '688c7f601bb97636f19d6ad9', // Sinh báo cáo chi tiết khách hàng
+            apiId: '689d8f1028227ebb51e520e8', // /reports/generateCustomerDetailReport
+        },
     ])
     logger.info('PermissionApis seeded')
 }
