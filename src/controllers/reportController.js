@@ -1,11 +1,11 @@
 const reportService = require('../services/reportService')
 const response = require('../utils/response/response')
 const excelService = require('../services/excelService')
+const pdfService = require('../services/pdfService')
 
 const reportController = {
     getSalesReport: async (req, res, next) => {
         try {
-
             const { startDate, endDate, customerId, page, limit } = req.query
 
             const data = await reportService.getSalesReport(
@@ -60,6 +60,27 @@ const reportController = {
             res.send(buffer)
         } catch (err) {
             console.error('Lỗi trong generateSalesDetailReport:', err)
+            next(err)
+        }
+    },
+
+    fileDebtReconciliation: async (req, res, next) => {
+        try {
+            const { startDate, endDate, customerId } = req.body
+            const data = await reportService.fileDebtReconciliation(
+                startDate,
+                endDate,
+                customerId,
+            )
+            const pdfBuffer = await pdfService.debtReconciliationForm(data)
+
+            res.setHeader('Content-Type', 'application/pdf')
+            res.setHeader(
+                'Content-Disposition',
+                'attachment; filename="Doi-chieu-cong-no".pdf',
+            )
+            res.send(pdfBuffer)
+        } catch (err) {
             next(err)
         }
     },

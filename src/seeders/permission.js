@@ -638,6 +638,13 @@ async function permissionSeeder() {
             code: 'bao_cao-sinh_bao_cao_chi_tiet_khach_hang',
             parentPermissionId: '688c7f601bb97636f19d6ac3',
         },
+
+        {
+            _id: new Types.ObjectId('688c7f601bb97636f19d6ad9'),
+            name: 'Sinh báo cáo đối chiếu công nợ',
+            code: 'bao_cao-sinh_bao_cao_doi_chieu_cong_no',
+            parentPermissionId: '688c7f601bb97636f19d6ac3',
+        },
     ])
     logger.info('Permissions seeded')
 }

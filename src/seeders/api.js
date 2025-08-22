@@ -594,11 +594,6 @@ async function apiSeeder() {
             note: 'Lấy công nợ theo ID',
         },
         {
-            _id: new Types.ObjectId('6892ceaeee639479e26a93b1'),
-            api: '/debt/generateReport',
-            note: 'Tạo biên bản đối chiếu công nợ',
-        },
-        {
             _id: new Types.ObjectId('6892ceaeee639479e26a93b2'),
             api: '/debt/generatePaymentRequest',
             note: 'Tạo giấy đề nghị thanh toán',
@@ -764,6 +759,11 @@ async function apiSeeder() {
             _id: new Types.ObjectId('689d8f1028227ebb51e520e7'),
             api: '/reports/generateSalesDetailReport',
             note: 'Tạo báo cáo chi tiết bán hàng',
+        },
+        {
+            _id: new Types.ObjectId('689d8f1028227ebb51e520e8'),
+            api: '/reports/fileDebtReconciliation',
+            note: 'Tạo báo cáo đối chiếu công nợ',
         },
         //System
         {
