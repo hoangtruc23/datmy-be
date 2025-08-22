@@ -36,6 +36,15 @@ const invoiceService = {
                     (1000 * 60 * 60 * 24),
             )
 
+            const totalAmountProducts = invoiceDetails.reduce((sum, detail) => {
+                return sum + detail.totalAmountProduct
+            }, 0)
+
+            const VATAmount = totalAmount - totalAmountProducts
+            const VATRate = totalAmountProducts > 0 
+                ? Math.round((VATAmount / totalAmountProducts) * 100 * 100) / 100  // tròn 2
+                : 10 
+
             const invoice = await InvoiceModel.create({
                 customerId,
                 customerName,
@@ -51,6 +60,8 @@ const invoiceService = {
                 invoiceLink,
                 paymentBy,
                 notes,
+                VATRate,      
+                VATAmount,    
             })
 
             return invoice
@@ -251,6 +262,8 @@ const invoiceService = {
                         customerName: 1,
                         totalAmount: 1,
                         totalPaid: 1,
+                        VATRate: 1,
+                        VATAmount: 1,
                         remainingDebt: 1,
                         dueDate: 1,
                         status: 1,

@@ -520,9 +520,9 @@ const reportService = {
                             (await UnitModel.findById(product.unit).lean())
                         unitCache[product.unit] = unit
                     }
-
+                    const vatRate = invoice.VATRate || 0
                     const totalAmount = detail.totalAmountProduct || 0
-                    const vatAmount = Math.round(totalAmount * 0.1)
+                    const vatAmount = Math.round(totalAmount * vatRate * 0.01)
                     const totalPayment = totalAmount + vatAmount
 
                     salesData.push({
@@ -542,7 +542,8 @@ const reportService = {
                         unitPrice: detail.price || 0,
                         discount: detail.discount || 0,
                         totalAmount: totalAmount,
-                        vatAmount: vatAmount,
+                        vatRate,
+                        vatAmount,
                         totalPayment: totalPayment,
                         address: customer ? customer.billingAddress : '',
                     })
