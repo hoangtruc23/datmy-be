@@ -64,66 +64,93 @@ const debtReconciliationService = {
 
     getDebtComparisonSummary: async (query) => {
         let { startDate, endDate, customerId, page, limit } = query
-        page = Number(page) || 1;
-        limit = Number(limit) || 10;
-        
-        const start = new Date(startDate);
-        const end = new Date(endDate);
+        page = Number(page) || 1
+        limit = Number(limit) || 10
 
-        const customerMatch = {};
+        const start = new Date(startDate)
+        const end = new Date(endDate)
+
+        const customerMatch = {}
         if (customerId) {
-            customerMatch._id = new Types.ObjectId(String(customerId));
+            customerMatch._id = new Types.ObjectId(String(customerId))
         }
 
-        const allCustomers = await CustomerModel.find(customerMatch).select('_id name').lean();
+        const allCustomers = await CustomerModel.find(customerMatch)
+            .select('_id name')
+            .lean()
         if (allCustomers.length === 0) {
             return {
-                summary: { totalOpeningBalance: 0, totalIncurredCredit: 0, totalIncurredDebit: 0, totalClosingBalance: 0 },
+                summary: {
+                    totalOpeningBalance: 0,
+                    totalIncurredCredit: 0,
+                    totalIncurredDebit: 0,
+                    totalClosingBalance: 0,
+                },
                 details: [],
-                pagination: { page, limit, totalItems: 0, totalPages: 0 }
-            };
+                pagination: { page, limit, totalItems: 0, totalPages: 0 },
+            }
         }
 
         // 1. Calculate the detailed breakdown for ALL customers
         const allCustomerDetails = await Promise.all(
             allCustomers.map(async (customer) => {
-                const id = customer._id;
-                const openingBalance = await debtCalculationService.getOpeningBalance(id, start);
-                const incurredDebit = await debtCalculationService.getIncurredDebitForPeriod(id, start, end);
-                const incurredCredit = await debtCalculationService.getIncurredCreditForPeriod(id, start, end);
-                const closingBalance = openingBalance + incurredDebit - incurredCredit;
-                const configDebt = await ConfigDebtModel.findOne({ customerId: id });
+                const id = customer._id
+                const openingBalance =
+                    await debtCalculationService.getOpeningBalance(id, start)
+                const incurredDebit =
+                    await debtCalculationService.getIncurredDebitForPeriod(
+                        id,
+                        start,
+                        end,
+                    )
+                const incurredCredit =
+                    await debtCalculationService.getIncurredCreditForPeriod(
+                        id,
+                        start,
+                        end,
+                    )
+                const closingBalance =
+                    openingBalance + incurredDebit - incurredCredit
+                const configDebt = await ConfigDebtModel.findOne({
+                    customerId: id,
+                })
 
                 return {
                     customerId: id,
                     customerName: customer.name,
-                    openingBalance,       // Số dư đầu kỳ
-                    incurredCredit,       // Phát sinh có (Tổng thanh toán)
-                    incurredDebit,        // Phát sinh nợ (Tổng phát sinh)
-                    closingBalance,       // Số dư cuối kỳ
+                    openingBalance, // Số dư đầu kỳ
+                    incurredCredit, // Phát sinh có (Tổng thanh toán)
+                    incurredDebit, // Phát sinh nợ (Tổng phát sinh)
+                    closingBalance, // Số dư cuối kỳ
                     creditLimit: configDebt?.limitDebt || 0,
                     status: 'Bình thường', // Placeholder for status logic
-                };
-            })
-        );
-        
+                }
+            }),
+        )
+
         // tổng các field
-        const grandTotals = allCustomerDetails.reduce((totals, item) => {
-            totals.totalOpeningBalance += item.openingBalance;
-            totals.totalIncurredCredit += item.incurredCredit;
-            totals.totalIncurredDebit += item.incurredDebit;
-            totals.totalClosingBalance += item.closingBalance;
-            return totals;
-        }, {
-            totalOpeningBalance: 0,
-            totalIncurredCredit: 0, 
-            totalIncurredDebit: 0,  
-            totalClosingBalance: 0,
-        });
+        const grandTotals = allCustomerDetails.reduce(
+            (totals, item) => {
+                totals.totalOpeningBalance += item.openingBalance
+                totals.totalIncurredCredit += item.incurredCredit
+                totals.totalIncurredDebit += item.incurredDebit
+                totals.totalClosingBalance += item.closingBalance
+                return totals
+            },
+            {
+                totalOpeningBalance: 0,
+                totalIncurredCredit: 0,
+                totalIncurredDebit: 0,
+                totalClosingBalance: 0,
+            },
+        )
 
         // 3. Create the paginated view of the details
-        const totalItems = allCustomerDetails.length;
-        const paginatedDetails = allCustomerDetails.slice((page - 1) * limit, page * limit);
+        const totalItems = allCustomerDetails.length
+        const paginatedDetails = allCustomerDetails.slice(
+            (page - 1) * limit,
+            page * limit,
+        )
 
         return {
             summary: grandTotals,
@@ -133,8 +160,8 @@ const debtReconciliationService = {
                 limit: limit,
                 totalItems: totalItems,
                 totalPages: Math.ceil(totalItems / limit),
-            }
-        };
+            },
+        }
     },
 
     // getDebtComparisonDetail: async (query) => {
@@ -223,27 +250,34 @@ const debtReconciliationService = {
     //         transactions,
     //     }
     // },
-    
+
     getDebtComparisonDetail: async (query) => {
-        let { startDate, endDate, customerId, page, limit } = query;
-        page = Number(page) || 1;
-        limit = Number(limit) || 10;
+        let { startDate, endDate, customerId, page, limit } = query
+        page = Number(page) || 1
+        limit = Number(limit) || 10
 
-        const start = new Date(startDate);
-        const end = new Date(endDate);
-        const customerObjectId = new Types.ObjectId(String(customerId));
+        const start = new Date(startDate)
+        const end = new Date(endDate)
+        const customerObjectId = new Types.ObjectId(String(customerId))
 
-        const customer = await CustomerModel.findById(customerObjectId).select('name').lean();
+        const customer = await CustomerModel.findById(customerObjectId)
+            .select('name')
+            .lean()
         if (!customer) {
-            throw new BadReq(errorCode.CUSTOMER_NOT_FOUND);
+            throw new BadReq(errorCode.CUSTOMER_NOT_FOUND)
         }
 
-        const openingBalance = await debtCalculationService.getOpeningBalance(customerObjectId, start);
+        const openingBalance = await debtCalculationService.getOpeningBalance(
+            customerObjectId,
+            start,
+        )
 
         const invoicesInPeriod = await InvoiceModel.find({
             customerId: customerObjectId,
             createdAt: { $gte: start, $lte: end },
-        }).select('invoiceCode createdAt totalAmount').lean();
+        })
+            .select('invoiceCode createdAt totalAmount')
+            .lean()
 
         const paymentsInPeriod = await PaymentHistoryModel.aggregate([
             { $match: { paymentDate: { $gte: start, $lte: end } } },
@@ -266,7 +300,7 @@ const debtReconciliationService = {
                     invoiceCode: '$invoice.invoiceCode',
                 },
             },
-        ]);
+        ])
 
         const allTransactions = [
             ...invoicesInPeriod.map((inv) => ({
@@ -283,17 +317,26 @@ const debtReconciliationService = {
                 debit: 0,
                 credit: p.amount,
             })),
-        ].sort((a, b) => new Date(a.date) - new Date(b.date));
+        ].sort((a, b) => new Date(a.date) - new Date(b.date))
 
         // --- CALCULATE TOTALS FROM ALL TRANSACTIONS (BEFORE PAGINATION) ---
-        const incurredDebit = allTransactions.reduce((sum, t) => sum + t.debit, 0);
-        const incurredCredit = allTransactions.reduce((sum, t) => sum + t.credit, 0);
-        const closingBalance = openingBalance + incurredDebit - incurredCredit;
+        const incurredDebit = allTransactions.reduce(
+            (sum, t) => sum + t.debit,
+            0,
+        )
+        const incurredCredit = allTransactions.reduce(
+            (sum, t) => sum + t.credit,
+            0,
+        )
+        const closingBalance = openingBalance + incurredDebit - incurredCredit
 
         // --- APPLY PAGINATION TO THE TRANSACTIONS LIST ---
-        const totalItems = allTransactions.length;
-        const paginatedTransactions = allTransactions.slice((page - 1) * limit, page * limit);
-        
+        const totalItems = allTransactions.length
+        const paginatedTransactions = allTransactions.slice(
+            (page - 1) * limit,
+            page * limit,
+        )
+
         return {
             summary: {
                 customerName: customer.name,
@@ -301,7 +344,7 @@ const debtReconciliationService = {
                 endDate: end.toISOString().split('T')[0],
                 openingBalance,
                 incurredCredit, // Tổng thanh toán
-                incurredDebit,  // Tổng phát sinh
+                incurredDebit, // Tổng phát sinh
                 closingBalance,
             },
             details: paginatedTransactions,
@@ -310,8 +353,8 @@ const debtReconciliationService = {
                 limit: limit,
                 totalItems: totalItems,
                 totalPages: Math.ceil(totalItems / limit),
-            }
-        };
+            },
+        }
     },
 }
 

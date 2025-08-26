@@ -149,7 +149,6 @@ const reportService = {
         const customerMatch = {}
         let allCustomers = []
         if (customerId) {
-
             customerMatch._id = new Types.ObjectId(String(customerId))
             allCustomers = await CustomerModel.find(customerMatch)
                 .select('_id name')

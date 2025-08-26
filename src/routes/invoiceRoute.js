@@ -11,6 +11,7 @@ router.get('/getAll', invoiceController.getAll)
 router.get('/getById/:id', invoiceController.getById)
 router.delete('/delete/:id', invoiceController.delete)
 router.get('/summary', invoiceController.getSummary)
+router.post('/import', invoiceController.importFromExcel)
 module.exports = router
 
 /**
@@ -341,4 +342,27 @@ module.exports = router
  *     responses:
  *       200:
  *         description: Lấy tổng hợp thông tin thành công
+ */
+
+/**
+ * @swagger
+ * /invoice/import:
+ *   post:
+ *     summary: Import hóa đơn từ file Excel
+ *     tags: [Invoice]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - fileUrl
+ *             properties:
+ *               fileUrl:
+ *                 type: string
+ *                 description: Đường dẫn tới file Excel đã upload. Lấy từ api upload/file
+ *                 example: "https://example.com/uploads/1756193071488-sochitietbanhang---dulieu.xlsx"
  */

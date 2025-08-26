@@ -332,6 +332,14 @@ const errorCode = {
         code: 85,
         message: 'Permission con không thuộc về Permission cha',
     },
+    INVOICEMAP_EXCEL_INVALID: {
+        code: 86,
+        message: 'Dữ liệu hóa đơn trong file Excel không hợp lệ',
+    },
+    WORKSHEET_NOT_FOUND: {
+        code: 87,
+        message: 'Không tìm thấy worksheet trong file Excel',
+    },
 }
 
 module.exports = errorCode

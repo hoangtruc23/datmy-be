@@ -38,8 +38,7 @@ const pdfService = {
 
             .replace('{{logoPath}}', logoDataUri)
 
-       
-	    let rows = ''
+        let rows = ''
         let total = 0
 
         for (const [index, item] of data.goodsIssueDetails.entries()) {
