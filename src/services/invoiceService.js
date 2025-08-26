@@ -650,7 +650,6 @@ const invoiceService = {
             throw err
         }
     },
-
     importFromExcel: async (fileUrl) => {
         try {
             const baseUrl = process.env.BASE_URL
@@ -671,7 +670,7 @@ const invoiceService = {
             const worksheet = workbook.worksheets[0]
 
             if (!worksheet) throw new BadReq(errorCode.WORKSHEET_NOT_FOUND)
-            await InvoiceModel.deleteMany({})
+            //await InvoiceModel.deleteMany({})
             const invoiceMap = new Map()
 
             worksheet.eachRow((row, rowNumber) => {
@@ -727,8 +726,12 @@ const invoiceService = {
             }
 
             const savedInvoices = []
+            const failedInvoices = new Map()
+
             for (const inv of invoiceMap.values()) {
                 try {
+                    const errors = []
+
                     let customer = await CustomerModel.findOne({
                         $or: [
                             { taxCode: inv.taxCode },
@@ -738,14 +741,20 @@ const invoiceService = {
                     })
 
                     if (!customer) {
-                        continue
+                        errors.push(
+                            `Không tìm được khách hàng với mã số thuế là ${inv.taxCode} có tên khách hàng là ${inv.customerName} mã khách hàng là ${inv.customerCode}`,
+                        )
                     }
 
                     const existed = await InvoiceModel.findOne({
                         invoiceCode: inv.invoiceCode,
                     })
                     if (existed) {
-                        console.warn(`Invoice ${inv.invoiceCode} đã tồn tại`)
+                        errors.push(`Hóa đơn đã tồn tại trong hệ thống`)
+                    }
+
+                    if (errors.length > 0) {
+                        failedInvoices.set(inv.invoiceCode, errors)
                         continue
                     }
 
@@ -757,11 +766,14 @@ const invoiceService = {
                     dueDate.setDate(dueDate.getDate() + limitDue)
 
                     const details = []
+                    const invalidProducts = []
+
                     for (const d of inv.invoiceDetails) {
                         const product = await ProductModel.findOne({
                             code: d.productCode,
                         })
                         if (!product) {
+                            invalidProducts.push(d.productCode)
                             continue
                         }
                         details.push({
@@ -773,7 +785,15 @@ const invoiceService = {
                         })
                     }
 
-                    if (!details.length) {
+                    if (invalidProducts.length > 0) {
+                        errors.push(
+                            `Không tìm được sản phẩm với mã hàng là ${invalidProducts.join(', ')}`,
+                        )
+                    }
+
+                    // Không nhập được sản phẩm, thì không tạo hóa đơn luôn, dù các sản phẩm khác vẫn nhập được
+                    if (invalidProducts.length > 0) {
+                        failedInvoices.set(inv.invoiceCode, errors)
                         continue
                     }
 
@@ -811,10 +831,26 @@ const invoiceService = {
                         `Lỗi khi lưu invoice ${inv.invoiceCode}:`,
                         err.message,
                     )
+                    const existingErrors =
+                        failedInvoices.get(inv.invoiceCode) || []
+                    existingErrors.push(`Lỗi hệ thống: ${err.message}`)
+                    failedInvoices.set(inv.invoiceCode, existingErrors)
                 }
             }
 
-            return savedInvoices
+            const errorMessages = []
+            for (const [invoiceCode, errors] of failedInvoices) {
+                errorMessages.push(
+                    `Hóa đơn số ${invoiceCode} lỗi do: ${errors.join('. ')}.`,
+                )
+            }
+
+            return {
+                totalInvoices: invoiceMap.size,
+                successCount: savedInvoices.length,
+                failedCount: failedInvoices.size,
+                failedInvoices: errorMessages,
+            }
         } catch (err) {
             throw err
         }

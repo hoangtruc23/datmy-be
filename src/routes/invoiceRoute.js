@@ -364,5 +364,44 @@ module.exports = router
  *               fileUrl:
  *                 type: string
  *                 description: Đường dẫn tới file Excel đã upload. Lấy từ api upload/file
- *                 example: "https://example.com/uploads/1756193071488-sochitietbanhang---dulieu.xlsx"
+ *                 example: "http://example.com/inventory/api/upload/file/1756202472355-sochitietbanhang---dulieu.xlsx"
+ *     responses:
+ *       200:
+ *         description: Kết quả import hóa đơn
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     totalInvoices:
+ *                       type: integer
+ *                       description: Tổng số hóa đơn trong file
+ *                       example: 494
+ *                     successCount:
+ *                       type: integer
+ *                       description: Số hóa đơn import thành công
+ *                       example: 422
+ *                     failedCount:
+ *                       type: integer
+ *                       description: Số hóa đơn thất bại
+ *                       example: 95
+ *                     failedInvoices:
+ *                       type: array
+ *                       description: Danh sách các hóa đơn thất bại kèm lý do
+ *                       items:
+ *                         type: string
+ *                       example:
+ *                         - "Hóa đơn số 00002982 lỗi do: Không tìm được sản phẩm với mã hàng là sc32,"
+ *                         - "Hóa đơn số 00002983 lỗi do: Không tìm được sản phẩm với mã hàng là BAOTRI,"
+ *                         - "Hóa đơn số 00002984 lỗi do: Không tìm được sản phẩm với mã hàng là SC1,"
+ *       400:
+ *         description: Yêu cầu không hợp lệ (thiếu fileUrl hoặc file không đúng định dạng)
+ *       500:
+ *         description: Lỗi server trong quá trình import
  */
