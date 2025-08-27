@@ -352,8 +352,6 @@ module.exports = router
  *               data: null
  */
 
-
-
 /**
  * @swagger
  * /dashboard/getInvoiceRecent:
@@ -502,4 +500,3 @@ module.exports = router
  *               message: "Không có quyền"
  *               data: null
  */
-

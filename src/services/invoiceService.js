@@ -3,9 +3,13 @@ const InvoiceModel = require('../models/invoice')
 const CustomerModel = require('../models/customer')
 const DiscountRequestModel = require('../models/discountRequest')
 const PaymentHistoryModel = require('../models/paymentHistory')
+const ConfigDebtModel = require('../models/configDebt')
+const ProductModel = require('../models/product')
 const BadReq = require('../utils/response/requestError')
 const constant = require('../utils/constant/constant')
 const errorCode = require('../utils/response/errorCode')
+const path = require('path')
+const ExcelJS = require('exceljs')
 const invoiceService = {
     create: async (data) => {
         try {
@@ -41,14 +45,20 @@ const invoiceService = {
             }, 0)
 
             const VATAmount = totalAmount - totalAmountProducts
-            const VATRate = totalAmountProducts > 0 
-                ? Math.round((VATAmount / totalAmountProducts) * 100 * 100) / 100  // tròn 2
-                : 10 
+            const VATRate =
+                totalAmountProducts > 0
+                    ? Math.round(
+                          (VATAmount / totalAmountProducts) * 100 * 100,
+                      ) / 100 // tròn 2
+                    : 10
+
+            const notVATtotalAmount = totalAmountProducts
 
             const invoice = await InvoiceModel.create({
                 customerId,
                 customerName,
                 invoiceCode,
+                notVATtotalAmount,
                 totalAmount,
                 dueDate,
                 limitDue,
@@ -60,8 +70,8 @@ const invoiceService = {
                 invoiceLink,
                 paymentBy,
                 notes,
-                VATRate,      
-                VATAmount,    
+                VATRate,
+                VATAmount,
             })
 
             return invoice
@@ -260,6 +270,7 @@ const invoiceService = {
                         _id: 1,
                         invoiceCode: 1,
                         customerName: 1,
+                        notVATtotalAmount: 1,
                         totalAmount: 1,
                         totalPaid: 1,
                         VATRate: 1,
@@ -385,8 +396,8 @@ const invoiceService = {
             if (!Types.ObjectId.isValid(id))
                 throw new BadReq(errorCode.INVALID_ID)
             const invoice = await InvoiceModel.findById(id)
-            //.populate('customerId', 'name code')
-            .populate('invoiceDetails.productId', 'name shortName code')
+                //.populate('customerId', 'name code')
+                .populate('invoiceDetails.productId', 'name shortName code')
             if (!invoice) throw new BadReq(errorCode.INVOICE_NOT_FOUND)
             return invoice
         } catch (err) {
@@ -396,19 +407,19 @@ const invoiceService = {
 
     delete: async (id) => {
         try {
-            const invoice = await InvoiceModel.findById(id);
-            if (!invoice) throw new BadReq(errorCode.INVOICE_NOT_FOUND);
+            const invoice = await InvoiceModel.findById(id)
+            if (!invoice) throw new BadReq(errorCode.INVOICE_NOT_FOUND)
 
             await Promise.all([
                 PaymentHistoryModel.deleteMany({ invoiceId: id }),
-                DiscountRequestModel.deleteMany({ invoiceId: id })
-            ]);
+                DiscountRequestModel.deleteMany({ invoiceId: id }),
+            ])
 
-            await InvoiceModel.findByIdAndDelete(id);
-            
-            return null;
+            await InvoiceModel.findByIdAndDelete(id)
+
+            return null
         } catch (err) {
-            throw err;
+            throw err
         }
     },
 
@@ -634,6 +645,211 @@ const invoiceService = {
                 pendingAmount: result?.pendingAmount || 0,
                 overdueInvoices: result?.overdueInvoices || 0,
                 overdueAmount: result?.overdueAmount || 0,
+            }
+        } catch (err) {
+            throw err
+        }
+    },
+    importFromExcel: async (fileUrl) => {
+        try {
+            const baseUrl = process.env.BASE_URL
+            const idx = fileUrl.indexOf(baseUrl)
+
+            if (idx === -1) {
+                throw new Error(
+                    `Không tìm thấy BASE_URL (${baseUrl}) trong fileUrl: ${fileUrl}`,
+                )
+            }
+
+            let relativeUrl = fileUrl.substring(idx + baseUrl.length)
+            relativeUrl = relativeUrl.replace(/^\/+/, '')
+            const filePath = path.join(__dirname, '..', 'public', relativeUrl)
+
+            const workbook = new ExcelJS.Workbook()
+            await workbook.xlsx.readFile(filePath)
+            const worksheet = workbook.worksheets[0]
+
+            if (!worksheet) throw new BadReq(errorCode.WORKSHEET_NOT_FOUND)
+            //await InvoiceModel.deleteMany({})
+            const invoiceMap = new Map()
+
+            worksheet.eachRow((row, rowNumber) => {
+                if (rowNumber <= 4) return
+
+                const [
+                    customerName,
+                    customerCode,
+                    invoiceCode,
+                    invoiceDate,
+                    taxCode,
+                    productCode,
+                    productName,
+                    unit,
+                    quantity,
+                    price,
+                    revenue,
+                    vatAmount,
+                    totalAmount,
+                    address,
+                ] = row.values.slice(1)
+
+                if (!invoiceCode) return
+
+                if (!invoiceMap.has(invoiceCode)) {
+                    invoiceMap.set(invoiceCode, {
+                        customerName,
+                        taxCode,
+                        invoiceCode,
+                        invoiceDate,
+                        invoiceDetails: [],
+                        VATAmount: 0,
+                        revenue: 0,
+                        totalAmount: 0,
+                    })
+                }
+                // trường hợp hóa đơn có nhiều invoice Details -> một số trường cần cộng dồn
+                const inv = invoiceMap.get(invoiceCode)
+                inv.VATAmount += Number(vatAmount) || 0
+                inv.revenue += Number(revenue) || 0
+                inv.totalAmount += Number(totalAmount) || 0
+
+                inv.invoiceDetails.push({
+                    productCode,
+                    quantity: Number(quantity) || 0,
+                    price: Number(price) || 0,
+                    totalAmountProduct: Number(revenue) || 0,
+                })
+            })
+
+            if (invoiceMap.size === 0) {
+                throw new BadReq(errorCode.INVOICEMAP_EXCEL_INVALID)
+            }
+
+            const savedInvoices = []
+            const failedInvoices = new Map()
+
+            for (const inv of invoiceMap.values()) {
+                try {
+                    const errors = []
+
+                    let customer = await CustomerModel.findOne({
+                        $or: [
+                            { taxCode: inv.taxCode },
+                            { officialName: inv.customerName },
+                            { name: inv.customerCode },
+                        ],
+                    })
+
+                    if (!customer) {
+                        errors.push(
+                            `Không tìm được khách hàng với mã số thuế là ${inv.taxCode} có tên khách hàng là ${inv.customerName} mã khách hàng là ${inv.customerCode}`,
+                        )
+                    }
+
+                    const existed = await InvoiceModel.findOne({
+                        invoiceCode: inv.invoiceCode,
+                    })
+                    if (existed) {
+                        errors.push(`Hóa đơn đã tồn tại trong hệ thống`)
+                    }
+
+                    if (errors.length > 0) {
+                        failedInvoices.set(inv.invoiceCode, errors)
+                        continue
+                    }
+
+                    let configDebt = await ConfigDebtModel.findOne({
+                        customerId: customer._id,
+                    })
+                    let limitDue = configDebt ? configDebt.limitDue : 30
+                    let dueDate = new Date(inv.invoiceDate)
+                    dueDate.setDate(dueDate.getDate() + limitDue)
+
+                    const details = []
+                    const invalidProducts = []
+
+                    for (const d of inv.invoiceDetails) {
+                        const product = await ProductModel.findOne({
+                            code: d.productCode,
+                        })
+                        if (!product) {
+                            invalidProducts.push(d.productCode)
+                            continue
+                        }
+                        details.push({
+                            productId: product._id,
+                            quantity: d.quantity,
+                            price: d.price,
+                            discount: 0,
+                            totalAmountProduct: d.totalAmountProduct,
+                        })
+                    }
+
+                    if (invalidProducts.length > 0) {
+                        errors.push(
+                            `Không tìm được sản phẩm với mã hàng là ${invalidProducts.join(', ')}`,
+                        )
+                    }
+
+                    // Không nhập được sản phẩm, thì không tạo hóa đơn luôn, dù các sản phẩm khác vẫn nhập được
+                    if (invalidProducts.length > 0) {
+                        failedInvoices.set(inv.invoiceCode, errors)
+                        continue
+                    }
+
+                    const VATRate =
+                        inv.revenue > 0
+                            ? Math.round(
+                                  (inv.VATAmount / inv.revenue) * 100 * 100,
+                              ) / 100
+                            : 10
+
+                    const invoice = await InvoiceModel.create({
+                        customerId: customer._id,
+                        customerName: customer.name,
+                        invoiceCode: inv.invoiceCode,
+                        notVATtotalAmount: inv.revenue,
+                        totalAmount: inv.totalAmount,
+                        VATAmount: inv.VATAmount,
+                        VATRate,
+                        invoiceDate: new Date(inv.invoiceDate),
+                        dueDate,
+                        limitDue,
+                        isFullyPaid: false,
+                        orderBy: null,
+                        accountant: null,
+                        reminderContact: null,
+                        paymentBy: '',
+                        invoiceLink: null,
+                        invoiceDetails: details,
+                        notes: '',
+                    })
+
+                    savedInvoices.push(invoice)
+                } catch (err) {
+                    console.error(
+                        `Lỗi khi lưu invoice ${inv.invoiceCode}:`,
+                        err.message,
+                    )
+                    const existingErrors =
+                        failedInvoices.get(inv.invoiceCode) || []
+                    existingErrors.push(`Lỗi hệ thống: ${err.message}`)
+                    failedInvoices.set(inv.invoiceCode, existingErrors)
+                }
+            }
+
+            const errorMessages = []
+            for (const [invoiceCode, errors] of failedInvoices) {
+                errorMessages.push(
+                    `Hóa đơn số ${invoiceCode} lỗi do: ${errors.join('. ')}.`,
+                )
+            }
+
+            return {
+                totalInvoices: invoiceMap.size,
+                successCount: savedInvoices.length,
+                failedCount: failedInvoices.size,
+                failedInvoices: errorMessages,
             }
         } catch (err) {
             throw err

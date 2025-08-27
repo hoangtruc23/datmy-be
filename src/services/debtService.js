@@ -451,8 +451,8 @@ const debtService = {
                 },
                 {
                     $match: {
-                        remainingDebt: { $gt: 0 }
-                    }
+                        remainingDebt: { $gt: 0 },
+                    },
                 },
                 {
                     $group: {
@@ -509,7 +509,10 @@ const debtService = {
                                             if: {
                                                 $and: [
                                                     {
-                                                        $lt: ['$$invoice.dueDate', currentDate]
+                                                        $lt: [
+                                                            '$$invoice.dueDate',
+                                                            currentDate,
+                                                        ],
                                                     },
                                                     {
                                                         $lt: [
@@ -517,20 +520,21 @@ const debtService = {
                                                                 $add: [
                                                                     '$$invoice.dueDate',
                                                                     {
-                                                                        $multiply: [
-                                                                            '$limitOverdue',
-                                                                            1000 *
-                                                                                60 *
-                                                                                60 *
-                                                                                24,
-                                                                        ],
+                                                                        $multiply:
+                                                                            [
+                                                                                '$limitOverdue',
+                                                                                1000 *
+                                                                                    60 *
+                                                                                    60 *
+                                                                                    24,
+                                                                            ],
                                                                     },
                                                                 ],
                                                             },
                                                             currentDate,
                                                         ],
-                                                    }
-                                                ]
+                                                    },
+                                                ],
                                             },
                                             then: '$$invoice.remainingDebt',
                                             else: 0,
@@ -549,7 +553,10 @@ const debtService = {
                                             if: {
                                                 $and: [
                                                     {
-                                                        $lt: ['$$invoice.dueDate', currentDate]
+                                                        $lt: [
+                                                            '$$invoice.dueDate',
+                                                            currentDate,
+                                                        ],
                                                     },
                                                     {
                                                         $lt: [
@@ -557,31 +564,33 @@ const debtService = {
                                                                 $add: [
                                                                     '$$invoice.dueDate',
                                                                     {
-                                                                        $multiply: [
-                                                                            '$limitOverdue',
-                                                                            1000 *
-                                                                                60 *
-                                                                                60 *
-                                                                                24,
-                                                                        ],
+                                                                        $multiply:
+                                                                            [
+                                                                                '$limitOverdue',
+                                                                                1000 *
+                                                                                    60 *
+                                                                                    60 *
+                                                                                    24,
+                                                                            ],
                                                                     },
                                                                     {
-                                                                        $multiply: [
-                                                                            constant
-                                                                                .DEBT_STATUS_PERIOD
-                                                                                .BAD_DEBT,
-                                                                            1000 *
-                                                                                60 *
-                                                                                60 *
-                                                                                24,
-                                                                        ],
+                                                                        $multiply:
+                                                                            [
+                                                                                constant
+                                                                                    .DEBT_STATUS_PERIOD
+                                                                                    .BAD_DEBT,
+                                                                                1000 *
+                                                                                    60 *
+                                                                                    60 *
+                                                                                    24,
+                                                                            ],
                                                                     },
                                                                 ],
                                                             },
                                                             currentDate,
                                                         ],
-                                                    }
-                                                ]
+                                                    },
+                                                ],
                                             },
                                             then: '$$invoice.remainingDebt',
                                             else: 0,

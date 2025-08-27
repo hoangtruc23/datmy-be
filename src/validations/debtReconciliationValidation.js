@@ -1,6 +1,6 @@
 const joi = require('joi')
 
-const debtReconciliationValidation  = {
+const debtReconciliationValidation = {
     getDebtSummary: {
         query: joi.object({
             startDate: joi.date().iso().required().messages({
@@ -64,4 +64,4 @@ const debtReconciliationValidation  = {
     },
 }
 
-module.exports = debtReconciliationValidation 
+module.exports = debtReconciliationValidation

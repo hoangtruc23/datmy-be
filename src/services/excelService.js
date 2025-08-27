@@ -18,7 +18,6 @@ const excelService = {
                 ? `Khách hàng: ${data.customerName}`
                 : ''
             worksheet.getCell('A4').value = ''
-
             ;['A1', 'A2', 'A3'].forEach((cell) => {
                 worksheet.getCell(cell).alignment = { horizontal: 'center' }
                 worksheet.getCell(cell).font = { bold: true, size: 14 }
@@ -59,7 +58,6 @@ const excelService = {
                     right: { style: 'thin' },
                 }
             })
-
             ;(data.salesData || []).forEach((sale) => {
                 const dataRow = worksheet.addRow([
                     sale.customerName || '',

@@ -465,6 +465,7 @@ async function permissionSeeder() {
             code: 'hoa_don-tong_hop',
             parentPermissionId: '686dd0b535512a73e076c3a7',
         },
+
         // Lịch sử thanh toán
         {
             _id: new Types.ObjectId('687df491fd5669a67e23a295'),

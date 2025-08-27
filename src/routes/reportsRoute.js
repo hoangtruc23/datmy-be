@@ -2,9 +2,8 @@ const express = require('express')
 const validate = require('../middlewares/validation')
 const reportController = require('../controllers/reportController')
 const debtReconciliationValidation = require('../validations/debtReconciliationValidation')
-const reportValidation = require('../validations/reportValidation');
+const reportValidation = require('../validations/reportValidation')
 const router = express.Router()
-
 
 router.get(
     '/sales',
@@ -483,8 +482,6 @@ module.exports = router
  *                         example: "Tăng"
  */
 
-
-
 /**
  * @swagger
  * /reports/generateSalesDetailReport:
@@ -522,8 +519,6 @@ module.exports = router
  *       200:
  *         description: OK
  */
-
-
 
 /**
  * @swagger

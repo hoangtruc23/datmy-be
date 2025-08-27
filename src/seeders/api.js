@@ -554,6 +554,11 @@ async function apiSeeder() {
             api: '/invoice/summary',
             note: 'Lấy tổng hợp hóa đơn',
         },
+        {
+            _id: new Types.ObjectId('68ad5f9a4af5468fb2b7d815'),
+            api: '/invoice/import',
+            note: 'Nhập hóa đơn từ file excel',
+        },
 
         // Lịch sử thanh toán
         {
