@@ -63,7 +63,7 @@ const invoiceService = {
                 VATAmount,
             })
 
-            return invoice
+            return null
         } catch (err) {
             throw err
         }
@@ -115,7 +115,7 @@ const invoiceService = {
             })
 
             await invoice.save()
-            return invoice
+            return null
         } catch (err) {
             throw err
         }
