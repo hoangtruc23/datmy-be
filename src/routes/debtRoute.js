@@ -141,7 +141,6 @@ module.exports = router
  *         description: OK
  */
 
-
 /**
  * @swagger
  * /debt/generatePaymentRequest:
@@ -196,4 +195,3 @@ module.exports = router
  *                   type: "null"
  *                   example: null
  */
-

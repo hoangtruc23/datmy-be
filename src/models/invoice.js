@@ -22,7 +22,7 @@ const invoiceDetail = new Schema(
         productId: {
             type: Types.ObjectId,
             ref: 'products',
-            required: true,
+            //required: true,
         },
         quantity: {
             type: Number,
@@ -70,7 +70,10 @@ const invoiceSchema = new Schema(
         VATRate: { type: Number, default: 10 },
         //Tiền thuế GTGT
         VATAmount: { type: Number, required: true },
-        
+
+        //tiền tổng cộng không VAT
+        notVATtotalAmount: { type: Number, required: true },
+        //tiền tổng cộng có VAT
         totalAmount: { type: Number, required: true },
         invoiceDate: { type: Date },
         //Cộng từ createdAt và  limitDue trong configDebt

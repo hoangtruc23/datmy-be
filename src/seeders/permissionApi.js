@@ -516,6 +516,10 @@ async function permissionApiSeeder() {
             apiId: '686dd0b535512a73e076c3a2', // /invoice/create
         },
         {
+            permissionId: '686dd0b535512a73e076c3a9', // Thêm hóa đơn
+            apiId: '68ad5f9a4af5468fb2b7d815', // /invoice/import
+        },
+        {
             permissionId: '686dd0b535512a73e076c3aa', // Cập nhật hóa đơn
             apiId: '686dd0b535512a73e076c3a3', // /invoice/update
         },
@@ -549,7 +553,6 @@ async function permissionApiSeeder() {
             permissionId: '687df491fd5669a67e23a299', // Xoá lịch sử thanh toán
             apiId: '687df491fd5669a67e23a294', // /paymentHistory/delete
         },
-
         //Công nợ
         {
             permissionId: '6880936c160be16212361ba2', // xem công nợ

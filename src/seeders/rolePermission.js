@@ -209,7 +209,7 @@ async function rolePermissionSeeder() {
             roleId: '684927c871287f2ae7d8130b', // Quản trị viên
             permissionId: '688c7f601bb97636f19d6ad8', // Xem báo cáo số chi tiết bán hàng
         },
-                {
+        {
             roleId: '684927c871287f2ae7d8130b', // Quản trị viên
             permissionId: '688c7f601bb97636f19d6ad9', // Xem báo cáo đối chiếu công nợ
         },
@@ -238,7 +238,7 @@ async function rolePermissionSeeder() {
             permissionId: '6861f2e524fe5c2a802dcaea', // báo cáo xuất kho
         },
         //////////////////////
-           {
+        {
             roleId: '684927c871287f2ae7d8130b',
             permissionId: '6861f2e524fe5c2a802dcaea', // báo cáo xuất kho
         },
@@ -1558,8 +1558,6 @@ async function rolePermissionSeeder() {
             roleId: '684927c871287f2ae7d81311',
             permissionId: '684927c871287f2ae7d81309', // Tạm ứng
         },
-
-        
     ])
     logger.info('RolePermission seeded')
 }

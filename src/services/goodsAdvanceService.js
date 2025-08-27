@@ -444,7 +444,6 @@ const goodsAdvanceService = {
                 usageContent,
                 storages,
             } = product
-            console.log(borrowWarehouseId)
             session.startTransaction()
             const checkGoodsAdvanceDetail =
                 await GoodsAdvanceDetaileModel.findOne({
@@ -464,9 +463,9 @@ const goodsAdvanceService = {
                 await Promise.all([
                     GoodsAdvanceModel.findById(goodsAdvanceId),
                     WarehouseModel.findById(borrowWarehouseId),
-                    ProductModel.findById(productId),
+                    ProductModel.findById(productId).populate('unit'),
                 ])
-
+                
             if (!checkAdvance) {
                 throw new BadReq(errorCode.GOODS_ADVANCE_NOT_FOUND)
             }
@@ -519,7 +518,7 @@ const goodsAdvanceService = {
                         productCode: checkProduct?.code,
                         productName: checkProduct?.name,
                         managementType: checkProduct?.managementType,
-                        unit: checkProduct?.checkProduct,
+                        unit: checkProduct?.unit?.name,
                         origin,
                         borrowedQuantity,
                         borrowStatus,

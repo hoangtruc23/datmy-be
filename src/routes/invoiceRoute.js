@@ -11,6 +11,7 @@ router.get('/getAll', invoiceController.getAll)
 router.get('/getById/:id', invoiceController.getById)
 router.delete('/delete/:id', invoiceController.delete)
 router.get('/summary', invoiceController.getSummary)
+router.post('/import', invoiceController.importFromExcel)
 module.exports = router
 
 /**
@@ -41,6 +42,9 @@ module.exports = router
  *               - totalAmount
  *               - invoiceDate
  *               - invoiceDetails
+ *               - VATRate
+ *               - VATAmount
+ *               - notVATtotalAmount
  *             properties:
  *               customerId:
  *                 type: string
@@ -56,8 +60,20 @@ module.exports = router
  *                 example: "L00123"
  *               totalAmount:
  *                 type: number
- *                 description: Tổng giá trị hóa đơn (Có bao gồm thuế))
+ *                 description: Tổng giá trị hóa đơn (có bao gồm VAT)
  *                 example: 1468500
+ *               notVATtotalAmount:
+ *                 type: number
+ *                 description: Tổng giá trị hóa đơn chưa VAT
+ *                 example: 1335000
+ *               VATRate:
+ *                 type: number
+ *                 description: Thuế suất VAT (%)
+ *                 example: 10
+ *               VATAmount:
+ *                 type: number
+ *                 description: Số tiền VAT
+ *                 example: 133500
  *               invoiceDate:
  *                 type: string
  *                 format: date
@@ -341,4 +357,66 @@ module.exports = router
  *     responses:
  *       200:
  *         description: Lấy tổng hợp thông tin thành công
+ */
+
+/**
+ * @swagger
+ * /invoice/import:
+ *   post:
+ *     summary: Import hóa đơn từ file Excel
+ *     tags: [Invoice]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - fileUrl
+ *             properties:
+ *               fileUrl:
+ *                 type: string
+ *                 description: Đường dẫn tới file Excel đã upload. Lấy từ api upload/file
+ *                 example: "http://example.com/inventory/api/upload/file/1756202472355-sochitietbanhang---dulieu.xlsx"
+ *     responses:
+ *       200:
+ *         description: Kết quả import hóa đơn
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     totalInvoices:
+ *                       type: integer
+ *                       description: Tổng số hóa đơn trong file
+ *                       example: 494
+ *                     successCount:
+ *                       type: integer
+ *                       description: Số hóa đơn import thành công
+ *                       example: 422
+ *                     failedCount:
+ *                       type: integer
+ *                       description: Số hóa đơn thất bại
+ *                       example: 95
+ *                     failedInvoices:
+ *                       type: array
+ *                       description: Danh sách các hóa đơn thất bại kèm lý do
+ *                       items:
+ *                         type: string
+ *                       example:
+ *                         - "Hóa đơn số 00002982 lỗi do: Không tìm được sản phẩm với mã hàng là sc32,"
+ *                         - "Hóa đơn số 00002983 lỗi do: Không tìm được sản phẩm với mã hàng là BAOTRI,"
+ *                         - "Hóa đơn số 00002984 lỗi do: Không tìm được sản phẩm với mã hàng là SC1,"
+ *       400:
+ *         description: Yêu cầu không hợp lệ (thiếu fileUrl hoặc file không đúng định dạng)
+ *       500:
+ *         description: Lỗi server trong quá trình import
  */
