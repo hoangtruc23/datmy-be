@@ -465,7 +465,7 @@ const goodsAdvanceService = {
                     WarehouseModel.findById(borrowWarehouseId),
                     ProductModel.findById(productId).populate('unit'),
                 ])
-                
+
             if (!checkAdvance) {
                 throw new BadReq(errorCode.GOODS_ADVANCE_NOT_FOUND)
             }
