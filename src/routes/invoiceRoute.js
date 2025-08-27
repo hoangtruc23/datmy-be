@@ -42,6 +42,9 @@ module.exports = router
  *               - totalAmount
  *               - invoiceDate
  *               - invoiceDetails
+ *               - VATRate
+ *               - VATAmount
+ *               - notVATtotalAmount
  *             properties:
  *               customerId:
  *                 type: string
@@ -57,8 +60,20 @@ module.exports = router
  *                 example: "L00123"
  *               totalAmount:
  *                 type: number
- *                 description: Tổng giá trị hóa đơn (Có bao gồm thuế))
+ *                 description: Tổng giá trị hóa đơn (có bao gồm VAT)
  *                 example: 1468500
+ *               notVATtotalAmount:
+ *                 type: number
+ *                 description: Tổng giá trị hóa đơn chưa VAT
+ *                 example: 1335000
+ *               VATRate:
+ *                 type: number
+ *                 description: Thuế suất VAT (%)
+ *                 example: 10
+ *               VATAmount:
+ *                 type: number
+ *                 description: Số tiền VAT
+ *                 example: 133500
  *               invoiceDate:
  *                 type: string
  *                 format: date

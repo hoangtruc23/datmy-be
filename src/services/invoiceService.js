@@ -27,6 +27,9 @@ const invoiceService = {
                 invoiceLink,
                 paymentBy,
                 dueDate,
+                VATRate,
+                VATAmount,
+                notVATtotalAmount,
             } = data
 
             const customer = await CustomerModel.findById(customerId)
@@ -39,20 +42,6 @@ const invoiceService = {
                 (new Date(dueDate) - new Date(invoiceDate)) /
                     (1000 * 60 * 60 * 24),
             )
-
-            const totalAmountProducts = invoiceDetails.reduce((sum, detail) => {
-                return sum + detail.totalAmountProduct
-            }, 0)
-
-            const VATAmount = totalAmount - totalAmountProducts
-            const VATRate =
-                totalAmountProducts > 0
-                    ? Math.round(
-                          (VATAmount / totalAmountProducts) * 100 * 100,
-                      ) / 100 // tròn 2
-                    : 10
-
-            const notVATtotalAmount = totalAmountProducts
 
             const invoice = await InvoiceModel.create({
                 customerId,
