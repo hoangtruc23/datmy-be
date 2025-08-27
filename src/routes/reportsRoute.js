@@ -2,9 +2,8 @@ const express = require('express')
 const validate = require('../middlewares/validation')
 const reportController = require('../controllers/reportController')
 const debtReconciliationValidation = require('../validations/debtReconciliationValidation')
-const reportValidation = require('../validations/reportValidation');
+const reportValidation = require('../validations/reportValidation')
 const router = express.Router()
-
 
 router.get(
     '/sales',
@@ -27,6 +26,23 @@ router.post('/fileDebtReconciliation', reportController.fileDebtReconciliation)
 router.get(
     '/generateSalesDetailReport',
     reportController.generateSalesDetailReport,
+)
+
+router.get(
+    '/getDebtConfigDetailByInvoice',
+    reportController.getDebtConfigDetailByInvoice,
+)
+router.get(
+    '/generateDebtConfigDetailByInvoice',
+    reportController.generateDebtConfigDetailByInvoice,
+)
+router.get(
+    '/getCustomerReceivableDetail',
+    reportController.getCustomerReceivableDetail,
+)
+router.get(
+    '/generateCustomerReceivableDetail',
+    reportController.generateCustomerReceivableDetail,
 )
 module.exports = router
 
@@ -483,8 +499,6 @@ module.exports = router
  *                         example: "Tăng"
  */
 
-
-
 /**
  * @swagger
  * /reports/generateSalesDetailReport:
@@ -523,8 +537,6 @@ module.exports = router
  *         description: OK
  */
 
-
-
 /**
  * @swagger
  * /reports/fileDebtReconciliation:
@@ -562,4 +574,539 @@ module.exports = router
  *     responses:
  *       200:
  *         description: OK
+ */
+
+/**
+ * @swagger
+ * /reports/getDebtConfigDetailByInvoice:
+ *   get:
+ *     summary: Sinh báo cáo sổ chi tiết công nợ theo hóa đơn
+ *     description: Sinh báo cáo sổ chi tiết công nợ theo hóa đơn
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Reports]
+ *     parameters:
+ *       - in: query
+ *         name: startDate
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "2025/06/18"
+ *         description: Ngày bắt đầu
+ *       - in: query
+ *         name: endDate
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "2026/01/01"
+ *         description: Ngày kết thúc
+ *       - in: query
+ *         name: customerId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "507f1f77bcf86cd799439011"
+ *         description: ID khách hàng
+ *     responses:
+ *       200:
+ *         description: Lấy thông tin thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
+ *                 code:
+ *                   type: integer
+ *                   example: 1
+ *                 message:
+ *                   type: string
+ *                   example: OK!
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     customerName:
+ *                       type: string
+ *                       example: CÔNG TY CỔ PHẦN DƯỢC PHẨM ABC
+ *                     startDate:
+ *                       type: string
+ *                       example: 2025-06-17T17:00:00.000Z
+ *                     endDate:
+ *                       type: string
+ *                       example: 2025-06-17T17:00:00.000Z
+ *                     invoices:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           postingDate:
+ *                             type: string
+ *                             example: 2025-06-17T17:00:00.000Z
+ *                           documentNumber:
+ *                             type: string
+ *                             example: BH25L00123
+ *                           invoiceCode:
+ *                             type: string
+ *                             example: L00123
+ *                           description:
+ *                             type: array
+ *                             example: Bán hàng Công ty Dược ABC theo số hóa đơn L00123
+ *                           dueDate:
+ *                             type: string
+ *                             example: 2025-06-17T17:00:00.000Z
+ *                           totalAmount:
+ *                             type: number
+ *                             example: 1500000
+ *                           totalPaid:
+ *                             type: number
+ *                             example: 0
+ *                           remainingDebt:
+ *                             type: number
+ *                             example: 1500000
+ *                     totalAmountAll:
+ *                       type: number
+ *                       example: 1500000
+ *                     totalPaidAll:
+ *                       type: number
+ *                       example: 0
+ *                     totalRemainingDebtAll:
+ *                       type: number
+ *                       example: 1500000
+ *                     totalRemainingDebtBeforeStart:
+ *                       type: number
+ *                       example: 0
+ *
+ *       401:
+ *         description: Chưa đăng nhập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 401
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có token
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       403:
+ *         description: Không có quyền truy cập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 403
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có quyền
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       500:
+ *         description: Lỗi server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Lỗi server!
+ *                 data:
+ *                   type: string
+ *                   example: null
+ */
+
+/**
+ * @swagger
+ * /reports/generateDebtConfigDetailByInvoice:
+ *   get:
+ *     summary: Sinh báo cáo chi tiết công nợ phải thu theo hóa đơn
+ *     description: Tạo file Excel báo cáo chi tiết bán hàng theo khoảng thời gian và khách hàng
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Reports]
+ *     parameters:
+ *       - in: query
+ *         name: startDate
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "2025/06/18"
+ *         description: Ngày bắt đầu
+ *       - in: query
+ *         name: endDate
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "2026/01/01"
+ *         description: Ngày kết thúc
+ *       - in: query
+ *         name: customerId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "507f1f77bcf86cd799439011"
+ *         description: ID khách hàng
+ *     responses:
+ *       200:
+ *         description: OK
+ *       401:
+ *         description: Chưa đăng nhập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 401
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có token
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       403:
+ *         description: Không có quyền truy cập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 403
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có quyền
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       500:
+ *         description: Lỗi server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Lỗi server!
+ *                 data:
+ *                   type: string
+ *                   example: null
+ */
+
+/**
+ * @swagger
+ * /reports/getCustomerReceivableDetail:
+ *   get:
+ *     summary: Sinh báo cáo sổ chi tiết công nợ của khách hàng
+ *     description: Sinh báo cáo sổ chi tiết công nợ của khách hàng
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Reports]
+ *     parameters:
+ *       - in: query
+ *         name: startDate
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "2025/06/18"
+ *         description: Ngày bắt đầu
+ *       - in: query
+ *         name: endDate
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "2026/01/01"
+ *         description: Ngày kết thúc
+ *       - in: query
+ *         name: customerId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "507f1f77bcf86cd799439011"
+ *         description: ID khách hàng
+ *     responses:
+ *       200:
+ *         description: Lấy thông tin thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
+ *                 code:
+ *                   type: integer
+ *                   example: 1
+ *                 message:
+ *                   type: string
+ *                   example: OK!
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     customerName:
+ *                       type: string
+ *                       example: CÔNG TY CỔ PHẦN XE ĐIỆN
+ *                     startDate:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2025-08-06T17:00:00.000Z"
+ *                     endDate:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2025-08-07T17:00:00.000Z"
+ *                     invoices:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           postingDate:
+ *                             type: string
+ *                             format: date-time
+ *                             example: "2025-08-07T03:12:34.798Z"
+ *                           invoiceDate:
+ *                             type: string
+ *                             format: date-time
+ *                             example: "2025-08-07T03:12:34.798Z"
+ *                           invoiceCode:
+ *                             type: string
+ *                             example: L324233
+ *                           invoiceDetails:
+ *                             type: array
+ *                             items:
+ *                               type: object
+ *                               properties:
+ *                                 description:
+ *                                   type: string
+ *                                   example: "Phí mua sản phẩm: Sản phẩm 297A"
+ *                                 debtAccount:
+ *                                   type: integer
+ *                                   example: 131
+ *                                 contraAccount:
+ *                                   type: integer
+ *                                   example: 5111
+ *                                 amount:
+ *                                   type: number
+ *                                   example: 1500000
+ *                           payments:
+ *                             type: array
+ *                             items:
+ *                               type: object
+ *                               properties:
+ *                                 postingDate:
+ *                                   type: string
+ *                                   format: date-time
+ *                                   example: "2025-08-07T04:18:06.051Z"
+ *                                 invoiceDate:
+ *                                   type: string
+ *                                   format: date-time
+ *                                   example: "2025-07-21T00:00:00.000Z"
+ *                                 description:
+ *                                   type: string
+ *                                   example: "Thu tiền khách hàng CÔNG TY CỔ PHẦN XE ĐIỆN theo hóa đơn L324233"
+ *                                 debtAccount:
+ *                                   type: integer
+ *                                   example: 131
+ *                                 contraAccount:
+ *                                   type: integer
+ *                                   example: 111
+ *                                 amount:
+ *                                   type: number
+ *                                   example: 1000000
+ *                           totalAmount:
+ *                             type: number
+ *                             example: 3338500
+ *                           totalPaid:
+ *                             type: number
+ *                             example: 4338500
+ *                           totalDebtRemaining:
+ *                             type: number
+ *                             example: -1000000
+ *                     totalAmountAll:
+ *                       type: number
+ *                       example: 4653500
+ *                     totalPaidAll:
+ *                       type: number
+ *                       example: 5653500
+ *                     totalDebtRemainingAll:
+ *                       type: number
+ *                       example: -1000000
+ *                     totalAllDebtRemainingBefore:
+ *                       type: number
+ *                       example: 0
+ *       401:
+ *         description: Chưa đăng nhập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 401
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có token
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       403:
+ *         description: Không có quyền truy cập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 403
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có quyền
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       500:
+ *         description: Lỗi server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Lỗi server!
+ *                 data:
+ *                   type: string
+ *                   example: null
+ */
+
+/**
+ * @swagger
+ * /reports/generateCustomerReceivableDetail:
+ *   get:
+ *     summary: Sinh báo cáo chi tiết công nợ phải thu của khách hàng
+ *     description: Tạo file Excel báo cáo chi tiết bán hàng theo khoảng thời gian và khách hàng
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Reports]
+ *     parameters:
+ *       - in: query
+ *         name: startDate
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "2025/06/18"
+ *         description: Ngày bắt đầu
+ *       - in: query
+ *         name: endDate
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "2026/01/01"
+ *         description: Ngày kết thúc
+ *       - in: query
+ *         name: customerId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "507f1f77bcf86cd799439011"
+ *         description: ID khách hàng
+ *     responses:
+ *       200:
+ *         description: OK
+ *       401:
+ *         description: Chưa đăng nhập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 401
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có token
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       403:
+ *         description: Không có quyền truy cập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 403
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có quyền
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       500:
+ *         description: Lỗi server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Lỗi server!
+ *                 data:
+ *                   type: string
+ *                   example: null
  */
