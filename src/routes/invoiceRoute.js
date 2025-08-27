@@ -189,8 +189,8 @@ module.exports = router
  * @swagger
  * /invoice/update/{id}:
  *   post:
- *     summary: Cập nhật hóa đơn, chỉ update các trường cần thiết
- *     description: Cập nhật hóa đơn theo ID, chỉ các trường cần thiết sẽ được cập nhật. Không cập nhật các trường phụ thuộc như tổng tiền, sản phẩm.
+ *     summary: Cập nhật hóa đơn
+ *     description: Cập nhật hóa đơn theo ID. Các trường không gửi lên sẽ giữ nguyên giá trị cũ.
  *     tags: [Invoice]
  *     security:
  *       - bearerAuth: []
@@ -220,15 +220,41 @@ module.exports = router
  *                 type: string
  *                 description: Mã hóa đơn (L/T + số)
  *                 example: "L00123"
+ *               totalAmount:
+ *                 type: number
+ *                 description: Tổng giá trị hóa đơn (có bao gồm VAT)
+ *                 example: 1468500
+ *               notVATtotalAmount:
+ *                 type: number
+ *                 description: Tổng giá trị hóa đơn chưa VAT
+ *                 example: 1335000
+ *               VATRate:
+ *                 type: number
+ *                 description: Thuế suất VAT (%)
+ *                 example: 10
+ *               VATAmount:
+ *                 type: number
+ *                 description: Số tiền VAT
+ *                 example: 133500
+ *               invoiceDate:
+ *                 type: string
+ *                 format: date
+ *                 description: Ngày lập hóa đơn
+ *                 example: "2025-08-04"
  *               dueDate:
  *                 type: string
  *                 format: date
- *                 description: Ngày đáo hạn (tính ngược ra limitDue nếu có)
+ *                 description: Ngày đáo hạn (tự tính ra limitDue nếu có)
  *                 example: "2025-09-15"
  *               invoiceLink:
  *                 type: string
  *                 description: Đường dẫn đến hóa đơn (nếu có)
  *                 example: "https://example.com/invoice/L00123"
+ *               paymentBy:
+ *                 type: string
+ *                 enum: [transfer, cash, other]
+ *                 description: Phương thức thanh toán
+ *                 example: "transfer"
  *               orderBy:
  *                 type: object
  *                 description: Người đặt hàng
@@ -259,6 +285,28 @@ module.exports = router
  *                   phone:
  *                     type: string
  *                     example: "0909123456"
+ *               invoiceDetails:
+ *                 type: array
+ *                 description: Danh sách sản phẩm trong hóa đơn
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     productId:
+ *                       type: string
+ *                       description: ID sản phẩm
+ *                       example: "64fce248a67d3e4d93db7390"
+ *                     quantity:
+ *                       type: number
+ *                       example: 5
+ *                     price:
+ *                       type: number
+ *                       example: 100000
+ *                     discount:
+ *                       type: number
+ *                       example: 5000
+ *                     totalAmountProduct:
+ *                       type: number
+ *                       example: 495000
  *               notes:
  *                 type: string
  *                 description: Ghi chú thêm

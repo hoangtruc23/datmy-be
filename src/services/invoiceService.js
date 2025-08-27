@@ -80,29 +80,42 @@ const invoiceService = {
                 })
                 if (conflict) throw new BadReq(errorCode.INVOICE_CODE_EXISTED)
             }
+
             if (data.dueDate && data.dueDate !== invoice.dueDate) {
                 const dueDate = new Date(data.dueDate)
-                const exportDate = invoice.createdAt
+                const invoiceDate = data.invoiceDate
+                    ? new Date(data.invoiceDate)
+                    : invoice.invoiceDate
                 const limitDue = Math.ceil(
-                    (dueDate - exportDate) / (1000 * 60 * 60 * 24),
+                    (dueDate - invoiceDate) / (1000 * 60 * 60 * 24),
                 )
                 invoice.limitDue = limitDue
             }
+
             Object.assign(invoice, {
-                customerId: data.customerId,
-                customerName: data.customerName,
-                invoiceCode: data.invoiceCode,
-                orderBy: data.orderBy,
-                accountant: data.accountant,
+                customerId: data.customerId ?? invoice.customerId,
+                customerName: data.customerName ?? invoice.customerName,
+                invoiceCode: data.invoiceCode ?? invoice.invoiceCode,
+                totalAmount: data.totalAmount ?? invoice.totalAmount,
+                notVATtotalAmount:
+                    data.notVATtotalAmount ?? invoice.notVATtotalAmount,
+                VATRate: data.VATRate ?? invoice.VATRate,
+                VATAmount: data.VATAmount ?? invoice.VATAmount,
+                orderBy: data.orderBy ?? invoice.orderBy,
+                accountant: data.accountant ?? invoice.accountant,
+                invoiceDate: data.invoiceDate ?? invoice.invoiceDate,
+                dueDate: data.dueDate ?? invoice.dueDate,
+                invoiceDetails: data.invoiceDetails ?? invoice.invoiceDetails,
+                invoiceLink: data.invoiceLink ?? invoice.invoiceLink,
+                paymentBy: data.paymentBy ?? invoice.paymentBy,
+                reminderContact:
+                    data.reminderContact ?? invoice.reminderContact,
+                notes: data.notes ?? invoice.notes,
                 limitDue: invoice.limitDue,
-                invoiceDetails: data.invoiceDetails,
-                invoiceLink: data.invoiceLink,
-                reminderContact: data.reminderContact,
-                notes: data.notes,
             })
 
             await invoice.save()
-            return null
+            return invoice
         } catch (err) {
             throw err
         }
