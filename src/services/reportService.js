@@ -719,24 +719,6 @@ const reportService = {
                         invoices: {
                             $push: {
                                 postingDate: '$dueDate',
-                                documentNumber: {
-                                    $concat: [
-                                        'BH',
-                                        {
-                                            $substr: [
-                                                {
-                                                    $dateToString: {
-                                                        format: '%Y',
-                                                        date: '$createdAt',
-                                                    },
-                                                },
-                                                2,
-                                                2,
-                                            ],
-                                        },
-                                        '$invoiceCode',
-                                    ],
-                                },
                                 invoiceCode: '$invoiceCode',
                                 description: {
                                     $concat: [

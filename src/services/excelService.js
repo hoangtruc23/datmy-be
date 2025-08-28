@@ -316,7 +316,7 @@ const excelService = {
             )
 
             //row 1
-            worksheet.mergeCells('A1:I1')
+            worksheet.mergeCells('A1:H1')
             worksheet.getCell('A1').value =
                 'CHI TIẾT CÔNG NỢ  PHẢI THU THEO HÓA ĐƠN'
             worksheet.getCell('A1').alignment = { horizontal: 'center' }
@@ -327,7 +327,7 @@ const excelService = {
             }
 
             //row 2
-            worksheet.mergeCells('A2:I2')
+            worksheet.mergeCells('A2:H2')
             worksheet.getCell('A2').value =
                 `Tài khoản: 131, Loại tiền: <<Tổng hợp>>, Từ ngày ${formatDate(startDate)} đến ngày ${formatDate(endDate)}`
             worksheet.getCell('A2').alignment = { horizontal: 'center' }
@@ -339,13 +339,12 @@ const excelService = {
             }
 
             //row 3
-            worksheet.mergeCells('A3:I3')
+            worksheet.mergeCells('A3:H3')
             worksheet.getCell('A3').value = ''
 
             //row 4
             const headers = [
                 'Ngày hạch toán',
-                'Số chứng từ',
                 'Số hóa đơn',
                 'Diễn giải',
                 'Hạn thanh toán',
@@ -377,13 +376,12 @@ const excelService = {
                 '',
                 '',
                 '',
-                '',
                 totalRemainingDebtBeforeStart,
                 totalAmountAll,
                 totalPaidAll,
                 totalRemainingDebtAll,
             ])
-            worksheet.mergeCells(row.number, 1, row.number, 5)
+            worksheet.mergeCells(row.number, 1, row.number, 4)
             row.eachCell((cell) => {
                 cell.font = {
                     name: 'Times New Roman',
@@ -407,7 +405,6 @@ const excelService = {
             invoices.forEach((inv) => {
                 const row = worksheet.addRow([
                     formatDate(inv.postingDate),
-                    inv.documentNumber,
                     inv.invoiceCode,
                     inv.description,
                     formatDate(inv.dueDate),
@@ -427,10 +424,10 @@ const excelService = {
                         left: { style: 'thin' },
                         right: { style: 'thin' },
                     }
-                    if (idx === 1 || idx === 5) {
+                    if (idx === 1 || idx === 4) {
                         cell.alignment = { horizontal: 'center' }
                     }
-                    if (idx === 4) {
+                    if (idx === 3) {
                         cell.alignment = { wrapText: true, vertical: 'top' }
                     }
                 })
@@ -439,7 +436,6 @@ const excelService = {
             //total row
             const totalRow = worksheet.addRow([
                 'Tổng Cộng',
-                '',
                 '',
                 '',
                 '',
