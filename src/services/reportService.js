@@ -718,7 +718,7 @@ const reportService = {
                         _id: null,
                         invoices: {
                             $push: {
-                                postingDate: '$dueDate',
+                                postingDate: '$createdAt',
                                 invoiceCode: '$invoiceCode',
                                 description: {
                                     $concat: [
@@ -892,7 +892,7 @@ const reportService = {
                         invoices: {
                             $push: {
                                 postingDate: '$createdAt',
-                                invoiceDate: '$createdAt',
+                                invoiceDate: '$invoiceDate',
                                 invoiceCode: '$invoiceCode',
                                 VATRate: '$VATRate',
                                 invoiceDetails: '$invoiceDetails',
@@ -955,7 +955,7 @@ const reportService = {
                                                 ? (detail.quantity *
                                                       detail.price -
                                                       detail.discount) *
-                                                  inv.VATRate
+                                                  (inv.VATRate / 100)
                                                 : (detail.quantity *
                                                       detail.price -
                                                       detail.discount) *
