@@ -700,6 +700,22 @@ async function permissionApiSeeder() {
             permissionId: '688c7f601bb97636f19d6ad9', // Sinh báo cáo chi tiết khách hàng
             apiId: '689d8f1028227ebb51e520e8', // /reports/generateCustomerDetailReport
         },
+        {
+            permissionId: '688c7f601bb97636f19d6ad9', // Sinh báo cáo chi tiết khách hàng
+            apiId: '68a935b682615e9f79697ca6', // /reports/getDebtConfigDetailByInvoice',
+        },
+        {
+            permissionId: '688c7f601bb97636f19d6ad9', // Sinh báo cáo chi tiết khách hàng
+            apiId: '68abdbf15ef4fc475dd0992e', // /reports/generateDebtConfigDetailByInvoice
+        },
+        {
+            permissionId: '688c7f601bb97636f19d6ad9', // Sinh báo cáo chi tiết khách hàng
+            apiId: '68ad58dfa053aa8a7b8dafd5', // /reports/getCustomerReceivableDetail
+        },
+        {
+            permissionId: '688c7f601bb97636f19d6ad9', // Sinh báo cáo chi tiết khách hàng
+            apiId: '68ad58dfa053aa8a7b8dafd6', // /reports/generateCustomerReceivableDetail
+        },
     ])
     logger.info('PermissionApis seeded')
 }
