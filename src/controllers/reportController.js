@@ -40,11 +40,11 @@ const reportController = {
     },
     generateSalesDetailReport: async (req, res, next) => {
         try {
-            const { fromDate, toDate, customerId } = req.query
+            const { startDate, endDate, customerId } = req.query
 
             const data = await reportService.generateSalesDetailReport(
-                fromDate,
-                toDate,
+                startDate,
+                endDate,
                 customerId,
             )
 
