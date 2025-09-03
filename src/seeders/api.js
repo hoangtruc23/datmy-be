@@ -770,6 +770,26 @@ async function apiSeeder() {
             api: '/reports/fileDebtReconciliation',
             note: 'Tạo báo cáo đối chiếu công nợ',
         },
+        {
+            _id: new Types.ObjectId('68a935b682615e9f79697ca6'),
+            api: '/reports/getDebtConfigDetailByInvoice',
+            note: 'Tạo báo cáo chi tiết công nợ theo hóa đơn',
+        },
+        {
+            _id: new Types.ObjectId('68abdbf15ef4fc475dd0992e'),
+            api: '/reports/generateDebtConfigDetailByInvoice',
+            note: 'Xuất excel báo cáo chi tiết công nợ theo hóa đơn',
+        },
+        {
+            _id: new Types.ObjectId('68ad58dfa053aa8a7b8dafd5'),
+            api: '/reports/getCustomerReceivableDetail',
+            note: 'Tạo báo cáo chi tiết công nợ cho khách hàng',
+        },
+        {
+            _id: new Types.ObjectId('68ad58dfa053aa8a7b8dafd6'),
+            api: '/reports/generateCustomerReceivableDetail',
+            note: 'Xuất excel báo cáo chi tiết công nợ cho từng khách hàng',
+        },
         //System
         {
             _id: new Types.ObjectId('689c1a210dcf117a9db3a0aa'),

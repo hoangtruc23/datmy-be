@@ -40,11 +40,11 @@ const reportController = {
     },
     generateSalesDetailReport: async (req, res, next) => {
         try {
-            const { fromDate, toDate, customerId } = req.query
+            const { startDate, endDate, customerId } = req.query
 
             const data = await reportService.generateSalesDetailReport(
-                fromDate,
-                toDate,
+                startDate,
+                endDate,
                 customerId,
             )
 
@@ -82,6 +82,66 @@ const reportController = {
             res.send(pdfBuffer)
         } catch (err) {
             next(err)
+        }
+    },
+    getDebtConfigDetailByInvoice: async (req, res, next) => {
+        try {
+            const result = await reportService.getDebtConfigDetailByInvoice(
+                req.query,
+            )
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
+    generateDebtConfigDetailByInvoice: async (req, res, next) => {
+        try {
+            const data = await reportService.getDebtConfigDetailByInvoice(
+                req.query,
+            )
+            const buffer =
+                await excelService.createDebtConfigDetailByInvoiceExcel(data)
+            res.setHeader(
+                'Content-Type',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            )
+            res.setHeader(
+                'Content-Disposition',
+                'attachment; filename=Bao-cao-chi-tiet-cong-no-phai-thu-theo-hoa-don.xlsx',
+            )
+            res.send(buffer)
+        } catch (error) {
+            next(error)
+        }
+    },
+    getCustomerReceivableDetail: async (req, res, next) => {
+        try {
+            const result = await reportService.getCustomerReceivableDetail(
+                req.query,
+            )
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
+    generateCustomerReceivableDetail: async (req, res, next) => {
+        try {
+            const data = await reportService.getCustomerReceivableDetail(
+                req.query,
+            )
+            const buffer =
+                await excelService.createCustomerReceivableDetailExcel(data)
+            res.setHeader(
+                'Content-Type',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            )
+            res.setHeader(
+                'Content-Disposition',
+                'attachment; filename=Bao-cao-chi-tiet-cong-no-phai-thu-cua-khach-hang.xlsx',
+            )
+            res.send(buffer)
+        } catch (error) {
+            next(error)
         }
     },
 }
