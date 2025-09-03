@@ -3,7 +3,21 @@ const PaymentHistoryModel = require('../models/paymentHistory')
 const InvoiceModel = require('../models/invoice')
 const BadReq = require('../utils/response/requestError')
 const errorCode = require('../utils/response/errorCode')
+async function changeFullyPaid(invoiceId) {
+    if (!invoiceId) return
 
+    const invoice = await InvoiceModel.findById(invoiceId)
+    if (!invoice) return
+
+    const payments = await PaymentHistoryModel.aggregate([
+        { $match: { invoiceId: new Types.ObjectId(invoiceId) } },
+        { $group: { _id: null, totalPaid: { $sum: '$amount' } } },
+    ])
+
+    const totalPaid = payments[0]?.totalPaid || 0
+    invoice.isFullyPaid = totalPaid >= invoice.totalAmount
+    await invoice.save()
+}
 const paymentHistoryService = {
     create: async (data) => {
         try {
@@ -31,7 +45,7 @@ const paymentHistoryService = {
                 method,
                 notes,
             })
-
+            await changeFullyPaid(invoiceId)
             return null
         } catch (err) {
             throw err
@@ -43,7 +57,9 @@ const paymentHistoryService = {
             const payment = await PaymentHistoryModel.findById(id)
             if (!payment) throw new BadReq(errorCode.PAYMENT_NOT_FOUND)
 
-            if (data.invoiceId && data.invoiceId !== payment.invoiceId) {
+            const oldInvoiceId = payment.invoiceId?.toString()
+
+            if (data.invoiceId && data.invoiceId !== oldInvoiceId) {
                 if (!Types.ObjectId.isValid(data.invoiceId)) {
                     throw new BadReq(errorCode.INVALID_ID)
                 }
@@ -63,6 +79,10 @@ const paymentHistoryService = {
             })
 
             await payment.save()
+            await changeFullyPaid(oldInvoiceId)
+            if (data.invoiceId && data.invoiceId !== oldInvoiceId) {
+                await changeFullyPaid(data.invoiceId)
+            }
             return null
         } catch (err) {
             throw err
@@ -124,6 +144,7 @@ const paymentHistoryService = {
         try {
             const payment = await PaymentHistoryModel.findByIdAndDelete(id)
             if (!payment) throw new BadReq(errorCode.PAYMENT_NOT_FOUND)
+            await changeFullyPaid(payment.invoiceId)
             return null
         } catch (err) {
             throw err
