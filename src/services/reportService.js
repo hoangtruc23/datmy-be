@@ -677,6 +677,7 @@ const reportService = {
             let { startDate, endDate, customerId } = query
             const start = new Date(startDate)
             const end = new Date(endDate)
+            end.setDate(end.getDate() + 1)
             const customer = await CustomerModel.findById(customerId).lean()
             if (!customerId || !customer) {
                 throw new BadReq(errorCode.CUSTOMER_NOT_FOUND)
@@ -813,8 +814,8 @@ const reportService = {
                   }
             return {
                 customerName: customer.officialName,
-                startDate: start,
-                endDate: end,
+                startDate: new Date(startDate),
+                endDate: new Date(endDate),
                 ...invoicesInfoReturn,
                 totalRemainingDebtBeforeStart,
             }
@@ -828,6 +829,7 @@ const reportService = {
             const { startDate, endDate, customerId } = query
             const start = new Date(startDate)
             const end = new Date(endDate)
+            end.setDate(end.getDate() + 1)
             const customer = await CustomerModel.findById(customerId)
             if (!customer) {
                 throw new BadReq(errorCode.CUSTOMER_NOT_FOUND)
@@ -984,8 +986,8 @@ const reportService = {
                   }
             return {
                 customerName: customer.officialName,
-                startDate: start,
-                endDate: end,
+                startDate: new Date(startDate),
+                endDate: new Date(endDate),
                 ...data,
                 totalAllDebtRemainingBefore,
             }
