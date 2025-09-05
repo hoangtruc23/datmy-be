@@ -10,7 +10,7 @@ const contactPersonSchema = joi.object({
     }),
     phone: joi
         .string()
-        .allow(null, '') 
+        .allow(null, '')
         .pattern(/^[0-9]{4,15}$/)
         .messages({
             'string.pattern.base': 'Số điện thoại phải có từ 4 đến 15 chữ số',
@@ -49,10 +49,8 @@ const customerBaseSchema = {
         'string.empty': 'Tên đầy đủ là bắt buộc',
         'any.required': 'Tên đầy đủ là bắt buộc',
     }),
-    taxCode: joi.string().min(10).max(15).required().messages({
+    taxCode: joi.string().required().messages({
         'string.empty': 'Mã số thuế là bắt buộc',
-        'string.min': 'Mã số thuế phải có từ 10 đến 15 ký tự',
-        'string.max': 'Mã số thuế phải có từ 10 đến 15 ký tự',
         'any.required': 'Mã số thuế là bắt buộc',
     }),
     billingAddress: joi.string().required().messages({
