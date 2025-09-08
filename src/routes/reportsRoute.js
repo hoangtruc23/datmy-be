@@ -600,12 +600,26 @@ module.exports = router
  *           type: string
  *           example: "2026/01/01"
  *         description: Ngày kết thúc
- *       - in: query
- *         name: customerId
- *         required: true
+ *       - name: page
+ *         in: query
  *         schema:
- *           type: string
- *           example: "507f1f77bcf86cd799439011"
+ *           type: integer
+ *         description: Page muốn lấy
+ *       - name: limit
+ *         in: query
+ *         schema:
+ *           type: integer
+ *         description: Giới hạn số phần tử trong 1 page
+ *       - in: query
+ *         name: customerIds
+ *         required: false
+ *         schema:
+ *           type: array
+ *           items:
+ *             type: string
+ *         example: ["507f1f77bcf86cd799439011","507f1f77bcf86cd799439012"]
+ *         style: form
+ *         explode: true
  *         description: ID khách hàng
  *     responses:
  *       200:
@@ -759,11 +773,15 @@ module.exports = router
  *           example: "2026/01/01"
  *         description: Ngày kết thúc
  *       - in: query
- *         name: customerId
- *         required: true
+ *         name: customerIds
+ *         required: false
  *         schema:
- *           type: string
- *           example: "507f1f77bcf86cd799439011"
+ *           type: array
+ *           items:
+ *             type: string
+ *         example: ["507f1f77bcf86cd799439011","507f1f77bcf86cd799439012"]
+ *         style: form
+ *         explode: true
  *         description: ID khách hàng
  *     responses:
  *       200:
@@ -848,12 +866,26 @@ module.exports = router
  *           type: string
  *           example: "2026/01/01"
  *         description: Ngày kết thúc
- *       - in: query
- *         name: customerId
- *         required: true
+ *       - name: page
+ *         in: query
  *         schema:
- *           type: string
- *           example: "507f1f77bcf86cd799439011"
+ *           type: integer
+ *         description: Page muốn lấy
+ *       - name: limit
+ *         in: query
+ *         schema:
+ *           type: integer
+ *         description: Giới hạn số phần tử trong 1 page
+ *       - in: query
+ *         name: customerIds
+ *         required: false
+ *         schema:
+ *           type: array
+ *           items:
+ *             type: string
+ *         example: ["507f1f77bcf86cd799439011","507f1f77bcf86cd799439012"]
+ *         style: form
+ *         explode: true
  *         description: ID khách hàng
  *     responses:
  *       200:
@@ -1046,11 +1078,15 @@ module.exports = router
  *           example: "2026/01/01"
  *         description: Ngày kết thúc
  *       - in: query
- *         name: customerId
- *         required: true
+ *         name: customerIds
+ *         required: false
  *         schema:
- *           type: string
- *           example: "507f1f77bcf86cd799439011"
+ *           type: array
+ *           items:
+ *             type: string
+ *         example: ["507f1f77bcf86cd799439011","507f1f77bcf86cd799439012"]
+ *         style: form
+ *         explode: true
  *         description: ID khách hàng
  *     responses:
  *       200:

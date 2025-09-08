@@ -5,14 +5,11 @@ const excelService = {
     createCustomerReceivableDetailExcel: async (data) => {
         try {
             const {
-                customerName,
+                customerData,
                 startDate,
                 endDate,
-                invoices,
-                totalAmountAll,
-                totalPaidAll,
-                totalRemainingDebtAll,
-                totalAllDebtRemainingBefore,
+                totalAmountAllCus,
+                totalPaidAllCus,
             } = data
 
             const workbook = new ExcelJS.Workbook()
@@ -93,64 +90,84 @@ const excelService = {
                 }
             })
 
-            //row 6
-            const row = worksheet.addRow([
-                `Tên khách hàng: ${customerName}`,
-                '',
-                '',
-                '',
-                '',
-                '',
-                totalAmountAll,
-                totalPaidAll !== 0 ? totalPaidAll : '',
-                totalAllDebtRemainingBefore > 0
-                    ? totalAllDebtRemainingBefore
-                    : '',
-                totalAllDebtRemainingBefore < 0
-                    ? totalAllDebtRemainingBefore * -1
-                    : '',
-            ])
-            worksheet.mergeCells(row.number, 1, row.number, 6)
-            row.eachCell((cell) => {
-                cell.font = {
-                    name: 'Times New Roman',
-                    size: 11,
-                    bold: true,
+            customerData.forEach((data) => {
+                //row 6
+                const row = worksheet.addRow([
+                    `Tên khách hàng: ${data.customerName}`,
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    data.totalAmountAll !== 0 ? data.totalAmountAll : '',
+                    data.totalPaidAll !== 0 ? data.totalPaidAll : '',
+                    '',
+                    '',
+                ])
+                worksheet.mergeCells(row.number, 1, row.number, 6)
+                row.eachCell((cell) => {
+                    cell.font = {
+                        name: 'Times New Roman',
+                        size: 11,
+                        bold: true,
+                    }
+                    cell.fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'D3D3D3' },
+                    }
+                    cell.border = {
+                        top: { style: 'thin' },
+                        bottom: { style: 'thin' },
+                        left: { style: 'thin' },
+                        right: { style: 'thin' },
+                    }
+                })
+
+                if (data.totalAllDebtRemainingBefore !== 0) {
+                    const row = worksheet.addRow([
+                        '',
+                        '',
+                        '',
+                        'Số dư đầu kỳ',
+                        '131',
+                        '',
+                        '',
+                        '',
+                        data.totalAllDebtRemainingBefore,
+                        '',
+                    ])
+                    row.eachCell((cell) => {
+                        cell.font = {
+                            name: 'Times New Roman',
+                            size: 11,
+                            bold: true,
+                        }
+                        cell.border = {
+                            top: { style: 'thin' },
+                            bottom: { style: 'thin' },
+                            left: { style: 'thin' },
+                            right: { style: 'thin' },
+                        }
+                    })
                 }
-                cell.fill = {
-                    type: 'pattern',
-                    pattern: 'solid',
-                    fgColor: { argb: 'D3D3D3' },
-                }
-                cell.border = {
-                    top: { style: 'thin' },
-                    bottom: { style: 'thin' },
-                    left: { style: 'thin' },
-                    right: { style: 'thin' },
-                }
-            })
-            let debtTemp =
-                totalAllDebtRemainingBefore > 0
-                    ? totalAllDebtRemainingBefore
-                    : 0
-            let payTemp =
-                totalAllDebtRemainingBefore < 0
-                    ? -totalAllDebtRemainingBefore
-                    : 0
-            invoices.forEach((inv) => {
-                inv.invoiceDetails.forEach((detail) => {
-                    debtTemp += detail.amount
+
+                let moneyTemp = data.totalAllDebtRemainingBefore
+                data.invoices.forEach((inv) => {
+                    moneyTemp += inv.amountDebt
+                    moneyTemp -= inv.amountPay
+
                     const row = worksheet.addRow([
                         formatDate(inv.postingDate),
-                        formatDate(inv.invoiceDate),
-                        inv.invoiceCode,
-                        detail.description,
-                        detail.debtAccount,
-                        detail.contraAccount,
-                        detail.amount,
-                        '',
-                        debtTemp,
-                        '',
+                        inv.invoiceDate ? formatDate(inv.invoiceDate) : '',
+                        inv.invoiceCode ?? '',
+                        inv.description,
+                        inv.debtAccount,
+                        inv.contraAccount,
+                        inv.amountDebt !== 0 ? inv.amountDebt : '',
+                        inv.amountPay !== 0 ? inv.amountPay : '',
+                        moneyTemp > 0 ? moneyTemp : '',
+                        moneyTemp < 0 ? -moneyTemp : '',
                     ])
 
                     row.eachCell((cell, idx) => {
@@ -168,59 +185,27 @@ const excelService = {
                             cell.alignment = { horizontal: 'center' }
                         }
                         if (idx === 4) {
-                            cell.alignment = { wrapText: true, vertical: 'top' }
+                            cell.alignment = {
+                                wrapText: true,
+                                vertical: 'top',
+                            }
                         }
                     })
                 })
 
-                inv.payments.forEach((payment) => {
-                    payTemp += payment.amount
-                    const row = worksheet.addRow([
-                        formatDate(payment.postingDate),
-                        formatDate(payment.invoiceDate),
-                        '',
-                        payment.description,
-                        payment.debtAccount,
-                        payment.contraAccount,
-                        '',
-                        payment.amount,
-                        '',
-                        payTemp,
-                    ])
-
-                    row.eachCell((cell, idx) => {
-                        cell.font = {
-                            name: 'Times New Roman',
-                            size: 11,
-                        }
-                        cell.border = {
-                            top: { style: 'thin' },
-                            bottom: { style: 'thin' },
-                            left: { style: 'thin' },
-                            right: { style: 'thin' },
-                        }
-                        if (idx === 1 || idx === 2) {
-                            cell.alignment = { horizontal: 'center' }
-                        }
-                        if (idx === 4) {
-                            cell.alignment = { wrapText: true, vertical: 'top' }
-                        }
-                    })
-                })
-
-                const row = worksheet.addRow([
+                const summaryRow = worksheet.addRow([
                     '',
                     '',
                     '',
                     'Cộng',
                     '131',
                     '',
-                    inv.totalAmount,
-                    inv.totalPaid,
-                    '',
-                    '',
+                    data.totalAmountAll !== 0 ? data.totalAmountAll : '',
+                    data.totalPaidAll !== 0 ? data.totalPaidAll : '',
+                    moneyTemp > 0 ? moneyTemp : '',
+                    moneyTemp < 0 ? -moneyTemp : '',
                 ])
-                row.eachCell((cell) => {
+                summaryRow.eachCell((cell) => {
                     cell.font = {
                         name: 'Times New Roman',
                         size: 11,
@@ -242,8 +227,8 @@ const excelService = {
                 '',
                 '',
                 '',
-                totalAmountAll,
-                totalPaidAll,
+                totalAmountAllCus,
+                totalPaidAllCus,
                 '',
                 '',
             ])
@@ -274,19 +259,18 @@ const excelService = {
             worksheet.columns.forEach((col, idx) => {
                 let maxLength = 6
                 for (let rowIdx = 3; rowIdx < worksheet.rowCount; ++rowIdx) {
-                    if (rowIdx !== 5) {
-                        const cell = worksheet
-                            .getRow(rowIdx + 1)
-                            .getCell(idx + 1)
-                        let text = ''
-                        if (cell.value instanceof Date) {
-                            text = formatDate(cell.value)
-                        } else {
-                            text = cell.value ? cell.value.toString() : ''
-                        }
-                        const length = text.length
-                        maxLength = Math.max(length, maxLength)
+                    const cell = worksheet.getRow(rowIdx + 1).getCell(idx + 1)
+                    if (cell.isMerged) {
+                        continue
                     }
+                    let text = ''
+                    if (cell.value instanceof Date) {
+                        text = formatDate(cell.value)
+                    } else {
+                        text = cell.value ? cell.value.toString() : ''
+                    }
+                    const length = text.length
+                    maxLength = Math.max(length, maxLength)
                 }
                 const suggested = maxLength + 6
                 col.width = Math.min(suggested, 40)
@@ -301,14 +285,12 @@ const excelService = {
     createDebtConfigDetailByInvoiceExcel: async (data) => {
         try {
             const {
-                customerName,
+                customerData,
                 startDate,
                 endDate,
-                invoices,
-                totalPaidAll,
-                totalAmountAll,
-                totalRemainingDebtAll,
-                totalRemainingDebtBeforeStart,
+                totalPaidAllCus,
+                totalAmountAllCus,
+                totalRemainingDebtAllCus,
             } = data
             const workbook = new ExcelJS.Workbook()
             const worksheet = workbook.addWorksheet(
@@ -316,7 +298,7 @@ const excelService = {
             )
 
             //row 1
-            worksheet.mergeCells('A1:H1')
+            worksheet.mergeCells('A1:G1')
             worksheet.getCell('A1').value =
                 'CHI TIẾT CÔNG NỢ  PHẢI THU THEO HÓA ĐƠN'
             worksheet.getCell('A1').alignment = { horizontal: 'center' }
@@ -327,7 +309,7 @@ const excelService = {
             }
 
             //row 2
-            worksheet.mergeCells('A2:H2')
+            worksheet.mergeCells('A2:G2')
             worksheet.getCell('A2').value =
                 `Tài khoản: 131, Loại tiền: <<Tổng hợp>>, Từ ngày ${formatDate(startDate)} đến ngày ${formatDate(endDate)}`
             worksheet.getCell('A2').alignment = { horizontal: 'center' }
@@ -339,7 +321,7 @@ const excelService = {
             }
 
             //row 3
-            worksheet.mergeCells('A3:H3')
+            worksheet.mergeCells('A3:G3')
             worksheet.getCell('A3').value = ''
 
             //row 4
@@ -348,7 +330,6 @@ const excelService = {
                 'Số hóa đơn',
                 'Diễn giải',
                 'Hạn thanh toán',
-                'Số còn phải thu Đk',
                 'Giá trị hóa đơn',
                 'Số đã thu',
                 'Số còn phải thu',
@@ -370,53 +351,27 @@ const excelService = {
                 }
             })
 
-            //row  5
-            const row = worksheet.addRow([
-                `Tên khách hàng: ${customerName}`,
-                '',
-                '',
-                '',
-                totalRemainingDebtBeforeStart,
-                totalAmountAll,
-                totalPaidAll,
-                totalRemainingDebtAll,
-            ])
-            worksheet.mergeCells(row.number, 1, row.number, 4)
-            row.eachCell((cell) => {
-                cell.font = {
-                    name: 'Times New Roman',
-                    size: 11,
-                    bold: true,
-                }
-                cell.fill = {
-                    type: 'pattern',
-                    pattern: 'solid',
-                    fgColor: { argb: 'D3D3D3' },
-                }
-                cell.border = {
-                    top: { style: 'thin' },
-                    bottom: { style: 'thin' },
-                    left: { style: 'thin' },
-                    right: { style: 'thin' },
-                }
-            })
-
-            //row 6 ->
-            invoices.forEach((inv) => {
+            customerData.forEach((data) => {
                 const row = worksheet.addRow([
-                    formatDate(inv.postingDate),
-                    inv.invoiceCode,
-                    inv.description,
-                    formatDate(inv.dueDate),
+                    `Tên khách hàng: ${data.customerName}`,
                     '',
-                    inv.totalAmount,
-                    inv.totalPaid,
-                    inv.remainingDebt,
+                    '',
+                    '',
+                    data.totalAmountAll,
+                    data.totalPaidAll,
+                    data.totalRemainingDebtAll,
                 ])
-                row.eachCell((cell, idx) => {
+                worksheet.mergeCells(row.number, 1, row.number, 4)
+                row.eachCell((cell) => {
                     cell.font = {
                         name: 'Times New Roman',
                         size: 11,
+                        bold: true,
+                    }
+                    cell.fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'D3D3D3' },
                     }
                     cell.border = {
                         top: { style: 'thin' },
@@ -424,14 +379,40 @@ const excelService = {
                         left: { style: 'thin' },
                         right: { style: 'thin' },
                     }
-                    if (idx === 1 || idx === 4) {
-                        cell.alignment = { horizontal: 'center' }
-                    }
-                    if (idx === 3) {
-                        cell.alignment = { wrapText: true, vertical: 'top' }
-                    }
+                })
+
+                data.invoices.forEach((inv) => {
+                    const row = worksheet.addRow([
+                        formatDate(inv.postingDate),
+                        inv.invoiceCode,
+                        inv.description,
+                        formatDate(inv.dueDate),
+                        inv.totalAmount,
+                        inv.totalPaid,
+                        inv.remainingDebt,
+                    ])
+                    row.eachCell((cell, idx) => {
+                        cell.font = {
+                            name: 'Times New Roman',
+                            size: 11,
+                        }
+                        cell.border = {
+                            top: { style: 'thin' },
+                            bottom: { style: 'thin' },
+                            left: { style: 'thin' },
+                            right: { style: 'thin' },
+                        }
+                        if (idx === 1 || idx === 4) {
+                            cell.alignment = { horizontal: 'center' }
+                        }
+                        if (idx === 3) {
+                            cell.alignment = { wrapText: true, vertical: 'top' }
+                        }
+                    })
                 })
             })
+
+            //row 6 ->
 
             //total row
             const totalRow = worksheet.addRow([
@@ -439,10 +420,9 @@ const excelService = {
                 '',
                 '',
                 '',
-                totalRemainingDebtBeforeStart,
-                totalAmountAll,
-                totalPaidAll,
-                totalRemainingDebtAll,
+                totalAmountAllCus,
+                totalPaidAllCus,
+                totalRemainingDebtAllCus,
             ])
             totalRow.eachCell((cell, idx) => {
                 if (idx === 1) {
@@ -475,19 +455,20 @@ const excelService = {
                     rowIndex < worksheet.rowCount;
                     ++rowIndex
                 ) {
-                    if (rowIndex !== 4) {
-                        const cell = worksheet
-                            .getRow(rowIndex + 1)
-                            .getCell(index + 1)
-                        let text = ''
-                        if (cell.value instanceof Date) {
-                            text = formatDate(cell.value)
-                        } else {
-                            text = cell.value ? cell.value.toString() : ''
-                        }
-                        const length = text.length
-                        maxLength = Math.max(length, maxLength)
+                    const cell = worksheet
+                        .getRow(rowIndex + 1)
+                        .getCell(index + 1)
+                    if (cell.isMerged) {
+                        continue
                     }
+                    let text = ''
+                    if (cell.value instanceof Date) {
+                        text = formatDate(cell.value)
+                    } else {
+                        text = cell.value ? cell.value.toString() : ''
+                    }
+                    const length = text.length
+                    maxLength = Math.max(length, maxLength)
                 }
                 const suggested = maxLength + 6
                 column.width = Math.min(suggested, 40)

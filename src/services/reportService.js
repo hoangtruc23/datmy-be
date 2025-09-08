@@ -10,8 +10,6 @@ const PaymentHistoryModel = require('../models/paymentHistory')
 const BadReq = require('../utils/response/requestError')
 const errorCode = require('../utils/response/errorCode')
 const { ObjectId } = require('mongodb')
-const e = require('express')
-const { log } = require('winston')
 const reportService = {
     getSalesReport: async (
         startDate,
@@ -672,325 +670,524 @@ const reportService = {
             throw err
         }
     },
-    getDebtConfigDetailByInvoice: async (query) => {
+
+    handleQueryInput: async (query, isPagination) => {
         try {
-            let { startDate, endDate, customerId } = query
+            let { startDate, endDate, customerIds } = query
             const start = new Date(startDate)
             const end = new Date(endDate)
             end.setDate(end.getDate() + 1)
-            const customer = await CustomerModel.findById(customerId).lean()
-            if (!customerId || !customer) {
-                throw new BadReq(errorCode.CUSTOMER_NOT_FOUND)
+
+            customerIds = customerIds ?? []
+            customerIds = Array.isArray(customerIds)
+                ? customerIds
+                : [customerIds]
+
+            if (customerIds.length) {
+                const checkCustomer = await CustomerModel.find({
+                    _id: { $in: customerIds },
+                })
+                if (checkCustomer.length !== customerIds.length) {
+                    throw new BadReq(errorCode.CUSTOMER_NOT_FOUND)
+                }
+            } else {
+                const customers = await CustomerModel.find()
+                customerIds = customers.map((cus) => cus._id)
             }
-            /*
-            Ngày hạch toán = Hạn thanh toán = dueDate (invoice)
-            Số chứng từ = BH + YY + Số hóa đơn ; số hóa đơn = invoiceCode (invoice)
-            Diễn giải = 'Bán hàng' + customerName + 'theo số hóa đơn' + invoiceId = customerName, invoiceCode
-            Số còn phải thu ĐK
-            Giá trị hóa đơn = totalAmount (invoiceCode)
-            Số đã thu = tổng amount (paymenthistories) invoiceId == invoiceId
-            Số còn phải thu = trên - dưới
-            */
-            const invoicesInfo = await InvoiceModel.aggregate([
-                {
-                    $match: {
-                        customerId: new Types.ObjectId(customerId),
-                        createdAt: {
-                            $gte: start,
-                            $lte: end,
-                        },
-                    },
-                },
-                {
-                    $lookup: {
-                        from: 'paymenthistories',
-                        localField: '_id',
-                        foreignField: 'invoiceId',
-                        as: 'paymentHistory',
-                    },
-                },
-                {
-                    $addFields: {
-                        totalPaid: { $sum: '$paymentHistory.amount' },
-                    },
-                },
-                {
-                    $group: {
-                        _id: null,
-                        invoices: {
-                            $push: {
-                                postingDate: '$createdAt',
-                                invoiceCode: '$invoiceCode',
-                                description: {
-                                    $concat: [
-                                        'Bán hàng ',
-                                        '$customerName',
-                                        ' theo số hóa đơn ',
-                                        '$invoiceCode',
-                                    ],
-                                },
-                                dueDate: '$dueDate',
-                                totalAmount: '$totalAmount',
-                                totalPaid: '$totalPaid',
-                                remainingDebt: {
-                                    $subtract: ['$totalAmount', '$totalPaid'],
-                                },
-                            },
-                        },
-                        totalAmountAll: { $sum: '$totalAmount' },
-                        totalPaidAll: { $sum: '$totalPaid' },
-                        totalRemainingDebtAll: {
-                            $sum: { $subtract: ['$totalAmount', '$totalPaid'] },
-                        },
-                    },
-                },
-                {
-                    $project: {
-                        _id: 0,
-                    },
-                },
-            ])
 
-            const invoicesInfoBefore = await InvoiceModel.aggregate([
-                {
-                    $match: {
-                        customerId: new Types.ObjectId(customerId),
-                        createdAt: {
-                            $lte: start,
-                        },
-                    },
-                },
-                {
-                    $lookup: {
-                        from: 'paymenthistories',
-                        localField: '_id',
-                        foreignField: 'invoiceId',
-                        as: 'payment',
-                    },
-                },
-                {
-                    $addFields: {
-                        totalPaid: { $sum: '$payment.amount' },
-                    },
-                },
-                {
-                    $addFields: {
-                        remainingDebt: {
-                            $subtract: ['$totalAmount', '$totalPaid'],
-                        },
-                    },
-                },
-                {
-                    $group: {
-                        _id: null,
-                        totalRemainingDebt: { $sum: '$remainingDebt' },
-                    },
-                },
-                {
-                    $project: {
-                        _id: 0,
-                        totalRemainingDebt: 1,
-                    },
-                },
-            ])
-
-            const totalRemainingDebtBeforeStart = invoicesInfoBefore[0]
-                ? invoicesInfoBefore[0].totalRemainingDebt
-                : 0
-            const invoicesInfoReturn = invoicesInfo[0]
-                ? {
-                      invoices: invoicesInfo[0].invoices,
-                      totalAmountAll: invoicesInfo[0].totalAmountAll,
-                      totalPaidAll: invoicesInfo[0].totalPaidAll,
-                      totalRemainingDebtAll:
-                          invoicesInfo[0].totalRemainingDebtAll +
-                          totalRemainingDebtBeforeStart,
-                  }
-                : {
-                      invoices: [],
-                      totalAmountAll: 0,
-                      totalPaidAll: 0,
-                      totalRemainingDebtAll: 0,
-                  }
+            let pagination = {}
+            if (isPagination) {
+                let { page = 1, limit = 1 } = query
+                page = Number(page)
+                limit = Number(limit)
+                const totalItems = customerIds.length
+                const totalPages = Math.ceil(totalItems / limit)
+                customerIds = customerIds.slice(
+                    (page - 1) * limit,
+                    page * limit,
+                )
+                pagination = {
+                    page,
+                    totalItems,
+                    totalPages,
+                }
+            }
             return {
-                customerName: customer.officialName,
-                startDate: new Date(startDate),
-                endDate: new Date(endDate),
-                ...invoicesInfoReturn,
-                totalRemainingDebtBeforeStart,
+                startDate,
+                endDate,
+                start,
+                end,
+                customerIds,
+                ...pagination,
             }
         } catch (error) {
             throw error
         }
     },
 
-    getCustomerReceivableDetail: async (query) => {
+    getDebtConfigDetailByInvoice: async (query, isPagination = true) => {
         try {
-            const { startDate, endDate, customerId } = query
-            const start = new Date(startDate)
-            const end = new Date(endDate)
-            end.setDate(end.getDate() + 1)
-            const customer = await CustomerModel.findById(customerId)
-            if (!customer) {
-                throw new BadReq(errorCode.CUSTOMER_NOT_FOUND)
+            const {
+                startDate,
+                endDate,
+                start,
+                end,
+                customerIds,
+                page,
+                totalItems,
+                totalPages,
+            } = await reportService.handleQueryInput(query, isPagination)
+            let pagination = {}
+            if (isPagination) {
+                pagination = {
+                    page,
+                    totalItems,
+                    totalPages,
+                }
             }
 
-            const invoicesBefore = await InvoiceModel.aggregate([
-                {
-                    $match: {
-                        customerId: new Types.ObjectId(customerId),
-                        createdAt: { $lte: start },
-                    },
-                },
-                {
-                    $lookup: {
-                        from: 'paymenthistories',
-                        localField: '_id',
-                        foreignField: 'invoiceId',
-                        as: 'payments',
-                    },
-                },
-                {
-                    $addFields: {
-                        totalPaid: { $sum: '$payments.amount' },
-                    },
-                },
-                {
-                    $addFields: {
-                        totalRemainingDebt: {
-                            $subtract: ['$totalAmount', '$totalPaid'],
+            const customerData = await Promise.all(
+                customerIds.map(async (customerId) => {
+                    const customer = await CustomerModel.findById(customerId)
+                    const invoicesInfo = await InvoiceModel.aggregate([
+                        {
+                            $match: {
+                                customerId: new Types.ObjectId(customerId),
+                                createdAt: {
+                                    $gte: start,
+                                    $lte: end,
+                                },
+                            },
                         },
-                    },
-                },
-            ])
-            const totalAllDebtRemainingBefore = invoicesBefore.reduce(
-                (acc, cur) => acc + cur.totalRemainingDebt,
-                0,
+                        {
+                            $lookup: {
+                                from: 'paymenthistories',
+                                localField: '_id',
+                                foreignField: 'invoiceId',
+                                as: 'paymentHistory',
+                            },
+                        },
+                        {
+                            $addFields: {
+                                totalPaid: { $sum: '$paymentHistory.amount' },
+                            },
+                        },
+                        {
+                            $group: {
+                                _id: null,
+                                invoices: {
+                                    $push: {
+                                        postingDate: '$createdAt',
+                                        invoiceCode: '$invoiceCode',
+                                        description: {
+                                            $concat: [
+                                                'Bán hàng ',
+                                                '$customerName',
+                                                ' theo số hóa đơn ',
+                                                '$invoiceCode',
+                                            ],
+                                        },
+                                        dueDate: '$dueDate',
+                                        totalAmount: '$totalAmount',
+                                        totalPaid: '$totalPaid',
+                                        remainingDebt: {
+                                            $subtract: [
+                                                '$totalAmount',
+                                                '$totalPaid',
+                                            ],
+                                        },
+                                    },
+                                },
+                                totalAmountAll: { $sum: '$totalAmount' },
+                                totalPaidAll: { $sum: '$totalPaid' },
+                                totalRemainingDebtAll: {
+                                    $sum: {
+                                        $subtract: [
+                                            '$totalAmount',
+                                            '$totalPaid',
+                                        ],
+                                    },
+                                },
+                            },
+                        },
+                        {
+                            $project: {
+                                _id: 0,
+                            },
+                        },
+                    ])
+                    const invoicesInfoReturn = invoicesInfo[0] ?? {
+                        invoices: [],
+                        totalAmountAll: 0,
+                        totalPaidAll: 0,
+                        totalRemainingDebtAll: 0,
+                    }
+                    return {
+                        customerName: customer.officialName,
+                        ...invoicesInfoReturn,
+                    }
+                }),
             )
+            const {
+                totalAmountAllCus,
+                totalPaidAllCus,
+                totalRemainingDebtAllCus,
+            } = customerData.reduce(
+                (acc, cur) => {
+                    acc.totalAmountAllCus += cur.totalAmountAll
+                    acc.totalPaidAllCus += cur.totalPaidAll
+                    acc.totalRemainingDebtAllCus += cur.totalRemainingDebtAll
+                    return acc
+                },
+                {
+                    totalAmountAllCus: 0,
+                    totalPaidAllCus: 0,
+                    totalRemainingDebtAllCus: 0,
+                },
+            )
+            const dataReturn = {
+                startDate: new Date(startDate),
+                endDate: new Date(endDate),
+                customerData,
+                totalAmountAllCus,
+                totalPaidAllCus,
+                totalRemainingDebtAllCus,
+            }
+            return isPagination
+                ? { ...dataReturn, pagination }
+                : { ...dataReturn }
+        } catch (error) {
+            throw error
+        }
+    },
 
-            const invoices = await InvoiceModel.aggregate([
-                {
-                    $match: {
-                        customerId: new Types.ObjectId(customerId),
-                        createdAt: { $gte: start, $lte: end },
-                    },
-                },
-                {
-                    $lookup: {
-                        from: 'paymenthistories',
-                        localField: '_id',
-                        foreignField: 'invoiceId',
-                        as: 'payments',
-                    },
-                },
-                {
-                    $addFields: {
-                        totalPaid: { $sum: '$payments.amount' },
-                    },
-                },
-                {
-                    $group: {
-                        _id: null,
-                        invoices: {
-                            $push: {
-                                postingDate: '$createdAt',
-                                invoiceDate: '$invoiceDate',
-                                invoiceCode: '$invoiceCode',
-                                VATRate: '$VATRate',
-                                invoiceDetails: '$invoiceDetails',
-                                payments: '$payments',
-                                totalAmount: '$totalAmount',
-                                totalPaid: '$totalPaid',
-                                totalDebtRemaining: {
+    getCustomerReceivableDetail: async (query, isPagination = true) => {
+        try {
+            const {
+                startDate,
+                endDate,
+                start,
+                end,
+                customerIds,
+                page,
+                totalItems,
+                totalPages,
+            } = await reportService.handleQueryInput(query, isPagination)
+            let pagination = {}
+            if (isPagination) {
+                pagination = {
+                    page,
+                    totalItems,
+                    totalPages,
+                }
+            }
+            const customerData = await Promise.all(
+                customerIds.map(async (customerId) => {
+                    const customer = await CustomerModel.findById(customerId)
+
+                    const invoicesBefore = await InvoiceModel.aggregate([
+                        {
+                            $match: {
+                                customerId: new Types.ObjectId(customerId),
+                                createdAt: { $lte: start },
+                            },
+                        },
+                        {
+                            $lookup: {
+                                from: 'paymenthistories',
+                                let: { id: '$_id' },
+                                pipeline: [
+                                    {
+                                        $match: {
+                                            $expr: {
+                                                $and: [
+                                                    {
+                                                        $eq: [
+                                                            '$$id',
+                                                            '$invoiceId',
+                                                        ],
+                                                    },
+                                                    {
+                                                        $lte: [
+                                                            '$paymentDate',
+                                                            start,
+                                                        ],
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    },
+                                ],
+                                as: 'payments',
+                            },
+                        },
+                        {
+                            $addFields: {
+                                totalPaid: { $sum: '$payments.amount' },
+                            },
+                        },
+                        {
+                            $addFields: {
+                                totalRemainingDebt: {
                                     $subtract: ['$totalAmount', '$totalPaid'],
                                 },
                             },
                         },
-                        totalAmountAll: { $sum: '$totalAmount' },
-                        totalPaidAll: { $sum: '$totalPaid' },
-                        totalDebtRemainingAll: {
-                            $sum: { $subtract: ['$totalAmount', '$totalPaid'] },
+                    ])
+                    const totalAllDebtRemainingBefore = invoicesBefore.reduce(
+                        (acc, cur) => acc + cur.totalRemainingDebt,
+                        0,
+                    )
+                    const invoices = await InvoiceModel.aggregate([
+                        {
+                            $match: {
+                                customerId: new Types.ObjectId(customerId),
+                            },
                         },
-                    },
-                },
-                {
-                    $project: {
-                        _id: 0,
-                    },
-                },
-            ])
+                        {
+                            $lookup: {
+                                from: 'paymenthistories',
+                                let: { id: '$_id' },
+                                pipeline: [
+                                    {
+                                        $match: {
+                                            $expr: {
+                                                $and: [
+                                                    {
+                                                        $eq: [
+                                                            '$$id',
+                                                            '$invoiceId',
+                                                        ],
+                                                    },
+                                                    {
+                                                        $gte: [
+                                                            '$paymentDate',
+                                                            start,
+                                                        ],
+                                                    },
+                                                    {
+                                                        $lte: [
+                                                            '$paymentDate',
+                                                            end,
+                                                        ],
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    },
+                                ],
+                                as: 'payments',
+                            },
+                        },
+                        {
+                            $addFields: {
+                                totalPaid: { $sum: '$payments.amount' },
+                                invoiceDetails: {
+                                    $cond: [
+                                        {
+                                            $and: [
+                                                { $gte: ['$createdAt', start] },
+                                                { $lte: ['$createdAt', end] },
+                                            ],
+                                        },
+                                        '$invoiceDetails',
+                                        [],
+                                    ],
+                                },
+                            },
+                        },
+                        {
+                            $match: {
+                                $expr: {
+                                    $not: {
+                                        $and: [
+                                            {
+                                                $eq: [
+                                                    {
+                                                        $size: '$invoiceDetails',
+                                                    },
+                                                    0,
+                                                ],
+                                            },
+                                            {
+                                                $eq: [
+                                                    { $size: '$payments' },
+                                                    0,
+                                                ],
+                                            },
+                                        ],
+                                    },
+                                },
+                            },
+                        },
+                        {
+                            $group: {
+                                _id: null,
+                                invoices: {
+                                    $push: {
+                                        postingDate: '$createdAt',
+                                        invoiceDate: '$invoiceDate',
+                                        invoiceCode: '$invoiceCode',
+                                        VATRate: '$VATRate',
+                                        invoiceDetails: '$invoiceDetails',
+                                        payments: '$payments',
+                                        totalAmount: {
+                                            $cond: [
+                                                {
+                                                    $eq: [
+                                                        {
+                                                            $size: '$invoiceDetails',
+                                                        },
+                                                        0,
+                                                    ],
+                                                },
+                                                0,
+                                                '$totalAmount',
+                                            ],
+                                        },
+                                        totalPaid: '$totalPaid',
+                                    },
+                                },
+                                totalAmountAll: {
+                                    $sum: {
+                                        $cond: [
+                                            {
+                                                $eq: [
+                                                    {
+                                                        $size: '$invoiceDetails',
+                                                    },
+                                                    0,
+                                                ],
+                                            },
+                                            0,
+                                            '$totalAmount',
+                                        ],
+                                    },
+                                },
+                                totalPaidAll: { $sum: '$totalPaid' },
+                            },
+                        },
+                        {
+                            $project: {
+                                _id: 0,
+                            },
+                        },
+                    ])
 
-            if (invoices[0]) {
-                invoices[0].invoices = await Promise.all(
-                    invoices[0].invoices.map(async (inv) => ({
-                        ...inv,
-                        payments: inv.payments.map((payment) => ({
-                            postingDate: payment.createdAt,
-                            invoiceDate: payment.paymentDate,
-                            description: `Thu tiền khách hàng ${payment.customerName} theo hóa đơn ${inv.invoiceCode}`,
-                            debtAccount: '131',
-                            contraAccount:
-                                payment.method === 'cash' ? '111' : '1121',
-                            amount: payment.amount,
-                        })),
-                        invoiceDetails: (
-                            await Promise.all(
-                                inv.invoiceDetails.map(async (detail, idx) => {
-                                    const product = await ProductModel.findById(
-                                        detail.productId,
+                    if (invoices[0]) {
+                        invoices[0].invoices = await Promise.all(
+                            invoices[0].invoices.map(async (inv) => {
+                                const payments = inv.payments.map(
+                                    (payment) => ({
+                                        postingDate: payment.paymentDate,
+                                        description: `Thu tiền khách hàng ${payment.customerName} theo hóa đơn ${inv.invoiceCode}`,
+                                        debtAccount: '131',
+                                        contraAccount:
+                                            payment.method === 'cash'
+                                                ? '111'
+                                                : '1121',
+                                        amountDebt: 0,
+                                        amountPay: payment.amount,
+                                    }),
+                                )
+
+                                const invoiceDetails = (
+                                    await Promise.all(
+                                        inv.invoiceDetails.map(
+                                            async (detail) => {
+                                                const product =
+                                                    await ProductModel.findById(
+                                                        detail.productId,
+                                                    )
+                                                const name = product
+                                                    ? product.name
+                                                    : ''
+                                                return [
+                                                    {
+                                                        postingDate:
+                                                            inv.postingDate,
+                                                        invoiceDate:
+                                                            inv.invoiceDate,
+                                                        invoiceCode:
+                                                            inv.invoiceCode,
+                                                        description: `Phí mua sản phẩm: ${name}`,
+                                                        debtAccount: '131',
+                                                        contraAccount: '5111',
+                                                        amountDebt:
+                                                            detail.quantity *
+                                                                detail.price -
+                                                            detail.discount,
+                                                        amountPay: 0,
+                                                    },
+                                                    {
+                                                        postingDate:
+                                                            inv.postingDate,
+                                                        invoiceDate:
+                                                            inv.invoiceDate,
+                                                        invoiceCode:
+                                                            inv.invoiceCode,
+                                                        description: `Thuế GTGT - Phí mua sản phẩm: ${name}`,
+                                                        debtAccount: '131',
+                                                        contraAccount: '33311',
+                                                        amountDebt: inv.VATRate
+                                                            ? (detail.quantity *
+                                                                  detail.price -
+                                                                  detail.discount) *
+                                                              (inv.VATRate /
+                                                                  100)
+                                                            : (detail.quantity *
+                                                                  detail.price -
+                                                                  detail.discount) *
+                                                              0.1,
+                                                        amountPay: 0,
+                                                    },
+                                                ]
+                                            },
+                                        ),
                                     )
-                                    const name = product ? product.name : ''
-                                    return [
-                                        {
-                                            description: `Phí mua sản phẩm: ${name}`,
-                                            debtAccount: '131',
-                                            contraAccount: '5111',
-                                            amount:
-                                                detail.quantity * detail.price -
-                                                detail.discount,
-                                        },
-                                        {
-                                            description: `Thuế GTGT - Phí mua sản phẩm: ${name}`,
-                                            debtAccount: '131',
-                                            contraAccount: '33311',
-                                            amount: inv.VATRate
-                                                ? (detail.quantity *
-                                                      detail.price -
-                                                      detail.discount) *
-                                                  (inv.VATRate / 100)
-                                                : (detail.quantity *
-                                                      detail.price -
-                                                      detail.discount) *
-                                                  0.1,
-                                        },
-                                    ]
-                                }),
-                            )
-                        ).flat(),
-                    })),
-                )
-            }
+                                ).flat()
 
-            const data = invoices[0]
-                ? {
-                      ...invoices[0],
-                      totalDebtRemainingAll:
-                          invoices[0].totalDebtRemainingAll +
-                          totalAllDebtRemainingBefore,
-                  }
-                : {
-                      invoices: [],
-                      totalAmountAll: 0,
-                      totalPaidAll: 0,
-                      totalDebtRemainingAll: 0,
-                  }
-            return {
-                customerName: customer.officialName,
+                                return [...invoiceDetails, ...payments]
+                            }),
+                        )
+                        invoices[0].invoices = invoices[0].invoices
+                            .flat()
+                            .sort((a, b) => a.postingDate - b.postingDate)
+                    }
+
+                    const data = invoices[0] ?? {
+                        invoices: [],
+                        totalAmountAll: 0,
+                        totalPaidAll: 0,
+                    }
+                    return {
+                        customerName: customer.officialName,
+                        ...data,
+                        totalAllDebtRemainingBefore,
+                    }
+                }),
+            )
+
+            const totalAmountAllCus = customerData.reduce(
+                (acc, cur) => acc + cur.totalAmountAll,
+                0,
+            )
+            const totalPaidAllCus = customerData.reduce(
+                (acc, cur) => acc + cur.totalPaidAll,
+                0,
+            )
+
+            const dataReturn = {
                 startDate: new Date(startDate),
                 endDate: new Date(endDate),
-                ...data,
-                totalAllDebtRemainingBefore,
+                customerData,
+                totalAmountAllCus,
+                totalPaidAllCus,
             }
+
+            return isPagination
+                ? { ...dataReturn, pagination }
+                : { ...dataReturn }
         } catch (error) {
             throw error
         }

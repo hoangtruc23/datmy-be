@@ -98,6 +98,7 @@ const reportController = {
         try {
             const data = await reportService.getDebtConfigDetailByInvoice(
                 req.query,
+                false,
             )
             const buffer =
                 await excelService.createDebtConfigDetailByInvoiceExcel(data)
@@ -128,6 +129,7 @@ const reportController = {
         try {
             const data = await reportService.getCustomerReceivableDetail(
                 req.query,
+                false,
             )
             const buffer =
                 await excelService.createCustomerReceivableDetailExcel(data)
