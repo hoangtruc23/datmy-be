@@ -43,6 +43,7 @@ const goodsIssueSchema = new Schema(
         customer: {
             type: String,
         },
+        goodsissueDate: { type: Date },
         billingAddress: {
             type: String,
             // required: true,
