@@ -10,12 +10,10 @@ const contactPersonSchema = joi.object({
     }),
     phone: joi
         .string()
+        .allow(null, '')
         .pattern(/^[0-9]{4,15}$/)
-        .required()
         .messages({
-            'string.empty': 'Số điện thoại người liên hệ là bắt buộc',
             'string.pattern.base': 'Số điện thoại phải có từ 4 đến 15 chữ số',
-            'any.required': 'Số điện thoại người liên hệ là bắt buộc',
         }),
 })
 
@@ -51,16 +49,10 @@ const customerBaseSchema = {
         'string.empty': 'Tên đầy đủ là bắt buộc',
         'any.required': 'Tên đầy đủ là bắt buộc',
     }),
-    taxCode: joi
-        .string()
-        .pattern(/^[0-9]{10,15}$/)
-        .required()
-        .messages({
-            'string.empty': 'Mã số thuế là bắt buộc',
-            'string.pattern.base':
-                'Mã số thuế phải là chữ số và có từ 10-15 ký tự',
-            'any.required': 'Mã số thuế là bắt buộc',
-        }),
+    taxCode: joi.string().required().messages({
+        'string.empty': 'Mã số thuế là bắt buộc',
+        'any.required': 'Mã số thuế là bắt buộc',
+    }),
     billingAddress: joi.string().required().messages({
         'string.empty': 'Địa chỉ xuất hóa đơn là bắt buộc',
         'any.required': 'Địa chỉ xuất hóa đơn là bắt buộc',

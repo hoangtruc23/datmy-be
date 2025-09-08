@@ -9,14 +9,6 @@ const BadReq = require('../utils/response/requestError')
 const customerService = {
     create: async (customerData) => {
         try {
-            // Check if tax code already exists, as it must be unique
-            const checkTaxCode = await CustomerModel.findOne({
-                taxCode: customerData.taxCode,
-            })
-            if (checkTaxCode) {
-                throw new BadReq(errorCode.TAXCODE_EXISTED)
-            }
-
             const latestCustomer = await CustomerModel.findOne().sort({
                 code: -1,
             })
@@ -37,19 +29,6 @@ const customerService = {
             const currentCustomer = await CustomerModel.findById(id)
             if (!currentCustomer) {
                 throw new BadReq(errorCode.CUSTOMER_NOT_FOUND)
-            }
-
-            // Check if the new taxCode is being used by another customer
-            if (
-                customerData.taxCode &&
-                customerData.taxCode !== currentCustomer.taxCode
-            ) {
-                const conflict = await CustomerModel.findOne({
-                    taxCode: customerData.taxCode,
-                })
-                if (conflict) {
-                    throw new BadReq(errorCode.TAXCODE_EXISTED)
-                }
             }
 
             // Apply the updates from customerData to the found customer document
