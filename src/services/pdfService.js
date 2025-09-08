@@ -2,6 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const puppeteer = require('puppeteer')
 const UnitModel = require('../models/unit')
+const ProductModel = require('../models/product')
 const pdfService = {
     generateGoodsIssuePdf: async (data) => {
         const templatePath = path.join(
@@ -45,12 +46,14 @@ const pdfService = {
             const unit = await UnitModel.findById(item.unit)
             const unitName = unit ? unit.name : '—'
 
+            const product = await ProductModel.findById(item.productId)
+            const specification = product ? product.specification : ''
             total += item.issuedQuantity
             rows += `
             <tr>
                 <td>${index + 1}</td>
                 <td>${item.productName}</td>
-                <td>${item.origin || ''}</td>
+                <td>${specification }</td>
                 <td>${unitName}</td>
                 <td>${item.issuedQuantity}</td>
                 <td>${item.note || ''}</td>
@@ -70,6 +73,11 @@ const pdfService = {
             .replace('{{checkBy}}', data.checkBy || '')
             .replace('{{storekeeper}}', data.storekeeper || '')
 
+        if (data.garageAddress) {
+            html = html.replace('{{garageAddressSection}}', '')
+        } else {
+            
+        }
         const browser = await puppeteer.launch({
             headless: true,
             args: ['--no-sandbox', '--disable-setuid-sandbox'],

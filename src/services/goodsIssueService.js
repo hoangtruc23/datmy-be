@@ -61,7 +61,8 @@ const goodsIssueService = {
                 GoodsIssueModel.find(matchConditions)
                     .skip((page - 1) * limit)
                     .limit(limit)
-                    .populate('createdBy', 'fullname'),
+                    .populate('createdBy', 'fullname')
+                    .sort({ goodsissueDate: -1 }),
                 GoodsIssueModel.countDocuments(matchConditions),
             ])
             return {
@@ -153,6 +154,7 @@ const goodsIssueService = {
                 recipient,
                 note,
                 isDraft,
+                goodsIssueDate = new Date(),
             } = goodsIssue
             const checkGoodsIssue = await GoodsIssueModel.findById(goodsIssueId)
             if (!checkGoodsIssue) {
@@ -204,6 +206,7 @@ const goodsIssueService = {
                     recipient,
                     note,
                     isDraft,
+                    goodsIssueDate,
                     isTemporary: false,
                     status: isDraft
                         ? constant.GOODS_ISSUE_STATUS.DRAFT
@@ -1121,6 +1124,7 @@ const goodsIssueService = {
         const goodsIssueDetails = await GoodsIssueDetailModel.find({
             goodsIssueId,
         }).lean()
+
         const goodsIssueApproval = await GoodsIssueApprovalModel.findOne({
             goodsIssueId,
         }).lean()
