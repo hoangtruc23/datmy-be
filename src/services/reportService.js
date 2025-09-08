@@ -697,7 +697,7 @@ const reportService = {
 
             let pagination = {}
             if (isPagination) {
-                let { page = 1, limit = 1 } = query
+                let { page = 1, limit = 10 } = query
                 page = Number(page)
                 limit = Number(limit)
                 const totalItems = customerIds.length

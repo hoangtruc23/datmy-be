@@ -641,56 +641,80 @@ module.exports = router
  *                 data:
  *                   type: object
  *                   properties:
- *                     customerName:
- *                       type: string
- *                       example: CÔNG TY CỔ PHẦN DƯỢC PHẨM ABC
  *                     startDate:
  *                       type: string
- *                       example: 2025-06-17T17:00:00.000Z
+ *                       format: date-time
+ *                       example: "2025-06-17T17:00:00.000Z"
  *                     endDate:
  *                       type: string
- *                       example: 2025-06-17T17:00:00.000Z
- *                     invoices:
+ *                       format: date-time
+ *                       example: "2025-12-31T17:00:00.000Z"
+ *                     customerData:
  *                       type: array
  *                       items:
  *                         type: object
  *                         properties:
- *                           postingDate:
+ *                           customerName:
  *                             type: string
- *                             example: 2025-06-17T17:00:00.000Z
- *                           documentNumber:
- *                             type: string
- *                             example: BH25L00123
- *                           invoiceCode:
- *                             type: string
- *                             example: L00123
- *                           description:
+ *                             example: "CÔNG TY CỔ PHẦN CÔNG NGHỆ PHẨM DEF"
+ *                           invoices:
  *                             type: array
- *                             example: Bán hàng Công ty Dược ABC theo số hóa đơn L00123
- *                           dueDate:
- *                             type: string
- *                             example: 2025-06-17T17:00:00.000Z
- *                           totalAmount:
+ *                             items:
+ *                               type: object
+ *                               properties:
+ *                                 postingDate:
+ *                                   type: string
+ *                                   format: date-time
+ *                                   example: "2025-08-28T03:42:31.550Z"
+ *                                 invoiceCode:
+ *                                   type: string
+ *                                   example: "280801"
+ *                                 description:
+ *                                   type: string
+ *                                   example: "Bán hàng CÔNG TY CỔ PHẦN CÔNG NGHỆ PHẨM DEF theo số hóa đơn 280801"
+ *                                 dueDate:
+ *                                   type: string
+ *                                   format: date-time
+ *                                   example: "2026-01-01T00:00:00.000Z"
+ *                                 totalAmount:
+ *                                   type: number
+ *                                   example: 1540000
+ *                                 totalPaid:
+ *                                   type: number
+ *                                   example: 1540000
+ *                                 remainingDebt:
+ *                                   type: number
+ *                                   example: 0
+ *                           totalAmountAll:
  *                             type: number
- *                             example: 1500000
- *                           totalPaid:
+ *                             example: 4180000
+ *                           totalPaidAll:
  *                             type: number
- *                             example: 0
- *                           remainingDebt:
+ *                             example: 4080000
+ *                           totalRemainingDebtAll:
  *                             type: number
- *                             example: 1500000
- *                     totalAmountAll:
+ *                             example: 100000
+ *                     totalAmountAllCus:
  *                       type: number
- *                       example: 1500000
- *                     totalPaidAll:
+ *                       example: 4180000
+ *                     totalPaidAllCus:
  *                       type: number
- *                       example: 0
- *                     totalRemainingDebtAll:
+ *                       example: 4080000
+ *                     totalRemainingDebtAllCus:
  *                       type: number
- *                       example: 1500000
- *                     totalRemainingDebtBeforeStart:
- *                       type: number
- *                       example: 0
+ *                       example: 100000
+ *                     pagination:
+ *                       type: object
+ *                       properties:
+ *                         page:
+ *                           type: integer
+ *                           example: 2
+ *                         totalItems:
+ *                           type: integer
+ *                           example: 2
+ *                         totalPages:
+ *                           type: integer
+ *                           example: 2
  *
  *       401:
  *         description: Chưa đăng nhập
@@ -907,51 +931,23 @@ module.exports = router
  *                 data:
  *                   type: object
  *                   properties:
- *                     customerName:
- *                       type: string
- *                       example: CÔNG TY CỔ PHẦN XE ĐIỆN
  *                     startDate:
  *                       type: string
  *                       format: date-time
- *                       example: "2025-08-06T17:00:00.000Z"
+ *                       example: "2025-06-17T17:00:00.000Z"
  *                     endDate:
  *                       type: string
  *                       format: date-time
- *                       example: "2025-08-07T17:00:00.000Z"
- *                     invoices:
+ *                       example: "2025-12-31T17:00:00.000Z"
+ *                     customerData:
  *                       type: array
  *                       items:
  *                         type: object
  *                         properties:
- *                           postingDate:
+ *                           customerName:
  *                             type: string
- *                             format: date-time
- *                             example: "2025-08-07T03:12:34.798Z"
- *                           invoiceDate:
- *                             type: string
- *                             format: date-time
- *                             example: "2025-08-07T03:12:34.798Z"
- *                           invoiceCode:
- *                             type: string
- *                             example: L324233
- *                           invoiceDetails:
- *                             type: array
- *                             items:
- *                               type: object
- *                               properties:
- *                                 description:
- *                                   type: string
- *                                   example: "Phí mua sản phẩm: Sản phẩm 297A"
- *                                 debtAccount:
- *                                   type: integer
- *                                   example: 131
- *                                 contraAccount:
- *                                   type: integer
- *                                   example: 5111
- *                                 amount:
- *                                   type: number
- *                                   example: 1500000
- *                           payments:
+ *                             example: "CÔNG TY CỔ PHẦN CÔNG NGHỆ PHẨM DEF"
+ *                           invoices:
  *                             type: array
  *                             items:
  *                               type: object
@@ -959,44 +955,58 @@ module.exports = router
  *                                 postingDate:
  *                                   type: string
  *                                   format: date-time
- *                                   example: "2025-08-07T04:18:06.051Z"
+ *                                   example: "2025-08-28T03:42:31.550Z"
  *                                 invoiceDate:
  *                                   type: string
  *                                   format: date-time
- *                                   example: "2025-07-21T00:00:00.000Z"
+ *                                   nullable: true
+ *                                   example: "2025-08-28T00:00:00.000Z"
+ *                                 invoiceCode:
+ *                                   type: string
+ *                                   nullable: true
+ *                                   example: "280801"
  *                                 description:
  *                                   type: string
- *                                   example: "Thu tiền khách hàng CÔNG TY CỔ PHẦN XE ĐIỆN theo hóa đơn L324233"
+ *                                   example: "Phí mua sản phẩm: Sản phẩm A"
  *                                 debtAccount:
- *                                   type: integer
- *                                   example: 131
+ *                                   type: string
+ *                                   example: "131"
  *                                 contraAccount:
- *                                   type: integer
- *                                   example: 111
- *                                 amount:
+ *                                   type: string
+ *                                   example: "5111"
+ *                                 amountDebt:
  *                                   type: number
  *                                   example: 1000000
- *                           totalAmount:
+ *                                 amountPay:
+ *                                   type: number
+ *                                   example: 0
+ *                           totalAmountAll:
  *                             type: number
- *                             example: 3338500
- *                           totalPaid:
+ *                             example: 4180000
+ *                           totalPaidAll:
  *                             type: number
- *                             example: 4338500
- *                           totalDebtRemaining:
+ *                             example: 4080000
+ *                           totalAllDebtRemainingBefore:
  *                             type: number
- *                             example: -1000000
- *                     totalAmountAll:
+ *                             example: 0
+ *                     totalAmountAllCus:
  *                       type: number
- *                       example: 4653500
- *                     totalPaidAll:
+ *                       example: 4180000
+ *                     totalPaidAllCus:
  *                       type: number
- *                       example: 5653500
- *                     totalDebtRemainingAll:
- *                       type: number
- *                       example: -1000000
- *                     totalAllDebtRemainingBefore:
- *                       type: number
- *                       example: 0
+ *                       example: 4080000
+ *                     pagination:
+ *                       type: object
+ *                       properties:
+ *                         page:
+ *                           type: integer
+ *                           example: 2
+ *                         totalItems:
+ *                           type: integer
+ *                           example: 2
+ *                         totalPages:
+ *                           type: integer
+ *                           example: 2
  *       401:
  *         description: Chưa đăng nhập
  *         content:
