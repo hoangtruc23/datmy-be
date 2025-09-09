@@ -37,7 +37,8 @@ const goodsReceiptService = {
                 })
                     .skip((page - 1) * limit)
                     .limit(limit)
-                    .populate('createdBy', 'fullname'),
+                    .populate('createdBy', 'fullname')
+                    .sort({ createdAt: -1 }),
                 GoodsReceiptModel.countDocuments({
                     status: { $in: statuses },
                     $or: [{ supplier: search }],
@@ -129,6 +130,7 @@ const goodsReceiptService = {
                 supplier,
                 deliveryAddresses,
                 note,
+                createdAt = new Date(),
             } = goodsReceipt
             const checkGoodsReceipt =
                 await GoodsReceiptModel.findById(goodsReceiptId)
@@ -163,6 +165,7 @@ const goodsReceiptService = {
                     status: constant.GOODS_RECEIPT_STATUS
                         .WAREHOUSE_STAFF_APPROVAL,
                     createdBy: currentUserId,
+                    createdAt
                 },
                 { session },
             )

@@ -63,8 +63,9 @@ const goodsAdvanceSchema = new Schema(
             ref: 'users',
             default: null,
         },
+        createdAt: { type: Date },
     },
-    { timestamps: true },
+    // { timestamps: true },
 )
 
 goodsAdvanceSchema.plugin(autoIncrement, {
