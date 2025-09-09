@@ -32,7 +32,8 @@ const goodsAdvanceService = {
                     isTemporary: false,
                 })
                     .skip((page - 1) * limit)
-                    .limit(limit),
+                    .limit(limit)
+                    .sort({ createdAt: -1 }),
                 GoodsAdvanceModel.countDocuments({
                     status: { $in: statuses },
                     $or: [{ customer: search }],
@@ -161,6 +162,7 @@ const goodsAdvanceService = {
                 borrowContent,
                 customer,
                 deliveryAddresses,
+                createdAt = new Date(),
             } = goodsAdvance
             const checkGoodsAdvance =
                 await GoodsAdvanceModel.findById(goodsAdvanceId)
@@ -210,6 +212,7 @@ const goodsAdvanceService = {
                     status: constant.GOODS_ADVANCE_STATUS
                         .WAREHOUSE_STAFF_APPROVAL,
                     createdBy: currentUserId,
+                    createdAt,
                 },
                 { session },
             )

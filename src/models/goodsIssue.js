@@ -43,7 +43,7 @@ const goodsIssueSchema = new Schema(
         customer: {
             type: String,
         },
-        goodsissueDate: { type: Date },
+
         billingAddress: {
             type: String,
             // required: true,
@@ -84,8 +84,9 @@ const goodsIssueSchema = new Schema(
             ref: 'users',
             default: null,
         },
+        createdAt: { type: Date },
     },
-    { timestamps: true },
+    // { timestamps: true },
 )
 
 goodsIssueSchema.plugin(autoIncrement, {

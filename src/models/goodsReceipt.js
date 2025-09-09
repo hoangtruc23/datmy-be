@@ -62,8 +62,9 @@ const goodsReceiptSchema = new Schema(
             ref: 'users',
             default: null,
         },
+        createdAt: { type: Date },
     },
-    { timestamps: true },
+    // { timestamps: true },
 )
 
 goodsReceiptSchema.plugin(autoIncrement, {
