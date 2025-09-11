@@ -42,7 +42,27 @@ const pdfService = {
         let rows = ''
         let total = 0
 
+        const areaSet = new Set()
         for (const [index, item] of data.goodsIssueDetails.entries()) {
+            let address = item?.warehouseId?.address || ''
+            const lower = address.toLowerCase()
+
+            if (
+                lower.includes('hcm') ||
+                lower.includes('ho chi minh') ||
+                lower.includes('hồ chí minh')
+            ) {
+                areaSet.add('HCM')
+            } else if (
+                lower.includes('hn') ||
+                lower.includes('ha noi') ||
+                lower.includes('hà nội')
+            ) {
+                areaSet.add('HN')
+            } else if (address) {
+                areaSet.add(address) 
+            }
+            
             const unit = await UnitModel.findById(item.unit)
             const unitName = unit ? unit.name : '—'
 
@@ -53,14 +73,15 @@ const pdfService = {
             <tr>
                 <td>${index + 1}</td>
                 <td>${item.productName}</td>
-                <td>${specification }</td>
+                <td>${specification}</td>
                 <td>${unitName}</td>
                 <td>${item.issuedQuantity}</td>
                 <td>${item.note || ''}</td>
             </tr>
             `
         }
-
+        const displayAddress = Array.from(areaSet).join(',');
+        html = html.replace('{{deliveryAddresses}}', displayAddress)
         html = html.replace('{{goodsIssueDetails}}', rows)
         html = html.replace('{{totalIssuedQuantity}}', total)
         html = html.replace('{{goodsIssueNote}}', data.note || '')
@@ -76,7 +97,6 @@ const pdfService = {
         if (data.garageAddress) {
             html = html.replace('{{garageAddressSection}}', '')
         } else {
-            
         }
         const browser = await puppeteer.launch({
             headless: true,

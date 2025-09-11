@@ -57,7 +57,7 @@ const warehousesService = {
     },
     update: async (id, reqData) => {
         try {
-            const { name, description } = reqData
+            const { name, description, address } = reqData
             const warehouse = await WarehouseModel.findById(id)
             if (!warehouse) {
                 throw new BadReq(errorCode.WAREHOUSE_NOT_FOUND)
@@ -73,6 +73,7 @@ const warehousesService = {
             await WarehouseModel.findByIdAndUpdate(id, {
                 name,
                 description,
+                address
             })
             return null
         } catch (error) {
