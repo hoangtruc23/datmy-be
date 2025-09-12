@@ -349,9 +349,22 @@ const errorCode = {
         message: 'Mail Server không hợp lệ',
     },
     SEND_EMAIL_FAILED: {
-        code: 89,
+        code: 90,
         message: 'Gửi email thất bại',
     },
+    ISSUED_TRANSFER_QUANTITY_INVALID: {
+        code: 91,
+        message: 'Số lượng chuyển kho lớn hơn số lượng tồn kho',
+    },
+    SERIAL_OR_BATCH_TRANSFER_QUANTITY_TOTAL_INVALID: {
+        code: 92,
+        message:
+            'Tổng số lượng sản phẩm của các lô không khớp với số lượng chuyển kho',
+    },
+    TRACKING_CODE_EXISTS:{
+        code: 93,
+        message: 'Mã lô/serial đã tồn tại',
+    }
 }
 
 module.exports = errorCode

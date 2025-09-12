@@ -672,6 +672,25 @@ async function permissionSeeder() {
             code: 'cau_hinh_nguoi_nhan_mail_mac_dinh',
             parentPermissionId: '68c12543e78783270db36262',
         },
+        // chuyển kho
+        {
+            _id: new Types.ObjectId('688c7f601bb97636f19d6ab1'),
+            name: 'Chuyển kho',
+            code: 'chuyen_kho',
+            parentPermissionId: null,
+        },
+        {
+            _id: new Types.ObjectId('688c7f601bb97636f19d6ab2'),
+            name: 'Danh sách phiếu chuyển kho',
+            code: 'chuyen_kho_them',
+            parentPermissionId: '688c7f601bb97636f19d6ab1',
+        },
+                {
+            _id: new Types.ObjectId('688c7f601bb97636f19d6ab3'),
+            name: 'Tạo chuyển kho',
+            code: 'chuyen_kho_xem',
+            parentPermissionId: '688c7f601bb97636f19d6ab1',
+        },
     ])
     logger.info('Permissions seeded')
 }
