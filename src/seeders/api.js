@@ -258,6 +258,11 @@ async function apiSeeder() {
             api: '/product/getAdvanceByTrackingCode',
             note: 'Trả về danh sách các phiếu tạm ứng tương ứng theo trackingCode',
         },
+                {
+            _id: new Types.ObjectId('6868e75fcebe446e4c78bbb7'),
+            api: '/product/updateQuantityProductStorage',
+            note: 'Cập nhật số lượng tồn kho của sản phẩm',
+        },
 
         // Thương hiệu
         {

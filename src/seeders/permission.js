@@ -236,6 +236,13 @@ async function permissionSeeder() {
             parentPermissionId: '685a1b9f9f5d2f68d81a1eb4',
         },
 
+        {
+            _id: new Types.ObjectId('685a1b9f9f5d2f68d81a1ec9'),
+            name: 'Cập nhật số lượng tồn kho',
+            code: 'san_pham-cap_nhat_so_luong_ton_kho',
+            parentPermissionId: '685a1b9f9f5d2f68d81a1eb4',
+        },
+
         // Thương hiệu
         {
             _id: new Types.ObjectId('684927c871287f2ae7d81306'),
@@ -685,7 +692,7 @@ async function permissionSeeder() {
             code: 'chuyen_kho_them',
             parentPermissionId: '688c7f601bb97636f19d6ab1',
         },
-                {
+        {
             _id: new Types.ObjectId('688c7f601bb97636f19d6ab3'),
             name: 'Tạo chuyển kho',
             code: 'chuyen_kho_xem',

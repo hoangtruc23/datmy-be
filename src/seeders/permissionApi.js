@@ -235,6 +235,10 @@ async function permissionApiSeeder() {
             permissionId: '685a1b9f9f5d2f68d81a1eb9', // Khóa/Mở khóa
             apiId: '685a1b9f9f5d2f68d81a1eb0', // /product/lockUnlock
         },
+        {
+            permissionId: '685a1b9f9f5d2f68d81a1ec9', // cập nhật số lượng tồn kho
+            apiId: '6868e75fcebe446e4c78bbb7', // /product/updateQuantityProductStorage
+        },
 
         // Thương hiệu
         {

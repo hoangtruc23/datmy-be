@@ -26,6 +26,10 @@ router.get(
     '/getAdvanceByTrackingCode',
     productController.getAdvanceByTrackingCode,
 )
+router.post(
+    '/updateQuantityProductStorage',
+    productController.updateQuantityProductStorage,
+)
 module.exports = router
 
 /**
@@ -531,4 +535,130 @@ module.exports = router
  *                       fullname:
  *                         type: string
  *                         example: "Nguyễn Văn A"
+ */
+
+
+/**
+ * @swagger
+ * /product/updateQuantityProductStorage:
+ *   post:
+ *     summary: Cập nhật số lượng tồn kho của sản phẩm theo tracking code
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Product]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - warehouseId
+ *               - productId
+ *               - trackingCode
+ *               - quantity
+ *             properties:
+ *               warehouseId:
+ *                 type: string
+ *                 description: ID kho hàng (ObjectId)
+ *                 example: "6875c2870831baa9fe3af0b2"
+ *               productId:
+ *                 type: string
+ *                 description: ID sản phẩm (ObjectId)
+ *                 example: "6875c1a10831baa9fe3af047"
+ *               trackingCode:
+ *                 type: string
+ *                 description: Mã lô/serial của sản phẩm
+ *                 example: "A100"
+ *               quantity:
+ *                 type: number
+ *                 description: Số lượng thay đổi (âm để giảm, dương để tăng)
+ *                 example: 5
+ *     responses:
+ *       200:
+ *         description: Cập nhật thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *       400:
+ *         description: Lỗi request (ví dụ: kho hoặc sản phẩm không tồn tại, quantity bằng 0)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 400
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: "WAREHOUSE_NOT_FOUND"
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       401:
+ *         description: Chưa đăng nhập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 401
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: "Không có token"
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       403:
+ *         description: Không có quyền truy cập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 403
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: "Không có quyền"
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       500:
+ *         description: Lỗi server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 500
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: "Lỗi server!"
+ *                 data:
+ *                   type: string
+ *                   example: null
  */

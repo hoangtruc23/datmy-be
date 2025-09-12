@@ -203,7 +203,7 @@ const productTransferHistoryService = {
             await session.commitTransaction()
             session.endSession()
 
-            return transfer[0]
+            return { success: true }
         } catch (error) {
             await session.abortTransaction()
             session.endSession()
