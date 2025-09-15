@@ -53,7 +53,7 @@ const sendOverdueDebtReminder = async () => {
     }
 }
 const SendOverdueDebtReminder = new CronJob(
-    '0 37 10 * * *',
+    '0 0 6 * * *',
     sendOverdueDebtReminder,
     null,
     'Asia/Ho_Chi_Minh',
