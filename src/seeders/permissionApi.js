@@ -716,6 +716,20 @@ async function permissionApiSeeder() {
             permissionId: '688c7f601bb97636f19d6ad9', // Sinh báo cáo chi tiết khách hàng
             apiId: '68ad58dfa053aa8a7b8dafd6', // /reports/generateCustomerReceivableDetail
         },
+
+        //mail
+        {
+            permissionId: '68c12543e78783270db36263', // Tạo kết nối đến mail server
+            apiId: '68c1243d15ae994f437fa626', // /mail/configMailServer
+        },
+        {
+            permissionId: '68c12543e78783270db36264', // Gửi mail
+            apiId: '68c1243d15ae994f437fa627', // /mail/sendMail
+        },
+        {
+            permissionId: '68c78603e435ea91ad31fc57', // Cấu hình người nhận mail mặc định
+            apiId: '68c785b3f8bf800b6fd2ccaa', // /mail/configMailReceiver
+        },
     ])
     logger.info('PermissionApis seeded')
 }

@@ -415,6 +415,23 @@ async function rolePermissionSeeder() {
             roleId: '684927c871287f2ae7d8130b', // Quản trị viên
             permissionId: '687165e2ee8406ca535d1ba5', // Xóa chiết khấu
         },
+        //mail quản trị viên
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '68c12543e78783270db36262', // mail
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '68c12543e78783270db36263', // tạo kết nối đến server mail
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '68c12543e78783270db36264', // gửi mail
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '68c78603e435ea91ad31fc57', // cấu hình người nhận mail mặc định
+        },
 
         // Nhân viên kho =======================================================================================
         // {

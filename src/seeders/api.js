@@ -831,6 +831,21 @@ async function apiSeeder() {
             api: '/system/updateRoleById',
             note: 'Chỉnh sửa Role theo roleId',
         },
+        {
+            _id: new Types.ObjectId('68c1243d15ae994f437fa626'),
+            api: '/mail/configMailServer',
+            note: 'kết nối đến mail server',
+        },
+        {
+            _id: new Types.ObjectId('68c1243d15ae994f437fa627'),
+            api: '/mail/sendMail',
+            note: 'gửi mail',
+        },
+        {
+            _id: new Types.ObjectId('68c785b3f8bf800b6fd2ccaa'),
+            api: '/mail/configMailReceiver',
+            note: 'cấu hình người nhận mail mặc định',
+        },
     ])
 
     logger.info('apis seeded')

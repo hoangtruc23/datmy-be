@@ -340,6 +340,18 @@ const errorCode = {
         code: 87,
         message: 'Không tìm thấy worksheet trong file Excel',
     },
+    MAIL_SERVER_INVALID: {
+        code: 88,
+        message: 'Mail Server không hợp lệ',
+    },
+    MAIL_SERVER_NOT_DEFINED: {
+        code: 89,
+        message: 'Mail Server không hợp lệ',
+    },
+    SEND_EMAIL_FAILED: {
+        code: 89,
+        message: 'Gửi email thất bại',
+    },
 }
 
 module.exports = errorCode
