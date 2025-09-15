@@ -646,6 +646,32 @@ async function permissionSeeder() {
             code: 'bao_cao-sinh_bao_cao_doi_chieu_cong_no',
             parentPermissionId: '688c7f601bb97636f19d6ac3',
         },
+
+        //mail
+        {
+            _id: new Types.ObjectId('68c12543e78783270db36262'),
+            name: 'Mail',
+            code: 'mail',
+            parentPermissionId: null,
+        },
+        {
+            _id: new Types.ObjectId('68c12543e78783270db36263'),
+            name: 'Tạo kết nối đến mail server',
+            code: 'tao_ket_noi_den_mail_server',
+            parentPermissionId: '68c12543e78783270db36262',
+        },
+        {
+            _id: new Types.ObjectId('68c12543e78783270db36264'),
+            name: 'Gửi mail',
+            code: 'gui_mail',
+            parentPermissionId: '68c12543e78783270db36262',
+        },
+        {
+            _id: new Types.ObjectId('68c78603e435ea91ad31fc57'),
+            name: 'Cấu hình người nhận mail mặc định',
+            code: 'cau_hinh_nguoi_nhan_mail_mac_dinh',
+            parentPermissionId: '68c12543e78783270db36262',
+        },
     ])
     logger.info('Permissions seeded')
 }

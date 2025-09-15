@@ -23,6 +23,7 @@ const debtReminderRoute = require('./debtReminderRoute')
 const reportsRoute = require('./reportsRoute')
 const dashBoardRoute = require('./dashBoardRoute')
 const systemRoute = require('./systemRoute')
+const mailRoute = require('./mailRoute')
 
 router.use('/auth', authRoute)
 router.use('/user', userRoute)
@@ -45,5 +46,6 @@ router.use('/debtReminder', debtReminderRoute)
 router.use('/reports', reportsRoute)
 router.use('/dashboard', dashBoardRoute)
 router.use('/system', systemRoute)
+router.use('/mail', mailRoute)
 
 module.exports = router
