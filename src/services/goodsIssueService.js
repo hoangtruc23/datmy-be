@@ -1121,10 +1121,13 @@ const goodsIssueService = {
         if (!goodsIssue) {
             throw new BadReq(errorCode.GOODS_ISSUE_NOT_FOUND)
         }
-        const goodsIssueDetails = await GoodsIssueDetailModel.find({
-            goodsIssueId,
-        }).lean()
-
+        const goodsIssueDetails = await GoodsIssueDetailModel.find({goodsIssueId})
+            .populate({
+                path: 'warehouseId',
+                select: 'name address',
+            })
+            .lean()
+            
         const goodsIssueApproval = await GoodsIssueApprovalModel.findOne({
             goodsIssueId,
         }).lean()

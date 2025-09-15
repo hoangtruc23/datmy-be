@@ -10,6 +10,9 @@ const warehouseSchema = new Schema(
         description: {
             type: String,
         },
+        address: {
+            type: String,
+        },
         isActive: {
             type: Boolean,
             default: true,
