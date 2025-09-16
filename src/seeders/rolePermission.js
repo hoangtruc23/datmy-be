@@ -433,6 +433,18 @@ async function rolePermissionSeeder() {
             permissionId: '68c78603e435ea91ad31fc57', // cấu hình người nhận mail mặc định
         },
 
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '688c7f601bb97636f19d6ab2', // chuyển kho
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '688c7f601bb97636f19d6ab3', // xem
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '685a1b9f9f5d2f68d81a1ec9', // cập nhật số lượng sản phẩm
+        },
         // Nhân viên kho =======================================================================================
         // {
         //     roleId: '684927c871287f2ae7d8130c',
@@ -1533,6 +1545,7 @@ async function rolePermissionSeeder() {
             roleId: '684927c871287f2ae7d81311',
             permissionId: '684927c871287f2ae7d81307', // Nhập kho
         },
+
         {
             roleId: '684927c871287f2ae7d81311',
             permissionId: '6856e210a596678c37b505e1', // Xem phiếu nhập kho

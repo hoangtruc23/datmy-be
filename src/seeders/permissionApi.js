@@ -235,6 +235,10 @@ async function permissionApiSeeder() {
             permissionId: '685a1b9f9f5d2f68d81a1eb9', // Khóa/Mở khóa
             apiId: '685a1b9f9f5d2f68d81a1eb0', // /product/lockUnlock
         },
+        {
+            permissionId: '685a1b9f9f5d2f68d81a1ec9', // cập nhật số lượng tồn kho
+            apiId: '6868e75fcebe446e4c78bbb7', // /product/updateQuantityProductStorage
+        },
 
         // Thương hiệu
         {
@@ -378,6 +382,15 @@ async function permissionApiSeeder() {
         {
             permissionId: '685a477d73dd15c087569df0', // Cập nhật phiếu xuất kho
             apiId: '685a477d73dd15c087569de7', // /goodsIssue/update
+        },
+        // chuyển kho
+        {
+            permissionId: '688c7f601bb97636f19d6ab2', // Cập nhật phiếu chuyển kho
+            apiId: '68a44835a3d2cdd989be0632', // /productTransferHistory/transferProduct
+        },
+        {
+            permissionId: '688c7f601bb97636f19d6ab3', // xem phiếu chuyển kho
+            apiId: '68a44835a3d2cdd989be0631', // /productTransferHistory/getAll
         },
         //Cập nhật thì cũng có thể thêm xóa sửa sản phẩm cho phiếu xuất kho
         {
