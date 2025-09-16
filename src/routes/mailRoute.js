@@ -12,6 +12,7 @@ router.post(
     mailController.configMailReceiver,
 )
 router.post('/sendMail', mailController.sendMail)
+router.get('/getAll', mailController.getAll)
 
 module.exports = router
 
@@ -275,6 +276,125 @@ module.exports = router
  *                 data:
  *                   type: string
  *                   example: null
+ *       401:
+ *         description: Chưa đăng nhập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 401
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có token
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       403:
+ *         description: Không có quyền truy cập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 403
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có quyền
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       500:
+ *         description: Lỗi server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Lỗi server!
+ *                 data:
+ *                   type: string
+ *                   example: null
+ */
+
+/**
+ * @swagger
+ * /mail/getAll:
+ *   get:
+ *     summary: Lấy ra mail server và danh sách người nhận
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Mail]
+ *     responses:
+ *       200:
+ *         description: Trả về cấu hình mail server và danh sách người nhận
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
+ *                 code:
+ *                   type: integer
+ *                   example: 1
+ *                 message:
+ *                   type: string
+ *                   example: OK!
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: 68c127e5bc75fbbcca8cf991
+ *                     __v:
+ *                       type: integer
+ *                       example: 0
+ *                     host:
+ *                       type: string
+ *                       example: test
+ *                     port:
+ *                       type: integer
+ *                       example: 465
+ *                     secure:
+ *                       type: boolean
+ *                       example: true
+ *                     user:
+ *                       type: string
+ *                       example: test
+ *                     pass:
+ *                       type: string
+ *                       example: test
+ *                     receiverIds:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           _id:
+ *                             type: string
+ *                             example: 684bcaeb7cac1b319680bf10
+ *                           username:
+ *                             type: string
+ *                             example: ketoanhoadon
+ *                           email:
+ *                             type: string
+ *                             example: user1@gamil.com
  *       401:
  *         description: Chưa đăng nhập
  *         content:

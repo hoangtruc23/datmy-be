@@ -851,6 +851,11 @@ async function apiSeeder() {
             api: '/mail/configMailReceiver',
             note: 'cấu hình người nhận mail mặc định',
         },
+        {
+            _id: new Types.ObjectId('68c93361d12a27f099ce27ad'),
+            api: '/mail/getAll',
+            note: 'lấy ra người nhận, cấu hình mail',
+        },
         // chuyển kho
         {
             _id: new Types.ObjectId('68a44835a3d2cdd989be0631'),
@@ -862,6 +867,7 @@ async function apiSeeder() {
             api: '/productTransferHistory/transferProduct',
             note: 'Chuyển kho',
         },
+        
     ])
 
     logger.info('apis seeded')
