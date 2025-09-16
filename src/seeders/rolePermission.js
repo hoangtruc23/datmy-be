@@ -432,6 +432,10 @@ async function rolePermissionSeeder() {
             roleId: '684927c871287f2ae7d8130b', // Quản trị viên
             permissionId: '68c78603e435ea91ad31fc57', // cấu hình người nhận mail mặc định
         },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '68c933a802908cb98dd9004d', // lấy ra cấu hình, người nhận mail mặc định
+        },
 
         // Nhân viên kho =======================================================================================
         // {

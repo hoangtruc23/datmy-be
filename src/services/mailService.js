@@ -92,6 +92,20 @@ const mailService = {
             throw error
         }
     },
+    getAll: async () => {
+        try {
+            const data = await MailServerModel.findOne({})
+                .populate({
+                    path: 'receiverIds',
+                    model: 'users',
+                    select: 'username email',
+                })
+                .lean()
+            return data
+        } catch (error) {
+            throw error
+        }
+    },
 }
 
 module.exports = mailService

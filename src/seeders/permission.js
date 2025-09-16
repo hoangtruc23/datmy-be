@@ -672,6 +672,12 @@ async function permissionSeeder() {
             code: 'cau_hinh_nguoi_nhan_mail_mac_dinh',
             parentPermissionId: '68c12543e78783270db36262',
         },
+        {
+            _id: new Types.ObjectId('68c933a802908cb98dd9004d'),
+            name: 'Lấy ra cấu hình, người nhận mail mặc định',
+            code: 'lay_ra_cau_hinh_va_nguoi_nhan_mail_mac_dinh',
+            parentPermissionId: '68c12543e78783270db36262',
+        },
     ])
     logger.info('Permissions seeded')
 }

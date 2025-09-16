@@ -730,6 +730,10 @@ async function permissionApiSeeder() {
             permissionId: '68c78603e435ea91ad31fc57', // Cấu hình người nhận mail mặc định
             apiId: '68c785b3f8bf800b6fd2ccaa', // /mail/configMailReceiver
         },
+        {
+            permissionId: '68c933a802908cb98dd9004d', // Lấy ra cấu hình, người nhận mail mặc định
+            apiId: '68c93361d12a27f099ce27ad', // /mail/getAll
+        },
     ])
     logger.info('PermissionApis seeded')
 }

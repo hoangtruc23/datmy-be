@@ -846,6 +846,11 @@ async function apiSeeder() {
             api: '/mail/configMailReceiver',
             note: 'cấu hình người nhận mail mặc định',
         },
+        {
+            _id: new Types.ObjectId('68c93361d12a27f099ce27ad'),
+            api: '/mail/getAll',
+            note: 'lấy ra người nhận, cấu hình mail',
+        },
     ])
 
     logger.info('apis seeded')
