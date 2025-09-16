@@ -586,7 +586,7 @@ module.exports = router
  *                   type: boolean
  *                   example: true
  *       400:
- *         description: Lỗi request (ví dụ: kho hoặc sản phẩm không tồn tại, quantity bằng 0)
+ *         description:  "Lỗi request (ví dụ: kho hoặc sản phẩm không tồn tại, quantity bằng 0)"
  *         content:
  *           application/json:
  *             schema:
