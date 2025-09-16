@@ -60,9 +60,9 @@ const pdfService = {
             ) {
                 areaSet.add('HN')
             } else if (address) {
-                areaSet.add(address) 
+                areaSet.add(address)
             }
-            
+
             const unit = await UnitModel.findById(item.unit)
             const unitName = unit ? unit.name : '—'
 
@@ -80,7 +80,7 @@ const pdfService = {
             </tr>
             `
         }
-        const displayAddress = Array.from(areaSet).join(',');
+        const displayAddress = Array.from(areaSet).join(',')
         html = html.replace('{{deliveryAddresses}}', displayAddress)
         html = html.replace('{{goodsIssueDetails}}', rows)
         html = html.replace('{{totalIssuedQuantity}}', total)
@@ -94,9 +94,13 @@ const pdfService = {
             .replace('{{checkBy}}', data.checkBy || '')
             .replace('{{storekeeper}}', data.storekeeper || '')
 
-        if (data.garageAddress) {
-            html = html.replace('{{garageAddressSection}}', '')
+        if (data.garageAddress && data.garageAddress.trim() !== '') {
+            html = html.replace(
+                '{{garageAddressSection}}',
+                `<p><strong>Địa chỉ gara:</strong> ${data.garageAddress}</p>`,
+            )
         } else {
+            html = html.replace('{{garageAddressSection}}', '')
         }
         const browser = await puppeteer.launch({
             headless: true,

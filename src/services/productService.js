@@ -10,6 +10,7 @@ const GoodsAdvanceDetailModel = require('../models/goodsAdvanceDetail')
 const GoodsAdvanceModel = require('../models/goodsAdvance')
 const UserModel = require('../models/user')
 const UnitModel = require('../models/unit')
+const constant = require('../utils/constant/constant')
 const errorCode = require('../utils/response/errorCode')
 const BadReq = require('../utils/response/requestError')
 const { Types } = require('mongoose')
@@ -455,6 +456,73 @@ const productCategoryService = {
                 }
             })
             return result
+        } catch (error) {
+            throw error
+        }
+    },
+
+    updateQuantityProductStorage: async ({
+        warehouseId,
+        productId,
+        trackingCode,
+        quantity,
+    }) => {
+        try {
+            const [checkWarehouse, checkProduct] = await Promise.all([
+                WarehouseModel.findById(warehouseId),
+                ProductModel.findById(productId),
+            ])
+            if (!checkWarehouse) {
+                throw new BadReq(errorCode.WAREHOUSE_NOT_FOUND)
+            }
+            if (!checkProduct) {
+                throw new BadReq(errorCode.PRODUCT_NOT_FOUND)
+            }
+
+            const existingStorage = await ProductStorageModel.findOne({
+                warehouseId,
+                trackingCode,
+            })
+
+            if (quantity < 0) {
+                if (!existingStorage) {
+                    throw new BadReq(errorCode.TRACKING_CODE_NOT_FOUND)
+                }
+                if (existingStorage.quantity + quantity < 0) {
+                    throw new BadReq(errorCode.INSUFFICIENT_QUANTITY_TO_REDUCE)
+                }
+                existingStorage.quantity += quantity
+                if (existingStorage.quantity === 0) {
+                    await existingStorage.deleteOne()
+                } else {
+                    await existingStorage.save()
+                }
+            } else if (quantity === 0) {
+                throw new BadReq(errorCode.QUANTITY_CAN_NOT_ZERO)
+            } else {
+                if (existingStorage) {
+                    if (
+                        checkProduct.managementType ===
+                        constant.PRODUCT_MANAGEMENT_TYPE.SERIAL
+                    ) {
+                        throw new BadReq(
+                            errorCode.SERIAL_PRODUCT_MUST_CREATE_NEW_TRACKINGCODE,
+                        )
+                    }
+                    existingStorage.quantity += quantity
+                    await existingStorage.save()
+                } else {
+                    // tạo mới lô nếu chưa có
+                    await ProductStorageModel.create({
+                        warehouseId,
+                        productId,
+                        trackingCode,
+                        quantity,
+                    })
+                }
+            }
+
+            return { success: true }
         } catch (error) {
             throw error
         }
