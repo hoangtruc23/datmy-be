@@ -26,9 +26,9 @@ const mailController = {
             next(error)
         }
     },
-    getAll: async (req, res, next) => {
+    getInfo: async (req, res, next) => {
         try {
-            const result = await mailService.getAll()
+            const result = await mailService.getInfo()
             return res.status(200).json(response.success(result))
         } catch (error) {
             next(error)

@@ -853,7 +853,7 @@ async function apiSeeder() {
         },
         {
             _id: new Types.ObjectId('68c93361d12a27f099ce27ad'),
-            api: '/mail/getAll',
+            api: '/mail/getInfo',
             note: 'lấy ra người nhận, cấu hình mail',
         },
         // chuyển kho

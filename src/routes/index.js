@@ -24,7 +24,7 @@ const reportsRoute = require('./reportsRoute')
 const dashBoardRoute = require('./dashBoardRoute')
 const systemRoute = require('./systemRoute')
 const mailRoute = require('./mailRoute')
-const productTransferHistoryRoute = require('./ProductTransferHistoryRoute')
+const productTransferHistoryRoute = require('./productTransferHistoryRoute')
 
 router.use('/auth', authRoute)
 router.use('/user', userRoute)

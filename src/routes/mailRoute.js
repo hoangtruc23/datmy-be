@@ -12,7 +12,7 @@ router.post(
     mailController.configMailReceiver,
 )
 router.post('/sendMail', mailController.sendMail)
-router.get('/getAll', mailController.getAll)
+router.get('/getInfo', mailController.getInfo)
 
 module.exports = router
 
@@ -334,7 +334,7 @@ module.exports = router
 
 /**
  * @swagger
- * /mail/getAll:
+ * /mail/getInfo:
  *   get:
  *     summary: Lấy ra mail server và danh sách người nhận
  *     security:

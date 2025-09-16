@@ -92,7 +92,7 @@ const mailService = {
             throw error
         }
     },
-    getAll: async () => {
+    getInfo: async () => {
         try {
             const data = await MailServerModel.findOne({})
                 .populate({
