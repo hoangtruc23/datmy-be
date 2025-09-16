@@ -148,14 +148,14 @@ module.exports = router
  *           schema:
  *             type: object
  *             required:
- *               - receivers
+ *               - receiverIds
  *             properties:
- *               receivers:
+ *               receiverIds:
  *                 type: array
- *                 description: Thông tin những người nhận
+ *                 description: Id những user nhận
  *                 items:
  *                   type: string
- *                   example: user@gmail.com
+ *                   example: id của customer
  *     responses:
  *       200:
  *         content:

@@ -1,4 +1,4 @@
-const { Schema, model } = require('mongoose')
+const { Schema, model, Types } = require('mongoose')
 
 const mailServerSchema = new Schema({
     host: {
@@ -21,8 +21,13 @@ const mailServerSchema = new Schema({
         type: String,
         required: true,
     },
-    receivers: {
-        type: [String],
+    receiverIds: {
+        type: [
+            {
+                type: Types.ObjectId,
+                ref: 'users',
+            },
+        ],
         default: [],
     },
 })
