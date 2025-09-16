@@ -1,5 +1,6 @@
 const nodemailer = require('nodemailer')
 const MailServerModel = require('../models/mailServer')
+const UserModel = require('../models/user')
 const BadReq = require('../utils/response/requestError')
 const errorCode = require('../utils/response/errorCode')
 
@@ -36,10 +37,10 @@ const mailService = {
 
     configMailReceiver: async (reqData) => {
         try {
-            const { receivers } = reqData
+            const { receiverIds } = reqData
             await MailServerModel.findOneAndUpdate(
                 {},
-                { receivers },
+                { receiverIds },
                 { upsert: true },
             )
             return null
@@ -66,7 +67,13 @@ const mailService = {
                 },
             })
 
-            for (const receiver of mailServer.receivers) {
+            const receivers = await UserModel.find({
+                _id: { $in: mailServer.receiverIds },
+            })
+
+            const mailReceivers = receivers.map((receiver) => receiver.email)
+
+            for (const receiver of mailReceivers) {
                 const email = {
                     from: mailServer.user,
                     to: receiver,
