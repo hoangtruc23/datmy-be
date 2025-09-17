@@ -863,7 +863,6 @@ module.exports = router
  *                   type: string
  *                   example: null
  */
-
 /**
  * @swagger
  * /system/updateRoleById/{roleId}:
@@ -873,12 +872,12 @@ module.exports = router
  *       - bearerAuth: []
  *     tags: [System]
  *     parameters:
- *     - name: roleId
- *       in: path
- *       required: true
- *       schema:
- *         type: string
- *       description: Id của role
+ *       - name: roleId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Id của role
  *     requestBody:
  *       required: true
  *       content:
@@ -888,6 +887,14 @@ module.exports = router
  *             required:
  *               - parentPermissionIds
  *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "Quản trị viên"
+ *                 description: Tên mới của role
+ *               note:
+ *                 type: string
+ *                 example: "Role có toàn quyền hệ thống"
+ *                 description: Ghi chú cho role
  *               parentPermissionIds:
  *                 type: array
  *                 items:
