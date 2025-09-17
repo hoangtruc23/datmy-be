@@ -165,7 +165,7 @@ const goodsReceiptService = {
                     status: constant.GOODS_RECEIPT_STATUS
                         .WAREHOUSE_STAFF_APPROVAL,
                     createdBy: currentUserId,
-                    createdAt
+                    createdAt,
                 },
                 { session },
             )
@@ -638,8 +638,11 @@ const goodsReceiptService = {
 
             // Step 1: Fetch and Prepare Data
             const matchConditions = { 'goodsReceipt.isTemporary': false }
-            if (statuses && statuses.length > 0) {
-                matchConditions['goodsReceipt.status'] = { $in: statuses }
+            const validStatuses = (statuses || []).filter(
+                (s) => s && s.trim() !== '',
+            )
+            if (validStatuses.length > 0) {
+                matchConditions['goodsReceipt.status'] = { $in: validStatuses }
             }
             if (warehouseIds && warehouseIds.length > 0) {
                 matchConditions.warehouseId = {
