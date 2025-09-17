@@ -855,10 +855,17 @@ const goodsIssueService = {
         try {
             const { startDate, endDate, warehouseIds, statuses } = filters
 
+            const checkWarehouse = await WarehouseModel.find({
+                _id: { $in: warehouseIds },
+            })
+            if (!checkWarehouse ) {
+                throw new BadReq(errorCode.WAREHOUSE_NOT_FOUND)
+            }
             // Step 1: Fetch and Prepare Data
+            const validStatuses = (statuses || []).filter(s => s && s.trim() !== '');
             const matchConditions = { 'goodsIssue.isTemporary': false }
-            if (statuses && statuses.length > 0) {
-                matchConditions['goodsIssue.status'] = { $in: statuses }
+            if ( validStatuses.length > 0) {
+                matchConditions['goodsIssue.status'] = { $in: validStatuses }
             }
             if (warehouseIds && warehouseIds.length > 0) {
                 matchConditions.warehouseId = {
@@ -944,7 +951,6 @@ const goodsIssueService = {
                     },
                 },
             ])
-
             const groupedByDate = new Map()
             for (const item of results) {
                 const dateKey = new Date(item.date).toLocaleDateString('vi-VN')
