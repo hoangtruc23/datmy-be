@@ -8,6 +8,7 @@ const contactPersonSchema = joi.object({
         'string.empty': 'Tên người liên hệ là bắt buộc',
         'any.required': 'Tên người liên hệ là bắt buộc',
     }),
+    phone: joi.string().allow('', null).optional(),
 })
 
 const deliveryAddressSchema = joi.object({
@@ -92,7 +93,7 @@ const customerBaseSchema = {
         .pattern(/^[0-9]{4,15}$/)
         .allow('', null)
         .messages({
-            'string.pattern.base': 'Số điện thoại phải có từ 4 đến 15 chữ số',
+            'string.pattern.base': 'Số điện thoại phải có từ 4 đến 17 chữ số',
         }),
     garageAddress: joi.string().allow('', null),
     contactPersons: joi.object({

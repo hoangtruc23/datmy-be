@@ -19,5 +19,8 @@ const productTransferHistorySchema = new Schema({
     },
 })
 
-const productTransferHistoryModel = model('ProductTransferHistory', productTransferHistorySchema)
+const productTransferHistoryModel = model(
+    'ProductTransferHistory',
+    productTransferHistorySchema,
+)
 module.exports = productTransferHistoryModel

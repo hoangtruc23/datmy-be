@@ -858,13 +858,15 @@ const goodsIssueService = {
             const checkWarehouse = await WarehouseModel.find({
                 _id: { $in: warehouseIds },
             })
-            if (!checkWarehouse ) {
+            if (!checkWarehouse) {
                 throw new BadReq(errorCode.WAREHOUSE_NOT_FOUND)
             }
             // Step 1: Fetch and Prepare Data
-            const validStatuses = (statuses || []).filter(s => s && s.trim() !== '');
+            const validStatuses = (statuses || []).filter(
+                (s) => s && s.trim() !== '',
+            )
             const matchConditions = { 'goodsIssue.isTemporary': false }
-            if ( validStatuses.length > 0) {
+            if (validStatuses.length > 0) {
                 matchConditions['goodsIssue.status'] = { $in: validStatuses }
             }
             if (warehouseIds && warehouseIds.length > 0) {
@@ -1127,13 +1129,15 @@ const goodsIssueService = {
         if (!goodsIssue) {
             throw new BadReq(errorCode.GOODS_ISSUE_NOT_FOUND)
         }
-        const goodsIssueDetails = await GoodsIssueDetailModel.find({goodsIssueId})
+        const goodsIssueDetails = await GoodsIssueDetailModel.find({
+            goodsIssueId,
+        })
             .populate({
                 path: 'warehouseId',
                 select: 'name address',
             })
             .lean()
-            
+
         const goodsIssueApproval = await GoodsIssueApprovalModel.findOne({
             goodsIssueId,
         }).lean()

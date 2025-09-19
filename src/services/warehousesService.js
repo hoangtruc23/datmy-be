@@ -73,7 +73,7 @@ const warehousesService = {
             await WarehouseModel.findByIdAndUpdate(id, {
                 name,
                 description,
-                address
+                address,
             })
             return null
         } catch (error) {

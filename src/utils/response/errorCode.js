@@ -361,7 +361,7 @@ const errorCode = {
         message:
             'Tổng số lượng sản phẩm của các lô không khớp với số lượng chuyển kho',
     },
-    TRACKING_CODE_EXISTS:{
+    TRACKING_CODE_EXISTS: {
         code: 93,
         message: 'Mã lô/serial đã tồn tại',
     },
@@ -369,14 +369,15 @@ const errorCode = {
         code: 91,
         message: 'Số lượng tồn kho không đủ để giảm',
     },
-    QUANTITY_CAN_NOT_ZERO:{
+    QUANTITY_CAN_NOT_ZERO: {
         code: 92,
         message: 'Số lượng không được phép = 0',
     },
     SERIAL_PRODUCT_MUST_CREATE_NEW_TRACKINGCODE: {
         code: 93,
-        message: 'Sản phẩm quản lý theo serial phải tạo mã mới với số lượng là 1',
-    }
+        message:
+            'Sản phẩm quản lý theo serial phải tạo mã mới với số lượng là 1',
+    },
 }
 
 module.exports = errorCode

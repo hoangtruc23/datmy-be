@@ -366,8 +366,8 @@ const systemServices = {
             if (Object.keys(updateFields).length > 0) {
                 await RoleModel.updateOne(
                     { _id: id },
-                    { $set: updateFields }, 
-                    { session }, 
+                    { $set: updateFields },
+                    { session },
                 )
             }
             const data = parentPermissionIds
