@@ -260,9 +260,9 @@ const goodsIssueService = {
             if (!checkGoodsIssue) {
                 throw new BadReq(errorCode.GOODS_ISSUE_NOT_FOUND)
             }
-            if (!checkGoodsIssue.isDraft) {
-                throw new BadReq(errorCode.DO_NOT_UPDATE_GOODS_ISSUE_NOT_DRAFT)
-            }
+            // if (!checkGoodsIssue.isDraft) {
+            //     throw new BadReq(errorCode.DO_NOT_UPDATE_GOODS_ISSUE_NOT_DRAFT)
+            // }
             if (checkGoodsIssue.status == constant.GOODS_ISSUE_STATUS.CANCEL) {
                 throw new BadReq(errorCode.DO_NOT_UPDATE_STATUS_CANCEL)
             }
