@@ -47,8 +47,7 @@ const checkPermission = async (req, res, next) => {
             '/login',
             '/getUserLoginDetail',
             '/changePassword',
-            '/logout',
-            '/goodsReceipt/approval',
+            '/logout',           
         ]
         let url = req.originalUrl.split('?')[0]
         const mongoIdRegex = /^[a-f\d]{24}$/i
