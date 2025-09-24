@@ -68,8 +68,8 @@ const constant = {
     },
     PAYMENT_METHOD: {
         CASH: 'cash',
-        BANK_TRANSFER: 'bank_transfer',
-        CREDIT_CARD: 'credit_card',
+        BANK_TRANSFER: 'bankTransfer',
+        CREDIT_CARD: 'creditCard',
         MOBILE_PAYMENT: 'mobilePayment',
         OTHER: 'other',
     },
