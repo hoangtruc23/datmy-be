@@ -747,6 +747,32 @@ async function permissionApiSeeder() {
             permissionId: '68c933a802908cb98dd9004d', // Lấy ra cấu hình, người nhận mail mặc định
             apiId: '68c93361d12a27f099ce27ad', // /mail/getAll
         },
+
+        // Yêu cầu công việc
+        {
+            permissionId: '68d1166bba1c480c8180bf6c', // Xem phiếu yêu cầu công việc
+            apiId: '68d1153524419859fede4ebe', // /workOrder/getAll
+        },
+        {
+            permissionId: '68d1166bba1c480c8180bf6c', // Xem phiếu yêu cầu công việc
+            apiId: '68d37503136efac69b7bcad1', // /workOrder/getById
+        },
+        {
+            permissionId: '68d1166bba1c480c8180bf6c', // Xem phiếu yêu cầu công việc
+            apiId: '68d37503136efac69b7bcad2', // /workOrder/getOverall
+        },
+        {
+            permissionId: '68d1166bba1c480c8180bf6d', // Tạo phiếu yêu cầu công việc
+            apiId: '68d1153524419859fede4ebf', // /workOrder/create
+        },
+        {
+            permissionId: '68d3750d4828a7c4347ad1bd', // Chỉnh sửa phiếu yêu cầu công việc
+            apiId: '68d37503136efac69b7bcad3', // /workOrder/update
+        },
+        {
+            permissionId: '68d3750d4828a7c4347ad1be', // Xóa phiếu yêu cầu công việc
+            apiId: '68d37503136efac69b7bcad4', // /workOrder/delete
+        },
     ])
     logger.info('PermissionApis seeded')
 }

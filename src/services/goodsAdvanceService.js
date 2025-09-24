@@ -137,7 +137,7 @@ const goodsAdvanceService = {
             }
             await ProductModel.populate(finalResult.products, {
                 path: 'unit',
-                select: 'name -_id', 
+                select: 'name -_id',
             })
             finalResult.products = finalResult.products.map((product) => {
                 return {

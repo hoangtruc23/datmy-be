@@ -119,12 +119,13 @@ const productController = {
     updateQuantityProductStorage: async (req, res, next) => {
         try {
             const { productId, warehouseId, quantity, trackingCode } = req.body
-            const productStorages = await productService.updateQuantityProductStorage({
-                productId,
-                warehouseId,
-                quantity,
-                trackingCode
-            })
+            const productStorages =
+                await productService.updateQuantityProductStorage({
+                    productId,
+                    warehouseId,
+                    quantity,
+                    trackingCode,
+                })
 
             return res.status(200).json(response.success(productStorages))
         } catch (error) {

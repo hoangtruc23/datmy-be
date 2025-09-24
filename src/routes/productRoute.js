@@ -537,7 +537,6 @@ module.exports = router
  *                         example: "Nguyễn Văn A"
  */
 
-
 /**
  * @swagger
  * /product/updateQuantityProductStorage:

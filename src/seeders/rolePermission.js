@@ -449,6 +449,28 @@ async function rolePermissionSeeder() {
             roleId: '684927c871287f2ae7d8130b', // Quản trị viên
             permissionId: '685a1b9f9f5d2f68d81a1ec9', // cập nhật số lượng sản phẩm
         },
+
+        // yêu cầu công việc quản trị viên
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '68d1166bba1c480c8180bf6b', // Phiếu yêu cầu công việc
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '68d1166bba1c480c8180bf6c', // Xem phiếu yêu cầu công việc
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '68d1166bba1c480c8180bf6d', // Tạo phiếu yêu cầu công việc
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '68d3750d4828a7c4347ad1bd', // Chỉnh sửa phiếu yêu cầu công việc
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '68d3750d4828a7c4347ad1be', // Xóa phiếu yêu cầu công việc
+        },
         // Nhân viên kho =======================================================================================
         // {
         //     roleId: '684927c871287f2ae7d8130c',

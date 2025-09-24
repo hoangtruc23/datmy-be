@@ -1,0 +1,140 @@
+const joi = require('joi')
+const constant = require('../utils/constant/constant')
+const workOrderValidation = {
+    getAll: {
+        query: joi
+            .object({
+                status: joi
+                    .string()
+                    .valid(...Object.values(constant.WORK_REQUEST_STATUS))
+                    .required()
+                    .messages({
+                        'any.only':
+                            "Tình trạng của phiếu chỉ bao gồm 'pending', 'inProgress', 'completed', 'overdue'",
+                        'any.required': 'Tình trạng của phiếu là bắt buộc',
+                    }),
+            })
+            .unknown(true),
+    },
+    create: {
+        body: joi
+            .object({
+                header: joi.string().trim().min(1).required().messages({
+                    '*': 'Tiêu đề công việc là bắt buộc',
+                }),
+                typeWork: joi
+                    .string()
+                    .valid(...Object.values(constant.WORK_TYPE_1))
+                    .messages({
+                        'any.only':
+                            "typeWork chỉ bao gồm '', 'repair', 'maintenance', 'installation', 'testIO', 'demo', 'samplePrinting'",
+                    }),
+                contactName: joi.string().trim().min(1).required().messages({
+                    '*': 'Tên người liên hệ là bắt buộc',
+                }),
+                contactPhone: joi
+                    .string()
+                    .pattern(/^[0-9]{4,15}$/)
+                    .messages({
+                        'string.pattern.base':
+                            'Số điện thoại phải có từ 4 đến 15 chữ số',
+                    }),
+                contactEmail: joi
+                    .string()
+                    .email({ tlds: { allow: false } })
+                    .messages({
+                        'string.email': 'Email không đúng định dạng',
+                    }),
+                description: joi.string().trim().min(1).required().messages({
+                    '*': 'Mô tả công việc là bắt buộc',
+                }),
+                priority: joi
+                    .string()
+                    .valid(...Object.values(constant.WORK_REQUEST_PRIORITY))
+                    .required()
+                    .messages({
+                        'any.only':
+                            "priority chỉ bao gồm 'high', 'medium', 'low'",
+                        'any.required': 'priority là bắt buộc',
+                    }),
+                estimatedTime: joi.number().positive().required().messages({
+                    'number.base': 'Thời gian ước tính phải là số',
+                    'number.positive': 'Thời gian ước tính phải lớn hơn 0',
+                    'any.required': 'Thời gian ước tính là bắt buộc',
+                }),
+                overDueTime: joi.date().iso().required().messages({
+                    'date.base': 'Ngày bắt đầu phải là ngày hợp lệ.',
+                    'date.format': 'Ngày bắt đầu phải có định dạng ISO 8601.',
+                    'any.required': 'Ngày bắt đầu là bắt buộc.',
+                }),
+                requestSource: joi
+                    .string()
+                    .valid(...Object.values(constant.WORK_REQUEST_SOURCE))
+                    .messages({
+                        'any.only':
+                            "requestSource chỉ bao gồm 'customer', 'warehouse', 'demo'",
+                    }),
+            })
+            .unknown(true),
+    },
+    update: {
+        body: joi
+            .object({
+                header: joi.string().trim().min(1).required().messages({
+                    '*': 'Tiêu đề công việc là bắt buộc',
+                }),
+                typeWork: joi
+                    .string()
+                    .valid(...Object.values(constant.WORK_TYPE_1))
+                    .messages({
+                        'any.only':
+                            "typeWork chỉ bao gồm '', 'repair', 'maintenance', 'installation', 'testIO', 'demo', 'samplePrinting'",
+                    }),
+                type: joi
+                    .string()
+                    .valid(...Object.values(constant.WORK_TYPE_2))
+                    .messages({
+                        'any.only':
+                            "type chỉ bao gồm '', 'D', 'G', 'V', 'M', 'A'",
+                    }),
+                description: joi.string().trim().min(1).required().messages({
+                    '*': 'Mô tả công việc là bắt buộc',
+                }),
+                priority: joi
+                    .string()
+                    .valid(...Object.values(constant.WORK_REQUEST_PRIORITY))
+                    .required()
+                    .messages({
+                        'any.only':
+                            "priority chỉ bao gồm 'high', 'medium', 'low'",
+                        'any.required': 'Loại ưu tiên là bắt buộc',
+                    }),
+                estimatedTime: joi.number().positive().required().messages({
+                    'number.base': 'Thời gian ước tính phải là số',
+                    'number.positive': 'Thời gian ước tính phải lớn hơn 0',
+                    'any.required': 'Thời gian ước tính là bắt buộc',
+                }),
+                overDueTime: joi.date().iso().required().messages({
+                    'date.base': 'Ngày bắt đầu phải là ngày hợp lệ.',
+                    'date.format': 'Ngày bắt đầu phải có định dạng ISO 8601.',
+                    'any.required': 'Ngày bắt đầu là bắt buộc.',
+                }),
+                requestSource: joi
+                    .string()
+                    .valid(...Object.values(constant.WORK_REQUEST_SOURCE))
+                    .messages({
+                        'any.only':
+                            "requestSource chỉ bao gồm 'customer', 'warehouse', 'demo'",
+                    }),
+                status: joi
+                    .string()
+                    .valid(...Object.values(constant.WORK_REQUEST_STATUS))
+                    .messages({
+                        'any.only':
+                            "status chỉ bao gồm 'pending', 'inProgress', 'completed', 'overdue'",
+                    }),
+            })
+            .unknown(true),
+    },
+}
+module.exports = workOrderValidation

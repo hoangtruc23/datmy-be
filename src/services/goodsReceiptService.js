@@ -165,7 +165,7 @@ const goodsReceiptService = {
                     status: constant.GOODS_RECEIPT_STATUS
                         .WAREHOUSE_STAFF_APPROVAL,
                     createdBy: currentUserId,
-                    createdAt
+                    createdAt,
                 },
                 { session },
             )

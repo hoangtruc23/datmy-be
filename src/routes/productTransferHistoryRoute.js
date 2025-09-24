@@ -6,7 +6,10 @@ const productTransferHistoryController = require('../controllers/productTranferH
 
 router.get('/getAll', productTransferHistoryController.getAll)
 
-router.post('/transferProduct', productTransferHistoryController.transferProduct)
+router.post(
+    '/transferProduct',
+    productTransferHistoryController.transferProduct,
+)
 
 module.exports = router
 

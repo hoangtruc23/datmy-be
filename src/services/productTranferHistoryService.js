@@ -171,9 +171,7 @@ const productTransferHistoryService = {
                     }).session(session)
 
                     if (exists) {
-                        throw new BadReq(
-                            errorCode.TRACKING_CODE_EXISTS,
-                        )
+                        throw new BadReq(errorCode.TRACKING_CODE_EXISTS)
                     }
                     await ProductStorageModel.create(
                         [
