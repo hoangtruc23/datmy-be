@@ -386,7 +386,7 @@ async function permissionSeeder() {
             _id: new Types.ObjectId('685cf633e0e45d397c4ca197'),
             name: 'Xem',
             code: 'tam_ung-xem',
-            parentPermissionId: '685cf633e0e45d397c4ca197',
+            parentPermissionId: '684927c871287f2ae7d81309',
         },
         {
             _id: new Types.ObjectId('685cf633e0e45d397c4ca198'),

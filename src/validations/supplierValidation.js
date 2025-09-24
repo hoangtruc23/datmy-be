@@ -5,15 +5,7 @@ const contactPersonSchema = joi.object({
         'string.empty': 'Tên người liên hệ là bắt buộc',
         'any.required': 'Tên người liên hệ là bắt buộc',
     }),
-    phone: joi
-        .string()
-        .pattern(/^[0-9]{4,15}$/)
-        .required()
-        .messages({
-            'string.empty': 'Số điện thoại người liên hệ là bắt buộc',
-            'string.pattern.base': 'Số điện thoại phải có từ 4 đến 15 chữ số',
-            'any.required': 'Số điện thoại người liên hệ là bắt buộc',
-        }),
+    phone: joi.string().allow('', null).optional(),
 })
 
 const deliveryAddressSchema = joi.object({
@@ -86,13 +78,7 @@ const supplierBaseSchema = {
         .string()
         .email({ tlds: { allow: false } })
         .allow('', null),
-    phone: joi
-        .string()
-        .pattern(/^[0-9]{4,15}$/)
-        .allow('', null)
-        .messages({
-            'string.pattern.base': 'Số điện thoại phải có từ 4 đến 15 chữ số',
-        }),
+    phone: joi.string().allow('', null).optional(),
     billingAddress: joi.string().required().messages({
         'string.empty': 'Địa chỉ xuất hóa đơn là bắt buộc',
         'any.required': 'Địa chỉ xuất hóa đơn là bắt buộc',

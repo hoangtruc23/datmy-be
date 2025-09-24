@@ -260,9 +260,9 @@ const goodsIssueService = {
             if (!checkGoodsIssue) {
                 throw new BadReq(errorCode.GOODS_ISSUE_NOT_FOUND)
             }
-            if (!checkGoodsIssue.isDraft) {
-                throw new BadReq(errorCode.DO_NOT_UPDATE_GOODS_ISSUE_NOT_DRAFT)
-            }
+            // if (!checkGoodsIssue.isDraft) {
+            //     throw new BadReq(errorCode.DO_NOT_UPDATE_GOODS_ISSUE_NOT_DRAFT)
+            // }
             if (checkGoodsIssue.status == constant.GOODS_ISSUE_STATUS.CANCEL) {
                 throw new BadReq(errorCode.DO_NOT_UPDATE_STATUS_CANCEL)
             }
@@ -415,8 +415,6 @@ const goodsIssueService = {
                 warehouseId,
                 origin,
                 issuedQuantity,
-                price,
-                totalAmount,
                 storages,
                 note,
             } = product
@@ -464,7 +462,6 @@ const goodsIssueService = {
             if (issuedQuantity > totalProduct) {
                 throw new BadReq(errorCode.ISSUED_QUANTITY_INVALID)
             }
-
             let batchQuantityTotal = 0
             // Check số lượng của từng số lô có lớn hơn tồn kho không, nếu hợp lệ thì cập nhật lại số lượng luôn
             for (let storage of storages) {
@@ -502,8 +499,6 @@ const goodsIssueService = {
                         unit: checkProduct?.unit,
                         origin,
                         issuedQuantity,
-                        price,
-                        totalAmount,
                         warehouseName: checkWarehouse.name,
                         storages,
                         note,
@@ -528,8 +523,6 @@ const goodsIssueService = {
                 warehouseId,
                 origin,
                 issuedQuantity,
-                price,
-                totalAmount,
                 storages,
                 note,
             } = product
@@ -615,8 +608,6 @@ const goodsIssueService = {
                 unit: checkProduct?.unit,
                 origin,
                 issuedQuantity,
-                price,
-                totalAmount,
                 warehouseName: checkWarehouse.warehouseName,
                 storages,
                 note,
@@ -855,10 +846,19 @@ const goodsIssueService = {
         try {
             const { startDate, endDate, warehouseIds, statuses } = filters
 
+            const checkWarehouse = await WarehouseModel.find({
+                _id: { $in: warehouseIds },
+            })
+            if (!checkWarehouse) {
+                throw new BadReq(errorCode.WAREHOUSE_NOT_FOUND)
+            }
             // Step 1: Fetch and Prepare Data
+            const validStatuses = (statuses || []).filter(
+                (s) => s && s.trim() !== '',
+            )
             const matchConditions = { 'goodsIssue.isTemporary': false }
-            if (statuses && statuses.length > 0) {
-                matchConditions['goodsIssue.status'] = { $in: statuses }
+            if (validStatuses.length > 0) {
+                matchConditions['goodsIssue.status'] = { $in: validStatuses }
             }
             if (warehouseIds && warehouseIds.length > 0) {
                 matchConditions.warehouseId = {
@@ -940,11 +940,10 @@ const goodsIssueService = {
                         specification: '$productInfo.specification',
                         brandName: '$brandInfo.name',
                         warehouseName: '$warehouseName',
-                        totalAmount: '$totalAmount',
+                        issuedQuantity: '$issuedQuantity',
                     },
                 },
             ])
-
             const groupedByDate = new Map()
             for (const item of results) {
                 const dateKey = new Date(item.date).toLocaleDateString('vi-VN')
@@ -964,7 +963,7 @@ const goodsIssueService = {
                 }
                 const receiptData = dayData.receipts.get(receiptKey)
                 receiptData.lineItems.push(item)
-                dayData.dailyTotal += item.totalAmount || 0
+                dayData.dailyTotal += item.issuedQuantity || 0
             }
 
             // Step 2: Define Report Configuration
@@ -1006,7 +1005,7 @@ const goodsIssueService = {
                     'QUY CÁCH',
                     'NHÃN HIỆU',
                     'KHO',
-                    'TỔNG CỘNG',
+                    'SỐ LƯỢNG',
                 ],
                 columnKeys: [
                     'date',
@@ -1018,7 +1017,7 @@ const goodsIssueService = {
                     'specification',
                     'brandName',
                     'warehouseName',
-                    'totalAmount',
+                    'issuedQuantity',
                 ],
                 mergeableColumnKeys: [
                     'date',
@@ -1086,8 +1085,8 @@ const goodsIssueService = {
                         style: { alignment: leftAlignment },
                     },
                     {
-                        key: 'totalAmount',
-                        width: 20,
+                        key: 'issuedQuantity',
+                        width: 15,
                         style: {
                             numFmt: '#,##0',
                             alignment: centerAlignmentForColumn,

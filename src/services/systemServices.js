@@ -355,12 +355,21 @@ const systemServices = {
         const session = await mongoose.startSession()
         session.startTransaction()
         try {
-            const { parentPermissionIds } = reqData
+            const { parentPermissionIds, name, note } = reqData
             const checkRole = await RoleModel.findById(id, null, { session })
             if (!checkRole) {
                 throw new BadReq(errorCode.ROLE_NOT_FOUND)
             }
-
+            const updateFields = {}
+            if (name !== undefined) updateFields.name = name
+            if (note !== undefined) updateFields.note = note
+            if (Object.keys(updateFields).length > 0) {
+                await RoleModel.updateOne(
+                    { _id: id },
+                    { $set: updateFields },
+                    { session },
+                )
+            }
             const data = parentPermissionIds
                 .map((parent) => [parent._id, ...parent.childrenPermissionIds])
                 .flat()

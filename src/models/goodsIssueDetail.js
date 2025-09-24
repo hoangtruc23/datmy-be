@@ -60,16 +60,6 @@ const goodsIssueDetailSchema = new Schema({
         min: 1,
         required: true,
     },
-    price: {
-        type: Number,
-        min: 0,
-        required: true,
-    },
-    totalAmount: {
-        type: Number,
-        min: 0,
-        required: true,
-    },
     warehouseName: {
         type: String,
     },

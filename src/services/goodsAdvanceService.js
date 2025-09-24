@@ -942,8 +942,11 @@ const goodsAdvanceService = {
             const { startDate, endDate, statuses, warehouseIds } = filters
 
             const matchConditions = { 'goodsAdvance.isTemporary': false }
-            if (statuses && statuses.length > 0) {
-                matchConditions['goodsAdvance.status'] = { $in: statuses }
+            const validStatuses = (statuses || []).filter(
+                (s) => s && s.trim() !== '',
+            )
+            if (validStatuses.length > 0) {
+                matchConditions['goodsAdvance.status'] = { $in: validStatuses }
             }
             if (warehouseIds && warehouseIds.length > 0) {
                 matchConditions.borrowWarehouseId = {
