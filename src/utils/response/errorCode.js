@@ -375,8 +375,11 @@ const errorCode = {
     },
     SERIAL_PRODUCT_MUST_CREATE_NEW_TRACKINGCODE: {
         code: 93,
-        message:
-            'Sản phẩm quản lý theo serial phải tạo mã mới với số lượng là 1',
+        message: 'Sản phẩm quản lý theo serial phải tạo mã mới với số lượng là 1',
+    },
+    WORK_ORDER_NOT_FOUND: {
+        code: 94,
+        message: 'Phiếu yêu cầu công việc không tồn tại',
     },
 }
 

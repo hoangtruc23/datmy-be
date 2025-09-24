@@ -1,0 +1,99 @@
+const { Schema, model, Types } = require('mongoose')
+const constant = require('../utils/constant/constant')
+
+const contactPersonSchema = new Schema({
+    _id: false,
+    contactName: {
+        type: String,
+        required: true,
+    },
+    contactPhone: {
+        type: String,
+        required: true,
+    },
+    contactEmail: {
+        type: String,
+        required: true,
+    },
+})
+
+const workOrderSchema = new Schema(
+    {
+        customerId: {
+            type: Types.ObjectId,
+            ref: 'customers',
+            required: true,
+        },
+        technicianId: {
+            type: Types.ObjectId,
+            ref: 'technicians',
+        },
+        code: {
+            type: String,
+            required: true,
+        },
+        typeWork: {
+            type: String,
+            enum: Object.values(constant.WORK_TYPE_1),
+            default: constant.WORK_TYPE_1.NULL,
+        },
+        type: {
+            type: String,
+            enum: Object.values(constant.WORK_TYPE_2),
+            default: constant.WORK_TYPE_2.NULL,
+        },
+        requestSource: {
+            type: String,
+            enum: Object.values(constant.WORK_REQUEST_SOURCE),
+            default: constant.WORK_REQUEST_SOURCE.WAREHOUSE,
+        },
+        header: {
+            type: String,
+            required: true,
+        },
+        description: {
+            type: String,
+            required: true,
+        },
+        status: {
+            type: String,
+            enum: Object.values(constant.WORK_REQUEST_STATUS),
+            default: constant.WORK_REQUEST_STATUS.PENDING,
+        },
+        priority: {
+            type: String,
+            required: true,
+            enum: Object.values(constant.WORK_REQUEST_PRIORITY),
+        },
+        contactPerson: contactPersonSchema,
+        address: {
+            type: String,
+            required: true,
+        },
+        assignedTime: {
+            type: Date,
+        },
+        estimatedTime: {
+            //hour
+            type: Number,
+            required: true,
+        },
+        overDueTime: {
+            type: Date,
+            required: true,
+        },
+        result: {
+            type: String,
+        },
+        note: {
+            type: String,
+        },
+        requiredSkill: {
+            type: [String],
+        },
+    },
+    { timestamps: true },
+)
+
+const WorkOrderModel = model('workOrders', workOrderSchema)
+module.exports = WorkOrderModel

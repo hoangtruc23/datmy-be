@@ -4,7 +4,6 @@ const router = express.Router()
 const authRoute = require('./authRoute')
 const userRoute = require('./userRoute')
 const supplierRoute = require('./supplierRoute')
-
 const warehouseRoute = require('./warehousesRoute')
 const uploadRoute = require('./uploadRoute')
 const productCategoryRoute = require('./productCategoryRoute')
@@ -25,6 +24,7 @@ const dashBoardRoute = require('./dashBoardRoute')
 const systemRoute = require('./systemRoute')
 const mailRoute = require('./mailRoute')
 const productTransferHistoryRoute = require('./productTransferHistoryRoute')
+const workOrderRoute = require('./workOrderRoute')
 
 router.use('/auth', authRoute)
 router.use('/user', userRoute)
@@ -49,5 +49,6 @@ router.use('/dashboard', dashBoardRoute)
 router.use('/system', systemRoute)
 router.use('/mail', mailRoute)
 router.use('/productTransferHistory', productTransferHistoryRoute)
+router.use('/workOrder', workOrderRoute)
 
 module.exports = router

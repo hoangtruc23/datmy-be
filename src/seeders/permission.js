@@ -704,6 +704,37 @@ async function permissionSeeder() {
             code: 'chuyen_kho_xem',
             parentPermissionId: '688c7f601bb97636f19d6ab1',
         },
+        //phiếu yêu cầu công việc
+        {
+            _id: new Types.ObjectId('68d1166bba1c480c8180bf6b'),
+            name: 'Phiếu yêu cầu công việc',
+            code: 'phieu_yeu_cau_cong_viec',
+            parentPermissionId: null,
+        },
+        {
+            _id: new Types.ObjectId('68d1166bba1c480c8180bf6c'),
+            name: 'Xem phiếu yêu cầu công việc',
+            code: 'xem_phieu_yeu_cau_cong_viec',
+            parentPermissionId: '68d1166bba1c480c8180bf6b',
+        },
+        {
+            _id: new Types.ObjectId('68d1166bba1c480c8180bf6d'),
+            name: 'Tạo phiếu yêu cầu công việc',
+            code: 'tao_phieu_yeu_cau_cong_viec',
+            parentPermissionId: '68d1166bba1c480c8180bf6b',
+        },
+        {
+            _id: new Types.ObjectId('68d3750d4828a7c4347ad1bd'),
+            name: 'Chỉnh sửa phiếu yêu cầu công việc',
+            code: 'chinh_sua_phieu_yeu_cau_cong_viec',
+            parentPermissionId: '68d1166bba1c480c8180bf6b',
+        },
+        {
+            _id: new Types.ObjectId('68d3750d4828a7c4347ad1be'),
+            name: 'Xóa phiếu yêu cầu công việc',
+            code: 'xoa_phieu_yeu_cau_cong_viec',
+            parentPermissionId: '68d1166bba1c480c8180bf6b',
+        },
     ])
     logger.info('Permissions seeded')
 }

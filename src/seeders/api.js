@@ -259,6 +259,7 @@ async function apiSeeder() {
             note: 'Trả về danh sách các phiếu tạm ứng tương ứng theo trackingCode',
         },
         {
+        {
             _id: new Types.ObjectId('6868e75fcebe446e4c78bbb7'),
             api: '/product/updateQuantityProductStorage',
             note: 'Cập nhật số lượng tồn kho của sản phẩm',
@@ -866,6 +867,37 @@ async function apiSeeder() {
             _id: new Types.ObjectId('68a44835a3d2cdd989be0632'),
             api: '/productTransferHistory/transferProduct',
             note: 'Chuyển kho',
+        },
+        //phiếu công việc
+        {
+            _id: new Types.ObjectId('68d1153524419859fede4ebe'),
+            api: '/workOrder/getAll',
+            note: 'Lấy ra tất cả phiếu yêu cầu công việc',
+        },
+        {
+            _id: new Types.ObjectId('68d37503136efac69b7bcad1'),
+            api: '/workOrder/getById',
+            note: 'Lấy ra phiếu yêu cầu công việc theo Id',
+        },
+        {
+            _id: new Types.ObjectId('68d37503136efac69b7bcad2'),
+            api: '/workOrder/getOverall',
+            note: 'Lấy ra tổng quan các phiếu',
+        },
+        {
+            _id: new Types.ObjectId('68d1153524419859fede4ebf'),
+            api: '/workOrder/create',
+            note: 'Tạo phiếu yêu cầu công việc',
+        },
+        {
+            _id: new Types.ObjectId('68d37503136efac69b7bcad3'),
+            api: '/workOrder/update',
+            note: 'Chỉnh sửa phiếu yêu cầu công việc',
+        },
+        {
+            _id: new Types.ObjectId('68d37503136efac69b7bcad4'),
+            api: '/workOrder/delete',
+            note: 'Xóa phiếu yêu cầu công việc',
         },
     ])
 

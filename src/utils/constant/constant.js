@@ -123,6 +123,54 @@ const constant = {
         CASH: 'cash',
         DEBT: 'debt',
     },
+    TECHNICIAN_STATUS: {
+        BUSY: 'busy',
+        AVAILABLE: 'available',
+        ACTIVE: 'active',
+        ON_LEAVE: 'onLeave',
+    },
+    TECHNICIAN_SKILL: {
+        REPAIR: 'repair',
+        MAINTENANCE: 'maintenance',
+        DEMO: 'demo',
+        CONSULTING: 'consulting',
+        SAMPLE_PRINTING: 'samplePrinting',
+        TEST_IO: 'testIO',
+        INSTALLATION: 'installation',
+    },
+    WORK_TYPE_1: {
+        NULL: '',
+        REPAIR: 'repair',
+        MAINTENANCE: 'maintenance',
+        INSTALLATION: 'installation',
+        TEST_IO: 'testIO',
+        DEMO: 'demo',
+        SAMPLE_PRINTING: 'samplePrinting',
+    },
+    WORK_TYPE_2: {
+        NULL: '',
+        D: 'D',
+        G: 'G',
+        V: 'V',
+        M: 'M',
+        A: 'A',
+    },
+    WORK_REQUEST_SOURCE: {
+        CUSTOMER: 'customer',
+        WAREHOUSE: 'warehouse',
+        DEMO: 'demo',
+    },
+    WORK_REQUEST_STATUS: {
+        PENDING: 'pending',
+        IN_PROGRESS: 'inProgress',
+        COMPLETED: 'completed',
+        OVERDUE: 'overdue',
+    },
+    WORK_REQUEST_PRIORITY: {
+        HIGH: 'high',
+        MEDIUM: 'medium',
+        LOW: 'low',
+    },
 }
 
 module.exports = constant
