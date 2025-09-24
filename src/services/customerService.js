@@ -49,12 +49,15 @@ const customerService = {
             if (!user) {
                 throw new BadReq(errorCode.USER_NOT_FOUND)
             }
-            const roleIds = user.roleIds.map((id) => id.toString())
+            const roleIds = (user.roleIds || [])
+                .filter(Boolean)
+                .map((id) => id.toString())
 
             // 2. Build the 'select' string for contactPersons based on role
             let contactPersonsFields = ''
 
             if (
+                user.username === constant.USER_ROOT ||
                 roleIds.includes(constant.ROLES.BGD) ||
                 roleIds.includes(constant.ROLES.admin)
             ) {

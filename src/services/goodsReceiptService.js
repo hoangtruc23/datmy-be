@@ -322,9 +322,15 @@ const goodsReceiptService = {
             if (!checkWarehouse) {
                 throw new BadReq(errorCode.WAREHOUSE_NOT_FOUND)
             }
+            if (checkWarehouse.isActive === false) {
+                throw new BadReq(errorCode.WAREHOUSE_INACTIVE)
+            }
             // Do chưa có api product nên chưa check được
             if (!checkProduct) {
                 throw new BadReq(errorCode.PRODUCT_NOT_FOUND)
+            }
+            if (checkProduct.isActive === false) {
+                throw new BadReq(errorCode.PRODUCT_INACTIVE)
             }
             await GoodsReceiptDetaileModel.create({
                 goodsReceiptId,
@@ -654,9 +660,9 @@ const goodsReceiptService = {
             if (startDate || endDate) {
                 matchConditions['goodsReceipt.createdAt'] = {}
                 if (startDate) {
-                    matchConditions['goodsReceipt.createdAt'].$gte = new Date(
-                        startDate,
-                    )
+                    const start = new Date(startDate)
+                    start.setHours(0, 0, 0, 0)
+                    matchConditions['goodsReceipt.createdAt'].$gte = start
                 }
                 if (endDate) {
                     const end = new Date(endDate)

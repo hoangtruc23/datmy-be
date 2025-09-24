@@ -381,6 +381,14 @@ const errorCode = {
         code: 94,
         message: 'Phiếu yêu cầu công việc không tồn tại',
     },
+    WAREHOUSE_INACTIVE: {
+        code: 95,
+        message: 'Kho hàng hiện không hoạt động',
+    },
+    PRODUCT_INACTIVE: {
+        code: 96,
+        message: 'Sản phẩm hiện không hoạt động',
+    },
 }
 
 module.exports = errorCode
