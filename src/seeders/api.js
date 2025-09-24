@@ -259,7 +259,6 @@ async function apiSeeder() {
             note: 'Trả về danh sách các phiếu tạm ứng tương ứng theo trackingCode',
         },
         {
-        {
             _id: new Types.ObjectId('6868e75fcebe446e4c78bbb7'),
             api: '/product/updateQuantityProductStorage',
             note: 'Cập nhật số lượng tồn kho của sản phẩm',
@@ -836,6 +835,11 @@ async function apiSeeder() {
             _id: new Types.ObjectId('68a44835a3d2cdd989be063d'),
             api: '/system/updateRoleById',
             note: 'Chỉnh sửa Role theo roleId',
+        },
+        {
+            _id: new Types.ObjectId('68a44835a3d2cdd989be064d'),
+            api: '/system/create',
+            note: 'Tạo mới Role',
         },
         {
             _id: new Types.ObjectId('68c1243d15ae994f437fa626'),

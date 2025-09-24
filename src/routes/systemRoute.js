@@ -17,6 +17,7 @@ router.post(
 router.get('/getAllRole', systemController.getAllRole)
 router.get('/getRoleById/:roleId', systemController.getRoleById)
 router.post('/updateRoleById/:roleId', systemController.updateRoleById)
+router.post('/create', systemController.create)
 
 module.exports = router
 
@@ -1001,6 +1002,155 @@ module.exports = router
  *                 message:
  *                   type: string
  *                   example: Lỗi server!
+ *                 data:
+ *                   type: string
+ *                   example: null
+ */
+
+/**
+ * @swagger
+ * /system/create:
+ *   post:
+ *     summary: Tạo mới role và gán permission
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [System]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - parentPermissionIds
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "Quản trị viên"
+ *                 description: Tên của role
+ *               note:
+ *                 type: string
+ *                 example: "Role có toàn quyền hệ thống"
+ *                 description: Ghi chú cho role
+ *               parentPermissionIds:
+ *                 type: array
+ *                 description: Danh sách permission cha và các permission con
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: 6854e30d6b90439ad8c00db7
+ *                       description: Id của permission cha
+ *                     childrenPermissionIds:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                         example: 6854e30d6b90439ad8c00db7
+ *                         description: Id của các permission con
+ *     responses:
+ *       201:
+ *         description: Tạo Role thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 201
+ *                 code:
+ *                   type: integer
+ *                   example: 1
+ *                 message:
+ *                   type: string
+ *                   example: "Tạo Role thành công!"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: 6854e30d6b90439ad8c00db7
+ *                     name:
+ *                       type: string
+ *                       example: "Quản trị viên"
+ *                     note:
+ *                       type: string
+ *                       example: "Role có toàn quyền hệ thống"
+ *       400:
+ *         description: Lỗi input
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 400
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: "Tên role là bắt buộc!"
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       401:
+ *         description: Chưa đăng nhập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 401
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: "Không có token"
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       403:
+ *         description: Không có quyền truy cập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 403
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: "Không có quyền"
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       500:
+ *         description: Lỗi server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 500
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: "Lỗi server!"
  *                 data:
  *                   type: string
  *                   example: null
