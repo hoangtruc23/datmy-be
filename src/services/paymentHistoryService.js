@@ -112,7 +112,7 @@ const paymentHistoryService = {
                 PaymentHistoryModel.find(filter)
                     .skip(skip)
                     .limit(limit)
-                    .sort({ createdAt: 1 })
+                    .sort({ createdAt: -1 })
                     .populate('invoiceId', 'invoiceCode'),
                 PaymentHistoryModel.countDocuments(filter),
             ])
