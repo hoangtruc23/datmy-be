@@ -193,32 +193,74 @@ const systemServices = {
         const session = await mongoose.startSession()
         session.startTransaction()
         try {
-            const { apiIds } = reqData
-            const checkPermissionId = await PermissionModel.findById(
-                permissionId,
-                null,
-                { session },
-            )
-            if (!checkPermissionId) {
-                throw new BadReq(errorCode.PERMISSION_NOT_FOUND)
-            }
+            const { apiIds = [], name, code, parentId } = reqData
 
-            const apis = await ApiModel.find({ _id: { $in: apiIds } }, null, {
+            const current = await PermissionModel.findById(permissionId, null, {
                 session,
             })
-            if (apis.length !== apiIds.length) {
-                throw new BadReq(errorCode.API_NOT_FOUND)
+            if (!current) throw new BadReq(errorCode.PERMISSION_NOT_FOUND)
+
+            if (parentId) {
+                if (parentId.toString() === permissionId.toString()) {
+                    throw new BadReq(errorCode.INVALID_PARENT_ID)
+                }
+                const parent = await PermissionModel.findById(parentId, null, {
+                    session,
+                })
+                if (!parent)
+                    throw new BadReq(errorCode.PARENT_PERMISSION_NOT_FOUND)
             }
 
-            await PermissionApiModel.deleteMany(
-                {
-                    permissionId,
-                },
-                { session },
-            )
+            if (code !== undefined) {
+                const normalizedCode = String(code).trim()
+                const existed = await PermissionModel.findOne(
+                    { code: normalizedCode },
+                    null,
+                    { session },
+                )
+                if (
+                    existed &&
+                    existed._id.toString() !== permissionId.toString()
+                ) {
+                    throw new BadReq(errorCode.PERMISSION_CODE_EXISTED)
+                }
+            }
 
-            const dataInput = apiIds.map((apiId) => ({ permissionId, apiId }))
-            await PermissionApiModel.insertMany(dataInput, { session })
+            if (apiIds.length) {
+                const apis = await ApiModel.find(
+                    { _id: { $in: apiIds } },
+                    null,
+                    { session },
+                )
+                if (apis.length !== apiIds.length)
+                    throw new BadReq(errorCode.API_NOT_FOUND)
+            }
+
+            const updateFields = {}
+            if (name !== undefined) updateFields.name = name
+            if (code !== undefined) updateFields.code = code
+            if (parentId !== undefined)
+                updateFields.parentPermissionId = parentId || null
+
+            if (Object.keys(updateFields).length) {
+                await PermissionModel.findByIdAndUpdate(
+                    permissionId,
+                    { $set: updateFields },
+                    { session, new: true },
+                )
+            }
+
+            if (apiIds.length) {
+                await PermissionApiModel.deleteMany(
+                    { permissionId },
+                    { session },
+                )
+                const dataInput = apiIds.map((apiId) => ({
+                    permissionId,
+                    apiId,
+                }))
+                await PermissionApiModel.insertMany(dataInput, { session })
+            }
 
             await session.commitTransaction()
             session.endSession()
@@ -420,7 +462,7 @@ const systemServices = {
             throw error
         }
     },
-    create: async (reqData) => {
+    createRole: async (reqData) => {
         const session = await mongoose.startSession()
         session.startTransaction()
         try {
@@ -479,10 +521,112 @@ const systemServices = {
             await session.commitTransaction()
             session.endSession()
 
-            return null 
+            return null
         } catch (error) {
             await session.abortTransaction()
             session.endSession()
+            throw error
+        }
+    },
+    createPermission: async (reqData) => {
+        const session = await mongoose.startSession()
+        session.startTransaction()
+        try {
+            const { name, code, parentPermissionId, apiIds = [] } = reqData
+
+            const existed = await PermissionModel.findOne({ code }, null, {
+                session,
+            })
+            if (existed) throw new BadReq(errorCode.PERMISSION_CODE_EXISTED)
+
+            if (!parentPermissionId) {
+                if (apiIds.length)
+                    throw new BadReq(errorCode.PARENT_PERMISSION_NO_API)
+                await PermissionModel.create(
+                    [
+                        {
+                            name: name,
+                            code: code,
+                            parentPermissionId: null,
+                        },
+                    ],
+                    { session },
+                )
+
+                await session.commitTransaction()
+                session.endSession()
+                return null
+            }
+            const parent = await PermissionModel.findById(
+                parentPermissionId,
+                null,
+                { session },
+            )
+            if (!parent) throw new BadReq(errorCode.PARENT_PERMISSION_NOT_FOUND)
+            // 3. Nếu có apiIds -> kiểm tra tồn tại
+            if (apiIds.length) {
+                const apis = await ApiModel.find(
+                    { _id: { $in: apiIds } },
+                    null,
+                    { session },
+                )
+                if (apis.length !== apiIds.length) {
+                    throw new BadReq(errorCode.API_NOT_FOUND)
+                }
+            }
+            const newPermission = await PermissionModel.create(
+                [
+                    {
+                        name,
+                        code,
+                        parentPermissionId: parentPermissionId,
+                    },
+                ],
+                { session },
+            )
+
+            if (apiIds.length) {
+                const dataInput = apiIds.map((apiId) => ({
+                    permissionId: newPermission[0]._id,
+                    apiId,
+                }))
+                await PermissionApiModel.insertMany(dataInput, { session })
+            }
+
+            await session.commitTransaction()
+            session.endSession()
+
+            return null
+        } catch (error) {
+            await session.abortTransaction()
+            session.endSession()
+            throw error
+        }
+    },
+    getAllParentPermission: async () => {
+        try {
+            // Lấy toàn bộ permission cha
+            const permissions = await PermissionModel.find(
+                {
+                    parentPermissionId: null,
+                },
+                { code: 1, name: 1 },
+            ).lean()
+
+            return { permissions }
+        } catch (error) {
+            throw error
+        }
+    },
+    delete: async (id) => {
+        try {
+            const role = await RoleModel.findById(id)
+            if (!role) {
+                throw new BadReq(errorCode.ROLE_NOT_FOUND)
+            }
+            await RoleModel.findByIdAndDelete(id)
+            return null
+        } catch (error) {
             throw error
         }
     },
