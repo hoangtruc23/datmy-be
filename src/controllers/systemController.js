@@ -74,6 +74,14 @@ const systemController = {
             next(error)
         }
     },
+    create: async (req, res, next) => {
+        try {
+            const result = await systemService.create(req.body)
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
 }
 
 module.exports = systemController

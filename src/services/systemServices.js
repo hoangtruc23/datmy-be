@@ -420,6 +420,72 @@ const systemServices = {
             throw error
         }
     },
+    create: async (reqData) => {
+        const session = await mongoose.startSession()
+        session.startTransaction()
+        try {
+            const { parentPermissionIds, name, note } = reqData
+
+            const newRole = await RoleModel.create(
+                [
+                    {
+                        name,
+                        note,
+                    },
+                ],
+                { session },
+            )
+            const role = newRole[0]
+            const data = parentPermissionIds
+                .map((parent) => [parent._id, ...parent.childrenPermissionIds])
+                .flat()
+
+            const checkPermissionId = await PermissionModel.find(
+                {
+                    _id: { $in: data },
+                },
+                null,
+                { session },
+            )
+            if (checkPermissionId.length !== data.length) {
+                throw new BadReq(errorCode.PERMISSION_NOT_FOUND)
+            }
+
+            for (let parent of parentPermissionIds) {
+                const checks = await Promise.all(
+                    parent.childrenPermissionIds.map((child) =>
+                        PermissionModel.findOne(
+                            {
+                                _id: child,
+                                parentPermissionId: parent._id,
+                            },
+                            null,
+                            { session },
+                        ),
+                    ),
+                )
+
+                if (checks.some((e) => !e)) {
+                    throw new BadReq(errorCode.PERMISSION_NOT_SATISFIED)
+                }
+            }
+
+            const inputData = data.map((permissionId) => ({
+                roleId: role._id,
+                permissionId,
+            }))
+            await RolePermissionModel.insertMany(inputData, { session })
+
+            await session.commitTransaction()
+            session.endSession()
+
+            return null 
+        } catch (error) {
+            await session.abortTransaction()
+            session.endSession()
+            throw error
+        }
+    },
 }
 
 module.exports = systemServices
