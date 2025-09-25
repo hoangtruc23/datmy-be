@@ -23,7 +23,7 @@ const paymentHistorySchema = new Schema(
         },
         method: {
             type: String,
-            enum: Object.values(constant.PAYMENT_METHOD),
+            enum: Object.values(constant.PAYMENT_METHOD).map(item => item.value),
             default: constant.APPROVAL_STATUS.NULL,
         },
         notes: { type: String },

@@ -555,6 +555,10 @@ async function permissionApiSeeder() {
             apiId: '687df491fd5669a67e23a292', // /paymentHistory/getById
         },
         {
+            permissionId: '687df491fd5669a67e23a296', // Xem lịch sử thanh toán
+            apiId: '687df491fd5669a67e23a695', // /paymentHistory/getAllPaymentMethod
+        },
+        {
             permissionId: '687df491fd5669a67e23a297', // Thêm lịch sử thanh toán
             apiId: '687df491fd5669a67e23a290', // /paymentHistory/create
         },
