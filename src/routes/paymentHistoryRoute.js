@@ -10,6 +10,7 @@ router.post('/update/:id', paymentHistoryController.update)
 router.get('/getAll', paymentHistoryController.getAll)
 router.get('/getById/:id', paymentHistoryController.getById)
 router.delete('/delete/:id', paymentHistoryController.delete)
+router.get('/getAllPaymentMethod', paymentHistoryController.getAllPaymentMethod)
 
 module.exports = router
 
@@ -209,4 +210,31 @@ module.exports = router
  *     responses:
  *       200:
  *         description: Xóa lịch sử thanh toán thành công
+ */
+
+
+/**
+ * @swagger
+ * /paymentHistory/getAllPaymentMethod:
+ *   get:
+ *     summary: Lấy danh sách phương thức thanh toán
+ *     tags: [PaymentHistory]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Danh sách phương thức thanh toán
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   key:
+ *                     type: string
+ *                     example: "cash"
+ *                   value:
+ *                     type: string
+ *                     example: "Tiền mặt"
  */

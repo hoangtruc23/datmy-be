@@ -591,6 +591,11 @@ async function apiSeeder() {
             api: '/paymentHistory/delete',
             note: 'Xóa lịch sử thanh toán',
         },
+        {
+            _id: new Types.ObjectId('687df491fd5669a67e23a695'),
+            api: '/paymentHistory/getAllPaymentMethod',
+            note: 'Lấy tất cả phương thức thanh toán',
+        },
 
         // Công nợ
         {
