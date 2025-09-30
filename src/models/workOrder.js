@@ -88,9 +88,6 @@ const workOrderSchema = new Schema(
         note: {
             type: String,
         },
-        requiredSkill: {
-            type: [String],
-        },
     },
     { timestamps: true },
 )

@@ -3,14 +3,18 @@ const BadReq = require('../utils/response/requestError')
 const errorCode = require('../utils/response/errorCode')
 const CustomerModel = require('../models/customer')
 const constant = require('../utils/constant/constant')
+const TechnicianModel = require('../models/technician')
+const UserModel = require('../models/user')
 
 const workOrderService = {
-    getAll: async (query) => {
+    getAll: async (userId, query) => {
         try {
             let { limit = 10, page = 1, search = '', status, type } = query
             limit = Number(limit)
             page = Number(page)
             search = new RegExp(search, 'i')
+
+            const technician = await TechnicianModel.findOne({ userId })
 
             const customers = await CustomerModel.find({ officialName: search })
             const customerIds = customers ? customers.map((c) => c._id) : []
@@ -23,17 +27,36 @@ const workOrderService = {
                 ],
                 ...(status ? { status } : {}),
                 ...(type ? { type } : {}),
+                ...(technician ? { technicianId: technician } : {}),
             }
             const [workOrders, totalItems] = await Promise.all([
                 WorkOrderModel.find(conditions)
                     .skip((page - 1) * limit)
                     .limit(limit)
                     .populate('customerId', 'officialName representative.name')
-                    .populate('technicianId', 'name'),
+                    .populate({
+                        path: 'technicianId',
+                        populate: { path: 'userId', select: 'fullname' },
+                    })
+                    .lean(),
                 WorkOrderModel.countDocuments(conditions),
             ])
+            const result = workOrders.map((order) => {
+                let technicianInfo = null
+                if (order.technicianId) {
+                    technicianInfo = {
+                        technicianId: order.technicianId._id,
+                        fullname: order.technicianId.userId.fullname,
+                    }
+                }
+                return {
+                    ...order,
+                    technicianInfo,
+                    technicianId: undefined,
+                }
+            })
             return {
-                workOrders,
+                result,
                 totalItems,
                 page,
                 totalPage: Math.ceil(totalItems / limit),
@@ -46,11 +69,22 @@ const workOrderService = {
         try {
             const workOrder = await WorkOrderModel.findById(workOrderId)
                 .populate('customerId', 'officialName representative.name')
-                .populate('technicianId', 'name')
+                .populate({
+                    path: 'technicianId',
+                    populate: { path: 'userId', select: 'fullname' },
+                })
+                .lean()
             if (!workOrder) {
                 throw new BadReq(errorCode.WORK_ORDER_NOT_FOUND)
             }
-            return workOrder
+            let technicianInfo = null
+            if (workOrder.technicianId) {
+                technicianInfo = {
+                    technicianId: workOrder.technicianId._id,
+                    fullname: workOrder.technicianId.userId.fullname,
+                }
+            }
+            return { ...workOrder, technicianInfo, technicianId: undefined }
         } catch (error) {
             throw error
         }
@@ -96,6 +130,7 @@ const workOrderService = {
     create: async (reqData) => {
         try {
             const {
+                technicianId,
                 header,
                 typeWork,
                 customerId,
@@ -109,6 +144,17 @@ const workOrderService = {
                 overDueTime,
                 requestSource,
             } = reqData
+
+            const customer = await CustomerModel.findById(customerId)
+            if (!customer) {
+                throw new BadReq(errorCode.CUSTOMER_NOT_FOUND)
+            }
+            const technician = await TechnicianModel.findById(technicianId)
+            if (technicianId && !technician) {
+                throw new BadReq(errorCode.TECHNICIAN_NOT_FOUND)
+            }
+
+            //gen workOrder code
             const latestOrder = await WorkOrderModel.findOne()
                 .sort({ code: -1 })
                 .lean()
@@ -118,6 +164,7 @@ const workOrderService = {
 
             await WorkOrderModel.create({
                 code,
+                technicianId,
                 customerId,
                 typeWork,
                 requestSource,
@@ -131,6 +178,10 @@ const workOrderService = {
                 estimatedTime,
                 overDueTime,
             })
+            //ktv có việc => status = working
+            await TechnicianModel.findByIdAndUpdate(technicianId, {
+                status: constant.TECHNICIAN_STATUS.WORKING,
+            })
             return null
         } catch (error) {
             throw error
@@ -140,9 +191,9 @@ const workOrderService = {
     update: async (workOrderId, reqData) => {
         try {
             const {
+                technicianId,
                 typeWork,
                 type,
-                requiredSkill,
                 requestSource,
                 header,
                 description,
@@ -156,10 +207,16 @@ const workOrderService = {
             if (!checkWorkOrder) {
                 throw new BadReq(errorCode.WORK_ORDER_NOT_FOUND)
             }
+
+            const technician = await TechnicianModel.findById(technicianId)
+            if (!technician) {
+                throw new BadReq(errorCode.TECHNICIAN_NOT_FOUND)
+            }
+
             await WorkOrderModel.findByIdAndUpdate(workOrderId, {
+                technicianId,
                 typeWork,
                 type,
-                requiredSkill,
                 requestSource,
                 header,
                 description,
@@ -168,6 +225,26 @@ const workOrderService = {
                 overDueTime,
                 status,
             })
+
+            //cập nhật ktv
+            if (checkWorkOrder.technicianId !== technicianId) {
+                // ktv cũ nếu hết việc => cập nhật trạng thái
+                const othersWorkOrder = await WorkOrderModel.findOne({
+                    technicianId: checkWorkOrder.technicianId,
+                })
+                if (!othersWorkOrder) {
+                    await TechnicianModel.findByIdAndUpdate(
+                        checkWorkOrder.technicianId,
+                        {
+                            status: constant.TECHNICIAN_STATUS.FREE,
+                        },
+                    )
+                }
+                // ktv mới cập nhật trạng thái
+                await TechnicianModel.findByIdAndUpdate(technicianId, {
+                    status: constant.TECHNICIAN_STATUS.WORKING,
+                })
+            }
             return null
         } catch (error) {
             throw error
@@ -180,6 +257,19 @@ const workOrderService = {
                 throw new BadReq(errorCode.WORK_ORDER_NOT_FOUND)
             }
             await WorkOrderModel.findByIdAndDelete(workOrderId)
+            //cập nhật ktv
+            // ktv cũ nếu hết việc => cập nhật trạng thái
+            const othersWorkOrder = await WorkOrderModel.findOne({
+                technicianId: checkWorkOrder.technicianId,
+            })
+            if (!othersWorkOrder) {
+                await TechnicianModel.findByIdAndUpdate(
+                    checkWorkOrder.technicianId,
+                    {
+                        status: constant.TECHNICIAN_STATUS.FREE,
+                    },
+                )
+            }
             return null
         } catch (error) {
             throw error

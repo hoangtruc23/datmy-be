@@ -1,10 +1,10 @@
 const response = require('../utils/response/response')
-const workOrderService = require('../services/workOrderService')
+const technicianService = require('../services/technicianService')
 
-const workOrderController = {
+const technicianController = {
     getAll: async (req, res, next) => {
         try {
-            const result = await workOrderService.getAll(req.userId, req.query)
+            const result = await technicianService.getAll(req.query)
             return res.status(200).json(response.success(result))
         } catch (error) {
             next(error)
@@ -12,8 +12,8 @@ const workOrderController = {
     },
     getById: async (req, res, next) => {
         try {
-            const result = await workOrderService.getById(
-                req.params.workOrderId,
+            const result = await technicianService.getById(
+                req.params.technicianId,
             )
             return res.status(200).json(response.success(result))
         } catch (error) {
@@ -22,7 +22,7 @@ const workOrderController = {
     },
     getOverall: async (req, res, next) => {
         try {
-            const result = await workOrderService.getOverall()
+            const result = await technicianService.getOverall()
             return res.status(200).json(response.success(result))
         } catch (error) {
             next(error)
@@ -30,7 +30,7 @@ const workOrderController = {
     },
     create: async (req, res, next) => {
         try {
-            const result = await workOrderService.create(req.body)
+            const result = await technicianService.create(req.body)
             return res.status(200).json(response.success(result))
         } catch (error) {
             next(error)
@@ -38,8 +38,8 @@ const workOrderController = {
     },
     update: async (req, res, next) => {
         try {
-            const result = await workOrderService.update(
-                req.params.workOrderId,
+            const result = await technicianService.update(
+                req.params.technicianId,
                 req.body,
             )
             return res.status(200).json(response.success(result))
@@ -47,13 +47,5 @@ const workOrderController = {
             next(error)
         }
     },
-    delete: async (req, res, next) => {
-        try {
-            const result = await workOrderService.delete(req.params.workOrderId)
-            return res.status(200).json(response.success(result))
-        } catch (error) {
-            next(error)
-        }
-    },
 }
-module.exports = workOrderController
+module.exports = technicianController

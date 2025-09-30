@@ -259,7 +259,6 @@ async function apiSeeder() {
             note: 'Trả về danh sách các phiếu tạm ứng tương ứng theo trackingCode',
         },
         {
-        {
             _id: new Types.ObjectId('6868e75fcebe446e4c78bbb7'),
             api: '/product/updateQuantityProductStorage',
             note: 'Cập nhật số lượng tồn kho của sản phẩm',
@@ -898,6 +897,32 @@ async function apiSeeder() {
             _id: new Types.ObjectId('68d37503136efac69b7bcad4'),
             api: '/workOrder/delete',
             note: 'Xóa phiếu yêu cầu công việc',
+        },
+        //kỹ thuật viên
+        {
+            _id: new Types.ObjectId('68db886658aa745a165f0c07'),
+            api: '/technician/getAll',
+            note: 'Lấy ra tất cả kỹ thuật viên',
+        },
+        {
+            _id: new Types.ObjectId('68db886658aa745a165f0c08'),
+            api: '/technician/getById',
+            note: 'Lấy ra kỹ thuật viên',
+        },
+        {
+            _id: new Types.ObjectId('68db886658aa745a165f0c09'),
+            api: '/technician/getOverall',
+            note: 'Lấy ra tổng quan các kỹ thuật viên',
+        },
+        {
+            _id: new Types.ObjectId('68db886658aa745a165f0c0a'),
+            api: '/technician/create',
+            note: 'Tạo kỹ thuật viên',
+        },
+        {
+            _id: new Types.ObjectId('68db886658aa745a165f0c0b'),
+            api: '/technician/update',
+            note: 'Chỉnh sửa kỹ thuật viên',
         },
     ])
 

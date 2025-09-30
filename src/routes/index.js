@@ -25,6 +25,7 @@ const systemRoute = require('./systemRoute')
 const mailRoute = require('./mailRoute')
 const productTransferHistoryRoute = require('./productTransferHistoryRoute')
 const workOrderRoute = require('./workOrderRoute')
+const technicianRoute = require('./technician')
 
 router.use('/auth', authRoute)
 router.use('/user', userRoute)
@@ -50,5 +51,6 @@ router.use('/system', systemRoute)
 router.use('/mail', mailRoute)
 router.use('/productTransferHistory', productTransferHistoryRoute)
 router.use('/workOrder', workOrderRoute)
+router.use('/technician', technicianRoute)
 
 module.exports = router

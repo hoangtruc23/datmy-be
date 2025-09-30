@@ -124,10 +124,8 @@ const constant = {
         DEBT: 'debt',
     },
     TECHNICIAN_STATUS: {
-        BUSY: 'busy',
-        AVAILABLE: 'available',
-        ACTIVE: 'active',
-        ON_LEAVE: 'onLeave',
+        FREE: 'free',
+        WORKING: 'working',
     },
     TECHNICIAN_SKILL: {
         REPAIR: 'repair',
