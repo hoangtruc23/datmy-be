@@ -591,6 +591,11 @@ async function apiSeeder() {
             api: '/paymentHistory/delete',
             note: 'Xóa lịch sử thanh toán',
         },
+        {
+            _id: new Types.ObjectId('687df491fd5669a67e23a695'),
+            api: '/paymentHistory/getAllPaymentMethod',
+            note: 'Lấy tất cả phương thức thanh toán',
+        },
 
         // Công nợ
         {
@@ -818,13 +823,18 @@ async function apiSeeder() {
         },
         {
             _id: new Types.ObjectId('68a429e85e3c66d130098a27'),
-            api: '/system/updatePermissionApi',
+            api: '/system/updatePermissionApiById',
             note: 'Chỉnh sửa PermissionApi theo PermissionId',
         },
         {
             _id: new Types.ObjectId('68a4244513d3b1f6e7194363'),
             api: '/system/getAllRole',
             note: 'Lấy ra tất cả Role',
+        },
+        {
+            _id: new Types.ObjectId('68a4244513d3b1f6e7194373'),
+            api: '/system/delete',
+            note: 'Xóa Role theo roleId',
         },
         {
             _id: new Types.ObjectId('68a429e85e3c66d130098a28'),
@@ -835,6 +845,21 @@ async function apiSeeder() {
             _id: new Types.ObjectId('68a44835a3d2cdd989be063d'),
             api: '/system/updateRoleById',
             note: 'Chỉnh sửa Role theo roleId',
+        },
+        {
+            _id: new Types.ObjectId('68a44835a3d2cdd989be064d'),
+            api: '/system/createRole',
+            note: 'Tạo mới Role',
+        },
+        {
+            _id: new Types.ObjectId('68a44835a3d2cdd989be065d'),
+            api: '/system/createPermission',
+            note: 'Tạo mới Permission',
+        },
+        {
+            _id: new Types.ObjectId('68a44835a3d2cdd989be066d'),
+            api: '/system/getAllParentPermission',
+            note: 'Lấy ra tất cả Parent Permission',
         },
         {
             _id: new Types.ObjectId('68c1243d15ae994f437fa626'),

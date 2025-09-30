@@ -67,11 +67,18 @@ const constant = {
         UNPAID: 'unpaid',
     },
     PAYMENT_METHOD: {
-        CASH: 'cash',
-        BANK_TRANSFER: 'bankTransfer',
-        CREDIT_CARD: 'creditCard',
-        MOBILE_PAYMENT: 'mobilePayment',
-        OTHER: 'other',
+        CASH: {
+            value: 'cash',
+            name: 'Tiền mặt',
+        },
+        BANK_TRANSFER: {
+            value: 'bankTransfer',
+            name: 'Chuyển khoản',
+        },
+        OTHER: {
+            value: 'other',
+            name: 'Khác',  
+        },
     },
     DISCOUNT_TYPE: {
         PERCENTAGE: 'percentage',

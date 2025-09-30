@@ -447,8 +447,14 @@ const goodsIssueService = {
             if (!checkWarehouse) {
                 throw new BadReq(errorCode.WAREHOUSE_NOT_FOUND)
             }
+            if (checkWarehouse.isActive === false) {
+                throw new BadReq(errorCode.WAREHOUSE_INACTIVE)
+            }
             if (!checkProduct) {
                 throw new BadReq(errorCode.PRODUCT_NOT_FOUND)
+            }
+            if (checkProduct.isActive === false) {
+                throw new BadReq(errorCode.PRODUCT_INACTIVE)
             }
             // Check số lượng xuất có lớn hơn số lượng tồn kho không
             const productStorages = await ProductStorageModel.find({
@@ -870,9 +876,9 @@ const goodsIssueService = {
             if (startDate || endDate) {
                 matchConditions['goodsIssue.createdAt'] = {}
                 if (startDate) {
-                    matchConditions['goodsIssue.createdAt'].$gte = new Date(
-                        startDate,
-                    )
+                    const start = new Date(startDate)
+                    start.setHours(0, 0, 0, 0)
+                    matchConditions['goodsIssue.createdAt'].$gte = start
                 }
                 if (endDate) {
                     const end = new Date(endDate)
@@ -880,7 +886,6 @@ const goodsIssueService = {
                     matchConditions['goodsIssue.createdAt'].$lte = end
                 }
             }
-
             const results = await GoodsIssueDetaileModel.aggregate([
                 {
                     $lookup: {

@@ -3,6 +3,7 @@ const PaymentHistoryModel = require('../models/paymentHistory')
 const InvoiceModel = require('../models/invoice')
 const BadReq = require('../utils/response/requestError')
 const errorCode = require('../utils/response/errorCode')
+const constant = require('../utils/constant/constant')
 async function changeFullyPaid(invoiceId) {
     if (!invoiceId) return
 
@@ -88,6 +89,20 @@ const paymentHistoryService = {
             throw err
         }
     },
+    getAllPaymentMethod: async () => {
+        try {
+            const methods = Object.values(constant.PAYMENT_METHOD).map(
+                (item) => ({
+                    key: item.value, 
+                    value: item.name, 
+                }),
+            )
+
+            return methods
+        } catch (err) {
+            throw err
+        }
+    },
 
     getAll: async (page = 1, limit = 10, search = '') => {
         try {
@@ -112,7 +127,7 @@ const paymentHistoryService = {
                 PaymentHistoryModel.find(filter)
                     .skip(skip)
                     .limit(limit)
-                    .sort({ createdAt: 1 })
+                    .sort({ createdAt: -1 })
                     .populate('invoiceId', 'invoiceCode'),
                 PaymentHistoryModel.countDocuments(filter),
             ])

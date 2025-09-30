@@ -245,7 +245,7 @@ const invoiceService = {
                 },
                 ...(status ? [{ $match: { status: { $eq: status } } }] : []),
                 {
-                    $sort: { createdAt: 1 },
+                    $sort: { createdAt: -1 },
                 },
                 {
                     $skip: skip,

@@ -74,6 +74,39 @@ const systemController = {
             next(error)
         }
     },
+    createRole: async (req, res, next) => {
+        try {
+            const result = await systemService.createRole(req.body)
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
+    createPermission: async (req, res, next) => {
+        try {
+            const result = await systemService.createPermission(req.body)
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
+    getAllParentPermission: async (req, res, next) => {
+        try {
+            const result = await systemService.getAllParentPermission()
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
+    delete: async (req, res, next) => {
+        try {
+            const id = req.params.roleId
+            const result = await systemService.delete(id)
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
 }
 
 module.exports = systemController

@@ -486,8 +486,14 @@ const goodsAdvanceService = {
             if (!checkWarehouse) {
                 throw new BadReq(errorCode.WAREHOUSE_NOT_FOUND)
             }
+            if (checkWarehouse.isActive === false) {
+                throw new BadReq(errorCode.WAREHOUSE_INACTIVE)
+            }
             if (!checkProduct) {
                 throw new BadReq(errorCode.PRODUCT_NOT_FOUND)
+            }
+            if (checkProduct.isActive === false) {
+                throw new BadReq(errorCode.PRODUCT_INACTIVE)
             }
             // Check số lượng xuất có lớn hơn số lượng tồn kho không
             const productStorages = await ProductStorageModel.find({
@@ -958,9 +964,9 @@ const goodsAdvanceService = {
             if (startDate || endDate) {
                 matchConditions['goodsAdvance.createdAt'] = {}
                 if (startDate) {
-                    matchConditions['goodsAdvance.createdAt'].$gte = new Date(
-                        startDate,
-                    )
+                    const start = new Date(startDate)
+                    start.setHours(0, 0, 0, 0)
+                    matchConditions['goodsAdvance.createdAt'].$gte = start
                 }
                 if (endDate) {
                     const end = new Date(endDate)
