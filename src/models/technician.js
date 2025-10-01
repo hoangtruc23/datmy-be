@@ -1,21 +1,13 @@
-const { Schema, model } = require('mongoose')
+const { Schema, model, Types } = require('mongoose')
 const constant = require('../utils/constant/constant')
 
 const technicianModel = new Schema(
     {
+        userId: {
+            type: Types.ObjectId,
+            ref: 'users',
+        },
         code: {
-            type: String,
-            required: true,
-        },
-        name: {
-            type: String,
-            required: true,
-        },
-        phone: {
-            type: String,
-            required: true,
-        },
-        email: {
             type: String,
             required: true,
         },
@@ -25,21 +17,7 @@ const technicianModel = new Schema(
         status: {
             type: String,
             enum: Object.values(constant.TECHNICIAN_STATUS),
-            default: constant.TECHNICIAN_STATUS.AVAILABLE,
-        },
-        rate: {
-            type: Number,
-            min: 0,
-            max: 5,
-        },
-        skills: {
-            type: [
-                {
-                    type: String,
-                    enum: Object.values(constant.TECHNICIAN_SKILL),
-                },
-            ],
-            default: [],
+            default: constant.TECHNICIAN_STATUS.FREE,
         },
     },
     { timestamps: true },

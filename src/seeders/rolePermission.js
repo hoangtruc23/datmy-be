@@ -475,6 +475,24 @@ async function rolePermissionSeeder() {
             roleId: '684927c871287f2ae7d8130b', // Quản trị viên
             permissionId: '68d3750d4828a7c4347ad1be', // Xóa phiếu yêu cầu công việc
         },
+
+        // kỹ thuật viên quản trị viên
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '68db8978cc41fa86439388cc', // Kỹ thuật viên
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '68db8978cc41fa86439388cd', // Xem kỹ thuật viên
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '68db8978cc41fa86439388ce', // Tạo kỹ thuật viên
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '68db8978cc41fa86439388cf', // Chỉnh sửa kỹ thuật viên
+        },
         // Nhân viên kho =======================================================================================
         // {
         //     roleId: '684927c871287f2ae7d8130c',

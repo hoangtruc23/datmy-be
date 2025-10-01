@@ -735,6 +735,31 @@ async function permissionSeeder() {
             code: 'xoa_phieu_yeu_cau_cong_viec',
             parentPermissionId: '68d1166bba1c480c8180bf6b',
         },
+        //kỹ thuật viên
+        {
+            _id: new Types.ObjectId('68db8978cc41fa86439388cc'),
+            name: 'kỹ thuật viên',
+            code: 'ky_thuat_vien',
+            parentPermissionId: null,
+        },
+        {
+            _id: new Types.ObjectId('68db8978cc41fa86439388cd'),
+            name: 'Xem kỹ thuật viên',
+            code: 'xem_ky_thuat_vien',
+            parentPermissionId: '68db8978cc41fa86439388cc',
+        },
+        {
+            _id: new Types.ObjectId('68db8978cc41fa86439388ce'),
+            name: 'Tạo kỹ thuật viên',
+            code: 'tao_ky_thuat_vien',
+            parentPermissionId: '68db8978cc41fa86439388cc',
+        },
+        {
+            _id: new Types.ObjectId('68db8978cc41fa86439388cf'),
+            name: 'Chỉnh sửa kỹ thuật viên',
+            code: 'chinh_sua_ky_thuat_vien',
+            parentPermissionId: '68db8978cc41fa86439388cc',
+        },
     ])
     logger.info('Permissions seeded')
 }

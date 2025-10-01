@@ -923,6 +923,32 @@ async function apiSeeder() {
             api: '/workOrder/delete',
             note: 'Xóa phiếu yêu cầu công việc',
         },
+        //kỹ thuật viên
+        {
+            _id: new Types.ObjectId('68db886658aa745a165f0c07'),
+            api: '/technician/getAll',
+            note: 'Lấy ra tất cả kỹ thuật viên',
+        },
+        {
+            _id: new Types.ObjectId('68db886658aa745a165f0c08'),
+            api: '/technician/getById',
+            note: 'Lấy ra kỹ thuật viên',
+        },
+        {
+            _id: new Types.ObjectId('68db886658aa745a165f0c09'),
+            api: '/technician/getOverall',
+            note: 'Lấy ra tổng quan các kỹ thuật viên',
+        },
+        {
+            _id: new Types.ObjectId('68db886658aa745a165f0c0a'),
+            api: '/technician/create',
+            note: 'Tạo kỹ thuật viên',
+        },
+        {
+            _id: new Types.ObjectId('68db886658aa745a165f0c0b'),
+            api: '/technician/update',
+            note: 'Chỉnh sửa kỹ thuật viên',
+        },
     ])
 
     logger.info('apis seeded')

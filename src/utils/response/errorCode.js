@@ -375,7 +375,8 @@ const errorCode = {
     },
     SERIAL_PRODUCT_MUST_CREATE_NEW_TRACKINGCODE: {
         code: 93,
-        message: 'Sản phẩm quản lý theo serial phải tạo mã mới với số lượng là 1',
+        message:
+            'Sản phẩm quản lý theo serial phải tạo mã mới với số lượng là 1',
     },
     WORK_ORDER_NOT_FOUND: {
         code: 94,
@@ -389,18 +390,22 @@ const errorCode = {
         code: 96,
         message: 'Sản phẩm hiện không hoạt động',
     },
-    PERMISSION_CODE_EXISTED:{
+    PERMISSION_CODE_EXISTED: {
         code: 97,
         message: 'Mã permission đã tồn tại',
     },
     PARENT_PERMISSION_NOT_FOUND: {
         code: 98,
-        message: 'Permission cha không tồn tại',    
+        message: 'Permission cha không tồn tại',
     },
     PARENT_PERMISSION_NO_API: {
         code: 99,
         message: 'Permission cha không cần truyền api',
-    }
+    },
+    TECHNICIAN_NOT_FOUND: {
+        code: 100,
+        message: 'Kỹ thuật viên không tồn tại',
+    },
 }
 
 module.exports = errorCode

@@ -81,14 +81,14 @@ router.delete('/delete/:workOrderId', workOrderController.delete)
  *                 data:
  *                   type: object
  *                   properties:
- *                     workOrders:
+ *                     result:
  *                       type: array
  *                       items:
  *                         type: object
  *                         properties:
  *                           _id:
  *                             type: string
- *                             example: 68d11f73e61b2ab50548e2f9
+ *                             example: 68dba8f3edc476e8fc580c77
  *                           customerId:
  *                             type: object
  *                             properties:
@@ -112,13 +112,13 @@ router.delete('/delete/:workOrderId', workOrderController.delete)
  *                             example: repair
  *                           type:
  *                             type: string
- *                             example: V
+ *                             example: ""
  *                           requestSource:
  *                             type: string
  *                             example: warehouse
  *                           header:
  *                             type: string
- *                             example: TEST
+ *                             example: TEST1
  *                           description:
  *                             type: string
  *                             example: sửa máy test
@@ -130,7 +130,7 @@ router.delete('/delete/:workOrderId', workOrderController.delete)
  *                             example: low
  *                           address:
  *                             type: string
- *                             example: 11 Tân Hóa, Phường 14, Quận 6, TP.HCM, Việt Nam
+ *                             example: 123, ABC Street
  *                           estimatedTime:
  *                             type: number
  *                             example: 2
@@ -141,21 +141,26 @@ router.delete('/delete/:workOrderId', workOrderController.delete)
  *                           createdAt:
  *                             type: string
  *                             format: date-time
- *                             example: 2025-09-22T10:05:39.901Z
+ *                             example: 2025-09-30T09:54:59.384Z
  *                           updatedAt:
  *                             type: string
  *                             format: date-time
- *                             example: 2025-09-22T10:05:39.901Z
- *                           requiredSkill:
- *                             type: array
- *                             items:
- *                               type: string
- *                             example:
- *                               - Sửa máy tính
- *                               - testSP
+ *                             example: 2025-09-30T09:54:59.384Z
+ *                           __v:
+ *                             type: number
+ *                             example: 0
+ *                           technicianInfo:
+ *                             type: object
+ *                             properties:
+ *                               technicianId:
+ *                                 type: string
+ *                                 example: 68dba0c6d790507bce84d743
+ *                               fullname:
+ *                                 type: string
+ *                                 example: Nguyễn Văn A
  *                     totalItems:
  *                       type: number
- *                       example: 4
+ *                       example: 1
  *                     page:
  *                       type: number
  *                       example: 1
@@ -255,7 +260,7 @@ router.delete('/delete/:workOrderId', workOrderController.delete)
  *                   properties:
  *                     _id:
  *                       type: string
- *                       example: 68d11f73e61b2ab50548e2f9
+ *                       example: 68dba8f3edc476e8fc580c77
  *                     customerId:
  *                       type: object
  *                       properties:
@@ -276,7 +281,7 @@ router.delete('/delete/:workOrderId', workOrderController.delete)
  *                       example: JOB-00001
  *                     typeWork:
  *                       type: string
- *                       example: ""
+ *                       example: repair
  *                     type:
  *                       type: string
  *                       example: ""
@@ -285,7 +290,7 @@ router.delete('/delete/:workOrderId', workOrderController.delete)
  *                       example: warehouse
  *                     header:
  *                       type: string
- *                       example: TEST
+ *                       example: TEST1
  *                     description:
  *                       type: string
  *                       example: sửa máy test
@@ -297,7 +302,7 @@ router.delete('/delete/:workOrderId', workOrderController.delete)
  *                       example: low
  *                     address:
  *                       type: string
- *                       example: 11 Tân Hóa, Phường 14, Quận 6, TP.Hồ Chí Minh, Việt Nam
+ *                       example: 123, ABC Street
  *                     estimatedTime:
  *                       type: number
  *                       example: 2
@@ -308,19 +313,23 @@ router.delete('/delete/:workOrderId', workOrderController.delete)
  *                     createdAt:
  *                       type: string
  *                       format: date-time
- *                       example: 2025-09-22T10:05:39.901Z
+ *                       example: 2025-09-30T09:54:59.384Z
  *                     updatedAt:
  *                       type: string
  *                       format: date-time
- *                       example: 2025-09-22T10:05:39.901Z
+ *                       example: 2025-09-30T09:54:59.384Z
  *                     __v:
  *                       type: number
  *                       example: 0
- *                     requiredSkill:
- *                       type: array
- *                       items:
- *                         type: string
- *                       example: []
+ *                     technicianInfo:
+ *                       type: object
+ *                       properties:
+ *                         technicianId:
+ *                           type: string
+ *                           example: 68dba0c6d790507bce84d743
+ *                         fullname:
+ *                           type: string
+ *                           example: Nguyễn Văn A
  *       401:
  *         description: Chưa đăng nhập
  *         content:
@@ -505,6 +514,9 @@ router.delete('/delete/:workOrderId', workOrderController.delete)
  *               - overDueTime
  *               - requestSource
  *             properties:
+ *               technicianId:
+ *                 type: string
+ *                 example:
  *               header:
  *                 type: string
  *                 example: TEST
@@ -667,14 +679,16 @@ router.delete('/delete/:workOrderId', workOrderController.delete)
  *             required:
  *               - header
  *               - typeWork
- *               - type
- *               - requiredSkill
+ *               - typel
  *               - description
  *               - priority
  *               - estimatedTime
  *               - overDueTime
  *               - requestSource
  *             properties:
+ *               technicianId:
+ *                 type: string
+ *                 example:
  *               header:
  *                 type: string
  *                 example: TEST
@@ -686,11 +700,6 @@ router.delete('/delete/:workOrderId', workOrderController.delete)
  *                 type: string
  *                 enum: ['', 'D', 'G', 'V', 'M', 'A']
  *                 example: D
- *               requiredSkill:
- *                 type: array
- *                 items:
- *                   type: string
- *                   example: 'Sửa máy tính'
  *               description:
  *                 type: string
  *                 example: sửa máy test

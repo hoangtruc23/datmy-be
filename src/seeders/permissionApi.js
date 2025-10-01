@@ -785,6 +785,28 @@ async function permissionApiSeeder() {
             permissionId: '68d3750d4828a7c4347ad1be', // Xóa phiếu yêu cầu công việc
             apiId: '68d37503136efac69b7bcad4', // /workOrder/delete
         },
+
+        // Kỹ thuật viên
+        {
+            permissionId: '68db8978cc41fa86439388cd', // Xem kỹ thuật viên
+            apiId: '68db886658aa745a165f0c07', // /technician/getAll
+        },
+        {
+            permissionId: '68db8978cc41fa86439388cd', // Xem kỹ thuật viên
+            apiId: '68db886658aa745a165f0c08', // /technician/getById
+        },
+        {
+            permissionId: '68db8978cc41fa86439388cd', // Xem kỹ thuật viên
+            apiId: '68db886658aa745a165f0c09', // /technician/getOverall
+        },
+        {
+            permissionId: '68db8978cc41fa86439388ce', // Tạo kỹ thuật viên
+            apiId: '68db886658aa745a165f0c0a', // /technician/create
+        },
+        {
+            permissionId: '68db8978cc41fa86439388cf', // Chỉnh sửa kỹ thuật viên
+            apiId: '68db886658aa745a165f0c0b', // /technician/update
+        },
     ])
     logger.info('PermissionApis seeded')
 }
