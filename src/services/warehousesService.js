@@ -29,7 +29,7 @@ const warehousesService = {
     },
     create: async (warehouse) => {
         try {
-            const { name, description } = warehouse
+            const { name, description, address } = warehouse
             const checkName = await WarehouseModel.findOne({ name: name })
             if (checkName) {
                 throw new BadReq(errorCode.WAREHOUSE_EXISTED)
@@ -37,6 +37,7 @@ const warehousesService = {
             const data = {
                 name: name,
                 description: description,
+                address: address
             }
             await WarehouseModel.create(data)
             return null

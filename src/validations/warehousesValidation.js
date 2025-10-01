@@ -12,6 +12,12 @@ const warehousesValidation = {
                     'string.base': 'Tên kho hàng là bắt buộc',
                     'any.required': 'Tên kho hàng là bắt buộc',
                 }),
+                address: joi.string().trim().min(1).required().messages({
+                    'string.empty': 'Địa chỉ kho hàng là bắt buộc',
+                    'string.min': 'Địa chỉ kho hàng phải chứa ký tự',
+                    'string.base': 'Địa chỉ kho hàng là bắt buộc',
+                    'any.required': 'Địa chỉ kho hàng là bắt buộc',
+                }),
             })
             .unknown(true),
     },

@@ -354,7 +354,7 @@ const errorCode = {
     },
     ISSUED_TRANSFER_QUANTITY_INVALID: {
         code: 91,
-        message: 'Số lượng chuyển kho lớn hơn số lượng tồn kho',
+        message: 'Số lượng chuyển lớn hơn số lượng tồn kho',
     },
     SERIAL_OR_BATCH_TRANSFER_QUANTITY_TOTAL_INVALID: {
         code: 92,
@@ -406,6 +406,10 @@ const errorCode = {
         code: 100,
         message: 'Kỹ thuật viên không tồn tại',
     },
+    TRANSFER_HISTORY_NOT_FOUND:{
+        code: 101,
+        message: 'Lịch sử chuyển nội bộ không tồn tại',
+    }
 }
 
 module.exports = errorCode

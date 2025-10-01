@@ -892,6 +892,11 @@ async function apiSeeder() {
             api: '/productTransferHistory/transferProduct',
             note: 'Chuyển kho',
         },
+        {
+            _id: new Types.ObjectId('68a44835a3d2cdd989be0633'),
+            api: '/productTransferHistory/getById',
+            note: 'Lấy ra phiếu chuyển kho theo Id',
+        },
         //phiếu công việc
         {
             _id: new Types.ObjectId('68d1153524419859fede4ebe'),

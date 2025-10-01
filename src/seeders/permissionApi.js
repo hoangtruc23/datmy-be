@@ -385,12 +385,16 @@ async function permissionApiSeeder() {
         },
         // chuyển kho
         {
-            permissionId: '688c7f601bb97636f19d6ab2', // Cập nhật phiếu chuyển kho
+            permissionId: '688c7f601bb97636f19d6ab2', // tạo phiếu chuyển kho
             apiId: '68a44835a3d2cdd989be0632', // /productTransferHistory/transferProduct
         },
         {
             permissionId: '688c7f601bb97636f19d6ab3', // xem phiếu chuyển kho
             apiId: '68a44835a3d2cdd989be0631', // /productTransferHistory/getAll
+        },
+        {
+            permissionId: '688c7f601bb97636f19d6ab3', // xem phiếu chuyển kho chi tiết
+            apiId: '68a44835a3d2cdd989be0633', // /productTransferHistory/getById
         },
         //Cập nhật thì cũng có thể thêm xóa sửa sản phẩm cho phiếu xuất kho
         {
