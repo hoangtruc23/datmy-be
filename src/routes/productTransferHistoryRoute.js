@@ -10,9 +10,8 @@ router.post(
     '/transferProduct',
     productTransferHistoryController.transferProduct,
 )
-
+router.get('/getById/:id', productTransferHistoryController.getById)
 module.exports = router
-
 /**
  * @swagger
  * /productTransferHistory/transferProduct:
@@ -42,7 +41,7 @@ module.exports = router
  *                 description: ID kho đích
  *               note:
  *                 type: string
- *                 example: "Chuyển kho test"
+ *                 example: "Cộng trừ mã trong cùng 1 kho"
  *                 description: Ghi chú chuyển kho
  *               details:
  *                 type: array
@@ -50,39 +49,39 @@ module.exports = router
  *                 items:
  *                   type: object
  *                   required:
- *                     - productId
- *                     - quantity
  *                     - oldStorages
  *                     - newStorages
  *                   properties:
- *                     productId:
- *                       type: string
- *                       example: "6875c1a10831baa9fe3af047"
- *                     quantity:
- *                       type: number
- *                       example: 1
  *                     oldStorages:
  *                       type: array
+ *                       description: Danh sách lô cũ cần trừ
  *                       items:
  *                         type: object
  *                         properties:
+ *                           productId:
+ *                             type: string
+ *                             example: "6875c1a10831baa9fe3af047"
  *                           trackingCode:
  *                             type: string
- *                             example: "A100"
+ *                             example: "TestUpdate"
  *                           quantity:
  *                             type: number
- *                             example: 1
+ *                             example: 5
  *                     newStorages:
  *                       type: array
+ *                       description: Danh sách lô mới được cộng
  *                       items:
  *                         type: object
  *                         properties:
+ *                           productId:
+ *                             type: string
+ *                             example: "6875c16f0831baa9fe3af02c"
  *                           trackingCode:
  *                             type: string
- *                             example: "TestA1"
+ *                             example: "B2"
  *                           quantity:
  *                             type: number
- *                             example: 1
+ *                             example: 5
  *     responses:
  *       200:
  *         description: Chuyển kho thành công
@@ -99,60 +98,10 @@ module.exports = router
  *                   example: 1
  *                 message:
  *                   type: string
- *                   example: "Chuyển kho thành công"
+ *                   example: "Chuyển thành công"
  *                 data:
- *                   type: object
- *                   description: Thông tin phiếu chuyển kho vừa tạo
- *                   properties:
- *                     _id:
- *                       type: string
- *                       example: "68c3b8f862734617db69a287"
- *                     fromWarehouseId:
- *                       type: string
- *                       example: "6875c2870831baa9fe3af0b2"
- *                     toWarehouseId:
- *                       type: string
- *                       example: "689e9b4d37e48fe8ab1129ca"
- *                     note:
- *                       type: string
- *                       example: "Chuyển kho test"
- *                     createdAt:
- *                       type: string
- *                       format: date-time
- *                       example: "2025-09-12T02:45:30.123Z"
- *                     details:
- *                       type: array
- *                       items:
- *                         type: object
- *                         properties:
- *                           productId:
- *                             type: string
- *                             example: "6875c1a10831baa9fe3af047"
- *                           quantity:
- *                             type: number
- *                             example: 1
- *                           oldStorages:
- *                             type: array
- *                             items:
- *                               type: object
- *                               properties:
- *                                 trackingCode:
- *                                   type: string
- *                                   example: "A100"
- *                                 quantity:
- *                                   type: number
- *                                   example: 1
- *                           newStorages:
- *                             type: array
- *                             items:
- *                               type: object
- *                               properties:
- *                                 trackingCode:
- *                                   type: string
- *                                   example: "TestA1"
- *                                 quantity:
- *                                   type: number
- *                                   example: 1
+ *                   type: boolean
+ *                   example: true
  *       400:
  *         description: Dữ liệu không hợp lệ hoặc kho/sản phẩm không tồn tại
  *       401:
@@ -211,7 +160,7 @@ module.exports = router
  *                         properties:
  *                           _id:
  *                             type: string
- *                             example: "68c3a8afe6d3212ab1e8aec0"
+ *                             example: "68dca7bef01e59797bff32f9"
  *                           fromWarehouseId:
  *                             type: object
  *                             properties:
@@ -232,11 +181,11 @@ module.exports = router
  *                                 example: "Kho Tân Bình"
  *                           note:
  *                             type: string
- *                             example: "Chuyển kho test"
+ *                             example: "Cộng trừ mã trong cùng 1 kho"
  *                           createdAt:
  *                             type: string
  *                             format: date-time
- *                             example: "2025-09-12T04:59:27.099Z"
+ *                             example: "2025-10-01T04:02:06.193Z"
  *                           details:
  *                             type: array
  *                             items:
@@ -244,28 +193,10 @@ module.exports = router
  *                               properties:
  *                                 _id:
  *                                   type: string
- *                                   example: "68c3a8afe6d3212ab1e8aec7"
+ *                                   example: "68dca7bef01e59797bff3302"
  *                                 transferId:
  *                                   type: string
- *                                   example: "68c3a8afe6d3212ab1e8aec0"
- *                                 productId:
- *                                   type: object
- *                                   properties:
- *                                     _id:
- *                                       type: string
- *                                       example: "6875c1a10831baa9fe3af047"
- *                                     name:
- *                                       type: string
- *                                       example: "test2"
- *                                     code:
- *                                       type: string
- *                                       example: "2"
- *                                     unit:
- *                                       type: string
- *                                       example: "6858ba9390e28f169336d106"
- *                                 quantity:
- *                                   type: number
- *                                   example: 1
+ *                                   example: "68dca7bef01e59797bff32f9"
  *                                 oldStorages:
  *                                   type: array
  *                                   items:
@@ -273,13 +204,28 @@ module.exports = router
  *                                     properties:
  *                                       trackingCode:
  *                                         type: string
- *                                         example: "A100"
+ *                                         example: "TestUpdate"
  *                                       quantity:
  *                                         type: number
- *                                         example: 1
+ *                                         example: 5
+ *                                       productId:
+ *                                         type: object
+ *                                         properties:
+ *                                           _id:
+ *                                             type: string
+ *                                             example: "6875c1a10831baa9fe3af047"
+ *                                           name:
+ *                                             type: string
+ *                                             example: "test2"
+ *                                           code:
+ *                                             type: string
+ *                                             example: "2"
+ *                                           unit:
+ *                                             type: string
+ *                                             example: "6858ba9390e28f169336d106"
  *                                       _id:
  *                                         type: string
- *                                         example: "68c3a8afe6d3212ab1e8aec8"
+ *                                         example: "68dca7bef01e59797bff3303"
  *                                 newStorages:
  *                                   type: array
  *                                   items:
@@ -287,13 +233,28 @@ module.exports = router
  *                                     properties:
  *                                       trackingCode:
  *                                         type: string
- *                                         example: "TestA1"
+ *                                         example: "B2"
  *                                       quantity:
  *                                         type: number
- *                                         example: 1
+ *                                         example: 5
+ *                                       productId:
+ *                                         type: object
+ *                                         properties:
+ *                                           _id:
+ *                                             type: string
+ *                                             example: "6875c16f0831baa9fe3af02c"
+ *                                           name:
+ *                                             type: string
+ *                                             example: "test1"
+ *                                           code:
+ *                                             type: string
+ *                                             example: "1"
+ *                                           unit:
+ *                                             type: string
+ *                                             example: "6858ba9390e28f169336d106"
  *                                       _id:
  *                                         type: string
- *                                         example: "68c3a8afe6d3212ab1e8aec9"
+ *                                         example: "68dca7bef01e59797bff3305"
  *                     page:
  *                       type: integer
  *                       example: 1
@@ -303,6 +264,173 @@ module.exports = router
  *                     totalPage:
  *                       type: integer
  *                       example: 1
+ *       401:
+ *         description: Chưa đăng nhập
+ *       403:
+ *         description: Không có quyền truy cập
+ *       500:
+ *         description: Lỗi server
+ */
+
+
+/**
+ * @swagger
+ * /productTransferHistory/getById/{id}:
+ *   get:
+ *     summary: Lấy thông tin chi tiết phiếu chuyển kho theo ID
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [ProductTransfer]
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID của phiếu chuyển kho
+ *     responses:
+ *       200:
+ *         description: Lấy chi tiết phiếu chuyển kho thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
+ *                 code:
+ *                   type: integer
+ *                   example: 1
+ *                 message:
+ *                   type: string
+ *                   example: "OK!"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: "68dca7bef01e59797bff32f9"
+ *                     fromWarehouseId:
+ *                       type: object
+ *                       properties:
+ *                         _id:
+ *                           type: string
+ *                           example: "6875c2870831baa9fe3af0b2"
+ *                         name:
+ *                           type: string
+ *                           example: "Kho test"
+ *                     toWarehouseId:
+ *                       type: object
+ *                       properties:
+ *                         _id:
+ *                           type: string
+ *                           example: "689e9b4d37e48fe8ab1129ca"
+ *                         name:
+ *                           type: string
+ *                           example: "Kho Tân Bình"
+ *                     note:
+ *                       type: string
+ *                       example: "Cộng trừ mã trong cùng 1 kho"
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2025-10-01T04:02:06.193Z"
+ *                     details:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           _id:
+ *                             type: string
+ *                             example: "68dca7bef01e59797bff3302"
+ *                           transferId:
+ *                             type: string
+ *                             example: "68dca7bef01e59797bff32f9"
+ *                           oldStorages:
+ *                             type: array
+ *                             items:
+ *                               type: object
+ *                               properties:
+ *                                 trackingCode:
+ *                                   type: string
+ *                                   example: "TestUpdate"
+ *                                 quantity:
+ *                                   type: number
+ *                                   example: 5
+ *                                 productId:
+ *                                   type: object
+ *                                   properties:
+ *                                     _id:
+ *                                       type: string
+ *                                       example: "6875c1a10831baa9fe3af047"
+ *                                     name:
+ *                                       type: string
+ *                                       example: "test2"
+ *                                     shortName:
+ *                                       type: string
+ *                                       example: "test2"
+ *                                     code:
+ *                                       type: string
+ *                                       example: "2"
+ *                                     unit:
+ *                                       type: string
+ *                                       example: "6858ba9390e28f169336d106"
+ *                                     managementType:
+ *                                       type: string
+ *                                       example: "serial"
+ *                                     safetyQuantity:
+ *                                       type: number
+ *                                       example: 2
+ *                                     isWarranty:
+ *                                       type: boolean
+ *                                       example: false
+ *                                     isActive:
+ *                                       type: boolean
+ *                                       example: true
+ *                           newStorages:
+ *                             type: array
+ *                             items:
+ *                               type: object
+ *                               properties:
+ *                                 trackingCode:
+ *                                   type: string
+ *                                   example: "B1"
+ *                                 quantity:
+ *                                   type: number
+ *                                   example: 5
+ *                                 productId:
+ *                                   type: object
+ *                                   properties:
+ *                                     _id:
+ *                                       type: string
+ *                                       example: "6875c1a10831baa9fe3af047"
+ *                                     name:
+ *                                       type: string
+ *                                       example: "test2"
+ *                                     shortName:
+ *                                       type: string
+ *                                       example: "test2"
+ *                                     code:
+ *                                       type: string
+ *                                       example: "2"
+ *                                     unit:
+ *                                       type: string
+ *                                       example: "6858ba9390e28f169336d106"
+ *                                     managementType:
+ *                                       type: string
+ *                                       example: "serial"
+ *                                     safetyQuantity:
+ *                                       type: number
+ *                                       example: 2
+ *                                     isWarranty:
+ *                                       type: boolean
+ *                                       example: false
+ *                                     isActive:
+ *                                       type: boolean
+ *                                       example: true
+ *       400:
+ *         description: Dữ liệu không hợp lệ hoặc phiếu chuyển kho không tồn tại
  *       401:
  *         description: Chưa đăng nhập
  *       403:

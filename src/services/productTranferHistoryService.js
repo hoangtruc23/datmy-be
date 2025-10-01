@@ -6,6 +6,7 @@ const { Types, default: mongoose } = require('mongoose')
 const WarehouseModel = require('../models/warehouses')
 const ProductStorageModel = require('../models/productStorage')
 const { CdpPage } = require('puppeteer')
+const constant = require('../utils/constant/constant')
 
 const productTransferHistoryService = {
     getAll: async (query) => {
@@ -29,16 +30,16 @@ const productTransferHistoryService = {
                 .limit(limit)
                 .populate('fromWarehouseId', 'name')
                 .populate('toWarehouseId', 'name')
-                .lean() // trả về plain object
+                .lean()
 
             // Lấy chi tiết chuyển kho cho từng phiếu
             for (let item of items) {
                 const details = await productTransferHistoryDetailModel
-                    .find({
-                        transferId: item._id,
-                    })
-                    .populate('productId', 'name code unit') // thông tin sản phẩm
+                    .find({ transferId: item._id })
+                    .populate('oldStorages.productId', 'name code unit')
+                    .populate('newStorages.productId', 'name code unit')
                     .lean()
+
                 item.details = details
             }
 
@@ -52,6 +53,7 @@ const productTransferHistoryService = {
             throw error
         }
     },
+
     create: async (data) => {
         try {
             const history = await productTransferHistoryModel.create(data)
@@ -62,6 +64,19 @@ const productTransferHistoryService = {
     },
     getById: async (id) => {
         try {
+            const data = await productTransferHistoryModel
+                .findById(id)
+                .populate('fromWarehouseId', 'name')
+                .populate('toWarehouseId', 'name')
+                .lean()
+            if (!data) {
+                throw new BadReq(errorCode.TRANSFER_HISTORY_NOT_FOUND)
+            }
+            const details = await productTransferHistoryDetailModel
+                .find({ transferId: id })
+                .populate('oldStorages.productId')
+                .populate('newStorages.productId')
+            return { ...data, details }
         } catch (error) {
             throw error
         }
@@ -70,18 +85,16 @@ const productTransferHistoryService = {
         const session = await mongoose.startSession()
         session.startTransaction()
         try {
-            const { fromWarehouseId, toWarehouseId, note, createdBy, details } =
-                data
+            const { fromWarehouseId, toWarehouseId, note, details } = data
 
             const [checkFromWarehouse, checkToWarehouse] = await Promise.all([
                 WarehouseModel.findById(fromWarehouseId),
                 WarehouseModel.findById(toWarehouseId),
             ])
-
-            if (!checkFromWarehouse && !checkToWarehouse) {
+            if (!checkFromWarehouse || !checkToWarehouse) {
                 throw new BadReq(errorCode.WAREHOUSE_NOT_FOUND)
             }
-
+            // Tạo lịch sử transfer
             const transfer = await productTransferHistoryModel.create(
                 [
                     {
@@ -94,31 +107,20 @@ const productTransferHistoryService = {
                 { session },
             )
             const transferId = transfer[0]._id
+
+            // Xử lý từng sản phẩm trong chi tiết
             for (const item of details) {
-                const { productId, quantity, oldStorages, newStorages } = item
-                const product = await ProductStorageModel.findOne({
-                    productId,
-                })
-                if (!product) throw new BadReq(errorCode.PRODUCT_NOT_FOUND)
-
-                // Check tồn kho
-                const productStorages = await ProductStorageModel.find({
-                    warehouseId: fromWarehouseId,
-                    productId,
-                })
-                const totalProduct = productStorages.reduce(
-                    (acc, cur) => acc + cur.quantity,
-                    0,
-                )
-                if (quantity > totalProduct) {
-                    throw new BadReq(errorCode.ISSUED_TRANSFER_QUANTITY_INVALID)
-                }
-
-                let batchQuantityTotal = 0
-                for (let oldStorage of item.oldStorages) {
+                const { oldStorages, newStorages } = item
+                for (const oldStorage of oldStorages) {
+                    const checkProduct = await ProductModel.findById(
+                        oldStorage.productId,
+                    ).session(session)
+                    if (!checkProduct) {
+                        throw new BadReq(errorCode.PRODUCT_NOT_FOUND)
+                    }
                     const ps = await ProductStorageModel.findOne({
                         warehouseId: fromWarehouseId,
-                        productId: productId,
+                        productId: oldStorage.productId,
                         trackingCode: oldStorage.trackingCode,
                     }).session(session)
 
@@ -135,62 +137,63 @@ const productTransferHistoryService = {
                             errorCode.ISSUED_TRANSFER_QUANTITY_INVALID,
                         )
                     }
-
-                    batchQuantityTotal += oldStorage.quantity
+                    // Giảm số lượng
+                    ps.quantity -= oldStorage.quantity
+                    await ps.save({ session })
+                    if (ps.quantity === 0) {
+                        await ProductStorageModel.deleteOne({
+                            _id: ps._id,
+                        }).session(session)
+                    }
                 }
-                if (batchQuantityTotal != quantity) {
-                    throw new BadReq(
-                        errorCode.SERIAL_OR_BATCH_TRANSFER_QUANTITY_TOTAL_INVALID,
-                    )
-                }
-                for (const oldStorage of oldStorages) {
-                    await ProductStorageModel.findOneAndUpdate(
-                        {
-                            warehouseId: fromWarehouseId,
-                            productId,
-                            trackingCode: oldStorage.trackingCode,
-                        },
-                        { $inc: { quantity: -oldStorage.quantity } },
-                        { session },
-                    )
-                }
-                const totalNewQuantity = newStorages.reduce(
-                    (acc, cur) => acc + cur.quantity,
-                    0,
-                )
-                if (totalNewQuantity !== quantity) {
-                    throw new BadReq(
-                        errorCode.SERIAL_OR_BATCH_TRANSFER_QUANTITY_TOTAL_INVALID,
-                    )
-                }
-
                 for (const newStorage of newStorages) {
+                    if (newStorage.quantity <= 0) {
+                        throw new BadReq(
+                            errorCode.NON_POSITIVE_QUANTITY_NOT_ALLOWED,
+                        )
+                    }
+                    const checkProduct = await ProductModel.findById(
+                        newStorage.productId,
+                    ).session(session)
+                    if (!checkProduct) {
+                        throw new BadReq(errorCode.PRODUCT_NOT_FOUND)
+                    }
                     const exists = await ProductStorageModel.findOne({
                         warehouseId: toWarehouseId,
+                        productId: newStorage.productId,
                         trackingCode: newStorage.trackingCode,
                     }).session(session)
-
                     if (exists) {
-                        throw new BadReq(errorCode.TRACKING_CODE_EXISTS)
+                        if (
+                            checkProduct.managementType ===
+                            constant.PRODUCT_MANAGEMENT_TYPE.SERIAL
+                        ) {
+                            throw new BadReq(
+                                errorCode.SERIAL_PRODUCT_MUST_CREATE_NEW_TRACKINGCODE,
+                            )
+                        }
+                        // Nếu lô đã tồn tại thì cộng dồn
+                        exists.quantity += newStorage.quantity
+                        await exists.save({ session })
+                    } else {
+                        // Nếu lô chưa tồn tại thì tạo mới
+                        await ProductStorageModel.create(
+                            [
+                                {
+                                    warehouseId: toWarehouseId,
+                                    productId: newStorage.productId,
+                                    trackingCode: newStorage.trackingCode,
+                                    quantity: newStorage.quantity,
+                                },
+                            ],
+                            { session },
+                        )
                     }
-                    await ProductStorageModel.create(
-                        [
-                            {
-                                warehouseId: toWarehouseId,
-                                productId,
-                                trackingCode: newStorage.trackingCode,
-                                quantity: newStorage.quantity,
-                            },
-                        ],
-                        { session },
-                    )
                 }
                 await productTransferHistoryDetailModel.create(
                     [
                         {
                             transferId,
-                            productId,
-                            quantity,
                             oldStorages,
                             newStorages,
                         },
@@ -198,9 +201,9 @@ const productTransferHistoryService = {
                     { session },
                 )
             }
+            // Commit transaction
             await session.commitTransaction()
             session.endSession()
-
             return { success: true }
         } catch (error) {
             await session.abortTransaction()

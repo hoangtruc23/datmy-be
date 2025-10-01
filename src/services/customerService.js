@@ -27,7 +27,6 @@ const customerService = {
     update: async (id, customerData) => {
         try {
             const currentCustomer = await CustomerModel.findById(id)
-            console.log('update')
             if (!currentCustomer) {
                 throw new BadReq(errorCode.CUSTOMER_NOT_FOUND)
             }

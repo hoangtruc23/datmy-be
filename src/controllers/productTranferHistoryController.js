@@ -12,6 +12,16 @@ const productTransferHistoryController = {
             next(error)
         }
     },
+    getById: async (req, res, next) => {
+        try {
+            const data = await productTransferHistoryService.getById(
+                req.params.id,
+            )
+            return res.status(200).json(response.success(data))
+        } catch (error) {
+            next(error)
+        }
+    },
     transferProduct: async (req, res, next) => {
         try {
             const result = await productTransferHistoryService.transferProduct(
