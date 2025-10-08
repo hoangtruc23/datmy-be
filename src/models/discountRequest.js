@@ -1,32 +1,42 @@
 const { Schema, model, Types } = require('mongoose')
 const constant = require('../utils/constant/constant')
 
+const discountSchema = new Schema(
+    {
+        amount: {
+            type: Number,
+            required: true,
+        },
+        requestDate: {
+            type: Date,
+            required: true,
+        },
+    },
+    { _id: false },
+)
+
 const discountRequestSchema = new Schema(
     {
-        invoiceId: {
+        customerId: {
             type: Types.ObjectId,
-            ref: 'invoices',
-            required: true,
+            ref: 'customers',
         },
-        requestDate: { type: Date, required: true },
-        type: {
-            type: String,
-            enum: Object.values(constant.DISCOUNT_TYPE),
-            required: true,
+        productId: {
+            type: Types.ObjectId,
+            ref: 'products',
         },
-        value: { type: Number, required: true, min: 0 },
-        // tính toán từ value và type
-        discountAmount: { type: Number },
-        content: { type: String },
-        status: {
-            type: String,
-            enum: Object.values(constant.APPROVAL_STATUS),
-            default: constant.APPROVAL_STATUS.NULL,
-        },
+        discounts: [discountSchema],
         refundStatus: {
             type: String,
             enum: Object.values(constant.REFUND_STATUS),
             default: constant.REFUND_STATUS.UNPAID,
+        },
+        content: {
+            type: String,
+        },
+        isEffect: {
+            type: Boolean,
+            default: true,
         },
     },
     { timestamps: true },

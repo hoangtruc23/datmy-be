@@ -77,12 +77,8 @@ const constant = {
         },
         OTHER: {
             value: 'other',
-            name: 'Khác',  
+            name: 'Khác',
         },
-    },
-    DISCOUNT_TYPE: {
-        PERCENTAGE: 'percentage',
-        AMOUNT: 'amount',
     },
     DEBT_REMINDER_STATUS: {
         NULL: '',
