@@ -7,6 +7,7 @@ const DiscountRequestModel = require('../models/discountRequest')
 const InvoiceModel = require('../models/invoice')
 const CustomerModel = require('../models/customer')
 const ProductModel = require('../models/product')
+const DiscountHistoryModel = require('../models/discountHistory')
 
 const discountService = {
     // discount
@@ -84,7 +85,13 @@ const discountService = {
 
     getAll: async function (query) {
         try {
-            let { page = 1, limit = 10, search } = query
+            let {
+                page = 1,
+                limit = 10,
+                search = '',
+                customerId,
+                productId,
+            } = query
             page = Number(page)
             limit = Number(limit)
             search = new RegExp(search, 'i')
@@ -110,6 +117,12 @@ const discountService = {
                 filters = { customerId: { $in: customerIds } }
             } else if (productIds.length) {
                 filters = { productId: { $in: productIds } }
+            }
+            if (customerId) {
+                filters.customerId = new Types.ObjectId(customerId)
+            }
+            if (productId) {
+                filters.productId = new Types.ObjectId(productId)
             }
 
             const [items, totalItems] = await Promise.all([
@@ -181,6 +194,9 @@ const discountService = {
                 throw new BadReq(errorCode.PRODUCT_NOT_FOUND)
             }
 
+            //update customerId hoặc productId => tạo cài đặt mới
+            //update cả amount và requestDate => push thêm vào cuối
+            //update amount hoặc requestDate => update lại phân tử cuối cùng
             if (
                 !request.customerId.equals(customerId) ||
                 !request.productId.equals(productId)
@@ -218,7 +234,12 @@ const discountService = {
                     })
                 } else {
                     await DiscountRequestModel.findByIdAndUpdate(id, {
-                        $push: { discounts: { amount, requestDate } },
+                        $push: {
+                            discounts: {
+                                $each: [{ amount, requestDate }],
+                                $sort: { requestDate: 1 },
+                            },
+                        },
                         content,
                     })
                 }
@@ -228,15 +249,53 @@ const discountService = {
             throw error
         }
     },
-    setRefund: async (id) => {
+    setRefund: async (reqData) => {
         try {
-            const request = await DiscountRequestModel.findByIdAndUpdate(id, {
-                refundStatus: constant.REFUND_STATUS.PAID,
-            })
+            const { discountRequestId, invoiceId } = reqData
+            const [request, invoice] = await Promise.all([
+                DiscountRequestModel.findById(discountRequestId),
+                InvoiceModel.findById(invoiceId),
+            ])
             if (!request) {
                 throw new BadReq(errorCode.DISCOUNT_REQUEST_NOT_FOUND)
-                return null
             }
+            if (!invoice) {
+                throw new BadReq(errorCode.INVOICE_NOT_FOUND)
+            }
+
+            const checkProduct = invoice.invoiceDetails.some((d) =>
+                d.productId.equals(request.productId),
+            )
+            const checkDay =
+                invoice.createdAt >= request.discounts[0].requestDate
+            if (
+                request.customerId.toString() !==
+                    invoice.customerId.toString() ||
+                !checkProduct ||
+                !checkDay
+            ) {
+                throw new BadReq(errorCode.DISCOUNT_REQUEST_NOT_MATCH)
+            }
+
+            const history = await DiscountHistoryModel.findOne({
+                discountRequestId,
+                invoiceId,
+            })
+            if (!history) {
+                await DiscountHistoryModel.create({
+                    discountRequestId,
+                    invoiceId,
+                    refundStatus: constant.REFUND_STATUS.PAID,
+                })
+            } else {
+                await DiscountHistoryModel.findByIdAndUpdate(history._id, {
+                    refundStatus:
+                        history.refundStatus === constant.REFUND_STATUS.PAID
+                            ? constant.REFUND_STATUS.UNPAID
+                            : constant.REFUND_STATUS.PAID,
+                })
+            }
+            return null
         } catch (error) {
             throw error
         }
@@ -291,9 +350,6 @@ const discountService = {
             } else if (productIds.length) {
                 filters = { productId: { $in: productIds } }
             }
-            if (refundStatus) {
-                filters.refundStatus = refundStatus
-            }
 
             const discountRequest = await DiscountRequestModel.aggregate([
                 { $match: filters },
@@ -331,12 +387,14 @@ const discountService = {
                 const discounts = req.discounts
                 for (let i = 0; i < discounts.length; ++i) {
                     const dis = discounts[i]
+                    const tomorrow = new Date()
+                    tomorrow.setDate(tomorrow.getDate() + 1)
                     const startDate = new Date(dis.requestDate)
                     const endDate =
                         i + 1 < discounts.length
                             ? new Date(discounts[i + 1].requestDate)
-                            : new Date('2026-01-01')
-                    const totalQuantity = await InvoiceModel.aggregate([
+                            : tomorrow
+                    let invoices = await InvoiceModel.aggregate([
                         {
                             $match: {
                                 customerId: new Types.ObjectId(
@@ -357,20 +415,44 @@ const discountService = {
                             },
                         },
                         {
-                            $group: {
-                                _id: null,
-                                totalQuantity: {
-                                    $sum: '$invoiceDetails.quantity',
-                                },
+                            $project: {
+                                invoiceCode: 1,
+                                createdAt: 1,
+                                'invoiceDetails.quantity': 1,
                             },
                         },
                     ])
-                    const quantity = totalQuantity.length
-                        ? totalQuantity[0].totalQuantity
-                        : 0
+                    invoices = invoices.map((inv) => ({
+                        _id: inv._id,
+                        invoiceCode: inv.invoiceCode,
+                        quantity: inv.invoiceDetails.quantity,
+                        discountAmount: dis.amount,
+                        totalDiscountAmount:
+                            dis.amount * inv.invoiceDetails.quantity,
+                    }))
+                    dis.invoices = invoices
+                }
+            }
 
-                    dis.quantity = quantity
-                    dis.discountAmount = quantity * dis.amount
+            for (let req of discountRequest) {
+                req.discounts = req.discounts.map((dis) => dis.invoices).flat()
+            }
+            for (let req of discountRequest) {
+                for (let dis of req.discounts) {
+                    const history = await DiscountHistoryModel.findOne({
+                        invoiceId: dis._id,
+                        customerId: dis.customerId,
+                    })
+                    if (!history) {
+                        dis.refundStatus = constant.REFUND_STATUS.UNPAID
+                    } else {
+                        dis.refundStatus = history.refundStatus
+                    }
+                }
+                if (refundStatus) {
+                    req.discounts = req.discounts.filter(
+                        (dis) => dis.refundStatus === refundStatus,
+                    )
                 }
             }
 
@@ -383,6 +465,52 @@ const discountService = {
                 totalItems,
                 totalPage: Math.ceil(totalItems / limit),
             }
+        } catch (error) {
+            throw error
+        }
+    },
+
+    getDiscountHistoryById: async function (id) {
+        try {
+            const result = await DiscountRequestModel.aggregate([
+                {
+                    $match: {
+                        _id: new Types.ObjectId(id),
+                        isEffect: true,
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'customers',
+                        localField: 'customerId',
+                        foreignField: '_id',
+                        as: 'customerInfo',
+                    },
+                },
+                { $unwind: '$customerInfo' },
+                {
+                    $lookup: {
+                        from: 'products',
+                        localField: 'productId',
+                        foreignField: '_id',
+                        as: 'productInfo',
+                    },
+                },
+                { $unwind: '$productInfo' },
+                {
+                    $project: {
+                        _id: 1,
+                        customerInfo: { _id: 1, officialName: 1 },
+                        productInfo: { _id: 1, name: 1, code: 1 },
+                        discounts: 1,
+                        content: 1,
+                    },
+                },
+            ])
+            if (!result) {
+                throw new BadReq(errorCode.DISCOUNT_REQUEST_NOT_FOUND)
+            }
+            return result
         } catch (error) {
             throw error
         }

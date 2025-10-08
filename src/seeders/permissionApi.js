@@ -672,32 +672,24 @@ async function permissionApiSeeder() {
             apiId: '687165240ac4b74840483515', // /discount/create
         },
         {
-            permissionId: '687165e2ee8406ca535d1ba2', // Xem tất cả phiếu chiết khấu
+            permissionId: '687165e2ee8406ca535d1ba2', // Xem phiếu chiết khấu
             apiId: '6871864935925a3d24f17a15', // /discount/getAll
         },
         {
-            permissionId: '687165e2ee8406ca535d1ba2', // Xem một phiếu chiết khấu
+            permissionId: '687165e2ee8406ca535d1ba2', // Xem phiếu chiết khấu
             apiId: '6871899346e790eda9a08c04', // /discount/getById
+        },
+        {
+            permissionId: '687165e2ee8406ca535d1ba2', // Xem phiếu chiết khấu
+            apiId: '68e6d2593a5ce22f2582b284', // /discount/getById
         },
         {
             permissionId: '687165e2ee8406ca535d1ba2', // Xem lịch sử tất cả phiếu chiết khấu
             apiId: '6871899346e790eda9a08c05', // /discount/getHistory
         },
         {
-            permissionId: '687165e2ee8406ca535d1ba2', // Xem các thông tin thống kê
-            apiId: '6871899346e790eda9a08c06', // /discount/getOverview
-        },
-        {
             permissionId: '687165e2ee8406ca535d1ba4', // Sửa phiếu chiết khấu
             apiId: '6871899346e790eda9a08c07', // /discount/update
-        },
-        {
-            permissionId: '687165e2ee8406ca535d1ba4', // Sửa phiếu chiết khấu
-            apiId: '68734efbffa7cc41b2858838', // /discount/approved
-        },
-        {
-            permissionId: '687165e2ee8406ca535d1ba4', // Sửa phiếu chiết khấu
-            apiId: '68734efbffa7cc41b2858839', // /discount/rejected
         },
         {
             permissionId: '687165e2ee8406ca535d1ba4', // Sửa phiếu chiết khấu
