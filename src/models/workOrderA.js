@@ -1,18 +1,6 @@
-const { model, Types, Schema } = require('mongoose')
+const { Types, Schema } = require('mongoose')
 
-const repairTimeSchema = new Schema({
-    repairDate: {
-        type: Date,
-    },
-    arrivalTime: {
-        type: String,
-    },
-    departureTime: {
-        type: String,
-    },
-})
-
-const workOrderRepairASchema = new Schema({
+const workOrderASchema = new Schema({
     workOrderId: {
         type: new Types.ObjectId(),
         required: true,
@@ -95,5 +83,4 @@ const workOrderRepairASchema = new Schema({
     },
 })
 
-const WorkOrderTestAModel = model('workOrderTestA', workOrderTestA)
-module.exports = WorkOrderTestAModel
+module.exports = WorkOrderASchema
