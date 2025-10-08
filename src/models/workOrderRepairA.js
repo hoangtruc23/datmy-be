@@ -1,99 +1,64 @@
 const { model, Types, Schema } = require('mongoose')
+const {
+    workOrderAMachineSchema,
+    workOrderASpecsSchema,
+} = require('./workOrderA')
 
-const repairTimeSchema = new Schema({
-    repairDate: {
-        type: Date,
+const repairTimeSchema = new Schema(
+    {
+        repairDate: {
+            type: Date,
+        },
+        arrivalTime: {
+            type: String,
+        },
+        departureTime: {
+            type: String,
+        },
     },
-    arrivalTime: {
-        type: String,
+    { _id: false },
+)
+const failureSchema = new Schema(
+    {
+        printHead: {
+            type: [String],
+        },
+        inkSystem: {
+            type: [String],
+        },
+        electricalSystem: {
+            type: [String],
+        },
     },
-    departureTime: {
-        type: String,
-    },
-})
+    { _id: false },
+)
 
 const workOrderRepairASchema = new Schema({
     workOrderId: {
-        type: new Types.ObjectId(),
+        type: Types.ObjectId,
         required: true,
+        ref: 'workOrders',
     },
     maintainContract: {
         type: Boolean,
     },
-    repairDate: {
-        type: repairTimeSchema,
+    repairDate: repairTimeSchema,
+    machineInfo: workOrderAMachineSchema,
+    machineSpecs: workOrderASpecsSchema,
+    failure: failureSchema,
+    handlingMethod: {
+        type: [String],
     },
-    machineType: {
+    technicianOpinion: {
         type: String,
     },
-    serialNumber: {
-        type: String,
+    customerOpinion: {
+        type: [String],
     },
-    inkType: {
-        type: String,
-    },
-    installDate: {
-        type: Date,
-    },
-    OpenTime: {
-        type: Number,
-    },
-    printTime: {
-        type: Number,
-    },
-    Printhead: {
-        type: Number,
-    },
-    injectionPipeLength: {
-        type: Number,
-    },
-
-    pumpSpeed: {
-        type: Number,
-    },
-    pumpType: {
-        type: String,
-    },
-    standardPressure: {
-        type: Number,
-    },
-    currentPressure: {
-        type: Number,
-    },
-    recoveryPumpSpeed: {
-        type: Number,
-    },
-    vacuumPressure: {
-        type: Number,
-    },
-    standardConcentration: {
-        type: Number,
-    },
-    currentConcentration: {
-        type: Number,
-    },
-    inkDropLevel: {
-        type: String,
-    },
-    bupTime: {
-        type: Number,
-    },
-    chargeLevel: {
-        type: String,
-    },
-    ITM: {
-        type: String,
-    },
-    softwareVersion: {
-        type: String,
-    },
-    language: {
-        type: String,
-    },
-    note: {
+    handling: {
         type: String,
     },
 })
 
-const WorkOrderTestAModel = model('workOrderTestA', workOrderTestA)
-module.exports = WorkOrderTestAModel
+const WorkOrderRepairAModel = model('workOrderRepairA', workOrderRepairASchema)
+module.exports = WorkOrderRepairAModel

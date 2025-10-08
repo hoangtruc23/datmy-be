@@ -1,86 +1,85 @@
-const { Types, Schema } = require('mongoose')
+const { Schema } = require('mongoose')
+const constant = require('../utils/constant/constant')
 
-const workOrderASchema = new Schema({
-    workOrderId: {
-        type: new Types.ObjectId(),
-        required: true,
+const workOrderAMachineSchema = new Schema(
+    {
+        machineType: {
+            type: String,
+        },
+        serialNumber: {
+            type: String,
+        },
+        inkType: {
+            type: String,
+        },
+        installDate: {
+            type: Date,
+        },
+        openTime: {
+            type: Number,
+        },
+        printTime: {
+            type: Number,
+        },
     },
-    maintainContract: {
-        type: Boolean,
-    },
-    repairDate: {
-        type: repairTimeSchema,
-    },
-    machineType: {
-        type: String,
-    },
-    serialNumber: {
-        type: String,
-    },
-    inkType: {
-        type: String,
-    },
-    installDate: {
-        type: Date,
-    },
-    OpenTime: {
-        type: Number,
-    },
-    printTime: {
-        type: Number,
-    },
-    Printhead: {
-        type: Number,
-    },
-    injectionPipeLength: {
-        type: Number,
-    },
+    { _id: false },
+)
 
-    pumpSpeed: {
-        type: Number,
+const workOrderASpecsSchema = new Schema(
+    {
+        printHead: {
+            type: Number,
+        },
+        pumpSpeed: {
+            type: Number,
+        },
+        standardPressure: {
+            type: Number,
+        },
+        currentPressure: {
+            type: Number,
+        },
+        recoveryPumpSpeed: {
+            // nếu có lưu tốc độ, nếu không có lưu -1
+            type: Number,
+        },
+        vacuumPressure: {
+            // nếu có lưu tốc độ, nếu không có lưu -1
+            type: Number,
+        },
+        standardConcentration: {
+            type: Number,
+        },
+        currentConcentration: {
+            type: Number,
+        },
+        inkDropLevel: {
+            levelType: {
+                type: String,
+                enum: Object.values(constant.INK_DROP_LEVEL_TYPE),
+            },
+            value: {
+                type: Number,
+            },
+        },
+        bupTime: {
+            type: Number,
+        },
+        inkTemperature: {
+            type: Number,
+        },
+        chargeLevel: {
+            type: String,
+        },
+        ITM: {
+            // không có thì lưu null
+            type: String,
+        },
+        softwareVersion: {
+            type: String,
+        },
     },
-    pumpType: {
-        type: String,
-    },
-    standardPressure: {
-        type: Number,
-    },
-    currentPressure: {
-        type: Number,
-    },
-    recoveryPumpSpeed: {
-        type: Number,
-    },
-    vacuumPressure: {
-        type: Number,
-    },
-    standardConcentration: {
-        type: Number,
-    },
-    currentConcentration: {
-        type: Number,
-    },
-    inkDropLevel: {
-        type: String,
-    },
-    bupTime: {
-        type: Number,
-    },
-    chargeLevel: {
-        type: String,
-    },
-    ITM: {
-        type: String,
-    },
-    softwareVersion: {
-        type: String,
-    },
-    language: {
-        type: String,
-    },
-    note: {
-        type: String,
-    },
-})
+    { _id: false },
+)
 
-module.exports = WorkOrderASchema
+module.exports = { workOrderAMachineSchema, workOrderASpecsSchema }

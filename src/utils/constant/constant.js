@@ -172,6 +172,24 @@ const constant = {
         MEDIUM: 'medium',
         LOW: 'low',
     },
+    INK_DROP_LEVEL_TYPE: {
+        AUTOMATIC: 'automatic',
+        MANUAL: 'manual',
+        NULL: '',
+    },
+    PURPOSE_TEST: {
+        HANDOVER: 'handover',
+        RENTAL: 'rental',
+        REPAIR: 'repair',
+        DEMO: 'demo',
+        LOAN: 'loan',
+        RECEIPT: 'receipt',
+    },
+    PRINT_SPEED_LEVEL: {
+        BASIC: 'basic',
+        MEDIUM: 'medium',
+        MAXIMUM: 'maximum',
+    },
 }
 
 module.exports = constant
