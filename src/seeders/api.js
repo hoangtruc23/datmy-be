@@ -718,14 +718,14 @@ async function apiSeeder() {
             note: 'Xem một phiếu chiết khấu',
         },
         {
+            _id: new Types.ObjectId('68e6d2593a5ce22f2582b284'),
+            api: '/discount/getDiscountHistoryById',
+            note: 'Xem lịch sử một cài đặt chiết khấu',
+        },
+        {
             _id: new Types.ObjectId('6871899346e790eda9a08c05'),
             api: '/discount/getHistory',
             note: 'Xem lịch sử tất cả phiếu chiết khấu',
-        },
-        {
-            _id: new Types.ObjectId('6871899346e790eda9a08c06'),
-            api: '/discount/getOverview',
-            note: 'Xem các thông tin thống kê',
         },
         {
             _id: new Types.ObjectId('6871899346e790eda9a08c07'),
@@ -736,16 +736,6 @@ async function apiSeeder() {
             _id: new Types.ObjectId('6871899346e790eda9a08c08'),
             api: '/discount/delete',
             note: 'Xóa phiếu chiết khấu',
-        },
-        {
-            _id: new Types.ObjectId('68734efbffa7cc41b2858838'),
-            api: '/discount/approved',
-            note: 'Chấp nhận phiếu chiết khấu',
-        },
-        {
-            _id: new Types.ObjectId('68734efbffa7cc41b2858839'),
-            api: '/discount/rejected',
-            note: 'Từ chối phiếu chiết khấu',
         },
         {
             _id: new Types.ObjectId('687415049898805f0639a2f4'),

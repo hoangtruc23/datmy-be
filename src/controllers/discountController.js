@@ -26,6 +26,14 @@ const discountController = {
             next(error)
         }
     },
+    getDiscountHistoryById: async (req, res, next) => {
+        try {
+            const result = await discountService.getDiscountHistoryById(req.params.id)
+            res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
     getHistory: async (req, res, next) => {
         try {
             const result = await discountService.getHistory(req.query)
@@ -34,33 +42,9 @@ const discountController = {
             next(error)
         }
     },
-    getOverview: async (req, res, next) => {
-        try {
-            const result = await discountService.getOverview()
-            res.status(200).json(response.success(result))
-        } catch (error) {
-            next(error)
-        }
-    },
-    approved: async (req, res, next) => {
-        try {
-            const result = await discountService.approved(req.params.id)
-            res.status(200).json(response.success(result))
-        } catch (error) {
-            next(error)
-        }
-    },
-    rejected: async (req, res, next) => {
-        try {
-            const result = await discountService.rejected(req.params.id)
-            res.status(200).json(response.success(result))
-        } catch (error) {
-            next(error)
-        }
-    },
     setRefund: async (req, res, next) => {
         try {
-            const result = await discountService.setRefund(req.params.id)
+            const result = await discountService.setRefund(req.body)
             res.status(200).json(response.success(result))
         } catch (error) {
             next(error)

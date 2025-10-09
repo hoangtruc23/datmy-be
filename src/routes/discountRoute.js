@@ -12,11 +12,12 @@ router.post(
 )
 router.get('/getAll', discountController.getAll)
 router.get('/getById/:id', discountController.getById)
+router.get(
+    '/getDiscountHistoryById/:id',
+    discountController.getDiscountHistoryById,
+)
 router.get('/getHistory', discountController.getHistory)
-router.get('/getOverview', discountController.getOverview)
-router.post('/approved/:id', discountController.approved)
-router.post('/rejected/:id', discountController.rejected)
-router.post('/setRefund/:id', discountController.setRefund)
+router.post('/setRefund', discountController.setRefund)
 router.post(
     '/update/:id',
     validate(discountValidation.update),
@@ -183,6 +184,16 @@ module.exports = router
  *         schema:
  *           type: string
  *         description: Từ khóa tìm kiếm (tên khách hàng, tên sản phẩm, code sản phẩm)
+ *       - name: customerId
+ *         in: query
+ *         schema:
+ *           type: string
+ *         description: Id khách hàng
+ *       - name: productId
+ *         in: query
+ *         schema:
+ *           type: string
+ *         description: Id sản phẩm
  *       - name: page
  *         in: query
  *         schema:
@@ -379,18 +390,24 @@ module.exports = router
  *                             items:
  *                               type: object
  *                               properties:
- *                                 amount:
- *                                   type: number
- *                                   example: 100000
- *                                 requestDate:
+ *                                 _id:
  *                                   type: string
- *                                   example: 2025-09-16T00:00:00.000Z
+ *                                   example: 68ca7e3ba311b672b8824b08
+ *                                 invoiceCode:
+ *                                   type: string
+ *                                   example: 170901
  *                                 quantity:
  *                                   type: number
  *                                   example: 10
  *                                 discountAmount:
  *                                   type: number
+ *                                   example: 100000
+ *                                 totalDiscountAmount:
+ *                                   type: number
  *                                   example: 1000000
+ *                                 refundStatus:
+ *                                   type: string
+ *                                   example: paid
  *                           content:
  *                             type: string
  *                             example: test
@@ -420,7 +437,7 @@ module.exports = router
  *                       example: 1
  *                     totalItems:
  *                       type: number
- *                       example: 3
+ *                       example: 6
  *                     totalPage:
  *                       type: number
  *                       example: 1
@@ -485,6 +502,151 @@ module.exports = router
  * /discount/getById/{id}:
  *   get:
  *     summary: Lấy thông tin 1 phiếu chiết khấu
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Discount]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID của phiếu chiết khấu cần lấy thông tin
+ *     responses:
+ *       200:
+ *         description: Lấy thông tin thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
+ *                 code:
+ *                   type: integer
+ *                   example: 1
+ *                 message:
+ *                   type: string
+ *                   example: OK!
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         example: 68e4db6b2582e5aef9be81ea
+ *                       content:
+ *                         type: string
+ *                         example: test
+ *                       requestDate:
+ *                         type: string
+ *                         example: 2025-09-16T00:00:00.000Z
+ *                       discountAmount:
+ *                         type: number
+ *                         example: 100000
+ *                       customerInfo:
+ *                         type: object
+ *                         properties:
+ *                           _id:
+ *                             type: string
+ *                             example: 689b2296324b9d06707df03b
+ *                           officialName:
+ *                             type: string
+ *                             example: CÔNG TY CỔ PHẦN XUẤT NHẬP KHẨU THƯƠNG MẠI BLUE OCEAN
+ *                       productInfo:
+ *                         type: object
+ *                         properties:
+ *                           _id:
+ *                             type: string
+ *                             example: 689b2296324b9d06707de4c2
+ *                           name:
+ *                             type: string
+ *                             example: Giá đỡ máy
+ *                           code:
+ *                             type: string
+ *                             example: MOUNTING BRACKET
+ *       400:
+ *         description: Lỗi input
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 400
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Phiếu chiết khấu không tồn tại
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       401:
+ *         description: Chưa đăng nhập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 401
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có token
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       403:
+ *         description: Không có quyền truy cập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 403
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có quyền
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       500:
+ *         description: Lỗi server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Lỗi server!
+ *                 data:
+ *                   type: string
+ *                   example: null
+ */
+
+/**
+ * @swagger
+ * /discount/getDiscountHistoryById/{id}:
+ *   get:
+ *     summary: Lấy thông tin lịch sử chiết khấu của 1 cài đặt chiết khấu
  *     security:
  *       - bearerAuth: []
  *     tags: [Discount]
@@ -768,19 +930,25 @@ module.exports = router
 
 /**
  * @swagger
- * /discount/setRefund/{id}:
+ * /discount/setRefund:
  *   post:
  *     summary: Cập nhận lại phiếu chiết khấu thành trạng thái đã trả chiết khấu
  *     security:
  *       - bearerAuth: []
  *     tags: [Discount]
- *     parameters:
- *     - name: id
- *       in: path
+ *     requestBody:
  *       required: true
- *       schema:
- *         type: string
- *       description: Id của phiếu chiết khấu
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               discountRequestId:
+ *                 type: string
+ *                 description: Id của phiếu chiết khấu
+ *               invoiceId:
+ *                 type: string
+ *                 description: Id của hóa đơn
  *     responses:
  *       200:
  *         description: Cập nhật phiếu chiết khấu thành công

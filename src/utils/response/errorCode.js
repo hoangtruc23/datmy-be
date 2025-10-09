@@ -406,10 +406,14 @@ const errorCode = {
         code: 100,
         message: 'Kỹ thuật viên không tồn tại',
     },
-    TRANSFER_HISTORY_NOT_FOUND:{
+    TRANSFER_HISTORY_NOT_FOUND: {
         code: 101,
         message: 'Lịch sử chuyển nội bộ không tồn tại',
-    }
+    },
+    DISCOUNT_REQUEST_NOT_MATCH: {
+        code: 102,
+        message: 'Chiết khấu và hóa đơn không trùng khớp',
+    },
 }
 
 module.exports = errorCode
