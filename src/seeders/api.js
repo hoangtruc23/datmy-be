@@ -887,6 +887,32 @@ async function apiSeeder() {
             api: '/productTransferHistory/getById',
             note: 'Lấy ra phiếu chuyển kho theo Id',
         },
+        //đơn hàng
+        {
+            _id: new Types.ObjectId('68b1f0e4d1f5c4e4f8b5e8c1'),
+            api: '/order/getAll',
+            note: 'Lấy ra tất cả đơn hàng',
+        },
+        {
+            _id: new Types.ObjectId('68b1f0e4d1f5c4e4f8b5e8c2'),
+            api: '/order/getById',
+            note: 'Lấy ra đơn hàng theo Id',
+        },
+        {
+            _id: new Types.ObjectId('68d1153524419859fede4ebd'),
+            api: '/order/update',
+            note: 'Cập nhật đơn hàng theo Id',
+        },
+        {
+            _id: new Types.ObjectId('68b1f0e4d1f5c4e4f8b5e8c3'),
+            api: '/order/delete',
+            note: 'Xóa đơn hàng theo Id',
+        },
+        {
+            _id: new Types.ObjectId('68b1f0e4d1f5c4e4f8b5e8c4'),
+            api: '/order/create',
+            note: 'Tạo đơn hàng',
+        },
         //phiếu công việc
         {
             _id: new Types.ObjectId('68d1153524419859fede4ebe'),

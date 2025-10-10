@@ -3,11 +3,6 @@ const { Schema, model, Types } = require('mongoose')
 const storagesSchema = new Schema({
     trackingCode: String,
     quantity: { type: Number, min: 1 },
-    productId: {
-        type: Types.ObjectId,
-        ref: 'products',
-        required: true,
-    },
 })
 
 const productTransferHistoryDetailSchema = new Schema({
@@ -16,7 +11,17 @@ const productTransferHistoryDetailSchema = new Schema({
         ref: 'ProductTransferHistory',
         required: true,
     },
+    oldProductId: {
+        type: Types.ObjectId,
+        ref: 'products',
+        required: true,
+    },
     oldStorages: [storagesSchema],
+    newProductId: {
+        type: Types.ObjectId,
+        ref: 'products',
+        required: true,
+    },
     newStorages: [storagesSchema],
 })
 
