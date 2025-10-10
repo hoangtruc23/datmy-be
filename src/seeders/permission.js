@@ -704,6 +704,38 @@ async function permissionSeeder() {
             code: 'chuyen_kho_xem',
             parentPermissionId: '688c7f601bb97636f19d6ab1',
         },
+        // đơn hàng
+        {
+            _id: new Types.ObjectId('688c7f601bbabc36f19d6ab1'),
+            name: 'Đơn hàng',
+            code: 'don_hang',
+            parentPermissionId: null,
+        },
+        {
+            _id: new Types.ObjectId('688c7f601bbabc36f19d6ab2'),
+            name: 'Xem Đơn hàng',
+            code: 'don_hang_xem',
+            parentPermissionId: '688c7f601bbabc36f19d6ab1',
+        },
+        {
+            _id: new Types.ObjectId('688c7f601bbabc36f19d6ab3'),
+            name: 'Tạo Đơn hàng',
+            code: 'don_hang_tao',
+            parentPermissionId: '688c7f601bbabc36f19d6ab1',
+        },
+        {
+            _id: new Types.ObjectId('688c7f601bbabc36f19d6ab4'),
+            name: 'Chỉnh sửa Đơn hàng',
+            code: 'don_hang_chinh_sua',
+            parentPermissionId: '688c7f601bbabc36f19d6ab1',
+        },
+        {
+            _id: new Types.ObjectId('688c7f601bbabc36f19d6ab5'),
+            name: 'Xóa Đơn hàng',
+            code: 'don_hang_xoa',
+            parentPermissionId: '688c7f601bbabc36f19d6ab1',
+        },
+
         //phiếu yêu cầu công việc
         {
             _id: new Types.ObjectId('68d1166bba1c480c8180bf6b'),

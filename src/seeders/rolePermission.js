@@ -493,6 +493,27 @@ async function rolePermissionSeeder() {
             roleId: '684927c871287f2ae7d8130b', // Quản trị viên
             permissionId: '68db8978cc41fa86439388cf', // Chỉnh sửa kỹ thuật viên
         },
+        // đơn hàng
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '688c7f601bbabc36f19d6ab1', // đơn hàng
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '688c7f601bbabc36f19d6ab2', // đơn hàng
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '688c7f601bbabc36f19d6ab3', // Tạo đơn hàng
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '688c7f601bbabc36f19d6ab4', // chỉnh sửa đơn hàng
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '688c7f601bbabc36f19d6ab5', // xóa đơn hàng
+        },
         // Nhân viên kho =======================================================================================
         // {
         //     roleId: '684927c871287f2ae7d8130c',

@@ -11,6 +11,8 @@ const ProductStorageModel = require('../models/productStorage')
 const GoodsIssueApprovalModel = require('../models/goodsIssueApproval')
 const UserModel = require('../models/user')
 const CustomerModel = require('../models/customer')
+const OrderModel = require('../models/order')
+const OrderDetailModel = require('../models/orderDetail')
 const GoodsIssueDetailModel = require('../models/goodsIssueDetail')
 const { findDuplicateTrackingCode } = require('../utils/helper/helper')
 const downloadService = require('./downloadService')
@@ -155,6 +157,7 @@ const goodsIssueService = {
                 note,
                 isDraft,
                 createdAt = new Date(),
+                orderIds = [],
             } = goodsIssue
             const checkGoodsIssue = await GoodsIssueModel.findById(goodsIssueId)
             if (!checkGoodsIssue) {
@@ -186,6 +189,44 @@ const goodsIssueService = {
                                     $inc: { quantity: -storage.quantity },
                                 },
                                 { session },
+                            )
+                        }
+                    }
+                    if (orderIds.length > 0) {
+                        let remainingToSubtract =
+                            goodsIssueDetail.issuedQuantity
+
+                        const orderDetails = await OrderDetailModel.find({
+                            orderId: { $in: orderIds },
+                            productId: goodsIssueDetail.productId,
+                        }).sort({ createdAt: 1 })
+
+                        for (const orderDetail of orderDetails) {
+                            if (remainingToSubtract <= 0) break
+
+                            const subtractQty = Math.min(
+                                remainingToSubtract,
+                                orderDetail.quantity,
+                            )
+
+                            await OrderDetailModel.findByIdAndUpdate(
+                                orderDetail._id,
+                                {
+                                    $inc: {
+                                        quantity: -subtractQty,
+                                    },
+                                    quantityExported: subtractQty,
+                                },
+                                { session },
+                            )
+
+                            remainingToSubtract -= subtractQty
+                        }
+
+                        // Nếu trừ hết order mà vẫn dư → lỗi logic
+                        if (remainingToSubtract > 0) {
+                            throw new BadReq(
+                                errorCode.ISSUE_QUANTITY_EXCEEDS_AVAILABLE_ORDER,
                             )
                         }
                     }
@@ -417,8 +458,21 @@ const goodsIssueService = {
                 issuedQuantity,
                 storages,
                 note,
+                orderId,
             } = product
-
+            if (orderId) {
+                const orderDetail = await OrderDetailModel.findOne({
+                    orderId,
+                    productId,
+                })
+                if (!orderDetail)
+                    throw new BadReq(errorCode.ORDER_DETAIL_NOT_FOUND)
+                if (
+                    issuedQuantity >
+                    orderDetail.quantity - orderDetail.quantityExported
+                )
+                    throw new BadReq(errorCode.ISSUE_QUANTITY_EXCEEDS_ORDER)
+            }
             session.startTransaction()
             const checkGoodsIssueDetail = await GoodsIssueDetaileModel.findOne({
                 goodsIssueId,

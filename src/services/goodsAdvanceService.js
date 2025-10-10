@@ -135,17 +135,6 @@ const goodsAdvanceService = {
                     }
                 })
             }
-            await ProductModel.populate(finalResult.products, {
-                path: 'unit',
-                select: 'name -_id',
-            })
-            finalResult.products = finalResult.products.map((product) => {
-                return {
-                    ...product,
-                    unit: product.unit ? product.unit.name : null,
-                }
-            })
-
             return finalResult
         } catch (error) {
             throw error

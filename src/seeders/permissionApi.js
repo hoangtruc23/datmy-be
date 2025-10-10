@@ -595,6 +595,27 @@ async function permissionApiSeeder() {
             permissionId: '6892ceaeee639479e26a93b4', // Tạo giấy đề nghị thanh toán
             apiId: '6892ceaeee639479e26a93b2', // /debt/generatePaymentRequest
         },
+        // Đơn hàng
+        {
+            permissionId: '688c7f601bbabc36f19d6ab2', // Xem đơn hàng
+            apiId: '68b1f0e4d1f5c4e4f8b5e8c1', // /order/getAll
+        },
+         {
+            permissionId: '688c7f601bbabc36f19d6ab2', // Xem đơn hàng
+            apiId: '68b1f0e4d1f5c4e4f8b5e8c2', // /order/getById
+        },
+        {
+            permissionId: '688c7f601bbabc36f19d6ab3', // Tạo đơn hàng
+            apiId: '68b1f0e4d1f5c4e4f8b5e8c4', // /order/create
+        },
+        {
+            permissionId: '688c7f601bbabc36f19d6ab4', // chỉnh sửa đơn hàng
+            apiId: '68d1153524419859fede4ebd', // /order/update
+        },
+        {
+            permissionId: '688c7f601bbabc36f19d6ab5', // xóa đơn hàng
+            apiId: '68b1f0e4d1f5c4e4f8b5e8c3', // /order/delete
+        },
 
         //Cài đặt công nợ
         {

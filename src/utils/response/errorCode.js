@@ -413,7 +413,26 @@ const errorCode = {
     DISCOUNT_REQUEST_NOT_MATCH: {
         code: 102,
         message: 'Chiết khấu và hóa đơn không trùng khớp',
+    ORDER_ITEMS_REQUIRED: {
+        code: 103,
+        message: 'Danh sách sản phẩm không được để trống',  
     },
-}
+    PRODUCT_ID_REQUIRED: {
+        code: 104,
+        message: 'Thiếu productId trong items',     
+    },
+    INVALID_QUANTITY: {
+        code: 105,
+        message: 'Số lượng sản phẩm không hợp lệ',     
+    },
+    ORDER_DETAIL_NOT_FOUND: {
+        code: 106,
+        message: 'Đơn đặt hàng chi tiết không tồn tại', 
+    },
+    ISSUE_QUANTITY_EXCEEDS_ORDER: {
+        code: 107,
+        message: 'Số lượng xuất vượt quá số lượng đặt hàng chưa xuất', 
+    },
+}}
 
 module.exports = errorCode
