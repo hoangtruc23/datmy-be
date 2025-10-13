@@ -913,6 +913,11 @@ async function apiSeeder() {
             api: '/order/create',
             note: 'Tạo đơn hàng',
         },
+        {
+            _id: new Types.ObjectId('68b1f0e4d1f5c4e4f8b5e8c5'),
+            api: '/order/getByIdForIssue',
+            note: 'Lấy thông tin chi tiết của một hoặc nhiều đơn hàng',
+        },
         //phiếu công việc
         {
             _id: new Types.ObjectId('68d1153524419859fede4ebe'),

@@ -157,7 +157,6 @@ const goodsIssueService = {
                 note,
                 isDraft,
                 createdAt = new Date(),
-                orderIds = [],
             } = goodsIssue
             const checkGoodsIssue = await GoodsIssueModel.findById(goodsIssueId)
             if (!checkGoodsIssue) {
@@ -168,7 +167,6 @@ const goodsIssueService = {
                 throw new BadReq(errorCode.CUSTOMER_NOT_FOUND)
             }
             if (!isDraft && checkGoodsIssue.isDraft) {
-                // Nếu phiếu tạo mà không phải nháp thì ta cập nhật lại productStorage (tồn kho)
                 const goodsIssueDetails = await GoodsIssueDetaileModel.find({
                     goodsIssueId,
                 })
@@ -192,43 +190,17 @@ const goodsIssueService = {
                             )
                         }
                     }
-                    if (orderIds.length > 0) {
-                        let remainingToSubtract =
-                            goodsIssueDetail.issuedQuantity
-
-                        const orderDetails = await OrderDetailModel.find({
-                            orderId: { $in: orderIds },
-                            productId: goodsIssueDetail.productId,
-                        }).sort({ createdAt: 1 })
-
-                        for (const orderDetail of orderDetails) {
-                            if (remainingToSubtract <= 0) break
-
-                            const subtractQty = Math.min(
-                                remainingToSubtract,
-                                orderDetail.quantity,
-                            )
-
-                            await OrderDetailModel.findByIdAndUpdate(
-                                orderDetail._id,
-                                {
-                                    $inc: {
-                                        quantity: -subtractQty,
-                                    },
-                                    quantityExported: subtractQty,
+                    if (goodsIssueDetail.orderDetailId) {
+                        await OrderDetailModel.findByIdAndUpdate(
+                            goodsIssueDetail.orderDetailId,
+                            {
+                                $inc: {
+                                    quantityExported:
+                                        goodsIssueDetail.issuedQuantity,
                                 },
-                                { session },
-                            )
-
-                            remainingToSubtract -= subtractQty
-                        }
-
-                        // Nếu trừ hết order mà vẫn dư → lỗi logic
-                        if (remainingToSubtract > 0) {
-                            throw new BadReq(
-                                errorCode.ISSUE_QUANTITY_EXCEEDS_AVAILABLE_ORDER,
-                            )
-                        }
+                            },
+                            { session },
+                        )
                     }
                 }
             }
@@ -562,6 +534,7 @@ const goodsIssueService = {
                         warehouseName: checkWarehouse.name,
                         storages,
                         note,
+                        orderDetailId: orderDetail ? orderDetail._id : null,
                     },
                 ],
                 { session },
