@@ -105,23 +105,21 @@ const orderService = {
             throw error
         }
     },
-
-    getById: async (orderIds) => {
+    getByIdForIssue: async (orderIds) => {
         try {
-            if (!Array.isArray(orderIds) || orderIds.length === 0) {
-                throw new Error('Order IDs must be a non-empty array')
-            }
-
-            // Lấy danh sách đơn hàng
             const orders = await OrderModel.find({
                 _id: { $in: orderIds },
-            }).populate('customerId', 'name officialName code')
-
+            }).populate({
+                path: 'customerId',
+                populate: {
+                    path: 'productsInUse',
+                    select: 'name code',
+                },
+            })
+            console.log('orders', orders)
             if (orders.length === 0) {
-                throw new Error('No orders found')
+                throw new BadReq(errorCode.ORDER_NOT_FOUND)
             }
-
-            // ✅ Kiểm tra tất cả đơn phải cùng khách hàng
             const firstCustomerId = orders[0].customerId?._id?.toString()
             const hasDifferentCustomer = orders.some(
                 (order) =>
@@ -129,38 +127,60 @@ const orderService = {
             )
 
             if (hasDifferentCustomer) {
-                throw new Error(
-                    'All selected orders must belong to the same customer',
-                )
+                throw new BadReq(errorCode.CUSTOMER_NOT_MATCH)
             }
 
             const allDetails = await OrderDetailModel.find({
                 orderId: { $in: orderIds },
             }).populate('productId', 'name code shortName')
 
-            const mergedMap = new Map()
+            const remainingDetails = allDetails
+                .filter(
+                    (detail) =>
+                        (detail.quantity || 0) > (detail.quantityExported || 0),
+                )
+                .map((detail) => ({
+                    ...detail.toObject(),
+                    remainingQuantity:
+                        (detail.quantity || 0) - (detail.quantityExported || 0),
+                }))
 
-            for (const detail of allDetails) {
-                const productId = detail.productId?._id?.toString()
-                if (!productId) continue
-
-                if (!mergedMap.has(productId)) {
-                    mergedMap.set(productId, {
-                        productId: detail.productId,
-                        totalQuantity: detail.quantity,
-                    })
-                } else {
-                    mergedMap.get(productId).totalQuantity += detail.quantity
-                }
-            }
-
-            const mergedItems = Array.from(mergedMap.values())
-
-            // ✅ Trả về dữ liệu tổng hợp
             return {
                 customer: orders[0].customerId,
-                orderIds,
-                items: mergedItems,
+                items: remainingDetails,
+            }
+        } catch (error) {
+            throw error
+        }
+    },
+    getById: async (orderId) => {
+        try {
+            const order = await OrderModel.findById(orderId).populate({
+                path: 'customerId',
+                populate: {
+                    path: 'productsInUse',
+                    select: 'name',
+                },
+            })
+
+            if (!order) {
+                throw new BadReq(errorCode.ORDER_NOT_FOUND)
+            }
+            const orderDetails = await OrderDetailModel.find({ orderId })
+                .populate('productId', 'name code shortName')
+                .lean()
+
+            return {
+                customer: order.customerId,
+                createAt: order.createdAt,
+                items: orderDetails.map((detail) => ({
+                    productId: detail.productId?._id,
+                    productCode: detail.productId?.code,
+                    productName: detail.productId?.name,
+                    shortName: detail.productId?.shortName,
+                    quantity: detail.quantity,
+                    quantityExported: detail.quantityExported || 0,
+                })),
             }
         } catch (error) {
             throw error
@@ -174,42 +194,77 @@ const orderService = {
             const { customerId, items } = reqData
 
             const order = await OrderModel.findById(orderId).session(session)
-            if (!order) {
-                throw new Error('Order not found')
-            }
+            if (!order) throw new BadReq(errorCode.ORDER_NOT_FOUND)
 
             if (customerId) {
                 const customerExists =
                     await CustomerModel.findById(customerId).session(session)
-                if (!customerExists) {
-                    throw new Error('Customer not found')
-                }
+                if (!customerExists)
+                    throw new BadReq(errorCode.CUSTOMER_NOT_FOUND)
                 order.customerId = customerId
             }
 
             if (items && Array.isArray(items)) {
-                // Xóa chi tiết cũ
-                await OrderDetailModel.deleteMany({ orderId }, { session })
-                const productIds = items.map((item) => item.productId)
-                const existingProducts = await ProductModel.find({
+                const productIds = items.map((i) => i.productId)
+                // Kiểm tra sản phẩm hợp lệ
+                const validProducts = await ProductModel.find({
                     _id: { $in: productIds },
                 }).session(session)
-                const existingProductIds = existingProducts.map((p) =>
-                    p._id.toString(),
-                )
+                const validIds = validProducts.map((p) => p._id.toString())
 
                 const invalidProducts = productIds.filter(
-                    (id) => !existingProductIds.includes(id.toString()),
+                    (id) => !validIds.includes(id.toString()),
                 )
                 if (invalidProducts.length > 0) {
                     throw new BadReq(errorCode.PRODUCT_NOT_FOUND)
                 }
-                const orderDetails = items.map((item) => ({
-                    orderId: order._id,
-                    productId: item.productId,
-                    quantity: item.quantity,
-                }))
-                await OrderDetailModel.insertMany(orderDetails, { session })
+                const existingDetails = await OrderDetailModel.find({
+                    orderId,
+                }).session(session)
+
+                const existingMap = new Map(
+                    existingDetails.map((d) => [d.productId.toString(), d]),
+                )
+                for (const item of items) {
+                    const existing = existingMap.get(item.productId.toString())
+
+                    if (existing) {
+                        if (
+                            existing.quantityExported > 0 &&
+                            item.quantity < existing.quantityExported
+                        ) {
+                            throw new BadReq(
+                                errorCode.QUANTITY_LESS_THAN_EXPORTED,
+                            )
+                        }
+
+                        await OrderDetailModel.updateOne(
+                            { _id: existing._id },
+                            { $set: { quantity: item.quantity } },
+                            { session },
+                        )
+                    } else {
+                        await OrderDetailModel.create(
+                            [
+                                {
+                                    orderId,
+                                    productId: item.productId,
+                                    quantity: item.quantity,
+                                },
+                            ],
+                            { session },
+                        )
+                    }
+                }
+                const productIdsToKeep = items.map((i) => i.productId)
+                await OrderDetailModel.deleteMany(
+                    {
+                        orderId,
+                        productId: { $nin: productIdsToKeep },
+                        quantityExported: 0,
+                    },
+                    { session },
+                )
             }
 
             await order.save({ session })

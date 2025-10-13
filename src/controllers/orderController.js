@@ -10,11 +10,19 @@ const orderController = {
             next(error)
         }
     },
-    getById: async (req, res, next) => {
+    getByIdForIssue: async (req, res, next) => {
         try {
             const { orderIds } = req.body
-            console.log('orderIds', orderIds)
-            const result = await orderService.getById(orderIds)
+            const result = await orderService.getByIdForIssue(orderIds)
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
+    getById: async (req, res, next) => {
+        try {
+            const { orderId } = req.params
+            const result = await orderService.getById(orderId)
             return res.status(200).json(response.success(result))
         } catch (error) {
             next(error)

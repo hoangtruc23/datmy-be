@@ -600,9 +600,13 @@ async function permissionApiSeeder() {
             permissionId: '688c7f601bbabc36f19d6ab2', // Xem đơn hàng
             apiId: '68b1f0e4d1f5c4e4f8b5e8c1', // /order/getAll
         },
-         {
+        {
             permissionId: '688c7f601bbabc36f19d6ab2', // Xem đơn hàng
             apiId: '68b1f0e4d1f5c4e4f8b5e8c2', // /order/getById
+        },
+        {
+            permissionId: '688c7f601bbabc36f19d6ab2', // Xem đơn hàng
+            apiId: '68b1f0e4d1f5c4e4f8b5e8c5', // /order/getByIdForIssue
         },
         {
             permissionId: '688c7f601bbabc36f19d6ab3', // Tạo đơn hàng
