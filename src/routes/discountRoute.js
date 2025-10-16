@@ -408,6 +408,9 @@ module.exports = router
  *                                 refundStatus:
  *                                   type: string
  *                                   example: paid
+ *                                 paymentDate:
+ *                                   type: string
+ *                                   example: 2024-10-16T00:00:00.000Z
  *                           content:
  *                             type: string
  *                             example: test
@@ -927,12 +930,11 @@ module.exports = router
  *                   type: string
  *                   example: null
  */
-
 /**
  * @swagger
  * /discount/setRefund:
  *   post:
- *     summary: Cập nhận lại phiếu chiết khấu thành trạng thái đã trả chiết khấu
+ *     summary: Cập nhật lại phiếu chiết khấu thành trạng thái đã trả chiết khấu
  *     security:
  *       - bearerAuth: []
  *     tags: [Discount]
@@ -949,6 +951,11 @@ module.exports = router
  *               invoiceId:
  *                 type: string
  *                 description: Id của hóa đơn
+ *               paymentDate:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2025-10-16T00:00:00.000Z"
+ *                 description: Ngày thanh toán chiết khấu (frontend truyền vào, dạng ISO hoặc new Date())
  *     responses:
  *       200:
  *         description: Cập nhật phiếu chiết khấu thành công

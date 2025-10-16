@@ -251,7 +251,7 @@ const discountService = {
     },
     setRefund: async (reqData) => {
         try {
-            const { discountRequestId, invoiceId } = reqData
+            const { discountRequestId, invoiceId, paymentDate } = reqData
             const [request, invoice] = await Promise.all([
                 DiscountRequestModel.findById(discountRequestId),
                 InvoiceModel.findById(invoiceId),
@@ -286,6 +286,7 @@ const discountService = {
                     discountRequestId,
                     invoiceId,
                     refundStatus: constant.REFUND_STATUS.PAID,
+                    paymentDate: paymentDate ? new Date(paymentDate) : null,
                 })
             } else {
                 await DiscountHistoryModel.findByIdAndUpdate(history._id, {
@@ -293,6 +294,12 @@ const discountService = {
                         history.refundStatus === constant.REFUND_STATUS.PAID
                             ? constant.REFUND_STATUS.UNPAID
                             : constant.REFUND_STATUS.PAID,
+                    paymentDate:
+                        history.refundStatus === constant.REFUND_STATUS.PAID
+                            ? null // nếu hủy thanh toán → xóa ngày
+                            : paymentDate
+                              ? new Date(paymentDate)
+                              : null,
                 })
             }
             return null
@@ -447,6 +454,7 @@ const discountService = {
                         dis.refundStatus = constant.REFUND_STATUS.UNPAID
                     } else {
                         dis.refundStatus = history.refundStatus
+                        dis.paymentDate = history.paymentDate || null
                     }
                 }
                 if (refundStatus) {
