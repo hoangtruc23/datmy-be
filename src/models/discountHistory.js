@@ -16,6 +16,10 @@ const discountHistorySchema = new Schema({
         type: String,
         enum: Object.values(constant.REFUND_STATUS),
     },
+    paymentDate: {
+        type: Date,
+        default: null, 
+    },
 })
 
 const DiscountHistoryModel = model('discounthistory', discountHistorySchema)
