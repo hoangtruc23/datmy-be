@@ -79,8 +79,10 @@ const discountService = {
                 discountAmount: '$lastDiscount.amount',
                 requestDate: '$lastDiscount.requestDate',
                 content: 1,
+                createdAt: 1,
             },
         },
+        { $sort: { createdAt: -1 } },
     ],
 
     getAll: async function (query) {
@@ -449,6 +451,7 @@ const discountService = {
                     const history = await DiscountHistoryModel.findOne({
                         invoiceId: dis._id,
                         customerId: dis.customerId,
+                        discountRequestId: req._id,
                     })
                     if (!history) {
                         dis.refundStatus = constant.REFUND_STATUS.UNPAID
