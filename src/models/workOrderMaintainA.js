@@ -18,21 +18,6 @@ const maintainTimeSchema = new Schema(
     },
     { _id: false },
 )
-const failureSchema = new Schema(
-    {
-        printHead: {
-            type: [String],
-        },
-        inkSystem: {
-            type: [String],
-        },
-        electricalSystem: {
-            type: [String],
-        },
-    },
-    { _id: false },
-)
-
 const workOrderMaintainASchema = new Schema({
     workOrderId: {
         type: Types.ObjectId,
@@ -45,7 +30,6 @@ const workOrderMaintainASchema = new Schema({
     maintainDate: maintainTimeSchema,
     machineInfo: workOrderAMachineSchema,
     machineSpecs: workOrderASpecsSchema,
-    failure: failureSchema,
     maintenanceOperation: {
         type: [String],
     },

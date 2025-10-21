@@ -1,18 +1,21 @@
 const { model, Types, Schema } = require('mongoose')
 const constant = require('../utils/constant/constant')
 
-const workOrderTestBaseSchema = new Schema({
-    testDate: {
-        type: Date,
+const workOrderTestBaseSchema = new Schema(
+    {
+        testDate: {
+            type: Date,
+        },
+        purposeTest: {
+            type: String,
+            enum: Object.values(constant.PURPOSE_TEST),
+        },
+        receiptDate: {
+            type: Date,
+        },
     },
-    purposeTest: {
-        type: String,
-        enum: Object.values(constant.PURPOSE_TEST),
-    },
-    receiptDate: {
-        type: Date,
-    },
-})
+    { _id: false },
+)
 
 const workOrderTestMSchema = new Schema({
     workOrderId: {

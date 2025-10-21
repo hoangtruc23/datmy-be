@@ -190,6 +190,43 @@ const constant = {
         MEDIUM: 'medium',
         MAXIMUM: 'maximum',
     },
+    PRODUCT_MOVEMENT: {
+        STATIC: 'Static',
+        MOF: 'Mark on the Fly',
+    },
+    ENCODER_SOURCE: {
+        ENCODER_INPUT: 'Encoder Input',
+        FIXED_SPEED: 'Fixed Speed',
+    },
+    REPAIR_D_SOFTWARE_TYPE: {
+        RAINBOW: 'Rainbow',
+        QUICKSTEP: 'Quickstep',
+    },
+    SYNC_SIGNAL: {
+        INTERNAL: 'Internal',
+        EXTERNAL_1: 'External 1',
+        EXTERNAL_2: 'External 2',
+        EXTERNAL_1_PHOTOCELL: 'External-1Photocell',
+        EXTERNAL_2_PHOTOCELLS: 'External-2Photocells',
+    },
+    SYNC_MODE: {
+        SINGLE: 'Single',
+        BACKLASH: 'Backlash',
+        BACKLASH_SUPPRESSED: 'Backlash suppressed',
+        BACKLASH_FORWARD: 'Backlash forward',
+    },
+    PRINTHEAD_DIRECTION: {
+        LEFT: 'left',
+        RIGHT: 'right',
+    },
+    PRINT_MODE: {
+        IM: 'static',
+        CM: 'moving',
+    },
+    APPLICATOR_MODE: {
+        STATIC: 'static',
+        DYNAMIC: 'dynamic',
+    },
 }
 
 module.exports = constant
