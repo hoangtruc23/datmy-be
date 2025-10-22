@@ -57,13 +57,17 @@ const workOrderSchema = new Schema(
         },
         status: {
             type: String,
-            enum: Object.values(constant.WORK_REQUEST_STATUS),
-            default: constant.WORK_REQUEST_STATUS.PENDING,
+            enum: Object.values(constant.WORK_REQUEST_STATUS).map(
+                (s) => s.value,
+            ),
+            default: constant.WORK_REQUEST_STATUS.PENDING.value,
         },
         priority: {
             type: String,
             required: true,
-            enum: Object.values(constant.WORK_REQUEST_PRIORITY),
+            enum: Object.values(constant.WORK_REQUEST_PRIORITY).map(
+                (s) => s.value,
+            ),
         },
         contactPerson: contactPersonSchema,
         address: {

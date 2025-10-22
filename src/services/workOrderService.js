@@ -100,13 +100,12 @@ const workOrderService = {
                 },
             ])
 
-            const acc = Object.values(constant.WORK_REQUEST_STATUS).reduce(
-                (acc, cur) => {
+            const acc = Object.values(constant.WORK_REQUEST_STATUS)
+                .map((s) => s.value)
+                .reduce((acc, cur) => {
                     acc[cur] = 0
                     return acc
-                },
-                {},
-            )
+                }, {})
 
             let result = countByStatus.reduce((acc, cur) => {
                 acc[cur._id] = cur.count
@@ -275,6 +274,9 @@ const workOrderService = {
             throw error
         }
     },
+
+    getAllState: () => Object.values(constant.WORK_REQUEST_STATUS),
+    getAllPriority: () => Object.values(constant.WORK_REQUEST_PRIORITY),
 }
 
 module.exports = workOrderService

@@ -66,7 +66,8 @@ const technicianService = {
                         { technicianId: technician._id },
                         {
                             status: {
-                                $ne: constant.WORK_REQUEST_STATUS.COMPLETED,
+                                $ne: constant.WORK_REQUEST_STATUS.COMPLETED
+                                    .value,
                             },
                         },
                     ],

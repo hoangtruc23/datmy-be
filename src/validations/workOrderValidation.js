@@ -6,7 +6,11 @@ const workOrderValidation = {
             .object({
                 status: joi
                     .string()
-                    .valid(...Object.values(constant.WORK_REQUEST_STATUS))
+                    .valid(
+                        ...Object.values(constant.WORK_REQUEST_STATUS).map(
+                            (s) => s.value,
+                        ),
+                    )
                     .required()
                     .messages({
                         'any.only':
@@ -50,7 +54,11 @@ const workOrderValidation = {
                 }),
                 priority: joi
                     .string()
-                    .valid(...Object.values(constant.WORK_REQUEST_PRIORITY))
+                    .valid(
+                        ...Object.values(constant.WORK_REQUEST_PRIORITY).map(
+                            (s) => s.value,
+                        ),
+                    )
                     .required()
                     .messages({
                         'any.only':
@@ -102,7 +110,11 @@ const workOrderValidation = {
                 }),
                 priority: joi
                     .string()
-                    .valid(...Object.values(constant.WORK_REQUEST_PRIORITY))
+                    .valid(
+                        ...Object.values(constant.WORK_REQUEST_PRIORITY).map(
+                            (s) => s.value,
+                        ),
+                    )
                     .required()
                     .messages({
                         'any.only':
@@ -128,7 +140,11 @@ const workOrderValidation = {
                     }),
                 status: joi
                     .string()
-                    .valid(...Object.values(constant.WORK_REQUEST_STATUS))
+                    .valid(
+                        ...Object.values(constant.WORK_REQUEST_STATUS).map(
+                            (s) => s.value,
+                        ),
+                    )
                     .messages({
                         'any.only':
                             "status chỉ bao gồm 'pending', 'inProgress', 'completed', 'overdue'",

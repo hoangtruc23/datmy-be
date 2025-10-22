@@ -795,6 +795,14 @@ async function permissionApiSeeder() {
             apiId: '68d37503136efac69b7bcad2', // /workOrder/getOverall
         },
         {
+            permissionId: '68d1166bba1c480c8180bf6c', // Xem phiếu yêu cầu công việc
+            apiId: '68f89736d0014bb79a3e081c', // /workOrder/getAllState
+        },
+        {
+            permissionId: '68d1166bba1c480c8180bf6c', // Xem phiếu yêu cầu công việc
+            apiId: '68f89736d0014bb79a3e081d', // /workOrder/getAllPriority
+        },
+        {
             permissionId: '68d1166bba1c480c8180bf6d', // Tạo phiếu yêu cầu công việc
             apiId: '68d1153524419859fede4ebf', // /workOrder/create
         },
