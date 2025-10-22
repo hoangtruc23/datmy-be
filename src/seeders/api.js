@@ -935,6 +935,16 @@ async function apiSeeder() {
             note: 'Lấy ra tổng quan các phiếu',
         },
         {
+            _id: new Types.ObjectId('68f89736d0014bb79a3e081c'),
+            api: '/workOrder/getAllState',
+            note: 'Lấy ra tất cả trạng thái',
+        },
+        {
+            _id: new Types.ObjectId('68f89736d0014bb79a3e081d'),
+            api: '/workOrder/getAllPriority',
+            note: 'Lấy ra tất cả các mức độ ưu tiên',
+        },
+        {
             _id: new Types.ObjectId('68d1153524419859fede4ebf'),
             api: '/workOrder/create',
             note: 'Tạo phiếu yêu cầu công việc',

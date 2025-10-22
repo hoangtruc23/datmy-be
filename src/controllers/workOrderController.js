@@ -55,5 +55,21 @@ const workOrderController = {
             next(error)
         }
     },
+    getAllState: (req, res, next) => {
+        try {
+            const result = workOrderService.getAllState()
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
+    getAllPriority: (req, res, next) => {
+        try {
+            const result = workOrderService.getAllPriority()
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
 }
 module.exports = workOrderController

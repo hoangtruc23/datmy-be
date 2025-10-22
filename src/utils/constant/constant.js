@@ -166,15 +166,36 @@ const constant = {
         DEMO: 'demo',
     },
     WORK_REQUEST_STATUS: {
-        PENDING: 'pending',
-        IN_PROGRESS: 'inProgress',
-        COMPLETED: 'completed',
-        OVERDUE: 'overdue',
+        PENDING: {
+            value: 'pending',
+            name: 'Chờ xử lý',
+        },
+        IN_PROGRESS: {
+            value: 'inProgress',
+            name: 'Đang xử lý',
+        },
+        COMPLETED: {
+            value: 'completed',
+            name: 'Hoàn thành',
+        },
+        OVERDUE: {
+            value: 'overdue',
+            name: 'Quá hạn',
+        },
     },
     WORK_REQUEST_PRIORITY: {
-        HIGH: 'high',
-        MEDIUM: 'medium',
-        LOW: 'low',
+        HIGH: {
+            value: 'high',
+            name: 'Cao',
+        },
+        MEDIUM: {
+            value: 'medium',
+            name: 'Trung bình',
+        },
+        LOW: {
+            value: 'low',
+            name: 'Thấp',
+        },
     },
     DEPARTMENT: {
         WAREHOUSE: 'warehouse',
