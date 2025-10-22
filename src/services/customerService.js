@@ -92,7 +92,7 @@ const customerService = {
                 .select(fieldsToSelect)
                 .populate({
                     path: 'productsInUse',
-                    select: 'name', // chỉ lấy field name của 
+                    select: 'name', // chỉ lấy field name của
                 })
 
             if (!customer) {

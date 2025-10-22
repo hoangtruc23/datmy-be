@@ -93,8 +93,8 @@ const paymentHistoryService = {
         try {
             const methods = Object.values(constant.PAYMENT_METHOD).map(
                 (item) => ({
-                    key: item.value, 
-                    value: item.name, 
+                    key: item.value,
+                    value: item.name,
                 }),
             )
 

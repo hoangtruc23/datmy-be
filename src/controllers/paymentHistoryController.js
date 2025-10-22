@@ -34,7 +34,8 @@ const paymentHistoryController = {
     },
     getAllPaymentMethod: async (req, res, next) => {
         try {
-            const paymentMethods = await paymentHistoryService.getAllPaymentMethod()
+            const paymentMethods =
+                await paymentHistoryService.getAllPaymentMethod()
             return res.status(200).json(response.success(paymentMethods))
         } catch (err) {
             next(err)

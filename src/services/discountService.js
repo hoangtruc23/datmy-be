@@ -363,7 +363,7 @@ const discountService = {
             const discountRequest = await DiscountRequestModel.aggregate([
                 { $match: filters },
                 { $skip: (page - 1) * limit },
-                { $limit: limit },                
+                { $limit: limit },
                 {
                     $lookup: {
                         from: 'customers',

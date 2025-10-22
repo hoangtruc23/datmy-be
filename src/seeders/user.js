@@ -15,6 +15,7 @@ async function userSeeder() {
             password:
                 '$2b$10$VbLYkTVZG0gy7gNoaJZCduG4B8OS8670Goz1XjRu6xC71YdJgIJF6',
             isActive: true,
+            department: null,
             roleIds: [null],
         },
         {
@@ -26,6 +27,7 @@ async function userSeeder() {
             password:
                 '$2b$10$VbLYkTVZG0gy7gNoaJZCduG4B8OS8670Goz1XjRu6xC71YdJgIJF6',
             isActive: true,
+            department: null,
             roleIds: ['684927c871287f2ae7d8130a'],
         },
         {
@@ -37,7 +39,21 @@ async function userSeeder() {
             password:
                 '$2b$10$VbLYkTVZG0gy7gNoaJZCduG4B8OS8670Goz1XjRu6xC71YdJgIJF6',
             isActive: true,
+            department: null,
             roleIds: ['684927c871287f2ae7d8130b'],
+        },
+        //inventory
+        {
+            _id: new Types.ObjectId('68f6f6d74bc127ec1ab44ed4'),
+            fullname: 'Quản lý kho',
+            username: 'quanlykho',
+            email: '',
+            phoneNumber: '',
+            password:
+                '$2b$10$VbLYkTVZG0gy7gNoaJZCduG4B8OS8670Goz1XjRu6xC71YdJgIJF6',
+            isActive: true,
+            department: 'warehouse',
+            roleIds: ['68f6f623dc799da9305e4347'],
         },
         {
             _id: new Types.ObjectId('684bcaeb7cac1b319680bf0d'),
@@ -48,6 +64,7 @@ async function userSeeder() {
             password:
                 '$2b$10$VbLYkTVZG0gy7gNoaJZCduG4B8OS8670Goz1XjRu6xC71YdJgIJF6',
             isActive: true,
+            department: 'warehouse',
             roleIds: ['684927c871287f2ae7d8130c'],
         },
         {
@@ -59,7 +76,21 @@ async function userSeeder() {
             password:
                 '$2b$10$VbLYkTVZG0gy7gNoaJZCduG4B8OS8670Goz1XjRu6xC71YdJgIJF6',
             isActive: true,
+            department: 'warehouse',
             roleIds: ['684927c871287f2ae7d8130e'],
+        },
+        //finance
+        {
+            _id: new Types.ObjectId('68f6f6d74bc127ec1ab44ed5'),
+            fullname: 'Quản lý công nợ',
+            username: 'quanlycongno',
+            email: '',
+            phoneNumber: '',
+            password:
+                '$2b$10$VbLYkTVZG0gy7gNoaJZCduG4B8OS8670Goz1XjRu6xC71YdJgIJF6',
+            isActive: true,
+            department: 'finance',
+            roleIds: ['68f6f623dc799da9305e4348'],
         },
         {
             _id: new Types.ObjectId('684bcaeb7cac1b319680bf0f'),
@@ -70,6 +101,7 @@ async function userSeeder() {
             password:
                 '$2b$10$VbLYkTVZG0gy7gNoaJZCduG4B8OS8670Goz1XjRu6xC71YdJgIJF6',
             isActive: true,
+            department: 'finance',
             roleIds: ['684927c871287f2ae7d8130f'],
         },
         {
@@ -77,7 +109,7 @@ async function userSeeder() {
             fullname: 'Kế toán hóa đơn',
             username: 'ketoanhoadon',
             email: '',
-            phoneNumber: '',
+            phoneNumber: 'finance',
             password:
                 '$2b$10$VbLYkTVZG0gy7gNoaJZCduG4B8OS8670Goz1XjRu6xC71YdJgIJF6',
             isActive: true,
@@ -88,11 +120,36 @@ async function userSeeder() {
             fullname: 'Bán hàng',
             username: 'banhang',
             email: '',
-            phoneNumber: '',
+            phoneNumber: 'finance',
             password:
                 '$2b$10$VbLYkTVZG0gy7gNoaJZCduG4B8OS8670Goz1XjRu6xC71YdJgIJF6',
             isActive: true,
             roleIds: ['684927c871287f2ae7d81311'],
+        },
+        //technical
+        {
+            _id: new Types.ObjectId('68f6f6d74bc127ec1ab44ed6'),
+            fullname: 'Quản lý kỹ thuật',
+            username: 'quanlykythuat',
+            email: '',
+            phoneNumber: '',
+            password:
+                '$2b$10$VbLYkTVZG0gy7gNoaJZCduG4B8OS8670Goz1XjRu6xC71YdJgIJF6',
+            isActive: true,
+            department: 'technical',
+            roleIds: ['68f6f623dc799da9305e4349'],
+        },
+        {
+            _id: new Types.ObjectId('68f6f6d74bc127ec1ab44ed7'),
+            fullname: 'Kỹ thuật viên',
+            username: 'kythuatvien',
+            email: '',
+            phoneNumber: '',
+            password:
+                '$2b$10$VbLYkTVZG0gy7gNoaJZCduG4B8OS8670Goz1XjRu6xC71YdJgIJF6',
+            isActive: true,
+            department: 'technical',
+            roleIds: ['68f6f623dc799da9305e434a'],
         },
     ])
     logger.info('Users seeded')

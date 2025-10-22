@@ -16,6 +16,12 @@ async function roleSeeder() {
             name: 'Quản trị viên',
             note: 'Quản trị viên',
         },
+        //warehouse
+        {
+            _id: new Types.ObjectId('68f6f623dc799da9305e4347'),
+            name: 'Quản lý kho',
+            note: 'Quản lý kho',
+        },
         {
             _id: new Types.ObjectId('684927c871287f2ae7d8130c'),
             name: 'Nhân viên kho',
@@ -25,6 +31,12 @@ async function roleSeeder() {
             _id: new Types.ObjectId('684927c871287f2ae7d8130e'),
             name: 'Kế toán kho',
             note: 'Kế toán kho',
+        },
+        //finance
+        {
+            _id: new Types.ObjectId('68f6f623dc799da9305e4348'),
+            name: 'Quản lý công nợ',
+            note: 'Quản lý công nợ',
         },
         {
             _id: new Types.ObjectId('684927c871287f2ae7d8130f'),
@@ -40,6 +52,17 @@ async function roleSeeder() {
             _id: new Types.ObjectId('684927c871287f2ae7d81311'),
             name: 'Bán hàng',
             note: 'Bán hàng',
+        },
+        //technical
+        {
+            _id: new Types.ObjectId('68f6f623dc799da9305e4349'),
+            note: 'Quản lý kỹ thuật',
+            name: 'Quản lý kỹ thuật',
+        },
+        {
+            _id: new Types.ObjectId('68f6f623dc799da9305e434a'),
+            note: 'Kỹ thuật viên',
+            name: 'Kỹ thuật viên',
         },
     ])
     logger.info('Roles seeded')

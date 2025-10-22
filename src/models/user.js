@@ -1,4 +1,5 @@
 const { Schema, model, Types } = require('mongoose')
+const constant = require('../utils/constant/constant')
 
 const userSchema = new Schema(
     {
@@ -24,6 +25,10 @@ const userSchema = new Schema(
             type: Boolean,
             required: true,
             default: true,
+        },
+        department: {
+            type: String,
+            enum: Object.values(constant.DEPARTMENT),
         },
         roleIds: [
             {

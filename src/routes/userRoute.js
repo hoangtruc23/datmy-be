@@ -338,6 +338,9 @@ module.exports = router
  *               password:
  *                 type: string
  *                 example: Quantrivien123!@#
+ *               department:
+ *                 type: string
+ *                 enum: [warehouse, finance, technical]
  *               roleIds:
  *                 type: array
  *                 items:
@@ -478,6 +481,9 @@ module.exports = router
  *               phoneNumber:
  *                 type: string
  *                 example: "0987548548"
+ *               department:
+ *                 type: string
+ *                 enum: [warehouse, finance, technical]
  *               roleIds:
  *                 type: array
  *                 items:
