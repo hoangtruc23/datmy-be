@@ -392,6 +392,10 @@ async function rolePermissionSeeder() {
         //#region Công nợ
         {
             roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '6880936c160be16212361ba1', // Công nợ
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
             permissionId: '6880936c160be16212361ba2', // Xem công nợ
         },
         {
@@ -408,6 +412,10 @@ async function rolePermissionSeeder() {
         },
         //#endregion
         //#region Cài đặt công nợ
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '6882fdc36f95b8b522848805', // cài đặt công nợ
+        },
         {
             roleId: '684927c871287f2ae7d8130b', // Quản trị viên
             permissionId: '6882fdc36f95b8b522848806', // Xem
@@ -427,19 +435,23 @@ async function rolePermissionSeeder() {
         //#endregion
         //#region Nhắc nợ
         {
-            roleId: '684927c871287f2ae7d8130b',
+            roleId: '684927c871287f2ae7d8130b', //Quản trị viên
+            permissionId: '68899f050e446ab399609245', // Nhắc nợ
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', //Quản trị viên
             permissionId: '68899f050e446ab399609246', // Xem
         },
         {
-            roleId: '684927c871287f2ae7d8130b',
+            roleId: '684927c871287f2ae7d8130b', //Quản trị viên
             permissionId: '68899f050e446ab399609247', //  Tạo
         },
         {
-            roleId: '684927c871287f2ae7d8130b',
+            roleId: '684927c871287f2ae7d8130b', //Quản trị viên
             permissionId: '68899f050e446ab399609248', //Cập nhật
         },
         {
-            roleId: '684927c871287f2ae7d8130b',
+            roleId: '684927c871287f2ae7d8130b', //Quản trị viên
             permissionId: '68899f050e446ab399609249', //  Xóa
         },
         //#endregion
@@ -941,6 +953,10 @@ async function rolePermissionSeeder() {
         // },
         //#endregion
         //#region Cài đặt công nợ
+        // {
+        //     roleId: '68f6f623dc799da9305e4347', // Quản lý kho
+        //     permissionId: '6882fdc36f95b8b522848805', // cài đặt công nợ
+        // },
         // {
         //     roleId: '68f6f623dc799da9305e4347', // Quản lý kho
         //     permissionId: '6882fdc36f95b8b522848806', // Xem
@@ -1474,6 +1490,10 @@ async function rolePermissionSeeder() {
         //#region Cài đặt công nợ
         {
             roleId: '68f6f623dc799da9305e4348', // Quản lý công nợ
+            permissionId: '6882fdc36f95b8b522848805', // cài đặt công nợ
+        },
+        {
+            roleId: '68f6f623dc799da9305e4348', // Quản lý công nợ
             permissionId: '6882fdc36f95b8b522848806', // Xem
         },
         {
@@ -2003,6 +2023,10 @@ async function rolePermissionSeeder() {
         // },
         //#endregion
         //#region Cài đặt công nợ
+        // {
+        //     roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
+        //     permissionId: '6882fdc36f95b8b522848805', // cài đặt công nợ
+        // },
         // {
         //     roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
         //     permissionId: '6882fdc36f95b8b522848806', // Xem
@@ -2535,6 +2559,10 @@ async function rolePermissionSeeder() {
         // },
         //#endregion
         //#region Cài đặt công nợ
+        // {
+        //     roleId: '68f6f623dc799da9305e434a', // Kỹ thuật viên
+        //     permissionId: '6882fdc36f95b8b522848805', // cài đặt công nợ
+        // },
         // {
         //     roleId: '68f6f623dc799da9305e434a', // Kỹ thuật viên
         //     permissionId: '6882fdc36f95b8b522848806', // Xem
