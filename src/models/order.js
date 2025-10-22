@@ -6,9 +6,16 @@ const orderSchema = new Schema({
         ref: 'customers',
         required: true,
     },
+    code: {
+        type: String,
+        required: true,
+    },
     createdAt: {
         type: Date,
         default: Date.now,
+    },
+    note: {
+        type: String,
     },
 })
 
