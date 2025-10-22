@@ -237,6 +237,12 @@ module.exports = router
  *               customerId:
  *                 type: string
  *                 description: ID khách hàng
+ *               code:
+ *                 type: string
+ *                 description: Mã đơn hàng
+ *               note:
+ *                 type: string
+ *                 description: ghi chú
  *               createdAt:
  *                 type: string
  *                 format: date-time
@@ -367,6 +373,12 @@ module.exports = router
  *                 type: string
  *                 format: date-time
  *                 description: Ngày tạo đơn hàng (ISO 8601). Mặc định là thời gian hiện tại nếu không truyền.
+ *               code:
+ *                 type: string
+ *                 description: Mã đơn hàng
+ *               note:
+ *                 type: string
+ *                 description: ghi chú
  *               items:
  *                 type: array
  *                 description: Danh sách sản phẩm trong đơn hàng

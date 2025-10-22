@@ -464,6 +464,10 @@ const errorCode = {
         code: 114,
         message: 'Phòng ban là bắc buộc với người dùng này',
     },
+    ORDER_CODE_EXISTS: {
+        code: 115,
+        message: 'Mã đơn hàng đã tồn tại'
+    }
 }
 
 module.exports = errorCode
