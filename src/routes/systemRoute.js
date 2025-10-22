@@ -1432,7 +1432,6 @@ module.exports = router
  *                   example: null
  */
 
-
 /**
  * @swagger
  * /system/delete/{roleId}:

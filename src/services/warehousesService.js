@@ -37,7 +37,7 @@ const warehousesService = {
             const data = {
                 name: name,
                 description: description,
-                address: address
+                address: address,
             }
             await WarehouseModel.create(data)
             return null

@@ -116,8 +116,8 @@ module.exports = router
  *   post:
  *     summary: Lấy thông tin chi tiết của một hoặc nhiều đơn hàng cùng khách hàng
  *     description: |
- *       API này cho phép truyền vào **một hoặc nhiều ID đơn hàng**.   
- *       - Mỗi sản phẩm sẽ có trường **số lượng còn lại** (`remainingQuantity = quantity - quantityExported`).  
+ *       API này cho phép truyền vào **một hoặc nhiều ID đơn hàng**.
+ *       - Mỗi sản phẩm sẽ có trường **số lượng còn lại** (`remainingQuantity = quantity - quantityExported`).
  *       - Các sản phẩm có `remainingQuantity <= 0` sẽ bị loại bỏ khỏi danh sách.
  *     security:
  *       - bearerAuth: []
@@ -211,7 +211,6 @@ module.exports = router
  *       500:
  *         description: Lỗi server
  */
-
 
 /**
  * @swagger
@@ -432,7 +431,7 @@ module.exports = router
  *     summary: Lấy thông tin chi tiết của một đơn hàng
  *     description: |
  *       API này trả về thông tin **khách hàng** (bao gồm thông tin liên hệ, địa chỉ, người đại diện, v.v.)
- *       và **danh sách sản phẩm** thuộc đơn hàng.  
+ *       và **danh sách sản phẩm** thuộc đơn hàng.
  *       Mỗi sản phẩm bao gồm thông tin cơ bản và số lượng đã xuất kho (nếu có).
  *     security:
  *       - bearerAuth: []

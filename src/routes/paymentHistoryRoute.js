@@ -212,7 +212,6 @@ module.exports = router
  *         description: Xóa lịch sử thanh toán thành công
  */
 
-
 /**
  * @swagger
  * /paymentHistory/getAllPaymentMethod:

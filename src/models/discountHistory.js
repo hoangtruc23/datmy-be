@@ -18,7 +18,7 @@ const discountHistorySchema = new Schema({
     },
     paymentDate: {
         type: Date,
-        default: null, 
+        default: null,
     },
 })
 

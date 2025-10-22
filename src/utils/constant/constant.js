@@ -11,6 +11,10 @@ const constant = {
         debtAccountant: '684927c871287f2ae7d8130f',
         billAccountant: '684927c871287f2ae7d81310',
         sale: '684927c871287f2ae7d81311',
+        warehouseManager: '68f6f623dc799da9305e4347',
+        financeManager: '68f6f623dc799da9305e4348',
+        technicalManager: '68f6f623dc799da9305e4349',
+        technician: '68f6f623dc799da9305e434a',
     },
     PRODUCT_MANAGEMENT_TYPE: {
         NONE: 'none',
@@ -171,6 +175,11 @@ const constant = {
         HIGH: 'high',
         MEDIUM: 'medium',
         LOW: 'low',
+    },
+    DEPARTMENT: {
+        WAREHOUSE: 'warehouse',
+        FINANCE: 'finance',
+        TECHNICAL: 'technical',
     },
 }
 

@@ -28,7 +28,9 @@ const discountController = {
     },
     getDiscountHistoryById: async (req, res, next) => {
         try {
-            const result = await discountService.getDiscountHistoryById(req.params.id)
+            const result = await discountService.getDiscountHistoryById(
+                req.params.id,
+            )
             res.status(200).json(response.success(result))
         } catch (error) {
             next(error)

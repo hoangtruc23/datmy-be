@@ -30,7 +30,7 @@ const technicianController = {
     },
     create: async (req, res, next) => {
         try {
-            const result = await technicianService.create(req.body)
+            const result = await technicianService.create(req.userId, req.body)
             return res.status(200).json(response.success(result))
         } catch (error) {
             next(error)

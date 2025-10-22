@@ -58,10 +58,10 @@ module.exports = router
  *                 example: Nguyễn Văn A
  *               username:
  *                 type: string
- *                 example: test
+ *                 example: kythuatvien
  *               password:
  *                 type: string
- *                 example: sửa máy test
+ *                 example: Admin123!@#
  *               phoneNumber:
  *                 type: string
  *                 example: "0912345678"
@@ -174,7 +174,7 @@ module.exports = router
  * @swagger
  * /technician/update/{technicianId}:
  *   post:
- *     summary: Chỉnh sửa phiếu công việc mới
+ *     summary: Chỉnh sửa thông tin kỹ thuật viên
  *     security:
  *       - bearerAuth: []
  *     parameters:

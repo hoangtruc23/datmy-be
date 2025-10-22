@@ -447,6 +447,23 @@ const errorCode = {
         message:
             'Số lượng đặt đơn hàng không được phép nhỏ hơn số lượng đã xuất',
     },
+    CANNOT_CREATE_USER_IN_OTHER_DEPARTMENT: {
+        code: 111,
+        message: 'Không thể tạo người dùng thuộc phòng ban khác',
+    },
+    NO_PERMISSION_TO_CHANGE_DEPARTMENT: {
+        code: 112,
+        message: 'Bạn không có quyền thay đổi phòng ban của người khác',
+    },
+    CANNOT_UPDATE_USER_IN_OTHER_DEPARTMENT: {
+        code: 113,
+        message:
+            'Không thể chỉnh sửa thông tin của người dùng thuộc phòng ban khác',
+    },
+    DEPARTMENT_IS_REQUIRED_FOR_THIS_USER: {
+        code: 114,
+        message: 'Phòng ban là bắc buộc với người dùng này',
+    },
 }
 
 module.exports = errorCode

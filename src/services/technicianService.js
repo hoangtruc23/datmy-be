@@ -7,18 +7,18 @@ const BadReq = require('../utils/response/requestError')
 const errorCode = require('../utils/response/errorCode')
 
 const technicianService = {
-    create: async (reqData) => {
+    create: async (reqUserId, reqData) => {
         try {
             const { fullname, username, email, phoneNumber, password, area } =
                 reqData
-            const roleIds = [constant.ROLES.admin]
-            await userService.create({
+            await userService.create(reqUserId, {
                 fullname,
                 username,
                 email,
                 phoneNumber,
                 password,
-                roleIds,
+                department: constant.DEPARTMENT.TECHNICAL,
+                roleIds: [constant.ROLES.technician],
             })
             const user = await UserModel.findOne({ username })
             const latestTechnician = await TechnicianModel.findOne()
