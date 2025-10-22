@@ -332,20 +332,23 @@ const discountService = {
     //history discount
     getHistory: async (query) => {
         try {
-            let { page = 1, limit = 10, search, refundStatus } = query
+            let { page = 1, limit = 10, search = '', refundStatus } = query
             page = Number(page)
             limit = Number(limit)
             search = new RegExp(search, 'i')
 
-            //handle search
-            const customers = await CustomerModel.find({
-                officialName: search,
-            })
-            const customerIds = customers.map((cus) => cus._id)
-            const products = await ProductModel.find({
-                $or: [{ name: search }, { code: search }],
-            })
-            const productIds = products.map((product) => product._id)
+            // Tìm customer & product theo từ khóa
+            const [customers, products] = await Promise.all([
+                CustomerModel.find({ officialName: search }).select('_id'),
+                ProductModel.find({
+                    $or: [{ name: search }, { code: search }],
+                }).select('_id'),
+            ])
+
+            const customerIds = customers.map((c) => c._id)
+            const productIds = products.map((p) => p._id)
+
+            //  Tạo bộ lọc
             let filters = {}
             if (customerIds.length && productIds.length) {
                 filters = {
@@ -360,10 +363,52 @@ const discountService = {
                 filters = { productId: { $in: productIds } }
             }
 
-            const discountRequest = await DiscountRequestModel.aggregate([
+            //  Lấy danh sách customer duy nhất để phân trang
+            const uniqueCustomers = await DiscountRequestModel.aggregate([
                 { $match: filters },
-                { $skip: (page - 1) * limit },
-                { $limit: limit },
+                {
+                    $lookup: {
+                        from: 'customers',
+                        localField: 'customerId',
+                        foreignField: '_id',
+                        as: 'customerInfo',
+                    },
+                },
+                { $unwind: '$customerInfo' },
+                {
+                    $group: {
+                        _id: '$customerInfo._id',
+                        customerInfo: { $first: '$customerInfo' },
+                    },
+                },
+                { $sort: { 'customerInfo.officialName': 1 } },
+            ])
+
+            const totalCustomers = uniqueCustomers.length
+            const paginatedCustomers = uniqueCustomers.slice(
+                (page - 1) * limit,
+                page * limit,
+            )
+            const customerPageIds = paginatedCustomers.map((c) => c._id)
+
+            // Lấy tất cả DiscountRequest của những customer trên trang hiện tại
+            const discountRequestIds = await DiscountRequestModel.aggregate([
+                {
+                    $match: {
+                        ...filters,
+                        customerId: { $in: customerPageIds },
+                    },
+                },
+                { $project: { _id: 1, createdAt: 1 } },
+            ])
+
+            // xử lí logic trả ra các records
+            const discountRequest = await DiscountRequestModel.aggregate([
+                {
+                    $match: {
+                        _id: { $in: discountRequestIds.map((i) => i._id) },
+                    },
+                },
                 {
                     $lookup: {
                         from: 'customers',
@@ -382,105 +427,281 @@ const discountService = {
                     },
                 },
                 { $unwind: '$productInfo' },
+
+                //  Lookup invoices
                 {
-                    $sort: {
-                        'customerInfo.officialName': 1,
-                        'productInfo.name': 1,
+                    $lookup: {
+                        from: 'invoices',
+                        let: { cId: '$customerId', pId: '$productId' },
+                        pipeline: [
+                            { $unwind: '$invoiceDetails' },
+                            {
+                                $match: {
+                                    $expr: {
+                                        $and: [
+                                            { $eq: ['$customerId', '$$cId'] },
+                                            {
+                                                $eq: [
+                                                    '$invoiceDetails.productId',
+                                                    '$$pId',
+                                                ],
+                                            },
+                                        ],
+                                    },
+                                },
+                            },
+                            {
+                                $project: {
+                                    invoiceCode: 1,
+                                    createdAt: 1,
+                                    quantity: '$invoiceDetails.quantity',
+                                    productId: '$invoiceDetails.productId',
+                                },
+                            },
+                        ],
+                        as: 'invoiceList',
                     },
                 },
+
+                // Map lại các discount
+                {
+                    $addFields: {
+                        discounts: {
+                            $map: {
+                                input: '$discounts',
+                                as: 'dis',
+                                in: {
+                                    amount: '$$dis.amount',
+                                    requestDate: '$$dis.requestDate',
+                                    invoices: {
+                                        $map: {
+                                            input: {
+                                                $filter: {
+                                                    input: '$invoiceList',
+                                                    as: 'inv',
+                                                    cond: {
+                                                        $and: [
+                                                            {
+                                                                $gte: [
+                                                                    '$$inv.createdAt',
+                                                                    '$$dis.requestDate',
+                                                                ],
+                                                            },
+                                                            {
+                                                                $lt: [
+                                                                    '$$inv.createdAt',
+                                                                    {
+                                                                        $ifNull:
+                                                                            [
+                                                                                {
+                                                                                    $arrayElemAt:
+                                                                                        [
+                                                                                            '$discounts.requestDate',
+                                                                                            {
+                                                                                                $add: [
+                                                                                                    {
+                                                                                                        $indexOfArray:
+                                                                                                            [
+                                                                                                                '$discounts.requestDate',
+                                                                                                                '$$dis.requestDate',
+                                                                                                            ],
+                                                                                                    },
+                                                                                                    1,
+                                                                                                ],
+                                                                                            },
+                                                                                        ],
+                                                                                },
+                                                                                new Date(),
+                                                                            ],
+                                                                    },
+                                                                ],
+                                                            },
+                                                        ],
+                                                    },
+                                                },
+                                            },
+                                            as: 'inv',
+                                            in: {
+                                                _id: '$$inv._id',
+                                                invoiceCode:
+                                                    '$$inv.invoiceCode',
+                                                quantity: '$$inv.quantity',
+                                                discountAmount: '$$dis.amount',
+                                                totalDiscountAmount: {
+                                                    $multiply: [
+                                                        '$$dis.amount',
+                                                        '$$inv.quantity',
+                                                    ],
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+
+                //  Gộp danh sách invoices
+                {
+                    $addFields: {
+                        discounts: {
+                            $reduce: {
+                                input: '$discounts',
+                                initialValue: [],
+                                in: {
+                                    $concatArrays: [
+                                        '$$value',
+                                        '$$this.invoices',
+                                    ],
+                                },
+                            },
+                        },
+                    },
+                },
+
+                //  Lookup refund history
+                {
+                    $lookup: {
+                        from: 'discounthistories',
+                        let: { invoiceIds: '$discounts._id', drId: '$_id' },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $and: [
+                                            {
+                                                $in: [
+                                                    '$invoiceId',
+                                                    '$$invoiceIds',
+                                                ],
+                                            },
+                                            {
+                                                $eq: [
+                                                    '$discountRequestId',
+                                                    '$$drId',
+                                                ],
+                                            },
+                                        ],
+                                    },
+                                },
+                            },
+                        ],
+                        as: 'refundHistory',
+                    },
+                },
+
+                // Gắn refundStatus
+                {
+                    $addFields: {
+                        discounts: {
+                            $map: {
+                                input: '$discounts',
+                                as: 'dis',
+                                in: {
+                                    $mergeObjects: [
+                                        '$$dis',
+                                        {
+                                            $let: {
+                                                vars: {
+                                                    matched: {
+                                                        $arrayElemAt: [
+                                                            {
+                                                                $filter: {
+                                                                    input: '$refundHistory',
+                                                                    as: 'ref',
+                                                                    cond: {
+                                                                        $eq: [
+                                                                            '$$ref.invoiceId',
+                                                                            '$$dis._id',
+                                                                        ],
+                                                                    },
+                                                                },
+                                                            },
+                                                            0,
+                                                        ],
+                                                    },
+                                                },
+                                                in: {
+                                                    refundStatus: {
+                                                        $ifNull: [
+                                                            '$$matched.refundStatus',
+                                                            constant
+                                                                .REFUND_STATUS
+                                                                .UNPAID,
+                                                        ],
+                                                    },
+                                                    paymentDate:
+                                                        '$$matched.paymentDate',
+                                                },
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                    },
+                },
+
+                // Lọc refundStatus nếu có
+                ...(refundStatus
+                    ? [
+                          {
+                              $addFields: {
+                                  discounts: {
+                                      $filter: {
+                                          input: '$discounts',
+                                          as: 'dis',
+                                          cond: {
+                                              $eq: [
+                                                  '$$dis.refundStatus',
+                                                  refundStatus,
+                                              ],
+                                          },
+                                      },
+                                  },
+                              },
+                          },
+                          {
+                              $match: {
+                                  'discounts.0': { $exists: true },
+                              },
+                          },
+                      ]
+                    : []),
+                { $sort: { 'customerInfo.officialName': 1 } },
+                {
+                    $group: {
+                        _id: '$customerInfo._id',
+                        customerInfo: { $first: '$customerInfo' },
+                        discountOfCustomer: {
+                            $push: {
+                                _id: '$_id',
+                                productInfo: {
+                                    name: '$productInfo.name',
+                                    code: '$productInfo.code',
+                                },
+                                content: '$content',
+                                discounts: '$discounts',
+                            },
+                        },
+                    },
+                },
+
                 {
                     $project: {
                         _id: 1,
                         customerInfo: { _id: 1, officialName: 1 },
-                        productInfo: { _id: 1, name: 1, code: 1 },
-                        content: 1,
-                        discounts: 1,
+                        discountOfCustomer: 1,
                     },
                 },
             ])
-            for (let req of discountRequest) {
-                const discounts = req.discounts
-                for (let i = 0; i < discounts.length; ++i) {
-                    const dis = discounts[i]
-                    const tomorrow = new Date()
-                    tomorrow.setDate(tomorrow.getDate() + 1)
-                    const startDate = new Date(dis.requestDate)
-                    const endDate =
-                        i + 1 < discounts.length
-                            ? new Date(discounts[i + 1].requestDate)
-                            : tomorrow
-                    let invoices = await InvoiceModel.aggregate([
-                        {
-                            $match: {
-                                customerId: new Types.ObjectId(
-                                    req.customerInfo._id,
-                                ),
-                                'invoiceDetails.productId': new Types.ObjectId(
-                                    req.productInfo._id,
-                                ),
-                                createdAt: { $gte: startDate, $lt: endDate },
-                            },
-                        },
-                        { $unwind: '$invoiceDetails' },
-                        {
-                            $match: {
-                                'invoiceDetails.productId': new Types.ObjectId(
-                                    req.productInfo._id,
-                                ),
-                            },
-                        },
-                        {
-                            $project: {
-                                invoiceCode: 1,
-                                createdAt: 1,
-                                'invoiceDetails.quantity': 1,
-                            },
-                        },
-                    ])
-                    invoices = invoices.map((inv) => ({
-                        _id: inv._id,
-                        invoiceCode: inv.invoiceCode,
-                        quantity: inv.invoiceDetails.quantity,
-                        discountAmount: dis.amount,
-                        totalDiscountAmount:
-                            dis.amount * inv.invoiceDetails.quantity,
-                    }))
-                    dis.invoices = invoices
-                }
-            }
-
-            for (let req of discountRequest) {
-                req.discounts = req.discounts.map((dis) => dis.invoices).flat()
-            }
-            for (let req of discountRequest) {
-                for (let dis of req.discounts) {
-                    const history = await DiscountHistoryModel.findOne({
-                        invoiceId: dis._id,
-                        customerId: dis.customerId,
-                        discountRequestId: req._id,
-                    })
-                    if (!history) {
-                        dis.refundStatus = constant.REFUND_STATUS.UNPAID
-                    } else {
-                        dis.refundStatus = history.refundStatus
-                        dis.paymentDate = history.paymentDate || null
-                    }
-                }
-                if (refundStatus) {
-                    req.discounts = req.discounts.filter(
-                        (dis) => dis.refundStatus === refundStatus,
-                    )
-                }
-            }
-
-            const totalItems =
-                await DiscountRequestModel.countDocuments(filters)
 
             return {
                 discountRequest,
                 page,
-                totalItems,
-                totalPage: Math.ceil(totalItems / limit),
+                totalItems: totalCustomers,
+                totalPage: Math.ceil(totalCustomers / limit),
             }
         } catch (error) {
             throw error

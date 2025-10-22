@@ -326,40 +326,39 @@ module.exports = router
  *                   type: string
  *                   example: null
  */
-
 /**
  * @swagger
  * /discount/getHistory:
  *   get:
- *     summary: Lấy thông tin lịch sử của phiếu chiết khấu
+ *     summary: Lấy thông tin lịch sử chiết khấu (group theo khách hàng)
  *     security:
  *       - bearerAuth: []
  *     tags: [Discount]
  *     parameters:
- *     - name: search
- *       in: query
- *       schema:
- *         type: string
- *       description: Từ khóa tìm kiếm (tên khách hàng, mã hóa đơn)
- *     - name: page
- *       in: query
- *       schema:
- *         type: integer
- *       description: Page muốn lấy
- *     - name: limit
- *       in: query
- *       schema:
- *         type: integer
- *       description: Giới hạn số phần tử trong 1 page
- *     - name: refundStatus
- *       in: query
- *       schema:
- *         type: string
- *         enum: ["paid", "unpaid"]
- *       description: Lọc theo trạng thái
+ *       - name: search
+ *         in: query
+ *         schema:
+ *           type: string
+ *         description: Từ khóa tìm kiếm (tên khách hàng hoặc mã sản phẩm)
+ *       - name: page
+ *         in: query
+ *         schema:
+ *           type: integer
+ *         description: Trang muốn lấy (mặc định = 1)
+ *       - name: limit
+ *         in: query
+ *         schema:
+ *           type: integer
+ *         description: Giới hạn số nhóm khách hàng trong 1 trang (mặc định = 10)
+ *       - name: refundStatus
+ *         in: query
+ *         schema:
+ *           type: string
+ *           enum: ["paid", "unpaid"]
+ *         description: Lọc theo trạng thái hoàn tiền
  *     responses:
  *       200:
- *         description: Trả về lịch sử của phiếu chiết khấu
+ *         description: Trả về lịch sử chiết khấu, được nhóm theo khách hàng
  *         content:
  *           application/json:
  *             schema:
@@ -377,71 +376,80 @@ module.exports = router
  *                 data:
  *                   type: object
  *                   properties:
- *                     discountRequest:
+ *                     data:
  *                       type: array
+ *                       description: Danh sách các khách hàng kèm chi tiết chiết khấu
  *                       items:
  *                         type: object
  *                         properties:
- *                           _id:
- *                             type: string
- *                             example: 68e4da9c2582e5aef9be81d8
- *                           discounts:
- *                             type: array
- *                             items:
- *                               type: object
- *                               properties:
- *                                 _id:
- *                                   type: string
- *                                   example: 68ca7e3ba311b672b8824b08
- *                                 invoiceCode:
- *                                   type: string
- *                                   example: 170901
- *                                 quantity:
- *                                   type: number
- *                                   example: 10
- *                                 discountAmount:
- *                                   type: number
- *                                   example: 100000
- *                                 totalDiscountAmount:
- *                                   type: number
- *                                   example: 1000000
- *                                 refundStatus:
- *                                   type: string
- *                                   example: paid
- *                                 paymentDate:
- *                                   type: string
- *                                   example: 2024-10-16T00:00:00.000Z
- *                           content:
- *                             type: string
- *                             example: test
  *                           customerInfo:
  *                             type: object
  *                             properties:
  *                               _id:
  *                                 type: string
- *                                 example: 689b2296324b9d06707df03e
+ *                                 example: 6899751541af42d9da26a9cd
  *                               officialName:
  *                                 type: string
- *                                 example: CÔNG TY TNHH NTC INVEST
- *                           productInfo:
- *                             type: object
- *                             properties:
- *                               _id:
- *                                 type: string
- *                                 example: 689b2296324b9d06707de4de
- *                               name:
- *                                 type: string
- *                                 example: Ruy băng KL00142-1
- *                               code:
- *                                 type: string
- *                                 example: KL00142-1
+ *                                 example: CÔNG TY CỔ PHẦN DƯỢC PHẨM ABC
+ *                           discountOfCustomer:
+ *                             type: array
+ *                             description: Danh sách sản phẩm và chi tiết chiết khấu của khách hàng này
+ *                             items:
+ *                               type: object
+ *                               properties:
+ *                                 productInfo:
+ *                                   type: object
+ *                                   properties:
+ *                                     _id:
+ *                                       type: string
+ *                                       example: 68883718d8bdb6a24119d57c
+ *                                     name:
+ *                                       type: string
+ *                                       example: Sản phẩm 297B
+ *                                     code:
+ *                                       type: string
+ *                                       example: 297B
+ *                                 content:
+ *                                   type: string
+ *                                   example: ""
+ *                                 discounts:
+ *                                   type: array
+ *                                   description: Danh sách hóa đơn áp dụng chiết khấu
+ *                                   items:
+ *                                     type: object
+ *                                     properties:
+ *                                       _id:
+ *                                         type: string
+ *                                         example: 68e72957ba9bdfa169ed26ee
+ *                                       invoiceCode:
+ *                                         type: string
+ *                                         example: HOADON1
+ *                                       quantity:
+ *                                         type: number
+ *                                         example: 10
+ *                                       discountAmount:
+ *                                         type: number
+ *                                         example: 10000
+ *                                       totalDiscountAmount:
+ *                                         type: number
+ *                                         example: 100000
+ *                                       refundStatus:
+ *                                         type: string
+ *                                         example: paid
+ *                                       paymentDate:
+ *                                         type: string
+ *                                         nullable: true
+ *                                         example: 2025-10-16T17:00:00.000Z
  *                     page:
  *                       type: number
  *                       example: 1
- *                     totalItems:
+ *                     limit:
  *                       type: number
- *                       example: 6
- *                     totalPage:
+ *                       example: 10
+ *                     totalGroups:
+ *                       type: number
+ *                       example: 5
+ *                     totalPages:
  *                       type: number
  *                       example: 1
  *       401:
@@ -460,9 +468,6 @@ module.exports = router
  *                 message:
  *                   type: string
  *                   example: Không có token
- *                 data:
- *                   type: string
- *                   example: null
  *       403:
  *         description: Không có quyền truy cập
  *         content:
@@ -479,9 +484,6 @@ module.exports = router
  *                 message:
  *                   type: string
  *                   example: Không có quyền
- *                 data:
- *                   type: string
- *                   example: null
  *       500:
  *         description: Lỗi server
  *         content:
@@ -495,10 +497,8 @@ module.exports = router
  *                 message:
  *                   type: string
  *                   example: Lỗi server!
- *                 data:
- *                   type: string
- *                   example: null
  */
+
 
 /**
  * @swagger

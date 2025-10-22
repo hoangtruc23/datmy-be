@@ -714,25 +714,25 @@ async function permissionSeeder() {
         {
             _id: new Types.ObjectId('688c7f601bbabc36f19d6ab2'),
             name: 'Xem Đơn hàng',
-            code: 'don_hang_xem',
+            code: 'don_hang-xem',
             parentPermissionId: '688c7f601bbabc36f19d6ab1',
         },
         {
             _id: new Types.ObjectId('688c7f601bbabc36f19d6ab3'),
             name: 'Tạo Đơn hàng',
-            code: 'don_hang_tao',
+            code: 'don_hang-them',
             parentPermissionId: '688c7f601bbabc36f19d6ab1',
         },
         {
             _id: new Types.ObjectId('688c7f601bbabc36f19d6ab4'),
             name: 'Chỉnh sửa Đơn hàng',
-            code: 'don_hang_chinh_sua',
+            code: 'don_hang-cap_nhat',
             parentPermissionId: '688c7f601bbabc36f19d6ab1',
-        },
+        },      
         {
             _id: new Types.ObjectId('688c7f601bbabc36f19d6ab5'),
             name: 'Xóa Đơn hàng',
-            code: 'don_hang_xoa',
+            code: 'don_hang-xoa',
             parentPermissionId: '688c7f601bbabc36f19d6ab1',
         },
 

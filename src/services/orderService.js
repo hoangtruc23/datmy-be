@@ -14,12 +14,24 @@ const orderService = {
         const session = await mongoose.startSession()
         session.startTransaction()
         try {
-            const { customerId, items, createdAt = new Date() } = reqData
+            const {
+                customerId,
+                items,
+                code,
+                createdAt = new Date(),
+                note,
+            } = reqData
 
             const checkCustomer = await CustomerModel.findById(customerId)
             if (!checkCustomer) throw new BadReq(errorCode.USER_NOT_FOUND)
             if (!items || !Array.isArray(items) || items.length === 0) {
                 throw new BadReq(errorCode.ORDER_ITEMS_REQUIRED)
+            }
+            const existingOrder = await OrderModel.findOne({ code }).session(
+                session,
+            )
+            if (existingOrder) {
+                throw new BadReq(errorCode.ORDER_CODE_EXISTS)
             }
 
             for (const item of items) {
@@ -37,7 +49,9 @@ const orderService = {
 
             const order = new OrderModel({
                 customerId,
+                code,
                 createdAt,
+                note,
             })
             await order.save({ session })
             const orderDetails = items.map((item) => ({
@@ -64,22 +78,88 @@ const orderService = {
             let { customerId, search = '', page = 1, limit = 10 } = query
             page = Number(page)
             limit = Number(limit)
-            let matchConditions = {}
+            const matchConditions = {}
             if (customerId) {
                 const checkUser = await CustomerModel.findById(customerId)
                 if (!checkUser) throw new BadReq(errorCode.USER_NOT_FOUND)
                 matchConditions.customerId = new Types.ObjectId(customerId)
             }
+            // --- Dùng aggregate để join với Customer ---
+            const pipeline = [
+                { $match: matchConditions },
+                {
+                    $lookup: {
+                        from: 'customers',
+                        localField: 'customerId',
+                        foreignField: '_id',
+                        as: 'customerInfo',
+                    },
+                },
+                { $unwind: '$customerInfo' },
+            ]
+            if (search && search.trim() !== '') {
+                pipeline.push({
+                    $match: {
+                        'customerInfo.officialName': {
+                            $regex: search,
+                            $options: 'i',
+                        },
+                    },
+                })
+            }
 
-            const [orders, totalItems] = await Promise.all([
-                OrderModel.find(matchConditions)
-                    .skip((page - 1) * limit)
-                    .limit(limit)
-                    .populate('customerId', 'name officialName code')
-                    .sort({ createdAt: -1 }),
-                OrderModel.countDocuments(matchConditions),
+            // --- Phân trang và sắp xếp ---
+            pipeline.push(
+                { $sort: { createdAt: -1 } },
+                { $skip: (page - 1) * limit },
+                { $limit: limit },
+                {
+                    $project: {
+                        _id: 1,
+                        code: 1,
+                        note: 1,
+                        createdAt: 1,
+                        customerId: {
+                            _id: '$customerInfo._id',
+                            officialName: '$customerInfo.officialName',
+                            name: '$customerInfo.name',
+                            code: '$customerInfo.code',
+                        },
+                    },
+                },
+            )
+
+            // --- Chạy đồng thời 2 query: dữ liệu + tổng số lượng ---
+            const [orders, totalCount] = await Promise.all([
+                OrderModel.aggregate(pipeline),
+                OrderModel.aggregate([
+                    {
+                        $lookup: {
+                            from: 'customers',
+                            localField: 'customerId',
+                            foreignField: '_id',
+                            as: 'customerInfo',
+                        },
+                    },
+                    { $unwind: '$customerInfo' },
+                    {
+                        $match: {
+                            ...matchConditions,
+                            ...(search
+                                ? {
+                                      'customerInfo.officialName': {
+                                          $regex: search,
+                                          $options: 'i',
+                                      },
+                                  }
+                                : {}),
+                        },
+                    },
+                    { $count: 'total' },
+                ]),
             ])
-
+            const totalItems = totalCount.length > 0 ? totalCount[0].total : 0
+            // --- Lấy chi tiết sản phẩm trong đơn hàng ---
             const orderIds = orders.map((o) => o._id)
             const details = await OrderDetailModel.find({
                 orderId: { $in: orderIds },
@@ -89,12 +169,8 @@ const orderService = {
                 const items = details.filter(
                     (d) => d.orderId.toString() === order._id.toString(),
                 )
-                return {
-                    ...order.toObject(),
-                    items,
-                }
+                return { ...order, items }
             })
-
             return {
                 orders: ordersWithItems,
                 page,
@@ -116,7 +192,6 @@ const orderService = {
                     select: 'name code',
                 },
             })
-            console.log('orders', orders)
             if (orders.length === 0) {
                 throw new BadReq(errorCode.ORDER_NOT_FOUND)
             }
@@ -172,8 +247,11 @@ const orderService = {
 
             return {
                 customer: order.customerId,
+                code: order.code,
+                note: order.note,
                 createAt: order.createdAt,
                 items: orderDetails.map((detail) => ({
+                    _id: detail._id,
                     productId: detail.productId?._id,
                     productCode: detail.productId?.code,
                     productName: detail.productId?.name,
@@ -191,10 +269,18 @@ const orderService = {
         const session = await mongoose.startSession()
         session.startTransaction()
         try {
-            const { customerId, items } = reqData
+            const { customerId, items, code, note } = reqData
 
             const order = await OrderModel.findById(orderId).session(session)
             if (!order) throw new BadReq(errorCode.ORDER_NOT_FOUND)
+            if (code && code !== order.code) {
+                const existingOrder = await OrderModel.findOne({
+                    code,
+                }).session(session)
+                if (existingOrder) throw new BadReq(errorCode.ORDER_CODE_EXISTS)
+                order.code = code
+            }
+            if (note !== undefined) order.note = note
 
             if (customerId) {
                 const customerExists =
@@ -206,7 +292,6 @@ const orderService = {
 
             if (items && Array.isArray(items)) {
                 const productIds = items.map((i) => i.productId)
-                // Kiểm tra sản phẩm hợp lệ
                 const validProducts = await ProductModel.find({
                     _id: { $in: productIds },
                 }).session(session)
