@@ -378,6 +378,9 @@ module.exports = router
  *                               fullname:
  *                                 type: string
  *                                 example: Nguyễn Văn A
+ *                               username:
+ *                                 type: string
+ *                                 example: kythuatvien1
  *                               email:
  *                                 type: string
  *                                 example: test1@gmail.com
@@ -516,6 +519,9 @@ module.exports = router
  *                         fullname:
  *                           type: string
  *                           example: Nguyễn Văn A
+ *                         username:
+ *                           type: string
+ *                           example: kythuatvien1
  *                         email:
  *                           type: string
  *                           example: test1@gmail.com

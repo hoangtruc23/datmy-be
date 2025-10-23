@@ -39,6 +39,7 @@ const technicianController = {
     update: async (req, res, next) => {
         try {
             const result = await technicianService.update(
+                req.userId,
                 req.params.technicianId,
                 req.body,
             )
