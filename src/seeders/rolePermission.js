@@ -186,6 +186,10 @@ async function rolePermissionSeeder() {
             roleId: '684927c871287f2ae7d8130b',
             permissionId: '68525e2d25829b7e6b32a614', // xoá
         },
+        {
+            roleId: '684927c871287f2ae7d8130b',
+            permissionId: '685cd0861d476d4f5d40f95f', // mở khóa
+        },
         //#endregion
         //#region Nhập kho
         {
@@ -211,14 +215,6 @@ async function rolePermissionSeeder() {
         {
             roleId: '684927c871287f2ae7d8130b',
             permissionId: '685a2a4f4630d293367c288c', // báo cáo nhập kho
-        },
-        {
-            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
-            permissionId: '688c7f601bb97636f19d6ad8', // Xem báo cáo số chi tiết bán hàng
-        },
-        {
-            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
-            permissionId: '688c7f601bb97636f19d6ad9', // Xem báo cáo đối chiếu công nợ
         },
         {
             roleId: '684927c871287f2ae7d8130b', //quan tri vien
@@ -502,7 +498,19 @@ async function rolePermissionSeeder() {
         //#region Báo cáo
         {
             roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '688c7f601bb97636f19d6ac3', // Xem báo cáo
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
             permissionId: '688c7f601bb97636f19d6ac4', // Xem báo cáo
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '688c7f601bb97636f19d6ad8', // Xem báo cáo số chi tiết khách hàng
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '688c7f601bb97636f19d6ad9', // Xem báo cáo đối chiếu công nợ
         },
         //#endregion
 
@@ -731,6 +739,10 @@ async function rolePermissionSeeder() {
             roleId: '68f6f623dc799da9305e4347', // Quản lý kho
             permissionId: '68525e2d25829b7e6b32a614', // xoá
         },
+        {
+            roleId: '68f6f623dc799da9305e4347', // Quản lý kho
+            permissionId: '685cd0861d476d4f5d40f95f', // mở khóa
+        },
         //#endregion
         //#region Nhập kho
         {
@@ -756,14 +768,6 @@ async function rolePermissionSeeder() {
         {
             roleId: '68f6f623dc799da9305e4347', // Quản lý kho
             permissionId: '685a2a4f4630d293367c288c', // báo cáo nhập kho
-        },
-        {
-            roleId: '68f6f623dc799da9305e4347', // Quản lý kho
-            permissionId: '688c7f601bb97636f19d6ad8', // Xem báo cáo số chi tiết bán hàng
-        },
-        {
-            roleId: '68f6f623dc799da9305e4347', // Quản lý kho
-            permissionId: '688c7f601bb97636f19d6ad9', // Xem báo cáo đối chiếu công nợ
         },
         {
             roleId: '68f6f623dc799da9305e4347', // Quản lý kho
@@ -937,6 +941,10 @@ async function rolePermissionSeeder() {
         //#region Công nợ
         // {
         //     roleId: '68f6f623dc799da9305e4347', // Quản lý kho
+        //     permissionId: '6880936c160be16212361ba1', // Công nợ
+        // },
+        // {
+        //     roleId: '68f6f623dc799da9305e4347', // Quản lý kho
         //     permissionId: '6880936c160be16212361ba2', // Xem công nợ
         // },
         // {
@@ -975,6 +983,10 @@ async function rolePermissionSeeder() {
         // },
         //#endregion
         //#region Nhắc nợ
+        // {
+        //     roleId: '68f6f623dc799da9305e4347', // Quản lý kho
+        //     permissionId: '68899f050e446ab399609245', // Nhắc nợ
+        // },
         // {
         //     roleId: '68f6f623dc799da9305e4347', // Quản lý kho
         //     permissionId: '68899f050e446ab399609246', // Xem
@@ -1037,10 +1049,22 @@ async function rolePermissionSeeder() {
         // },
         //#endregion
         //#region Báo cáo
+        // {
+        //     roleId: '68f6f623dc799da9305e4347', // Quản lý kho
+        //     permissionId: '688c7f601bb97636f19d6ac3', // Xem báo cáo
+        // },
         //{
         //    roleId: '68f6f623dc799da9305e4347', // Quản lý kho
         //    permissionId: '688c7f601bb97636f19d6ac4', // Xem báo cáo
         //},
+        // {
+        //     roleId: '68f6f623dc799da9305e4347', // Quản lý kho
+        //     permissionId: '688c7f601bb97636f19d6ad8', // Xem báo cáo số chi tiết bán hàng
+        // },
+        // {
+        //     roleId: '68f6f623dc799da9305e4347', // Quản lý kho
+        //     permissionId: '688c7f601bb97636f19d6ad9', // Xem báo cáo đối chiếu công nợ
+        // },
         //#endregion
 
         // ------------------------------------------------------------------------------------------ technical ----
@@ -1266,6 +1290,10 @@ async function rolePermissionSeeder() {
         //     roleId: '68f6f623dc799da9305e4348', // Quản lý công nợ
         //     permissionId: '68525e2d25829b7e6b32a614', // xoá
         // },
+        // {
+        //     roleId: '68f6f623dc799da9305e4348', // Quản lý công nợ
+        //     permissionId: '685cd0861d476d4f5d40f95f', // mở khóa
+        // },
         //#endregion
         //#region Nhập kho
         // {
@@ -1291,14 +1319,6 @@ async function rolePermissionSeeder() {
         // {
         //     roleId: '68f6f623dc799da9305e4348', // Quản lý công nợ
         //     permissionId: '685a2a4f4630d293367c288c', // báo cáo nhập kho
-        // },
-        // {
-        //     roleId: '68f6f623dc799da9305e4348', // Quản lý công nợ
-        //     permissionId: '688c7f601bb97636f19d6ad8', // Xem báo cáo số chi tiết bán hàng
-        // },
-        // {
-        //     roleId: '68f6f623dc799da9305e4348', // Quản lý công nợ
-        //     permissionId: '688c7f601bb97636f19d6ad9', // Xem báo cáo đối chiếu công nợ
         // },
         // {
         //     roleId: '68f6f623dc799da9305e4348', // Quản lý công nợ
@@ -1472,6 +1492,10 @@ async function rolePermissionSeeder() {
         //#region Công nợ
         {
             roleId: '68f6f623dc799da9305e4348', // Quản lý công nợ
+            permissionId: '6880936c160be16212361ba1', // Công nợ
+        },
+        {
+            roleId: '68f6f623dc799da9305e4348', // Quản lý công nợ
             permissionId: '6880936c160be16212361ba2', // Xem công nợ
         },
         {
@@ -1510,6 +1534,10 @@ async function rolePermissionSeeder() {
         },
         //#endregion
         //#region Nhắc nợ
+        {
+            roleId: '68f6f623dc799da9305e4348', // Quản lý công nợ
+            permissionId: '68899f050e446ab399609245', // Nhắc nợ
+        },
         {
             roleId: '68f6f623dc799da9305e4348', // Quản lý công nợ
             permissionId: '68899f050e446ab399609246', // Xem
@@ -1574,7 +1602,19 @@ async function rolePermissionSeeder() {
         //#region Báo cáo
         {
             roleId: '68f6f623dc799da9305e4348', // Quản lý công nợ
+            permissionId: '688c7f601bb97636f19d6ac3', // Xem báo cáo
+        },
+        {
+            roleId: '68f6f623dc799da9305e4348', // Quản lý công nợ
             permissionId: '688c7f601bb97636f19d6ac4', // Xem báo cáo
+        },
+        {
+            roleId: '68f6f623dc799da9305e4348', // Quản lý công nợ
+            permissionId: '688c7f601bb97636f19d6ad8', // Xem báo cáo số chi tiết bán hàng
+        },
+        {
+            roleId: '68f6f623dc799da9305e4348', // Quản lý công nợ
+            permissionId: '688c7f601bb97636f19d6ad9', // Xem báo cáo đối chiếu công nợ
         },
         //#endregion
 
@@ -1801,6 +1841,10 @@ async function rolePermissionSeeder() {
         //     roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
         //     permissionId: '68525e2d25829b7e6b32a614', // xoá
         // },
+        // {
+        //     roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
+        //     permissionId: '685cd0861d476d4f5d40f95f', // mở khóa
+        // },
         //#endregion
         //#region Nhập kho
         // {
@@ -1826,14 +1870,6 @@ async function rolePermissionSeeder() {
         // {
         //     roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
         //     permissionId: '685a2a4f4630d293367c288c', // báo cáo nhập kho
-        // },
-        // {
-        //     roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
-        //     permissionId: '688c7f601bb97636f19d6ad8', // Xem báo cáo số chi tiết bán hàng
-        // },
-        // {
-        //     roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
-        //     permissionId: '688c7f601bb97636f19d6ad9', // Xem báo cáo đối chiếu công nợ
         // },
         // {
         //     roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
@@ -2007,6 +2043,10 @@ async function rolePermissionSeeder() {
         //#region Công nợ
         // {
         //     roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
+        //     permissionId: '6880936c160be16212361ba1', // Công nợ
+        // },
+        // {
+        //     roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
         //     permissionId: '6880936c160be16212361ba2', // Xem công nợ
         // },
         // {
@@ -2045,6 +2085,10 @@ async function rolePermissionSeeder() {
         // },
         //#endregion
         //#region Nhắc nợ
+        // {
+        //     roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
+        //     permissionId: '68899f050e446ab399609245', // Nhắc nợ
+        // },
         // {
         //     roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
         //     permissionId: '68899f050e446ab399609246', // Xem
@@ -2109,7 +2153,19 @@ async function rolePermissionSeeder() {
         //#region Báo cáo
         // {
         //     roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
+        //     permissionId: '688c7f601bb97636f19d6ac3', // Xem báo cáo
+        // },
+        // {
+        //     roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
         //     permissionId: '688c7f601bb97636f19d6ac4', // Xem báo cáo
+        // },
+        // {
+        //     roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
+        //     permissionId: '688c7f601bb97636f19d6ad8', // Xem báo cáo số chi tiết bán hàng
+        // },
+        // {
+        //     roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
+        //     permissionId: '688c7f601bb97636f19d6ad9', // Xem báo cáo đối chiếu công nợ
         // },
         //#endregion
 
@@ -2337,6 +2393,10 @@ async function rolePermissionSeeder() {
         //     roleId: '68f6f623dc799da9305e434a', // Kỹ thuật viên
         //     permissionId: '68525e2d25829b7e6b32a614', // xoá
         // },
+        // {
+        //     roleId: '68f6f623dc799da9305e434a', // Kỹ thuật viên
+        //     permissionId: '685cd0861d476d4f5d40f95f', // mở khóa
+        // },
         //#endregion
         //#region Nhập kho
         // {
@@ -2362,14 +2422,6 @@ async function rolePermissionSeeder() {
         // {
         //     roleId: '68f6f623dc799da9305e434a', // Kỹ thuật viên
         //     permissionId: '685a2a4f4630d293367c288c', // báo cáo nhập kho
-        // },
-        // {
-        //     roleId: '68f6f623dc799da9305e434a', // Kỹ thuật viên
-        //     permissionId: '688c7f601bb97636f19d6ad8', // Xem báo cáo số chi tiết bán hàng
-        // },
-        // {
-        //     roleId: '68f6f623dc799da9305e434a', // Kỹ thuật viên
-        //     permissionId: '688c7f601bb97636f19d6ad9', // Xem báo cáo đối chiếu công nợ
         // },
         // {
         //     roleId: '68f6f623dc799da9305e434a', // Kỹ thuật viên
@@ -2543,6 +2595,10 @@ async function rolePermissionSeeder() {
         //#region Công nợ
         // {
         //     roleId: '68f6f623dc799da9305e434a', // Kỹ thuật viên
+        //     permissionId: '6880936c160be16212361ba1', // Công nợ
+        // },
+        // {
+        //     roleId: '68f6f623dc799da9305e434a', // Kỹ thuật viên
         //     permissionId: '6880936c160be16212361ba2', // Xem công nợ
         // },
         // {
@@ -2581,6 +2637,10 @@ async function rolePermissionSeeder() {
         // },
         //#endregion
         //#region Nhắc nợ
+        // {
+        //     roleId: '68f6f623dc799da9305e434a', // Kỹ thuật viên
+        //     permissionId: '68899f050e446ab399609245', // Nhắc nợ
+        // },
         // {
         //     roleId: '68f6f623dc799da9305e434a', // Kỹ thuật viên
         //     permissionId: '68899f050e446ab399609246', // Xem
@@ -2645,7 +2705,19 @@ async function rolePermissionSeeder() {
         //#region Báo cáo
         // {
         //     roleId: '68f6f623dc799da9305e434a', // Kỹ thuật viên
+        //     permissionId: '688c7f601bb97636f19d6ac3', // Xem báo cáo
+        // },
+        // {
+        //     roleId: '68f6f623dc799da9305e434a', // Kỹ thuật viên
         //     permissionId: '688c7f601bb97636f19d6ac4', // Xem báo cáo
+        // },
+        // {
+        //     roleId: '68f6f623dc799da9305e434a', // Kỹ thuật viên
+        //     permissionId: '688c7f601bb97636f19d6ad8', // Xem báo cáo số chi tiết bán hàng
+        // },
+        // {
+        //     roleId: '68f6f623dc799da9305e434a', // Kỹ thuật viên
+        //     permissionId: '688c7f601bb97636f19d6ad9', // Xem báo cáo đối chiếu công nợ
         // },
         //#endregion
 

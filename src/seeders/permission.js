@@ -728,7 +728,7 @@ async function permissionSeeder() {
             name: 'Chỉnh sửa Đơn hàng',
             code: 'don_hang-cap_nhat',
             parentPermissionId: '688c7f601bbabc36f19d6ab1',
-        },      
+        },
         {
             _id: new Types.ObjectId('688c7f601bbabc36f19d6ab5'),
             name: 'Xóa Đơn hàng',
