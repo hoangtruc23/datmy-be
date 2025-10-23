@@ -56,7 +56,7 @@ const technicianService = {
                 TechnicianModel.find(conditions)
                     .skip((page - 1) * limit)
                     .limit(limit)
-                    .populate('userId', 'fullname email phoneNumber')
+                    .populate('userId', 'fullname email phoneNumber username')
                     .lean(),
                 TechnicianModel.countDocuments(conditions),
             ])
@@ -89,7 +89,7 @@ const technicianService = {
         try {
             const technician = await TechnicianModel.findById(
                 technicianId,
-            ).populate('userId', 'fullname email phoneNumber')
+            ).populate('userId', 'fullname email phoneNumber username')
             if (!technician) {
                 throw new BadReq(errorCode.TECHNICIAN_NOT_FOUND)
             }
@@ -132,7 +132,7 @@ const technicianService = {
         }
     },
 
-    update: async (technicianId, reqData) => {
+    update: async (reqUserId, technicianId, reqData) => {
         try {
             const technician = await TechnicianModel.findById(technicianId)
             if (!technician) {
@@ -140,7 +140,7 @@ const technicianService = {
             }
             const user = await UserModel.findById(technician.userId)
             const { username, fullname, email, phoneNumber, area } = reqData
-            await userService.update(user._id, {
+            await userService.update(reqUserId, user._id, {
                 username,
                 fullname,
                 email,
