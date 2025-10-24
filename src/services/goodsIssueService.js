@@ -182,7 +182,6 @@ const goodsIssueService = {
                                     productId: goodsIssueDetail.productId,
                                     trackingCode: storage.trackingCode,
                                 },
-                                // nhớ check lại khi nó trừ số lượng âm thì có throw lỗi không
                                 {
                                     $inc: { quantity: -storage.quantity },
                                 },
@@ -323,6 +322,19 @@ const goodsIssueService = {
                             )
                         }
                     }
+                    if (goodsIssueDetail.orderDetailId) {
+
+                        const deatail = await OrderDetailModel.findByIdAndUpdate(
+                            goodsIssueDetail.orderDetailId,
+                            {
+                                $inc: {
+                                    quantityExported:
+                                        goodsIssueDetail.issuedQuantity,
+                                },
+                            },
+                            { session },
+                        )
+                    }
                 }
             }
             await GoodsIssueModel.findByIdAndUpdate(
@@ -422,6 +434,7 @@ const goodsIssueService = {
     addProduct: async (product) => {
         const session = await mongoose.startSession()
         try {
+            session.startTransaction()
             const {
                 goodsIssueId,
                 productId,
@@ -432,8 +445,9 @@ const goodsIssueService = {
                 note,
                 orderId,
             } = product
+            let orderDetail
             if (orderId) {
-                const orderDetail = await OrderDetailModel.findOne({
+                orderDetail = await OrderDetailModel.findOne({
                     orderId,
                     productId,
                 })
@@ -445,7 +459,6 @@ const goodsIssueService = {
                 )
                     throw new BadReq(errorCode.ISSUE_QUANTITY_EXCEEDS_ORDER)
             }
-            session.startTransaction()
             const checkGoodsIssueDetail = await GoodsIssueDetaileModel.findOne({
                 goodsIssueId,
                 productId,
@@ -519,7 +532,7 @@ const goodsIssueService = {
                     errorCode.SERIAL_OR_BATCH_QUANTITY_TOTAL_INVALID,
                 )
             }
-            await GoodsIssueDetaileModel.create(
+            const detail = await GoodsIssueDetaileModel.create(
                 [
                     {
                         goodsIssueId,
@@ -641,7 +654,7 @@ const goodsIssueService = {
                 unit: checkProduct?.unit,
                 origin,
                 issuedQuantity,
-                warehouseName: checkWarehouse.warehouseName,
+                warehouseName: checkWarehouse.name,
                 storages,
                 note,
             })
