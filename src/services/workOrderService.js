@@ -68,7 +68,7 @@ const workOrderService = {
     getById: async (workOrderId) => {
         try {
             const workOrder = await WorkOrderModel.findById(workOrderId)
-                .populate('customerId', 'officialName representative.name')
+                .populate('customerId', 'officialName representative.name phone email')
                 .populate({
                     path: 'technicianId',
                     populate: { path: 'userId', select: 'fullname' },
