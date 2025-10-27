@@ -40,19 +40,7 @@ const workOrderValidation = {
                 contactName: joi.string().trim().min(1).required().messages({
                     '*': 'Tên người liên hệ là bắt buộc',
                 }),
-                contactPhone: joi
-                    .string()
-                    .pattern(/^[0-9]{4,15}$/)
-                    .messages({
-                        'string.pattern.base':
-                            'Số điện thoại phải có từ 4 đến 15 chữ số',
-                    }),
-                contactEmail: joi
-                    .string()
-                    .email({ tlds: { allow: false } })
-                    .messages({
-                        'string.email': 'Email không đúng định dạng',
-                    }),
+                
                 description: joi.string().trim().min(1).required().messages({
                     '*': 'Mô tả công việc là bắt buộc',
                 }),
