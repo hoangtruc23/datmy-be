@@ -3,9 +3,28 @@ const constant = require('../utils/constant/constant')
 
 const technicianModel = new Schema(
     {
-        userId: {
-            type: Types.ObjectId,
-            ref: 'users',
+        fullname: {
+            type: String,
+            required: true,
+        },
+        username: {
+            type: String,
+            required: true,
+        },
+        email: {
+            type: String,
+        },
+        phoneNumber: {
+            type: String,
+        },
+        password: {
+            type: String,
+            required: true,
+        },
+        isActive: {
+            type: Boolean,
+            required: true,
+            default: true,
         },
         code: {
             type: String,

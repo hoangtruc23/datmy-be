@@ -804,11 +804,11 @@ async function permissionApiSeeder() {
         },
         {
             permissionId: '68d1166bba1c480c8180bf6c', // Xem phiếu yêu cầu công việc
-            apiId: '68fee754df90864cd0ba5306', // /workOrder/getAllWorkType1
+            apiId: '68fee754df90864cd0ba5306', // /workOrder/getAllWorkType
         },
         {
             permissionId: '68d1166bba1c480c8180bf6c', // Xem phiếu yêu cầu công việc
-            apiId: '68fee754df90864cd0ba5307', // /workOrder/getAllWorkType2
+            apiId: '68fee754df90864cd0ba5307', // /workOrder/getAllType
         },
         {
             permissionId: '68d1166bba1c480c8180bf6c', // Xem phiếu yêu cầu công việc

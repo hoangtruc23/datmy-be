@@ -946,13 +946,13 @@ async function apiSeeder() {
         },
         {
             _id: new Types.ObjectId('68fee754df90864cd0ba5306'),
-            api: '/workOrder/getAllWorkType1',
-            note: 'Lấy ra tất cả loại công việc 1',
+            api: '/workOrder/getAllWorkType',
+            note: 'Lấy ra tất cả loại công việc ',
         },
         {
             _id: new Types.ObjectId('68fee754df90864cd0ba5307'),
-            api: '/workOrder/getAllWorkType2',
-            note: 'Lấy ra tất cả loại công việc 2',
+            api: '/workOrder/getAllWorkDetailType',
+            note: 'Lấy ra tất cả loại chi tiết công việc',
         },
         {
             _id: new Types.ObjectId('68fee754df90864cd0ba5308'),

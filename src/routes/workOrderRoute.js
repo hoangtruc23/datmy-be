@@ -25,8 +25,8 @@ router.post(
 router.delete('/delete/:workOrderId', workOrderController.delete)
 router.get('/getAllState', workOrderController.getAllState)
 router.get('/getAllPriority', workOrderController.getAllPriority)
-router.get('/getAllWorkType1', workOrderController.getAllWorkType1)
-router.get('/getAllWorkType2', workOrderController.getAllWorkType2)
+router.get('/getAllWorkType', workOrderController.getAllWorkType)
+router.get('/getAllType', workOrderController.getAllType)
 router.get('/getAllWorkRequestSource', workOrderController.getAllWorkRequestSource)
 router.get('/getAllTechnicianStatus', workOrderController.getAllTechnicianStatus)
 /**
@@ -679,16 +679,16 @@ router.get('/getAllTechnicianStatus', workOrderController.getAllTechnicianStatus
 
 /**
  * @swagger
- * /workOrder/getAllWorkType1:
+ * /workOrder/getAllWorkType:
  *   get:
- *     summary: Lấy ra tất cả các loại công việc 1
+ *     summary: Lấy ra tất cả các loại công việc 
  *     security:
  *       - bearerAuth: []
  *     tags: [WorkOrder]
  *     parameters: []
  *     responses:
  *       200:
- *         description: Trả về tất cả các loại công việc 1
+ *         description: Trả về tất cả các loại công việc 
  *         content:
  *           application/json:
  *             schema:
@@ -772,16 +772,16 @@ router.get('/getAllTechnicianStatus', workOrderController.getAllTechnicianStatus
 
 /**
  * @swagger
- * /workOrder/getAllWorkType2:
+ * /workOrder/getAllType:
  *   get:
- *     summary: Lấy ra tất cả các loại công việc 2
+ *     summary: Lấy ra tất cả các loại chi tiết công việc 
  *     security:
  *       - bearerAuth: []
  *     tags: [WorkOrder]
  *     parameters: []
  *     responses:
  *       200:
- *         description: Trả về tất cả loại công việc 2
+ *         description: Trả về tất cả loại chi tiết công việc
  *         content:
  *           application/json:
  *             schema:

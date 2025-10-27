@@ -71,17 +71,17 @@ const workOrderController = {
             next(error)
         }
     },
-    getAllWorkType1: (req, res, next) => {
+    getAllWorkType: (req, res, next) => {
         try {
-            const result = workOrderService.getAllWorkType1()
+            const result = workOrderService.getAllWorkType()
             return res.status(200).json(response.success(result))
         } catch (error) {
             next(error)
         }
     },
-    getAllWorkType2: (req, res, next) => {
+    getAllType: (req, res, next) => {
         try {
-            const result = workOrderService.getAllWorkType2()
+            const result = workOrderService.getAllType()
             return res.status(200).json(response.success(result))
         } catch (error) {
             next(error)

@@ -29,7 +29,7 @@ const workOrderValidation = {
                 typeWork: joi
                     .string()
                     .valid(
-                        ...Object.values(constant.WORK_TYPE_1).map(
+                        ...Object.values(constant.WORK_ORDER_TYPE).map(
                             (s) => s.value,
                         ),
                     )
@@ -102,7 +102,7 @@ const workOrderValidation = {
                 typeWork: joi
                     .string()
                     .valid(
-                        ...Object.values(constant.WORK_TYPE_1).map(
+                        ...Object.values(constant.WORK_ORDER_TYPE).map(
                             (s) => s.value,
                         ),
                     )
@@ -113,7 +113,7 @@ const workOrderValidation = {
                 type: joi
                     .string()
                     .valid(
-                        ...Object.values(constant.WORK_TYPE_2).map(
+                        ...Object.values(constant.WORK_ORDER_DETAIL_TYPE).map(
                             (s) => s.value,
                         ),
                     )

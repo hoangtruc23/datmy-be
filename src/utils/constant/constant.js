@@ -14,7 +14,6 @@ const constant = {
         warehouseManager: '68f6f623dc799da9305e4347',
         financeManager: '68f6f623dc799da9305e4348',
         technicalManager: '68f6f623dc799da9305e4349',
-        technician: '68f6f623dc799da9305e434a',
     },
     PRODUCT_MANAGEMENT_TYPE: {
         NONE: 'none',
@@ -140,7 +139,7 @@ const constant = {
             name: 'Đang hoạt động',
         },
     },
-    WORK_TYPE_1: {
+    WORK_ORDER_TYPE: {
         NULL: {
             value: '',
             name: '',
@@ -170,7 +169,7 @@ const constant = {
             name: 'In mẫu',
         },
     },
-    WORK_TYPE_2: {
+    WORK_ORDER_DETAIL_TYPE: {
         NULL: {
             value: '',
             name: '',
