@@ -145,7 +145,10 @@ const workOrderService = {
             if (!customer) {
                 throw new BadReq(errorCode.CUSTOMER_NOT_FOUND)
             }
-            const technician = await TechnicianModel.findById(technicianId)
+            const technician = await TechnicianModel.findOne({
+                technicianId,
+                isActive: true,
+            })
             if (technicianId && !technician) {
                 throw new BadReq(errorCode.TECHNICIAN_NOT_FOUND)
             }
@@ -208,7 +211,10 @@ const workOrderService = {
                 throw new BadReq(errorCode.WORK_ORDER_NOT_FOUND)
             }
 
-            const technician = await TechnicianModel.findById(technicianId)
+            const technician = await TechnicianModel.findOne({
+                technicianId,
+                isActive: true,
+            })
             if (technicianId && !technician) {
                 throw new BadReq(errorCode.TECHNICIAN_NOT_FOUND)
             }
