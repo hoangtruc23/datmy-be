@@ -100,10 +100,15 @@ const orderService = {
             if (search && search.trim() !== '') {
                 pipeline.push({
                     $match: {
-                        'customerInfo.officialName': {
-                            $regex: search,
-                            $options: 'i',
-                        },
+                        $or: [
+                            {
+                                'customerInfo.officialName': {
+                                    $regex: search,
+                                    $options: 'i',
+                                },
+                            },
+                            { code: { $regex: search, $options: 'i' } },
+                        ],
                     },
                 })
             }
@@ -207,7 +212,7 @@ const orderService = {
 
             const allDetails = await OrderDetailModel.find({
                 orderId: { $in: orderIds },
-            }).populate('productId', 'name code shortName')
+            }).populate('productId')
 
             const remainingDetails = allDetails
                 .filter(
