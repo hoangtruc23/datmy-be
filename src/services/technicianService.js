@@ -45,18 +45,14 @@ const technicianService = {
             limit = Number(limit)
             search = new RegExp(search, 'i')
 
-            const users = await UserModel.find({ fullname: search })
-            const userIds = users ? users.map((user) => user._id) : []
-
             const conditions = {
-                $or: [{ userId: { $in: userIds } }, { code: search }],
+                $or: [{ fullname: search }, { code: search }],
                 ...(status ? { status } : {}),
             }
             const [technicians, totalItems] = await Promise.all([
                 TechnicianModel.find(conditions)
                     .skip((page - 1) * limit)
                     .limit(limit)
-                    .populate('userId', 'fullname email phoneNumber username')
                     .lean(),
                 TechnicianModel.countDocuments(conditions),
             ])
@@ -87,9 +83,9 @@ const technicianService = {
 
     getById: async (technicianId) => {
         try {
-            const technician = await TechnicianModel.findById(
-                technicianId,
-            ).populate('userId', 'fullname email phoneNumber username')
+            const technician = await TechnicianModel.findById(technicianId, {
+                password: 0,
+            })
             if (!technician) {
                 throw new BadReq(errorCode.TECHNICIAN_NOT_FOUND)
             }
@@ -131,27 +127,56 @@ const technicianService = {
         }
     },
 
-    update: async (reqUserId, technicianId, reqData) => {
+    update: async (technicianId, reqData) => {
         try {
             const technician = await TechnicianModel.findById(technicianId)
             if (!technician) {
                 throw new BadReq(errorCode.TECHNICIAN_NOT_FOUND)
             }
-            const user = await UserModel.findById(technician.userId)
             const { username, fullname, email, phoneNumber, area } = reqData
-            await userService.update(reqUserId, user._id, {
+
+            const checkUsername = await TechnicianModel.findOne({
+                username,
+                _id: { $ne: userId },
+            })
+            if (checkUsername) {
+                throw new BadReq(errorCode.TECHNICIAN_EXISTED)
+            }
+            await TechnicianModel.findByIdAndUpdate(technicianId, {
                 username,
                 fullname,
                 email,
                 phoneNumber,
-            })
-            await TechnicianModel.findByIdAndUpdate(technician._id, {
                 area,
             })
             return null
         } catch (error) {
             throw error
         }
+    },
+
+    changeActive: async (technicianId) => {
+        const technician = await TechnicianModel.findById(technicianId)
+        if (!technician) {
+            throw new BadReq(errorCode.TECHNICIAN_NOT_FOUND)
+        }
+        const workOrders = WorkOrderModel.findOne({
+            $and: [
+                { technicianId },
+                {
+                    status: {
+                        $ne: constant.WORK_REQUEST_STATUS.COMPLETED.value,
+                    },
+                },
+            ],
+        })
+        if (workOrders) {
+            throw new BadReq(errorCode.TECHNICIAN_CANNOT_LOCKED)
+        }
+        await TechnicianModel.findByIdAndUpdate(technicianId, {
+            isActive: false,
+        })
+        return null
     },
 }
 module.exports = technicianService
