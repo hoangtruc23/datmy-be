@@ -179,7 +179,7 @@ const workOrderService = {
             })
             //ktv có việc => status = working
             await TechnicianModel.findByIdAndUpdate(technicianId, {
-                status: constant.TECHNICIAN_STATUS.WORKING,
+                status: constant.TECHNICIAN_STATUS.WORKING.value,
             })
             return null
         } catch (error) {
@@ -235,13 +235,13 @@ const workOrderService = {
                     await TechnicianModel.findByIdAndUpdate(
                         checkWorkOrder.technicianId,
                         {
-                            status: constant.TECHNICIAN_STATUS.FREE,
+                            status: constant.TECHNICIAN_STATUS.FREE.value,
                         },
                     )
                 }
                 // ktv mới cập nhật trạng thái
                 await TechnicianModel.findByIdAndUpdate(technicianId, {
-                    status: constant.TECHNICIAN_STATUS.WORKING,
+                    status: constant.TECHNICIAN_STATUS.WORKING.value,
                 })
             }
             return null
@@ -265,7 +265,7 @@ const workOrderService = {
                 await TechnicianModel.findByIdAndUpdate(
                     checkWorkOrder.technicianId,
                     {
-                        status: constant.TECHNICIAN_STATUS.FREE,
+                        status: constant.TECHNICIAN_STATUS.FREE.value,
                     },
                 )
             }

@@ -110,13 +110,12 @@ const technicianService = {
                     },
                 },
             ])
-            const acc = Object.values(constant.TECHNICIAN_STATUS).reduce(
-                (acc, cur) => {
+            const acc = Object.values(constant.TECHNICIAN_STATUS)
+                .map((s) => s.value)
+                .reduce((acc, cur) => {
                     acc[cur] = 0
                     return acc
-                },
-                {},
-            )
+                }, {})
 
             const result = countByStatus.reduce(
                 (acc, cur) => {

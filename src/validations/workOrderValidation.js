@@ -28,7 +28,11 @@ const workOrderValidation = {
                 }),
                 typeWork: joi
                     .string()
-                    .valid(...Object.values(constant.WORK_TYPE_1))
+                    .valid(
+                        ...Object.values(constant.WORK_TYPE_1).map(
+                            (s) => s.value,
+                        ),
+                    )
                     .messages({
                         'any.only':
                             "typeWork chỉ bao gồm '', 'repair', 'maintenance', 'installation', 'testIO', 'demo', 'samplePrinting'",
@@ -77,7 +81,11 @@ const workOrderValidation = {
                 }),
                 requestSource: joi
                     .string()
-                    .valid(...Object.values(constant.WORK_REQUEST_SOURCE))
+                    .valid(
+                        ...Object.values(constant.WORK_REQUEST_SOURCE).map(
+                            (s) => s.value,
+                        ),
+                    )
                     .messages({
                         'any.only':
                             "requestSource chỉ bao gồm 'customer', 'warehouse', 'demo'",
@@ -93,14 +101,22 @@ const workOrderValidation = {
                 }),
                 typeWork: joi
                     .string()
-                    .valid(...Object.values(constant.WORK_TYPE_1))
+                    .valid(
+                        ...Object.values(constant.WORK_TYPE_1).map(
+                            (s) => s.value,
+                        ),
+                    )
                     .messages({
                         'any.only':
                             "typeWork chỉ bao gồm '', 'repair', 'maintenance', 'installation', 'testIO', 'demo', 'samplePrinting'",
                     }),
                 type: joi
                     .string()
-                    .valid(...Object.values(constant.WORK_TYPE_2))
+                    .valid(
+                        ...Object.values(constant.WORK_TYPE_2).map(
+                            (s) => s.value,
+                        ),
+                    )
                     .messages({
                         'any.only':
                             "type chỉ bao gồm '', 'D', 'G', 'V', 'M', 'A'",
@@ -133,7 +149,11 @@ const workOrderValidation = {
                 }),
                 requestSource: joi
                     .string()
-                    .valid(...Object.values(constant.WORK_REQUEST_SOURCE))
+                    .valid(
+                        ...Object.values(constant.WORK_REQUEST_SOURCE).map(
+                            (s) => s.value,
+                        ),
+                    )
                     .messages({
                         'any.only':
                             "requestSource chỉ bao gồm 'customer', 'warehouse', 'demo'",

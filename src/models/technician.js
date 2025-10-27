@@ -16,8 +16,8 @@ const technicianModel = new Schema(
         },
         status: {
             type: String,
-            enum: Object.values(constant.TECHNICIAN_STATUS),
-            default: constant.TECHNICIAN_STATUS.FREE,
+            enum: Object.values(constant.TECHNICIAN_STATUS).map((s) => s.value),
+            default: constant.TECHNICIAN_STATUS.FREE.value,
         },
     },
     { timestamps: true },
