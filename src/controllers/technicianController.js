@@ -39,9 +39,18 @@ const technicianController = {
     update: async (req, res, next) => {
         try {
             const result = await technicianService.update(
-                req.userId,
                 req.params.technicianId,
                 req.body,
+            )
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
+    changeActive: async (req, res, next) => {
+        try {
+            const result = await technicianService.changeActive(
+                req.params.technicianId,
             )
             return res.status(200).json(response.success(result))
         } catch (error) {

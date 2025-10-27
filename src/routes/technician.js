@@ -22,6 +22,7 @@ router.post(
     validate(technicianValidation.update),
     technicianController.update,
 )
+router.post('/changeActive/:technicianId', technicianController.changeActive)
 
 module.exports = router
 /**
@@ -690,6 +691,119 @@ module.exports = router
  *                 code:
  *                   type: integer
  *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Lỗi server!
+ *                 data:
+ *                   type: string
+ *                   example: null
+ */
+
+/**
+ * @swagger
+ * /technician/changeActive/{technicianId}:
+ *   post:
+ *     summary: Cập nhật trạng thái của KTV
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Technician]
+ *     parameters:
+ *     - name: technicianId
+ *       in: path
+ *       required: true
+ *       schema:
+ *         type: string
+ *       description: Id của KTV
+ *     responses:
+ *       200:
+ *         description: Cập nhật thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
+ *                 code:
+ *                   type: integer
+ *                   example: 1
+ *                 message:
+ *                   type: string
+ *                   example: OK!
+ *                 data:
+ *                   type: object
+ *                   example: null
+ *       400:
+ *         description: Lỗi input
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 400
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không tìm thấy nhân viên!
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       401:
+ *         description: Chưa đăng nhập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 401
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có token
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       403:
+ *         description: Không có quyền truy cập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 403
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có quyền
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       500:
+ *         description: Lỗi server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 500
+ *                 code:
+ *                   type: integer
+ *                   example: -1
  *                 message:
  *                   type: string
  *                   example: Lỗi server!

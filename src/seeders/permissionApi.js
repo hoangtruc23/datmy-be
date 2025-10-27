@@ -852,6 +852,10 @@ async function permissionApiSeeder() {
             permissionId: '68db8978cc41fa86439388cf', // Chỉnh sửa kỹ thuật viên
             apiId: '68db886658aa745a165f0c0b', // /technician/update
         },
+        {
+            permissionId: '68ff31af6de21eecbc535ad1', // Khóa/Mở khóa kỹ thuật viên
+            apiId: '68ff312d7c0247493f1d5065', // /technician/changeActive
+        },
     ])
     logger.info('PermissionApis seeded')
 }

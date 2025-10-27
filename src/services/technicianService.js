@@ -51,6 +51,7 @@ const technicianService = {
             }
             const [technicians, totalItems] = await Promise.all([
                 TechnicianModel.find(conditions)
+                    .select('-password')
                     .skip((page - 1) * limit)
                     .limit(limit)
                     .lean(),
@@ -137,7 +138,7 @@ const technicianService = {
 
             const checkUsername = await TechnicianModel.findOne({
                 username,
-                _id: { $ne: userId },
+                _id: { $ne: technicianId },
             })
             if (checkUsername) {
                 throw new BadReq(errorCode.TECHNICIAN_EXISTED)
@@ -160,7 +161,7 @@ const technicianService = {
         if (!technician) {
             throw new BadReq(errorCode.TECHNICIAN_NOT_FOUND)
         }
-        const workOrders = WorkOrderModel.findOne({
+        const workOrders = await WorkOrderModel.findOne({
             $and: [
                 { technicianId },
                 {
@@ -170,11 +171,12 @@ const technicianService = {
                 },
             ],
         })
+
         if (workOrders) {
             throw new BadReq(errorCode.TECHNICIAN_CANNOT_LOCKED)
         }
         await TechnicianModel.findByIdAndUpdate(technicianId, {
-            isActive: false,
+            isActive: !technician.isActive,
         })
         return null
     },
