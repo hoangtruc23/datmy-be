@@ -158,7 +158,7 @@ const constant = {
         },
         TEST_IO: {
             value: 'testIO',
-            name: 'Test',
+            name: 'Test Xuất/Nhập',
         },
         DEMO: {
             value: 'demo',

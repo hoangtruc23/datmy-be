@@ -4,7 +4,7 @@ const workOrderService = require('../services/workOrderService')
 const workOrderController = {
     getAll: async (req, res, next) => {
         try {
-            const result = await workOrderService.getAll(req.userId, req.query)
+            const result = await workOrderService.getAll(req.query)
             return res.status(200).json(response.success(result))
         } catch (error) {
             next(error)

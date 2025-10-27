@@ -27,8 +27,14 @@ router.get('/getAllState', workOrderController.getAllState)
 router.get('/getAllPriority', workOrderController.getAllPriority)
 router.get('/getAllWorkType', workOrderController.getAllWorkType)
 router.get('/getAllType', workOrderController.getAllType)
-router.get('/getAllWorkRequestSource', workOrderController.getAllWorkRequestSource)
-router.get('/getAllTechnicianStatus', workOrderController.getAllTechnicianStatus)
+router.get(
+    '/getAllWorkRequestSource',
+    workOrderController.getAllWorkRequestSource,
+)
+router.get(
+    '/getAllTechnicianStatus',
+    workOrderController.getAllTechnicianStatus,
+)
 /**
  * @swagger
  * tags:
@@ -45,6 +51,13 @@ router.get('/getAllTechnicianStatus', workOrderController.getAllTechnicianStatus
  *       - bearerAuth: []
  *     tags: [WorkOrder]
  *     parameters:
+ *       - name: typeWork
+ *         in: query
+ *         schema:
+ *           type: string
+ *           enum: ["", "repair", "maintenance", "installation", "testIO", "demo", "samplePrinting"]
+ *           default: ""
+ *         description: Loại công việc
  *       - name: status
  *         in: query
  *         schema:
@@ -681,14 +694,14 @@ router.get('/getAllTechnicianStatus', workOrderController.getAllTechnicianStatus
  * @swagger
  * /workOrder/getAllWorkType:
  *   get:
- *     summary: Lấy ra tất cả các loại công việc 
+ *     summary: Lấy ra tất cả các loại công việc
  *     security:
  *       - bearerAuth: []
  *     tags: [WorkOrder]
  *     parameters: []
  *     responses:
  *       200:
- *         description: Trả về tất cả các loại công việc 
+ *         description: Trả về tất cả các loại công việc
  *         content:
  *           application/json:
  *             schema:
@@ -774,7 +787,7 @@ router.get('/getAllTechnicianStatus', workOrderController.getAllTechnicianStatus
  * @swagger
  * /workOrder/getAllType:
  *   get:
- *     summary: Lấy ra tất cả các loại chi tiết công việc 
+ *     summary: Lấy ra tất cả các loại chi tiết công việc
  *     security:
  *       - bearerAuth: []
  *     tags: [WorkOrder]
