@@ -55,7 +55,7 @@ router.get(
  *         in: query
  *         schema:
  *           type: string
- *           enum: ["", "repair", "maintenance", "installation", "testIO", "demo", "samplePrinting"]
+ *           enum: ["repair", "maintenance", "installation", "testIO", "demo", "samplePrinting"]
  *           default: ""
  *         description: Loại công việc
  *       - name: status
