@@ -803,6 +803,22 @@ async function permissionApiSeeder() {
             apiId: '68f89736d0014bb79a3e081d', // /workOrder/getAllPriority
         },
         {
+            permissionId: '68d1166bba1c480c8180bf6c', // Xem phiếu yêu cầu công việc
+            apiId: '68fee754df90864cd0ba5306', // /workOrder/getAllWorkType
+        },
+        {
+            permissionId: '68d1166bba1c480c8180bf6c', // Xem phiếu yêu cầu công việc
+            apiId: '68fee754df90864cd0ba5307', // /workOrder/getAllType
+        },
+        {
+            permissionId: '68d1166bba1c480c8180bf6c', // Xem phiếu yêu cầu công việc
+            apiId: '68fee754df90864cd0ba5308', // /workOrder/getAllWorkRequestSource
+        },
+        {
+            permissionId: '68d1166bba1c480c8180bf6c', // Xem phiếu yêu cầu công việc
+            apiId: '68fee754df90864cd0ba5309', // /workOrder/getAllTechnicianStatus
+        },
+        {
             permissionId: '68d1166bba1c480c8180bf6d', // Tạo phiếu yêu cầu công việc
             apiId: '68d1153524419859fede4ebf', // /workOrder/create
         },

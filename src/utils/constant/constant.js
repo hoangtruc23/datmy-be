@@ -14,7 +14,6 @@ const constant = {
         warehouseManager: '68f6f623dc799da9305e4347',
         financeManager: '68f6f623dc799da9305e4348',
         technicalManager: '68f6f623dc799da9305e4349',
-        technician: '68f6f623dc799da9305e434a',
     },
     PRODUCT_MANAGEMENT_TYPE: {
         NONE: 'none',
@@ -131,39 +130,84 @@ const constant = {
         DEBT: 'debt',
     },
     TECHNICIAN_STATUS: {
-        FREE: 'free',
-        WORKING: 'working',
+        FREE: {
+            value: 'free',
+            name: 'Rảnh',
+        },
+        WORKING: {
+            value: 'working',
+            name: 'Đang hoạt động',
+        },
     },
-    TECHNICIAN_SKILL: {
-        REPAIR: 'repair',
-        MAINTENANCE: 'maintenance',
-        DEMO: 'demo',
-        CONSULTING: 'consulting',
-        SAMPLE_PRINTING: 'samplePrinting',
-        TEST_IO: 'testIO',
-        INSTALLATION: 'installation',
+    WORK_ORDER_TYPE: {
+        NULL: {
+            value: '',
+            name: '',
+        },
+        REPAIR: {
+            value: 'repair',
+            name: 'Sửa chữa',
+        },
+        MAINTENANCE: {
+            value: 'maintenance',
+            name: 'Bảo trì',
+        },
+        INSTALLATION: {
+            value: 'installation',
+            name: 'Lắp đặt',
+        },
+        TEST_IO: {
+            value: 'testIO',
+            name: 'Test',
+        },
+        DEMO: {
+            value: 'demo',
+            name: 'Demo',
+        },
+        SAMPLE_PRINTING: {
+            value: 'samplePrinting',
+            name: 'In mẫu',
+        },
     },
-    WORK_TYPE_1: {
-        NULL: '',
-        REPAIR: 'repair',
-        MAINTENANCE: 'maintenance',
-        INSTALLATION: 'installation',
-        TEST_IO: 'testIO',
-        DEMO: 'demo',
-        SAMPLE_PRINTING: 'samplePrinting',
-    },
-    WORK_TYPE_2: {
-        NULL: '',
-        D: 'D',
-        G: 'G',
-        V: 'V',
-        M: 'M',
-        A: 'A',
+    WORK_ORDER_DETAIL_TYPE: {
+        NULL: {
+            value: '',
+            name: '',
+        },
+        D: {
+            value: 'D',
+            name: 'D',
+        },
+        G: {
+            value: 'G',
+            name: 'G',
+        },
+        V: {
+            value: 'V',
+            name: 'V',
+        },
+        M: {
+            value: 'M',
+            name: 'M',
+        },
+        A: {
+            value: 'A',
+            name: 'A',
+        },
     },
     WORK_REQUEST_SOURCE: {
-        CUSTOMER: 'customer',
-        WAREHOUSE: 'warehouse',
-        DEMO: 'demo',
+        CUSTOMER: {
+            value: 'customer',
+            name: 'Khách hàng',
+        },
+        WAREHOUSE: {
+            value: 'warehouse',
+            name: 'Kho',
+        },
+        DEMO: {
+            value: 'demo',
+            name: 'Demo',
+        },
     },
     WORK_REQUEST_STATUS: {
         PENDING: {

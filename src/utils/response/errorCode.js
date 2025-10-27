@@ -466,8 +466,12 @@ const errorCode = {
     },
     ORDER_CODE_EXISTS: {
         code: 115,
-        message: 'Mã đơn hàng đã tồn tại'
-    }
+        message: 'Mã đơn hàng đã tồn tại',
+    },
+    TECHNICIAN_EXISTED: {
+        code: 125,
+        message: 'Kỹ thuật viên đã tồn tại',
+    },
 }
 
 module.exports = errorCode

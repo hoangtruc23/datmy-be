@@ -34,18 +34,21 @@ const workOrderSchema = new Schema(
         },
         typeWork: {
             type: String,
-            enum: Object.values(constant.WORK_TYPE_1),
-            default: constant.WORK_TYPE_1.NULL,
+            enum: Object.values(constant.WORK_ORDER_TYPE).map((s) => s.value),
+            default: constant.WORK_ORDER_TYPE.NULL.value,
         },
         type: {
             type: String,
-            enum: Object.values(constant.WORK_TYPE_2),
-            default: constant.WORK_TYPE_2.NULL,
+            enum: Object.values(constant.WORK_ORDER_DETAIL_TYPE).map((s) => s.value),
+            default: constant.WORK_ORDER_DETAIL_TYPE.NULL.value,
         },
         requestSource: {
             type: String,
-            enum: Object.values(constant.WORK_REQUEST_SOURCE),
-            default: constant.WORK_REQUEST_SOURCE.WAREHOUSE,
+            enum: Object.values(constant.WORK_REQUEST_SOURCE).map(
+                (s) => s.value,
+            ),
+
+            default: constant.WORK_REQUEST_SOURCE.WAREHOUSE.value,
         },
         header: {
             type: String,

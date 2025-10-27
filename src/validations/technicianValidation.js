@@ -7,7 +7,11 @@ const technicianValidation = {
             .object({
                 status: joi
                     .string()
-                    .valid(...Object.values(constant.TECHNICIAN_STATUS))
+                    .valid(
+                        ...Object.values(constant.TECHNICIAN_STATUS).map(
+                            (s) => s.value,
+                        ),
+                    )
                     .required()
                     .messages({
                         'any.only':

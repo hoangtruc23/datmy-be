@@ -945,6 +945,26 @@ async function apiSeeder() {
             note: 'Lấy ra tất cả các mức độ ưu tiên',
         },
         {
+            _id: new Types.ObjectId('68fee754df90864cd0ba5306'),
+            api: '/workOrder/getAllWorkType',
+            note: 'Lấy ra tất cả loại công việc ',
+        },
+        {
+            _id: new Types.ObjectId('68fee754df90864cd0ba5307'),
+            api: '/workOrder/getAllType',
+            note: 'Lấy ra tất cả loại chi tiết công việc',
+        },
+        {
+            _id: new Types.ObjectId('68fee754df90864cd0ba5308'),
+            api: '/workOrder/getAllWorkRequestSource',
+            note: 'Lấy ra tất cả nguồn yêu cầu công việc ',
+        },
+        {
+            _id: new Types.ObjectId('68fee754df90864cd0ba5309'),
+            api: '/workOrder/getAllTechnicianStatus',
+            note: 'Lấy ra tất cả trạng thái của KTV',
+        },
+        {
             _id: new Types.ObjectId('68d1153524419859fede4ebf'),
             api: '/workOrder/create',
             note: 'Tạo phiếu yêu cầu công việc',

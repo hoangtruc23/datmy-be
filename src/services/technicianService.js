@@ -5,30 +5,30 @@ const userService = require('../services/userService')
 const constant = require('../utils/constant/constant')
 const BadReq = require('../utils/response/requestError')
 const errorCode = require('../utils/response/errorCode')
+const bcrypt = require('bcryptjs')
 
 const technicianService = {
-    create: async (reqUserId, reqData) => {
+    create: async (reqData) => {
         try {
             const { fullname, username, email, phoneNumber, password, area } =
                 reqData
-            await userService.create(reqUserId, {
-                fullname,
-                username,
-                email,
-                phoneNumber,
-                password,
-                department: constant.DEPARTMENT.TECHNICAL,
-                roleIds: [constant.ROLES.technician],
-            })
-            const user = await UserModel.findOne({ username })
+            const checkUsername = await TechnicianModel.findOne({ username })
+            if (checkUsername) {
+                throw new BadReq(errorCode.TECHNICIAN_EXISTED)
+            }
             const latestTechnician = await TechnicianModel.findOne()
                 .sort({ code: -1 })
                 .lean()
             const code = latestTechnician
                 ? `TECH-${String(Number(latestTechnician.code.slice(5)) + 1).padStart(5, '0')}`
                 : 'TECH-00001'
+            const hashPass = await bcrypt.hash(password, 10)
             await TechnicianModel.create({
-                userId: user._id,
+                fullname,
+                username,
+                email,
+                phoneNumber,
+                password: hashPass,
                 area,
                 code,
             })
@@ -110,13 +110,12 @@ const technicianService = {
                     },
                 },
             ])
-            const acc = Object.values(constant.TECHNICIAN_STATUS).reduce(
-                (acc, cur) => {
+            const acc = Object.values(constant.TECHNICIAN_STATUS)
+                .map((s) => s.value)
+                .reduce((acc, cur) => {
                     acc[cur] = 0
                     return acc
-                },
-                {},
-            )
+                }, {})
 
             const result = countByStatus.reduce(
                 (acc, cur) => {

@@ -71,5 +71,37 @@ const workOrderController = {
             next(error)
         }
     },
+    getAllWorkType: (req, res, next) => {
+        try {
+            const result = workOrderService.getAllWorkType()
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
+    getAllType: (req, res, next) => {
+        try {
+            const result = workOrderService.getAllType()
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
+    getAllTechnicianStatus: (req, res, next) => {
+        try {
+            const result = workOrderService.getAllTechnicianStatus()
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
+    getAllWorkRequestSource: (req, res, next) => {
+        try {
+            const result = workOrderService.getAllWorkRequestSource()
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
 }
 module.exports = workOrderController

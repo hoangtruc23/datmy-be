@@ -161,7 +161,7 @@ const workOrderService = {
                 ? `JOB-${String(Number(latestOrder.code.slice(4)) + 1).padStart(5, '0')}`
                 : 'JOB-00001'
 
-            await WorkOrderModel.create({
+            const workOrder = await WorkOrderModel.create({
                 code,
                 technicianId,
                 customerId,
@@ -170,17 +170,21 @@ const workOrderService = {
                 header,
                 description,
                 priority,
-                contactName,
-                contactPhone,
-                contactEmail,
+                contactPerson: { contactName, contactPhone, contactEmail },
                 address,
                 estimatedTime,
                 overDueTime,
             })
-            //ktv có việc => status = working
-            await TechnicianModel.findByIdAndUpdate(technicianId, {
-                status: constant.TECHNICIAN_STATUS.WORKING,
-            })
+
+            if (technicianId) {
+                //ktv có việc => status = working
+                await TechnicianModel.findByIdAndUpdate(technicianId, {
+                    status: constant.TECHNICIAN_STATUS.WORKING.value,
+                })
+                await WorkOrderModel.findByIdAndUpdate(workOrder._id, {
+                    assignedTime: new Date(),
+                })
+            }
             return null
         } catch (error) {
             throw error
@@ -208,7 +212,7 @@ const workOrderService = {
             }
 
             const technician = await TechnicianModel.findById(technicianId)
-            if (!technician) {
+            if (technicianId && !technician) {
                 throw new BadReq(errorCode.TECHNICIAN_NOT_FOUND)
             }
 
@@ -226,7 +230,11 @@ const workOrderService = {
             })
 
             //cập nhật ktv
-            if (checkWorkOrder.technicianId !== technicianId) {
+            if (technicianId && checkWorkOrder.technicianId !== technicianId) {
+                await WorkOrderModel.findByIdAndUpdate(workOrderId, {
+                    assignedTime: new Date(),
+                })
+
                 // ktv cũ nếu hết việc => cập nhật trạng thái
                 const othersWorkOrder = await WorkOrderModel.findOne({
                     technicianId: checkWorkOrder.technicianId,
@@ -235,15 +243,31 @@ const workOrderService = {
                     await TechnicianModel.findByIdAndUpdate(
                         checkWorkOrder.technicianId,
                         {
-                            status: constant.TECHNICIAN_STATUS.FREE,
+                            status: constant.TECHNICIAN_STATUS.FREE.value,
                         },
                     )
                 }
                 // ktv mới cập nhật trạng thái
                 await TechnicianModel.findByIdAndUpdate(technicianId, {
-                    status: constant.TECHNICIAN_STATUS.WORKING,
+                    status: constant.TECHNICIAN_STATUS.WORKING.value,
                 })
             }
+
+            if (!technicianId && checkWorkOrder.technicianId) {
+                // ktv cũ nếu hết việc => cập nhật trạng thái
+                const othersWorkOrder = await WorkOrderModel.findOne({
+                    technicianId: checkWorkOrder.technicianId,
+                })
+                if (!othersWorkOrder) {
+                    await TechnicianModel.findByIdAndUpdate(
+                        checkWorkOrder.technicianId,
+                        {
+                            status: constant.TECHNICIAN_STATUS.FREE.value,
+                        },
+                    )
+                }
+            }
+
             return null
         } catch (error) {
             throw error
@@ -265,7 +289,7 @@ const workOrderService = {
                 await TechnicianModel.findByIdAndUpdate(
                     checkWorkOrder.technicianId,
                     {
-                        status: constant.TECHNICIAN_STATUS.FREE,
+                        status: constant.TECHNICIAN_STATUS.FREE.value,
                     },
                 )
             }
@@ -277,6 +301,10 @@ const workOrderService = {
 
     getAllState: () => Object.values(constant.WORK_REQUEST_STATUS),
     getAllPriority: () => Object.values(constant.WORK_REQUEST_PRIORITY),
+    getAllWorkType: () => Object.values(constant.WORK_ORDER_TYPE),
+    getAllType: () => Object.values(constant.WORK_ORDER_DETAIL_TYPE),
+    getAllTechnicianStatus: () => Object.values(constant.TECHNICIAN_STATUS),
+    getAllWorkRequestSource: () => Object.values(constant.WORK_REQUEST_SOURCE),
 }
 
 module.exports = workOrderService
