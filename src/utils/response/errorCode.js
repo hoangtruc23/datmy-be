@@ -472,6 +472,10 @@ const errorCode = {
         code: 125,
         message: 'Kỹ thuật viên đã tồn tại',
     },
+    TECHNICIAN_CANNOT_LOCKED: {
+        code: 126,
+        message: 'Kỹ thuật viên hiện đang có công việc chưa hoàn thành',
+    },
 }
 
 module.exports = errorCode

@@ -792,6 +792,12 @@ async function permissionSeeder() {
             code: 'chinh_sua_ky_thuat_vien',
             parentPermissionId: '68db8978cc41fa86439388cc',
         },
+        {
+            _id: new Types.ObjectId('68ff31af6de21eecbc535ad1'),
+            name: 'Khóa/Mở khóa kỹ thuật viên',
+            code: 'khoa_mo_khoa-ky_thuat_vien',
+            parentPermissionId: '68db8978cc41fa86439388cc',
+        },
     ])
     logger.info('Permissions seeded')
 }
