@@ -277,6 +277,10 @@ const workOrderService = {
 
     getAllState: () => Object.values(constant.WORK_REQUEST_STATUS),
     getAllPriority: () => Object.values(constant.WORK_REQUEST_PRIORITY),
+    getAllWorkType1: () => Object.values(constant.WORK_TYPE_1),
+    getAllWorkType2: () => Object.values(constant.WORK_TYPE_2),
+    getAllTechnicianStatus: () => Object.values(constant.TECHNICIAN_STATUS),
+    getAllWorkRequestSource: () => Object.values(constant.WORK_REQUEST_SOURCE),
 }
 
 module.exports = workOrderService
