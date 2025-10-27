@@ -1005,6 +1005,11 @@ async function apiSeeder() {
             api: '/technician/update',
             note: 'Chỉnh sửa kỹ thuật viên',
         },
+        {
+            _id: new Types.ObjectId('68ff312d7c0247493f1d5065'),
+            api: '/technician/changeActive',
+            note: 'Khóa/Mở khóa kỹ thuật viên',
+        },
     ])
 
     logger.info('apis seeded')
