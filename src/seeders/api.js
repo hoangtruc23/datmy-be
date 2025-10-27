@@ -951,7 +951,7 @@ async function apiSeeder() {
         },
         {
             _id: new Types.ObjectId('68fee754df90864cd0ba5307'),
-            api: '/workOrder/getAllWorkDetailType',
+            api: '/workOrder/getAllType',
             note: 'Lấy ra tất cả loại chi tiết công việc',
         },
         {
