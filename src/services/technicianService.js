@@ -99,20 +99,6 @@ const technicianService = {
         }
     },
 
-    getByUserId: async (userId) => {
-        try {
-            const technician = await TechnicianModel.findOne({
-                userId,
-            }).populate('userId', 'fullname email phoneNumber username')
-            if (!technician) {
-                throw new BadReq(errorCode.TECHNICIAN_NOT_FOUND)
-            }
-            return technician
-        } catch (error) {
-            throw error
-        }
-    },
-
     getOverall: async () => {
         try {
             const allTechnician = await TechnicianModel.countDocuments({})
