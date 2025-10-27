@@ -7,14 +7,12 @@ const TechnicianModel = require('../models/technician')
 const UserModel = require('../models/user')
 
 const workOrderService = {
-    getAll: async (userId, query) => {
+    getAll: async (query) => {
         try {
-            let { limit = 10, page = 1, search = '', status, type } = query
+            let { limit = 10, page = 1, search = '', status, typeWork } = query
             limit = Number(limit)
             page = Number(page)
             search = new RegExp(search, 'i')
-
-            const technician = await TechnicianModel.findOne({ userId })
 
             const customers = await CustomerModel.find({ officialName: search })
             const customerIds = customers ? customers.map((c) => c._id) : []
@@ -26,18 +24,17 @@ const workOrderService = {
                     { customerId: { $in: customerIds } },
                 ],
                 ...(status ? { status } : {}),
-                ...(type ? { type } : {}),
-                ...(technician ? { technicianId: technician } : {}),
+                ...(typeWork ? { typeWork } : { typeWork: '' }),
             }
             const [workOrders, totalItems] = await Promise.all([
                 WorkOrderModel.find(conditions)
                     .skip((page - 1) * limit)
                     .limit(limit)
-                    .populate('customerId', 'officialName representative.name phone email')
-                    .populate({
-                        path: 'technicianId',
-                        populate: { path: 'userId', select: 'fullname' },
-                    })
+                    .populate(
+                        'customerId',
+                        'officialName representative.name phone email',
+                    )
+                    .populate('technicianId', 'fullname')
                     .lean(),
                 WorkOrderModel.countDocuments(conditions),
             ])
@@ -46,7 +43,7 @@ const workOrderService = {
                 if (order.technicianId) {
                     technicianInfo = {
                         technicianId: order.technicianId._id,
-                        fullname: order.technicianId.userId.fullname,
+                        fullname: order.technicianId.fullname,
                     }
                 }
                 return {
@@ -68,11 +65,11 @@ const workOrderService = {
     getById: async (workOrderId) => {
         try {
             const workOrder = await WorkOrderModel.findById(workOrderId)
-                .populate('customerId', 'officialName representative.name phone email')
-                .populate({
-                    path: 'technicianId',
-                    populate: { path: 'userId', select: 'fullname' },
-                })
+                .populate(
+                    'customerId',
+                    'officialName representative.name phone email',
+                )
+                .populate('technicianId', 'fullname')
                 .lean()
             if (!workOrder) {
                 throw new BadReq(errorCode.WORK_ORDER_NOT_FOUND)
@@ -81,7 +78,7 @@ const workOrderService = {
             if (workOrder.technicianId) {
                 technicianInfo = {
                     technicianId: workOrder.technicianId._id,
-                    fullname: workOrder.technicianId.userId.fullname,
+                    fullname: workOrder.technicianId.fullname,
                 }
             }
             return { ...workOrder, technicianInfo, technicianId: undefined }
@@ -148,7 +145,10 @@ const workOrderService = {
             if (!customer) {
                 throw new BadReq(errorCode.CUSTOMER_NOT_FOUND)
             }
-            const technician = await TechnicianModel.findById(technicianId)
+            const technician = await TechnicianModel.findOne({
+                technicianId,
+                isActive: true,
+            })
             if (technicianId && !technician) {
                 throw new BadReq(errorCode.TECHNICIAN_NOT_FOUND)
             }
@@ -211,7 +211,10 @@ const workOrderService = {
                 throw new BadReq(errorCode.WORK_ORDER_NOT_FOUND)
             }
 
-            const technician = await TechnicianModel.findById(technicianId)
+            const technician = await TechnicianModel.findOne({
+                technicianId,
+                isActive: true,
+            })
             if (technicianId && !technician) {
                 throw new BadReq(errorCode.TECHNICIAN_NOT_FOUND)
             }

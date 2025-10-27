@@ -11,11 +11,20 @@ const workOrderValidation = {
                             (s) => s.value,
                         ),
                     )
-                    .required()
                     .messages({
                         'any.only':
                             "Tình trạng của phiếu chỉ bao gồm 'pending', 'inProgress', 'completed', 'overdue'",
-                        'any.required': 'Tình trạng của phiếu là bắt buộc',
+                    }),
+                typeWork: joi
+                    .string()
+                    .valid(
+                        ...Object.values(constant.WORK_ORDER_TYPE).map(
+                            (s) => s.value,
+                        ),
+                    )
+                    .messages({
+                        'any.only':
+                            "typeWork chỉ bao gồm '', 'repair', 'maintenance', 'installation', 'testIO', 'demo', 'samplePrinting'",
                     }),
             })
             .unknown(true),
@@ -40,7 +49,7 @@ const workOrderValidation = {
                 contactName: joi.string().trim().min(1).required().messages({
                     '*': 'Tên người liên hệ là bắt buộc',
                 }),
-                
+
                 description: joi.string().trim().min(1).required().messages({
                     '*': 'Mô tả công việc là bắt buộc',
                 }),
