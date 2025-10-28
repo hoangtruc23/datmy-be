@@ -4,6 +4,10 @@ const constant = require('../utils/constant/constant')
 const BadReq = require('../utils/response/requestError')
 const errorCode = require('../utils/response/errorCode')
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
+const { envConfig } = require('../config/envConfg')
+const { clientRedis } = require('../config/redisConfig')
+const PermissionApiModel = require('../models/permissionApi')
 
 const technicianService = {
     create: async (reqData) => {
@@ -179,5 +183,100 @@ const technicianService = {
         return null
     },
     getAllTechnicianStatus: () => Object.values(constant.TECHNICIAN_STATUS),
+    login: async (reqData) => {
+        try {
+            const { username, password } = reqData
+            const technician = await TechnicianModel.findOne({
+                username,
+                isActive: true,
+            })
+            if (!technician) {
+                throw new BadReq(errorCode.INCORRECT_USERNAME)
+            }
+            const checkPassword = await bcrypt.compare(
+                password,
+                technician.password,
+            )
+            if (!checkPassword) {
+                throw new BadReq(errorCode.INCORRECT_PASSWORD)
+            }
+
+            const ts = Date.now()
+            const accessToken = jwt.sign(
+                { userId: technician._id, ts },
+                envConfig.JWT_ACCESS_TOKEN_PRIVATE_KEY,
+                { expiresIn: Number(envConfig.JWT_ACCESS_TOKEN_EXPIRES) },
+            )
+            await clientRedis.set(
+                `${constant.REDIS_PREFIX_ACCESS_TOKEN}_${technician._id}_${ts}`,
+                accessToken,
+                { EX: envConfig.JWT_ACCESS_TOKEN_EXPIRES },
+            )
+
+            const apis = (
+                await PermissionApiModel.find({
+                    permissionId: {
+                        $in: Object.values(constant.TECHNICIAN_PERMISSION_ID),
+                    },
+                }).populate('apiId')
+            ).map((a) => a?.apiId?.api)
+
+            await clientRedis.set(
+                `${constant.REDIS_PREFIX_PERMISSION}_${technician._id}`,
+                JSON.stringify(apis),
+                {
+                    EX: envConfig.JWT_ACCESS_TOKEN_EXPIRES,
+                },
+            )
+            return accessToken
+        } catch (error) {
+            throw error
+        }
+    },
+    logout: async (token) => {
+        try {
+            const tokenData = jwt.verify(
+                token,
+                envConfig.JWT_ACCESS_TOKEN_PRIVATE_KEY,
+            )
+            await clientRedis.del(
+                `${constant.REDIS_PREFIX_ACCESS_TOKEN}_${tokenData.userId}_${tokenData.ts}`,
+            )
+            return null
+        } catch (error) {
+            throw error
+        }
+    },
+    changPassword: async (technicianId, reqData) => {
+        try {
+            const { newPassword } = reqData
+            const technician = await TechnicianModel.findById(technicianId)
+            if (!technician) {
+                throw new BadReq(errorCode.TECHNICIAN_NOT_FOUND)
+            }
+
+            const hashPass = await bcrypt.hash(newPassword, 10)
+            await TechnicianModel.findByIdAndUpdate(technicianId, {
+                password: hashPass,
+            })
+            return null
+        } catch (error) {
+            throw error
+        }
+    },
+    getTechnicianLoginDetail: async (technicianId) => {
+        try {
+            const technician = await TechnicianModel.findById(technicianId, {
+                password: 0,
+                __v: 0,
+            }).lean()
+            if (!technician) {
+                throw new BadReq(errorCode.TECHNICIAN_NOT_FOUND)
+            }
+            return technician
+        } catch (error) {
+            throw error
+        }
+    },
 }
 module.exports = technicianService
