@@ -15,6 +15,10 @@ const constant = {
         financeManager: '68f6f623dc799da9305e4348',
         technicalManager: '68f6f623dc799da9305e4349',
     },
+    TECHNICIAN_PERMISSION_ID: {
+        WORK_ORDER: '68d1166bba1c480c8180bf6b',
+        WORK_ORDER_READ: '68d1166bba1c480c8180bf6c'
+    },
     PRODUCT_MANAGEMENT_TYPE: {
         NONE: 'none',
         SERIAL: 'serial',

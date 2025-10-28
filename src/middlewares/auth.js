@@ -46,6 +46,7 @@ const checkPermission = async (req, res, next) => {
         const listApiNotCheck = [
             '/login',
             '/getUserLoginDetail',
+            '/getTechnicianLoginDetail',
             '/changePassword',
             '/logout',
         ]
