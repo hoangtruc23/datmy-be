@@ -25,7 +25,7 @@ const systemRoute = require('./systemRoute')
 const mailRoute = require('./mailRoute')
 const productTransferHistoryRoute = require('./productTransferHistoryRoute')
 const workOrderRoute = require('./workOrderRoute')
-const technicianRoute = require('./technician')
+const technicianRoute = require('./technicianRoute')
 const orderRoute = require('./orderRoute')
 
 router.use('/auth', authRoute)

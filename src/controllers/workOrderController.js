@@ -4,7 +4,7 @@ const workOrderService = require('../services/workOrderService')
 const workOrderController = {
     getAll: async (req, res, next) => {
         try {
-            const result = await workOrderService.getAll(req.query)
+            const result = await workOrderService.getAll(req.userId, req.query)
             return res.status(200).json(response.success(result))
         } catch (error) {
             next(error)
@@ -82,14 +82,6 @@ const workOrderController = {
     getAllType: (req, res, next) => {
         try {
             const result = workOrderService.getAllType()
-            return res.status(200).json(response.success(result))
-        } catch (error) {
-            next(error)
-        }
-    },
-    getAllTechnicianStatus: (req, res, next) => {
-        try {
-            const result = workOrderService.getAllTechnicianStatus()
             return res.status(200).json(response.success(result))
         } catch (error) {
             next(error)

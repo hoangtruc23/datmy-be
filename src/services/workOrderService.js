@@ -4,16 +4,16 @@ const errorCode = require('../utils/response/errorCode')
 const CustomerModel = require('../models/customer')
 const constant = require('../utils/constant/constant')
 const TechnicianModel = require('../models/technician')
-const UserModel = require('../models/user')
 
 const workOrderService = {
-    getAll: async (query) => {
+    getAll: async (reqUserId, query) => {
         try {
             let { limit = 10, page = 1, search = '', status, typeWork } = query
             limit = Number(limit)
             page = Number(page)
             search = new RegExp(search, 'i')
 
+            const technician = await TechnicianModel.findById(reqUserId)
             const customers = await CustomerModel.find({ officialName: search })
             const customerIds = customers ? customers.map((c) => c._id) : []
 
@@ -25,6 +25,7 @@ const workOrderService = {
                 ],
                 ...(status ? { status } : {}),
                 ...(typeWork ? { typeWork } : { typeWork: '' }),
+                ...(technician ? { technicianId: reqUserId } : {}),
             }
             const [workOrders, totalItems] = await Promise.all([
                 WorkOrderModel.find(conditions)
@@ -146,7 +147,7 @@ const workOrderService = {
                 throw new BadReq(errorCode.CUSTOMER_NOT_FOUND)
             }
             const technician = await TechnicianModel.findOne({
-                technicianId,
+                _id: technicianId,
                 isActive: true,
             })
             if (technicianId && !technician) {
@@ -212,7 +213,7 @@ const workOrderService = {
             }
 
             const technician = await TechnicianModel.findOne({
-                technicianId,
+                _id: technicianId,
                 isActive: true,
             })
             if (technicianId && !technician) {
@@ -306,7 +307,6 @@ const workOrderService = {
     getAllPriority: () => Object.values(constant.WORK_REQUEST_PRIORITY),
     getAllWorkType: () => Object.values(constant.WORK_ORDER_TYPE),
     getAllType: () => Object.values(constant.WORK_ORDER_DETAIL_TYPE),
-    getAllTechnicianStatus: () => Object.values(constant.TECHNICIAN_STATUS),
     getAllWorkRequestSource: () => Object.values(constant.WORK_REQUEST_SOURCE),
 }
 

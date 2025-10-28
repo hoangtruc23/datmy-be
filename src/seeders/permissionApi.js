@@ -815,10 +815,6 @@ async function permissionApiSeeder() {
             apiId: '68fee754df90864cd0ba5308', // /workOrder/getAllWorkRequestSource
         },
         {
-            permissionId: '68d1166bba1c480c8180bf6c', // Xem phiếu yêu cầu công việc
-            apiId: '68fee754df90864cd0ba5309', // /workOrder/getAllTechnicianStatus
-        },
-        {
             permissionId: '68d1166bba1c480c8180bf6d', // Tạo phiếu yêu cầu công việc
             apiId: '68d1153524419859fede4ebf', // /workOrder/create
         },
@@ -855,6 +851,10 @@ async function permissionApiSeeder() {
         {
             permissionId: '68ff31af6de21eecbc535ad1', // Khóa/Mở khóa kỹ thuật viên
             apiId: '68ff312d7c0247493f1d5065', // /technician/changeActive
+        },
+        {
+            permissionId: '68db8978cc41fa86439388cd', // Xem kỹ thuật viên
+            apiId: '68fee754df90864cd0ba5309', // /workOrder/getAllTechnicianStatus
         },
     ])
     logger.info('PermissionApis seeded')

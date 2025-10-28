@@ -57,5 +57,13 @@ const technicianController = {
             next(error)
         }
     },
+    getAllTechnicianStatus: (req, res, next) => {
+        try {
+            const result = technicianService.getAllTechnicianStatus()
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
 }
 module.exports = technicianController
