@@ -1,7 +1,5 @@
 const TechnicianModel = require('../models/technician')
-const UserModel = require('../models/user')
 const WorkOrderModel = require('../models/workOrder')
-const userService = require('../services/userService')
 const constant = require('../utils/constant/constant')
 const BadReq = require('../utils/response/requestError')
 const errorCode = require('../utils/response/errorCode')
@@ -180,5 +178,6 @@ const technicianService = {
         })
         return null
     },
+    getAllTechnicianStatus: () => Object.values(constant.TECHNICIAN_STATUS),
 }
 module.exports = technicianService

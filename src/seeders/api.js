@@ -960,11 +960,6 @@ async function apiSeeder() {
             note: 'Lấy ra tất cả nguồn yêu cầu công việc ',
         },
         {
-            _id: new Types.ObjectId('68fee754df90864cd0ba5309'),
-            api: '/workOrder/getAllTechnicianStatus',
-            note: 'Lấy ra tất cả trạng thái của KTV',
-        },
-        {
             _id: new Types.ObjectId('68d1153524419859fede4ebf'),
             api: '/workOrder/create',
             note: 'Tạo phiếu yêu cầu công việc',
@@ -1009,6 +1004,11 @@ async function apiSeeder() {
             _id: new Types.ObjectId('68ff312d7c0247493f1d5065'),
             api: '/technician/changeActive',
             note: 'Khóa/Mở khóa kỹ thuật viên',
+        },
+        {
+            _id: new Types.ObjectId('68fee754df90864cd0ba5309'),
+            api: '/technician/getAllTechnicianStatus',
+            note: 'Lấy ra tất cả trạng thái của KTV',
         },
     ])
 
