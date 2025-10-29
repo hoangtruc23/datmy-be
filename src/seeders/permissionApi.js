@@ -595,6 +595,31 @@ async function permissionApiSeeder() {
             permissionId: '6892ceaeee639479e26a93b4', // Tạo giấy đề nghị thanh toán
             apiId: '6892ceaeee639479e26a93b2', // /debt/generatePaymentRequest
         },
+        // Đơn hàng
+        {
+            permissionId: '688c7f601bbabc36f19d6ab2', // Xem đơn hàng
+            apiId: '68b1f0e4d1f5c4e4f8b5e8c1', // /order/getAll
+        },
+        {
+            permissionId: '688c7f601bbabc36f19d6ab2', // Xem đơn hàng
+            apiId: '68b1f0e4d1f5c4e4f8b5e8c2', // /order/getById
+        },
+        {
+            permissionId: '688c7f601bbabc36f19d6ab2', // Xem đơn hàng
+            apiId: '68b1f0e4d1f5c4e4f8b5e8c5', // /order/getByIdForIssue
+        },
+        {
+            permissionId: '688c7f601bbabc36f19d6ab3', // Tạo đơn hàng
+            apiId: '68b1f0e4d1f5c4e4f8b5e8c4', // /order/create
+        },
+        {
+            permissionId: '688c7f601bbabc36f19d6ab4', // chỉnh sửa đơn hàng
+            apiId: '68d1153524419859fede4ebd', // /order/update
+        },
+        {
+            permissionId: '688c7f601bbabc36f19d6ab5', // xóa đơn hàng
+            apiId: '68b1f0e4d1f5c4e4f8b5e8c3', // /order/delete
+        },
 
         //Cài đặt công nợ
         {
@@ -672,32 +697,24 @@ async function permissionApiSeeder() {
             apiId: '687165240ac4b74840483515', // /discount/create
         },
         {
-            permissionId: '687165e2ee8406ca535d1ba2', // Xem tất cả phiếu chiết khấu
+            permissionId: '687165e2ee8406ca535d1ba2', // Xem phiếu chiết khấu
             apiId: '6871864935925a3d24f17a15', // /discount/getAll
         },
         {
-            permissionId: '687165e2ee8406ca535d1ba2', // Xem một phiếu chiết khấu
+            permissionId: '687165e2ee8406ca535d1ba2', // Xem phiếu chiết khấu
             apiId: '6871899346e790eda9a08c04', // /discount/getById
+        },
+        {
+            permissionId: '687165e2ee8406ca535d1ba2', // Xem phiếu chiết khấu
+            apiId: '68e6d2593a5ce22f2582b284', // /discount/getById
         },
         {
             permissionId: '687165e2ee8406ca535d1ba2', // Xem lịch sử tất cả phiếu chiết khấu
             apiId: '6871899346e790eda9a08c05', // /discount/getHistory
         },
         {
-            permissionId: '687165e2ee8406ca535d1ba2', // Xem các thông tin thống kê
-            apiId: '6871899346e790eda9a08c06', // /discount/getOverview
-        },
-        {
             permissionId: '687165e2ee8406ca535d1ba4', // Sửa phiếu chiết khấu
             apiId: '6871899346e790eda9a08c07', // /discount/update
-        },
-        {
-            permissionId: '687165e2ee8406ca535d1ba4', // Sửa phiếu chiết khấu
-            apiId: '68734efbffa7cc41b2858838', // /discount/approved
-        },
-        {
-            permissionId: '687165e2ee8406ca535d1ba4', // Sửa phiếu chiết khấu
-            apiId: '68734efbffa7cc41b2858839', // /discount/rejected
         },
         {
             permissionId: '687165e2ee8406ca535d1ba4', // Sửa phiếu chiết khấu
@@ -778,6 +795,26 @@ async function permissionApiSeeder() {
             apiId: '68d37503136efac69b7bcad2', // /workOrder/getOverall
         },
         {
+            permissionId: '68d1166bba1c480c8180bf6c', // Xem phiếu yêu cầu công việc
+            apiId: '68f89736d0014bb79a3e081c', // /workOrder/getAllState
+        },
+        {
+            permissionId: '68d1166bba1c480c8180bf6c', // Xem phiếu yêu cầu công việc
+            apiId: '68f89736d0014bb79a3e081d', // /workOrder/getAllPriority
+        },
+        {
+            permissionId: '68d1166bba1c480c8180bf6c', // Xem phiếu yêu cầu công việc
+            apiId: '68fee754df90864cd0ba5306', // /workOrder/getAllWorkType
+        },
+        {
+            permissionId: '68d1166bba1c480c8180bf6c', // Xem phiếu yêu cầu công việc
+            apiId: '68fee754df90864cd0ba5307', // /workOrder/getAllType
+        },
+        {
+            permissionId: '68d1166bba1c480c8180bf6c', // Xem phiếu yêu cầu công việc
+            apiId: '68fee754df90864cd0ba5308', // /workOrder/getAllWorkRequestSource
+        },
+        {
             permissionId: '68d1166bba1c480c8180bf6d', // Tạo phiếu yêu cầu công việc
             apiId: '68d1153524419859fede4ebf', // /workOrder/create
         },
@@ -810,6 +847,14 @@ async function permissionApiSeeder() {
         {
             permissionId: '68db8978cc41fa86439388cf', // Chỉnh sửa kỹ thuật viên
             apiId: '68db886658aa745a165f0c0b', // /technician/update
+        },
+        {
+            permissionId: '68ff31af6de21eecbc535ad1', // Khóa/Mở khóa kỹ thuật viên
+            apiId: '68ff312d7c0247493f1d5065', // /technician/changeActive
+        },
+        {
+            permissionId: '68db8978cc41fa86439388cd', // Xem kỹ thuật viên
+            apiId: '68fee754df90864cd0ba5309', // /workOrder/getAllTechnicianStatus
         },
     ])
     logger.info('PermissionApis seeded')

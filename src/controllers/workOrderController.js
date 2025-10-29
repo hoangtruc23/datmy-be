@@ -55,5 +55,45 @@ const workOrderController = {
             next(error)
         }
     },
+    getAllState: (req, res, next) => {
+        try {
+            const result = workOrderService.getAllState()
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
+    getAllPriority: (req, res, next) => {
+        try {
+            const result = workOrderService.getAllPriority()
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
+    getAllWorkType: (req, res, next) => {
+        try {
+            const result = workOrderService.getAllWorkType()
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
+    getAllType: (req, res, next) => {
+        try {
+            const result = workOrderService.getAllType()
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
+    getAllWorkRequestSource: (req, res, next) => {
+        try {
+            const result = workOrderService.getAllWorkRequestSource()
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
 }
 module.exports = workOrderController

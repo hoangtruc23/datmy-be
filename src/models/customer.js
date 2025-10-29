@@ -123,7 +123,7 @@ const customerSchema = new Schema(
         },
         internalTransport: { type: Boolean, default: false },
         //warehouseId: { type: Schema.Types.ObjectId, ref: 'Warehouse' },
-        productsInUse: [{ type: Schema.Types.ObjectId, ref: 'Product' }],
+        productsInUse: [{ type: Schema.Types.ObjectId, ref: 'products' }],
         status: {
             type: String,
             enum: ['none', 'met', 'not_met'],

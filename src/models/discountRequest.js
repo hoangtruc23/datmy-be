@@ -26,11 +26,6 @@ const discountRequestSchema = new Schema(
             ref: 'products',
         },
         discounts: [discountSchema],
-        refundStatus: {
-            type: String,
-            enum: Object.values(constant.REFUND_STATUS),
-            default: constant.REFUND_STATUS.UNPAID,
-        },
         content: {
             type: String,
         },
@@ -42,5 +37,5 @@ const discountRequestSchema = new Schema(
     { timestamps: true },
 )
 
-const DiscountRequestModel = model('discount_requests', discountRequestSchema)
+const DiscountRequestModel = model('discountrequests', discountRequestSchema)
 module.exports = DiscountRequestModel

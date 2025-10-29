@@ -3,9 +3,28 @@ const constant = require('../utils/constant/constant')
 
 const technicianModel = new Schema(
     {
-        userId: {
-            type: Types.ObjectId,
-            ref: 'users',
+        fullname: {
+            type: String,
+            required: true,
+        },
+        username: {
+            type: String,
+            required: true,
+        },
+        email: {
+            type: String,
+        },
+        phoneNumber: {
+            type: String,
+        },
+        password: {
+            type: String,
+            required: true,
+        },
+        isActive: {
+            type: Boolean,
+            required: true,
+            default: true,
         },
         code: {
             type: String,
@@ -16,8 +35,8 @@ const technicianModel = new Schema(
         },
         status: {
             type: String,
-            enum: Object.values(constant.TECHNICIAN_STATUS),
-            default: constant.TECHNICIAN_STATUS.FREE,
+            enum: Object.values(constant.TECHNICIAN_STATUS).map((s) => s.value),
+            default: constant.TECHNICIAN_STATUS.FREE.value,
         },
     },
     { timestamps: true },

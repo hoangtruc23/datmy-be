@@ -47,5 +47,61 @@ const technicianController = {
             next(error)
         }
     },
+    changeActive: async (req, res, next) => {
+        try {
+            const result = await technicianService.changeActive(
+                req.params.technicianId,
+            )
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
+    getAllTechnicianStatus: (req, res, next) => {
+        try {
+            const result = technicianService.getAllTechnicianStatus()
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
+    login: async (req, res, next) => {
+        try {
+            const result = await technicianService.login(req.body)
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
+    changePassword: async (req, res, next) => {
+        try {
+            const result = await technicianService.changPassword(
+                req.userId,
+                req.body,
+            )
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
+    getTechnicianLoginDetail: async (req, res, next) => {
+        try {
+            const result = await technicianService.getTechnicianLoginDetail(
+                req.userId,
+            )
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
+    logout: async (req, res, next) => {
+        try {
+            const token = req.headers.authorization?.split(' ')[1]
+            const result = await technicianService.logout(token)
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
 }
 module.exports = technicianController

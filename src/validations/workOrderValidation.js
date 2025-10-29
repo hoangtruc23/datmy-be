@@ -6,12 +6,25 @@ const workOrderValidation = {
             .object({
                 status: joi
                     .string()
-                    .valid(...Object.values(constant.WORK_REQUEST_STATUS))
-                    .required()
+                    .valid(
+                        ...Object.values(constant.WORK_REQUEST_STATUS).map(
+                            (s) => s.value,
+                        ),
+                    )
                     .messages({
                         'any.only':
                             "Tình trạng của phiếu chỉ bao gồm 'pending', 'inProgress', 'completed', 'overdue'",
-                        'any.required': 'Tình trạng của phiếu là bắt buộc',
+                    }),
+                typeWork: joi
+                    .string()
+                    .valid(
+                        ...Object.values(constant.WORK_ORDER_TYPE).map(
+                            (s) => s.value,
+                        ),
+                    )
+                    .messages({
+                        'any.only':
+                            "typeWork chỉ bao gồm '', 'repair', 'maintenance', 'installation', 'testIO', 'demo', 'samplePrinting'",
                     }),
             })
             .unknown(true),
@@ -24,7 +37,11 @@ const workOrderValidation = {
                 }),
                 typeWork: joi
                     .string()
-                    .valid(...Object.values(constant.WORK_TYPE_1))
+                    .valid(
+                        ...Object.values(constant.WORK_ORDER_TYPE).map(
+                            (s) => s.value,
+                        ),
+                    )
                     .messages({
                         'any.only':
                             "typeWork chỉ bao gồm '', 'repair', 'maintenance', 'installation', 'testIO', 'demo', 'samplePrinting'",
@@ -32,25 +49,17 @@ const workOrderValidation = {
                 contactName: joi.string().trim().min(1).required().messages({
                     '*': 'Tên người liên hệ là bắt buộc',
                 }),
-                contactPhone: joi
-                    .string()
-                    .pattern(/^[0-9]{4,15}$/)
-                    .messages({
-                        'string.pattern.base':
-                            'Số điện thoại phải có từ 4 đến 15 chữ số',
-                    }),
-                contactEmail: joi
-                    .string()
-                    .email({ tlds: { allow: false } })
-                    .messages({
-                        'string.email': 'Email không đúng định dạng',
-                    }),
+
                 description: joi.string().trim().min(1).required().messages({
                     '*': 'Mô tả công việc là bắt buộc',
                 }),
                 priority: joi
                     .string()
-                    .valid(...Object.values(constant.WORK_REQUEST_PRIORITY))
+                    .valid(
+                        ...Object.values(constant.WORK_REQUEST_PRIORITY).map(
+                            (s) => s.value,
+                        ),
+                    )
                     .required()
                     .messages({
                         'any.only':
@@ -69,7 +78,11 @@ const workOrderValidation = {
                 }),
                 requestSource: joi
                     .string()
-                    .valid(...Object.values(constant.WORK_REQUEST_SOURCE))
+                    .valid(
+                        ...Object.values(constant.WORK_REQUEST_SOURCE).map(
+                            (s) => s.value,
+                        ),
+                    )
                     .messages({
                         'any.only':
                             "requestSource chỉ bao gồm 'customer', 'warehouse', 'demo'",
@@ -85,14 +98,22 @@ const workOrderValidation = {
                 }),
                 typeWork: joi
                     .string()
-                    .valid(...Object.values(constant.WORK_TYPE_1))
+                    .valid(
+                        ...Object.values(constant.WORK_ORDER_TYPE).map(
+                            (s) => s.value,
+                        ),
+                    )
                     .messages({
                         'any.only':
                             "typeWork chỉ bao gồm '', 'repair', 'maintenance', 'installation', 'testIO', 'demo', 'samplePrinting'",
                     }),
                 type: joi
                     .string()
-                    .valid(...Object.values(constant.WORK_TYPE_2))
+                    .valid(
+                        ...Object.values(constant.WORK_ORDER_DETAIL_TYPE).map(
+                            (s) => s.value,
+                        ),
+                    )
                     .messages({
                         'any.only':
                             "type chỉ bao gồm '', 'D', 'G', 'V', 'M', 'A'",
@@ -102,7 +123,11 @@ const workOrderValidation = {
                 }),
                 priority: joi
                     .string()
-                    .valid(...Object.values(constant.WORK_REQUEST_PRIORITY))
+                    .valid(
+                        ...Object.values(constant.WORK_REQUEST_PRIORITY).map(
+                            (s) => s.value,
+                        ),
+                    )
                     .required()
                     .messages({
                         'any.only':
@@ -121,14 +146,22 @@ const workOrderValidation = {
                 }),
                 requestSource: joi
                     .string()
-                    .valid(...Object.values(constant.WORK_REQUEST_SOURCE))
+                    .valid(
+                        ...Object.values(constant.WORK_REQUEST_SOURCE).map(
+                            (s) => s.value,
+                        ),
+                    )
                     .messages({
                         'any.only':
                             "requestSource chỉ bao gồm 'customer', 'warehouse', 'demo'",
                     }),
                 status: joi
                     .string()
-                    .valid(...Object.values(constant.WORK_REQUEST_STATUS))
+                    .valid(
+                        ...Object.values(constant.WORK_REQUEST_STATUS).map(
+                            (s) => s.value,
+                        ),
+                    )
                     .messages({
                         'any.only':
                             "status chỉ bao gồm 'pending', 'inProgress', 'completed', 'overdue'",

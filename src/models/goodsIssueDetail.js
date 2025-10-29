@@ -67,6 +67,10 @@ const goodsIssueDetailSchema = new Schema({
     note: {
         type: String,
     },
+    orderDetailId: {
+        type: Types.ObjectId,
+        ref: 'orderDetails',
+    },
 })
 
 const GoodsIssueDetaileModel = model(

@@ -4,7 +4,7 @@ const response = require('../utils/response/response')
 const userController = {
     getAll: async (req, res, next) => {
         try {
-            const result = await userService.getAll(req.query)
+            const result = await userService.getAll(req.userId, req.query)
             return res.status(200).json(response.success(result))
         } catch (error) {
             next(error)
@@ -21,7 +21,7 @@ const userController = {
     },
     create: async (req, res, next) => {
         try {
-            const result = await userService.create(req.body)
+            const result = await userService.create(req.userId, req.body)
             return res.status(200).json(response.success(result))
         } catch (error) {
             next(error)
@@ -30,7 +30,11 @@ const userController = {
     update: async (req, res, next) => {
         try {
             const { userId } = req.params
-            const result = await userService.update(userId, req.body)
+            const result = await userService.update(
+                req.userId,
+                userId,
+                req.body,
+            )
             return res.status(200).json(response.success(result))
         } catch (error) {
             next(error)
@@ -40,7 +44,11 @@ const userController = {
         try {
             const { userId } = req.params
             const { newPassword } = req.body
-            const result = await userService.changePassword(userId, newPassword)
+            const result = await userService.changePassword(
+                req.userId,
+                userId,
+                newPassword,
+            )
             return res.status(200).json(response.success(result))
         } catch (error) {
             next(error)
@@ -49,7 +57,10 @@ const userController = {
     changeActiveStatus: async (req, res, next) => {
         try {
             const { userId } = req.params
-            const result = await userService.changeActiveStatus(userId)
+            const result = await userService.changeActiveStatus(
+                req.userId,
+                userId,
+            )
             return res.status(200).json(response.success(result))
         } catch (error) {
             next(error)

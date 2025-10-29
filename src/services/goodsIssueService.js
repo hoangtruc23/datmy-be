@@ -11,6 +11,8 @@ const ProductStorageModel = require('../models/productStorage')
 const GoodsIssueApprovalModel = require('../models/goodsIssueApproval')
 const UserModel = require('../models/user')
 const CustomerModel = require('../models/customer')
+const OrderModel = require('../models/order')
+const OrderDetailModel = require('../models/orderDetail')
 const GoodsIssueDetailModel = require('../models/goodsIssueDetail')
 const { findDuplicateTrackingCode } = require('../utils/helper/helper')
 const downloadService = require('./downloadService')
@@ -165,7 +167,6 @@ const goodsIssueService = {
                 throw new BadReq(errorCode.CUSTOMER_NOT_FOUND)
             }
             if (!isDraft && checkGoodsIssue.isDraft) {
-                // Nếu phiếu tạo mà không phải nháp thì ta cập nhật lại productStorage (tồn kho)
                 const goodsIssueDetails = await GoodsIssueDetaileModel.find({
                     goodsIssueId,
                 })
@@ -181,13 +182,24 @@ const goodsIssueService = {
                                     productId: goodsIssueDetail.productId,
                                     trackingCode: storage.trackingCode,
                                 },
-                                // nhớ check lại khi nó trừ số lượng âm thì có throw lỗi không
                                 {
                                     $inc: { quantity: -storage.quantity },
                                 },
                                 { session },
                             )
                         }
+                    }
+                    if (goodsIssueDetail.orderDetailId) {
+                        await OrderDetailModel.findByIdAndUpdate(
+                            goodsIssueDetail.orderDetailId,
+                            {
+                                $inc: {
+                                    quantityExported:
+                                        goodsIssueDetail.issuedQuantity,
+                                },
+                            },
+                            { session },
+                        )
                     }
                 }
             }
@@ -310,6 +322,19 @@ const goodsIssueService = {
                             )
                         }
                     }
+                    if (goodsIssueDetail.orderDetailId) {
+
+                        const deatail = await OrderDetailModel.findByIdAndUpdate(
+                            goodsIssueDetail.orderDetailId,
+                            {
+                                $inc: {
+                                    quantityExported:
+                                        goodsIssueDetail.issuedQuantity,
+                                },
+                            },
+                            { session },
+                        )
+                    }
                 }
             }
             await GoodsIssueModel.findByIdAndUpdate(
@@ -409,6 +434,7 @@ const goodsIssueService = {
     addProduct: async (product) => {
         const session = await mongoose.startSession()
         try {
+            session.startTransaction()
             const {
                 goodsIssueId,
                 productId,
@@ -417,9 +443,22 @@ const goodsIssueService = {
                 issuedQuantity,
                 storages,
                 note,
+                orderId,
             } = product
-
-            session.startTransaction()
+            let orderDetail
+            if (orderId) {
+                orderDetail = await OrderDetailModel.findOne({
+                    orderId,
+                    productId,
+                })
+                if (!orderDetail)
+                    throw new BadReq(errorCode.ORDER_DETAIL_NOT_FOUND)
+                if (
+                    issuedQuantity >
+                    orderDetail.quantity - orderDetail.quantityExported
+                )
+                    throw new BadReq(errorCode.ISSUE_QUANTITY_EXCEEDS_ORDER)
+            }
             const checkGoodsIssueDetail = await GoodsIssueDetaileModel.findOne({
                 goodsIssueId,
                 productId,
@@ -493,7 +532,7 @@ const goodsIssueService = {
                     errorCode.SERIAL_OR_BATCH_QUANTITY_TOTAL_INVALID,
                 )
             }
-            await GoodsIssueDetaileModel.create(
+            const detail = await GoodsIssueDetaileModel.create(
                 [
                     {
                         goodsIssueId,
@@ -508,6 +547,7 @@ const goodsIssueService = {
                         warehouseName: checkWarehouse.name,
                         storages,
                         note,
+                        orderDetailId: orderDetail ? orderDetail._id : null,
                     },
                 ],
                 { session },
@@ -614,7 +654,7 @@ const goodsIssueService = {
                 unit: checkProduct?.unit,
                 origin,
                 issuedQuantity,
-                warehouseName: checkWarehouse.warehouseName,
+                warehouseName: checkWarehouse.name,
                 storages,
                 note,
             })

@@ -23,6 +23,14 @@ router.post(
     workOrderController.update,
 )
 router.delete('/delete/:workOrderId', workOrderController.delete)
+router.get('/getAllState', workOrderController.getAllState)
+router.get('/getAllPriority', workOrderController.getAllPriority)
+router.get('/getAllWorkType', workOrderController.getAllWorkType)
+router.get('/getAllType', workOrderController.getAllType)
+router.get(
+    '/getAllWorkRequestSource',
+    workOrderController.getAllWorkRequestSource,
+)
 
 /**
  * @swagger
@@ -40,6 +48,13 @@ router.delete('/delete/:workOrderId', workOrderController.delete)
  *       - bearerAuth: []
  *     tags: [WorkOrder]
  *     parameters:
+ *       - name: typeWork
+ *         in: query
+ *         schema:
+ *           type: string
+ *           enum: ["repair", "maintenance", "installation", "testIO", "demo", "samplePrinting"]
+ *           default: ""
+ *         description: Loại công việc
  *       - name: status
  *         in: query
  *         schema:
@@ -430,6 +445,471 @@ router.delete('/delete/:workOrderId', workOrderController.delete)
  *                     dueNow:
  *                       type: number
  *                       example: 1
+ *       401:
+ *         description: Chưa đăng nhập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 401
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có token
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       403:
+ *         description: Không có quyền truy cập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 403
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có quyền
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       500:
+ *         description: Lỗi server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Lỗi server!
+ *                 data:
+ *                   type: string
+ *                   example: null
+ */
+
+/**
+ * @swagger
+ * /workOrder/getAllState:
+ *   get:
+ *     summary: Lấy ra tất cả các trạng thái
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [WorkOrder]
+ *     parameters: []
+ *     responses:
+ *       200:
+ *         description: Trả về tất cả các trạng thái
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
+ *                 code:
+ *                   type: integer
+ *                   example: 1
+ *                 message:
+ *                   type: string
+ *                   example: OK!
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         example: pending
+ *                       name:
+ *                         type: string
+ *                         example: Chờ xử lý
+ *       401:
+ *         description: Chưa đăng nhập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 401
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có token
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       403:
+ *         description: Không có quyền truy cập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 403
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có quyền
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       500:
+ *         description: Lỗi server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Lỗi server!
+ *                 data:
+ *                   type: string
+ *                   example: null
+ */
+
+/**
+ * @swagger
+ * /workOrder/getAllPriority:
+ *   get:
+ *     summary: Lấy ra tất cả các độ ưu tiên
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [WorkOrder]
+ *     parameters: []
+ *     responses:
+ *       200:
+ *         description: Trả về tất cả độ ưu tiên
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
+ *                 code:
+ *                   type: integer
+ *                   example: 1
+ *                 message:
+ *                   type: string
+ *                   example: OK!
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         example: high
+ *                       name:
+ *                         type: string
+ *                         example: cao
+ *       401:
+ *         description: Chưa đăng nhập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 401
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có token
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       403:
+ *         description: Không có quyền truy cập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 403
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có quyền
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       500:
+ *         description: Lỗi server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Lỗi server!
+ *                 data:
+ *                   type: string
+ *                   example: null
+ */
+
+/**
+ * @swagger
+ * /workOrder/getAllWorkType:
+ *   get:
+ *     summary: Lấy ra tất cả các loại công việc
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [WorkOrder]
+ *     parameters: []
+ *     responses:
+ *       200:
+ *         description: Trả về tất cả các loại công việc
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
+ *                 code:
+ *                   type: integer
+ *                   example: 1
+ *                 message:
+ *                   type: string
+ *                   example: OK!
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         example: Repair
+ *                       name:
+ *                         type: string
+ *                         example: Sửa chữa
+ *       401:
+ *         description: Chưa đăng nhập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 401
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có token
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       403:
+ *         description: Không có quyền truy cập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 403
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có quyền
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       500:
+ *         description: Lỗi server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Lỗi server!
+ *                 data:
+ *                   type: string
+ *                   example: null
+ */
+
+/**
+ * @swagger
+ * /workOrder/getAllType:
+ *   get:
+ *     summary: Lấy ra tất cả các loại chi tiết công việc
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [WorkOrder]
+ *     parameters: []
+ *     responses:
+ *       200:
+ *         description: Trả về tất cả loại chi tiết công việc
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
+ *                 code:
+ *                   type: integer
+ *                   example: 1
+ *                 message:
+ *                   type: string
+ *                   example: OK!
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         example: A
+ *                       name:
+ *                         type: string
+ *                         example: A
+ *       401:
+ *         description: Chưa đăng nhập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 401
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có token
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       403:
+ *         description: Không có quyền truy cập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 403
+ *                 code:
+ *                   type: integer
+ *                   example: -1
+ *                 message:
+ *                   type: string
+ *                   example: Không có quyền
+ *                 data:
+ *                   type: string
+ *                   example: null
+ *       500:
+ *         description: Lỗi server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Lỗi server!
+ *                 data:
+ *                   type: string
+ *                   example: null
+ */
+
+/**
+ * @swagger
+ * /workOrder/getAllWorkRequestSource:
+ *   get:
+ *     summary: Lấy ra tất cả các nguồn yêu cầu công việc
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [WorkOrder]
+ *     parameters: []
+ *     responses:
+ *       200:
+ *         description: Trả về tất cả các nguồn yêu cầu công việc
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
+ *                 code:
+ *                   type: integer
+ *                   example: 1
+ *                 message:
+ *                   type: string
+ *                   example: OK!
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         example: warehouse
+ *                       name:
+ *                         type: string
+ *                         example: Kho
  *       401:
  *         description: Chưa đăng nhập
  *         content:

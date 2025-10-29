@@ -718,14 +718,14 @@ async function apiSeeder() {
             note: 'Xem một phiếu chiết khấu',
         },
         {
+            _id: new Types.ObjectId('68e6d2593a5ce22f2582b284'),
+            api: '/discount/getDiscountHistoryById',
+            note: 'Xem lịch sử một cài đặt chiết khấu',
+        },
+        {
             _id: new Types.ObjectId('6871899346e790eda9a08c05'),
             api: '/discount/getHistory',
             note: 'Xem lịch sử tất cả phiếu chiết khấu',
-        },
-        {
-            _id: new Types.ObjectId('6871899346e790eda9a08c06'),
-            api: '/discount/getOverview',
-            note: 'Xem các thông tin thống kê',
         },
         {
             _id: new Types.ObjectId('6871899346e790eda9a08c07'),
@@ -736,16 +736,6 @@ async function apiSeeder() {
             _id: new Types.ObjectId('6871899346e790eda9a08c08'),
             api: '/discount/delete',
             note: 'Xóa phiếu chiết khấu',
-        },
-        {
-            _id: new Types.ObjectId('68734efbffa7cc41b2858838'),
-            api: '/discount/approved',
-            note: 'Chấp nhận phiếu chiết khấu',
-        },
-        {
-            _id: new Types.ObjectId('68734efbffa7cc41b2858839'),
-            api: '/discount/rejected',
-            note: 'Từ chối phiếu chiết khấu',
         },
         {
             _id: new Types.ObjectId('687415049898805f0639a2f4'),
@@ -897,6 +887,37 @@ async function apiSeeder() {
             api: '/productTransferHistory/getById',
             note: 'Lấy ra phiếu chuyển kho theo Id',
         },
+        //đơn hàng
+        {
+            _id: new Types.ObjectId('68b1f0e4d1f5c4e4f8b5e8c1'),
+            api: '/order/getAll',
+            note: 'Lấy ra tất cả đơn hàng',
+        },
+        {
+            _id: new Types.ObjectId('68b1f0e4d1f5c4e4f8b5e8c2'),
+            api: '/order/getById',
+            note: 'Lấy ra đơn hàng theo Id',
+        },
+        {
+            _id: new Types.ObjectId('68d1153524419859fede4ebd'),
+            api: '/order/update',
+            note: 'Cập nhật đơn hàng theo Id',
+        },
+        {
+            _id: new Types.ObjectId('68b1f0e4d1f5c4e4f8b5e8c3'),
+            api: '/order/delete',
+            note: 'Xóa đơn hàng theo Id',
+        },
+        {
+            _id: new Types.ObjectId('68b1f0e4d1f5c4e4f8b5e8c4'),
+            api: '/order/create',
+            note: 'Tạo đơn hàng',
+        },
+        {
+            _id: new Types.ObjectId('68b1f0e4d1f5c4e4f8b5e8c5'),
+            api: '/order/getByIdForIssue',
+            note: 'Lấy thông tin chi tiết của một hoặc nhiều đơn hàng',
+        },
         //phiếu công việc
         {
             _id: new Types.ObjectId('68d1153524419859fede4ebe'),
@@ -912,6 +933,31 @@ async function apiSeeder() {
             _id: new Types.ObjectId('68d37503136efac69b7bcad2'),
             api: '/workOrder/getOverall',
             note: 'Lấy ra tổng quan các phiếu',
+        },
+        {
+            _id: new Types.ObjectId('68f89736d0014bb79a3e081c'),
+            api: '/workOrder/getAllState',
+            note: 'Lấy ra tất cả trạng thái',
+        },
+        {
+            _id: new Types.ObjectId('68f89736d0014bb79a3e081d'),
+            api: '/workOrder/getAllPriority',
+            note: 'Lấy ra tất cả các mức độ ưu tiên',
+        },
+        {
+            _id: new Types.ObjectId('68fee754df90864cd0ba5306'),
+            api: '/workOrder/getAllWorkType',
+            note: 'Lấy ra tất cả loại công việc ',
+        },
+        {
+            _id: new Types.ObjectId('68fee754df90864cd0ba5307'),
+            api: '/workOrder/getAllType',
+            note: 'Lấy ra tất cả loại chi tiết công việc',
+        },
+        {
+            _id: new Types.ObjectId('68fee754df90864cd0ba5308'),
+            api: '/workOrder/getAllWorkRequestSource',
+            note: 'Lấy ra tất cả nguồn yêu cầu công việc ',
         },
         {
             _id: new Types.ObjectId('68d1153524419859fede4ebf'),
@@ -953,6 +999,16 @@ async function apiSeeder() {
             _id: new Types.ObjectId('68db886658aa745a165f0c0b'),
             api: '/technician/update',
             note: 'Chỉnh sửa kỹ thuật viên',
+        },
+        {
+            _id: new Types.ObjectId('68ff312d7c0247493f1d5065'),
+            api: '/technician/changeActive',
+            note: 'Khóa/Mở khóa kỹ thuật viên',
+        },
+        {
+            _id: new Types.ObjectId('68fee754df90864cd0ba5309'),
+            api: '/technician/getAllTechnicianStatus',
+            note: 'Lấy ra tất cả trạng thái của KTV',
         },
     ])
 

@@ -63,6 +63,15 @@ const userValidation = {
                         'Mật khẩu phải có ít nhất 1 chữ cái, 1 số, 1 ký tự đặc biệt và độ dài từ 3–30 ký tự',
                     'any.required': 'Mật khẩu là bắt buộc',
                 }),
+            department: joi
+                .string()
+                .valid('warehouse', 'finance', 'technical')
+                .allow(null)
+                .messages({
+                    'string.base': 'Phòng ban phải là chuỗi ký tự',
+                    'any.only':
+                        'Phòng ban không hợp lệ (chỉ chấp nhận warehouse, finance, technical)',
+                }),
             roleIds: joi
                 .array()
                 .items(joi.string())
@@ -113,6 +122,15 @@ const userValidation = {
                 .messages({
                     'string.pattern.base':
                         'Số điện thoại phải có từ 4 đến 15 chữ số',
+                }),
+            department: joi
+                .string()
+                .valid('warehouse', 'finance', 'technical')
+                .allow(null)
+                .messages({
+                    'string.base': 'Phòng ban phải là chuỗi ký tự',
+                    'any.only':
+                        'Phòng ban không hợp lệ (chỉ chấp nhận warehouse, finance, technical)',
                 }),
             roleIds: joi
                 .array()

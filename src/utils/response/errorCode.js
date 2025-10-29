@@ -406,10 +406,76 @@ const errorCode = {
         code: 100,
         message: 'Kỹ thuật viên không tồn tại',
     },
-    TRANSFER_HISTORY_NOT_FOUND:{
+    TRANSFER_HISTORY_NOT_FOUND: {
         code: 101,
         message: 'Lịch sử chuyển nội bộ không tồn tại',
-    }
+    },
+    DISCOUNT_REQUEST_NOT_MATCH: {
+        code: 102,
+        message: 'Chiết khấu và hóa đơn không trùng khớp',
+    },
+    ORDER_ITEMS_REQUIRED: {
+        code: 103,
+        message: 'Danh sách sản phẩm không được để trống',
+    },
+    PRODUCT_ID_REQUIRED: {
+        code: 104,
+        message: 'Thiếu productId trong items',
+    },
+    INVALID_QUANTITY: {
+        code: 105,
+        message: 'Số lượng sản phẩm không hợp lệ',
+    },
+    ORDER_DETAIL_NOT_FOUND: {
+        code: 106,
+        message: 'Đơn đặt hàng chi tiết không tồn tại',
+    },
+    ISSUE_QUANTITY_EXCEEDS_ORDER: {
+        code: 107,
+        message: 'Số lượng xuất vượt quá số lượng đặt hàng chưa xuất',
+    },
+    ORDER_NOT_FOUND: {
+        code: 108,
+        message: 'Đơn đặt hàng không tồn tại',
+    },
+    CUSTOMER_NOT_MATCH: {
+        code: 109,
+        message: 'Tất cả đơn đặt hàng phải thuộc về cùng một khách hàng',
+    },
+    QUANTITY_LESS_THAN_EXPORTED: {
+        code: 110,
+        message:
+            'Số lượng đặt đơn hàng không được phép nhỏ hơn số lượng đã xuất',
+    },
+    CANNOT_CREATE_USER_IN_OTHER_DEPARTMENT: {
+        code: 111,
+        message: 'Không thể tạo người dùng thuộc phòng ban khác',
+    },
+    NO_PERMISSION_TO_CHANGE_DEPARTMENT: {
+        code: 112,
+        message: 'Bạn không có quyền thay đổi phòng ban của người khác',
+    },
+    CANNOT_UPDATE_USER_IN_OTHER_DEPARTMENT: {
+        code: 113,
+        message:
+            'Không thể chỉnh sửa thông tin của người dùng thuộc phòng ban khác',
+    },
+    DEPARTMENT_IS_REQUIRED_FOR_THIS_USER: {
+        code: 114,
+        message: 'Phòng ban là bắc buộc với người dùng này',
+    },
+    ORDER_CODE_EXISTS: {
+        code: 115,
+        message: 'Mã đơn hàng đã tồn tại',
+    },
+    TECHNICIAN_EXISTED: {
+        code: 125,
+        message: 'Kỹ thuật viên đã tồn tại',
+    },
+    TECHNICIAN_CANNOT_LOCKED: {
+        code: 126,
+        message: 'Kỹ thuật viên hiện đang có công việc chưa hoàn thành',
+    },
 }
 
 module.exports = errorCode

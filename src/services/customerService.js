@@ -2,6 +2,7 @@
 
 const CustomerModel = require('../models/customer')
 const UserModel = require('../models/user')
+const ProductModel = require('../models/product')
 const constant = require('../utils/constant/constant')
 const errorCode = require('../utils/response/errorCode')
 const BadReq = require('../utils/response/requestError')
@@ -87,8 +88,12 @@ const customerService = {
                 : commonFields
 
             // 5. Execute the query with the select clause
-            const customer =
-                await CustomerModel.findById(id).select(fieldsToSelect)
+            const customer = await CustomerModel.findById(id)
+                .select(fieldsToSelect)
+                .populate({
+                    path: 'productsInUse',
+                    select: 'name', // chỉ lấy field name của
+                })
 
             if (!customer) {
                 throw new BadReq(errorCode.CUSTOMER_NOT_FOUND)
