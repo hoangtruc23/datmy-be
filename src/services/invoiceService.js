@@ -652,25 +652,13 @@ const invoiceService = {
             throw err
         }
     },
-    importFromExcel: async (fileUrl) => {
+    importFromExcel: async (file) => {
         const session = await mongoose.startSession()
         await session.startTransaction()
 
         try {
-            const baseUrl = process.env.BASE_URL
-            const idx = fileUrl.indexOf(baseUrl)
-            if (idx === -1) {
-                throw new Error(
-                    `Không tìm thấy BASE_URL (${baseUrl}) trong fileUrl: ${fileUrl}`,
-                )
-            }
-
-            let relativeUrl = fileUrl.substring(idx + baseUrl.length)
-            relativeUrl = relativeUrl.replace(/^\/+/, '')
-            const filePath = path.join(__dirname, '..', 'public', relativeUrl)
-
             const workbook = new ExcelJS.Workbook()
-            await workbook.xlsx.readFile(filePath)
+            await workbook.xlsx.load(file, { type: 'buffer' })
             const worksheet = workbook.worksheets[0]
 
             if (!worksheet) throw new BadReq(errorCode.WORKSHEET_NOT_FOUND)
@@ -680,8 +668,8 @@ const invoiceService = {
             worksheet.eachRow((row, rowNumber) => {
                 if (rowNumber <= 4) return
                 const [
-                    customerName,
                     code,
+                    customerName,
                     invoiceCode,
                     invoiceDate,
                     taxCode,

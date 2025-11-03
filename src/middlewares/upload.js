@@ -3,7 +3,7 @@ const path = require('path')
 const fs = require('fs')
 const errorCode = require('../utils/response/errorCode')
 const BadReq = require('../utils/response/requestError')
-
+const memoryStorage = multer.memoryStorage()
 const removeVietnameseTones = (str) => {
     if (!str) return ''
     return str
@@ -86,4 +86,10 @@ const uploadFile = multer({
     fileFilter: fileFileFilter,
 })
 
-module.exports = { uploadImage, uploadFile }
+const uploadMemoryFile = multer({
+    storage: memoryStorage,
+    limits: { fileSize: 5 * 1024 * 1024 }, 
+    fileFilter: fileFileFilter, 
+})
+
+module.exports = { uploadImage, uploadFile, uploadMemoryFile }
