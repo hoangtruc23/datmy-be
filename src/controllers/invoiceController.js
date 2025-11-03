@@ -62,8 +62,7 @@ const invoiceController = {
     },
     importFromExcel: async (req, res, next) => {
         try {
-            const { fileUrl } = req.body
-            const invoices = await invoiceService.importFromExcel(fileUrl)
+            const invoices = await invoiceService.importFromExcel(req.file.buffer)
             return res.status(200).json(response.success(invoices))
         } catch (err) {
             next(err)
