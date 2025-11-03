@@ -469,12 +469,16 @@ const errorCode = {
         message: 'Mã đơn hàng đã tồn tại',
     },
     TECHNICIAN_EXISTED: {
-        code: 125,
+        code: 116,
         message: 'Kỹ thuật viên đã tồn tại',
     },
     TECHNICIAN_CANNOT_LOCKED: {
-        code: 126,
+        code: 117,
         message: 'Kỹ thuật viên hiện đang có công việc chưa hoàn thành',
+    },
+    CUSTOMER_CODE_EXISTED: {
+        code: 118,
+        message: 'Mã khách hàng đã tồn tại!',
     },
 }
 

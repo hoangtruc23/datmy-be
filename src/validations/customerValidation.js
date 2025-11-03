@@ -9,6 +9,7 @@ const contactPersonSchema = joi.object({
         'any.required': 'Tên người liên hệ là bắt buộc',
     }),
     phone: joi.string().allow('', null).optional(),
+    email: joi.string().allow('', null).optional(),
 })
 
 const deliveryAddressSchema = joi.object({
@@ -35,18 +36,16 @@ const deliveryAddressSchema = joi.object({
 })
 
 const customerBaseSchema = {
-    name: joi.string().required().messages({
-        'string.empty': 'Tên là bắt buộc',
-        'any.required': 'Tên là bắt buộc',
+    name: joi.string().allow(null, ''),
+    code: joi.string().trim().required().messages({
+        'string.empty': 'Code không được để trống',
+        'any.required': 'Code là bắt buộc',
     }),
     officialName: joi.string().required().messages({
         'string.empty': 'Tên đầy đủ là bắt buộc',
         'any.required': 'Tên đầy đủ là bắt buộc',
     }),
-    taxCode: joi.string().required().messages({
-        'string.empty': 'Mã số thuế là bắt buộc',
-        'any.required': 'Mã số thuế là bắt buộc',
-    }),
+    taxCode: joi.string().allow(null, ''),
     billingAddress: joi.string().required().messages({
         'string.empty': 'Địa chỉ xuất hóa đơn là bắt buộc',
         'any.required': 'Địa chỉ xuất hóa đơn là bắt buộc',
@@ -54,13 +53,12 @@ const customerBaseSchema = {
     deliveryAddresses: joi
         .array()
         .items(deliveryAddressSchema)
-        .min(1)
+        .min(0)
         .max(5)
-        .required()
+        .allow(null) 
+        .default([]) 
         .messages({
-            'array.min': 'Phải có ít nhất 1 địa chỉ giao hàng',
             'array.max': 'Không được nhiều hơn 5 địa chỉ giao hàng',
-            'any.required': 'Danh sách địa chỉ giao hàng là bắt buộc',
         }),
     fax: joi
         .any()
@@ -88,29 +86,26 @@ const customerBaseSchema = {
         .string()
         .email({ tlds: { allow: false } })
         .allow('', null),
-    phone: joi
-        .string()
-        .pattern(/^[0-9]{4,15}$/)
-        .allow('', null)
-        .messages({
-            'string.pattern.base': 'Số điện thoại phải có từ 4 đến 17 chữ số',
-        }),
     garageAddress: joi.string().allow('', null),
     contactPersons: joi.object({
         warehouseAccountant: joi.array().items(contactPersonSchema),
         sale: joi.array().items(contactPersonSchema),
+        debt: joi.array().items(contactPersonSchema),
         accountant: joi.array().items(contactPersonSchema),
         tech: joi.array().items(contactPersonSchema),
         debtAccountant: joi.array().items(contactPersonSchema),
         billAccountant: joi.array().items(contactPersonSchema),
     }),
+    groupCustomers: joi.string().allow(null, ''),
+    CMND: joi.string().allow(null, ''),
+    dateOfIssue: joi.date().allow(null, ''),
+    placeOfIssue: joi.string().allow(null, ''),
     notes: joi.string().allow('', null),
     purchaseCycleInWeeks: joi.number().allow(null),
     internalTransport: joi.boolean().default(false),
     productsInUse: joi.array().items(joi.string()),
     status: joi.string().valid('none', 'met', 'not_met').default('none'),
     isActive: joi.boolean().default(true),
-    code: joi.forbidden(),
 }
 
 const customerValidation = {
