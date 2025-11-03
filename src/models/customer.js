@@ -15,27 +15,22 @@ const deliveryAddressSchema = new Schema(
     {
         street: {
             type: String,
-            required: true,
             trim: true,
         },
         ward: {
             type: String,
-            required: true,
             trim: true,
         },
         district: {
             type: String,
-            required: true,
             trim: true,
         },
         city: {
             type: String,
-            required: true,
             trim: true,
         },
         country: {
             type: String,
-            required: true,
             trim: true,
         },
     },
@@ -46,10 +41,13 @@ const contactPersonSchema = new Schema(
     {
         name: {
             type: String,
-            required: true,
             trim: true,
         },
         phone: {
+            type: String,
+            trim: true,
+        },
+        email: {
             type: String,
             trim: true,
         },
@@ -65,13 +63,12 @@ const customerSchema = new Schema(
         //     enum: ['customer', 'supplier'],
         // },
         code: {
-            type: Number,
+            type: String,
             required: true,
             unique: true,
         },
         name: {
             type: String,
-            required: true,
             trim: true,
         },
         officialName: {
@@ -81,7 +78,6 @@ const customerSchema = new Schema(
         },
         taxCode: {
             type: String,
-            required: true,
             trim: true,
             // unique: true,
         },
@@ -98,9 +94,22 @@ const customerSchema = new Schema(
             type: String,
             trim: true,
         },
+        groupCustomers: {
+            type: String,
+            trim: true,
+        },
+        CMND: {
+            type: String,
+            trim: true,
+        },
+        dateOfIssue: {
+            type: Date,
+        },
+        placeOfIssue: {
+            type: String,
+        },
         billingAddress: {
             type: String,
-            required: true,
             trim: true,
         },
         garageAddress: { type: String, trim: true },
@@ -109,9 +118,9 @@ const customerSchema = new Schema(
         contactPersons: {
             warehouseAccountant: [contactPersonSchema],
             sale: [contactPersonSchema],
+            debt: [contactPersonSchema],
             accountant: [contactPersonSchema],
             tech: [contactPersonSchema],
-            debtAccountant: [contactPersonSchema],
             billAccountant: [contactPersonSchema],
         },
         notes: {
