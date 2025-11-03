@@ -1,4 +1,4 @@
-const { Types } = require('mongoose')
+const { Types, mongoose } = require('mongoose')
 const InvoiceModel = require('../models/invoice')
 const CustomerModel = require('../models/customer')
 const DiscountRequestModel = require('../models/discountRequest')
@@ -653,10 +653,12 @@ const invoiceService = {
         }
     },
     importFromExcel: async (fileUrl) => {
+        const session = await mongoose.startSession()
+        await session.startTransaction()
+
         try {
             const baseUrl = process.env.BASE_URL
             const idx = fileUrl.indexOf(baseUrl)
-
             if (idx === -1) {
                 throw new Error(
                     `Không tìm thấy BASE_URL (${baseUrl}) trong fileUrl: ${fileUrl}`,
@@ -672,15 +674,14 @@ const invoiceService = {
             const worksheet = workbook.worksheets[0]
 
             if (!worksheet) throw new BadReq(errorCode.WORKSHEET_NOT_FOUND)
-            //await InvoiceModel.deleteMany({})
-            const invoiceMap = new Map()
 
+            // --- Gom dữ liệu từ Excel vào Map theo invoiceCode ---
+            const invoiceMap = new Map()
             worksheet.eachRow((row, rowNumber) => {
                 if (rowNumber <= 4) return
-
                 const [
                     customerName,
-                    customerCode,
+                    code,
                     invoiceCode,
                     invoiceDate,
                     taxCode,
@@ -700,6 +701,7 @@ const invoiceService = {
                 if (!invoiceMap.has(invoiceCode)) {
                     invoiceMap.set(invoiceCode, {
                         customerName,
+                        code,
                         taxCode,
                         invoiceCode,
                         invoiceDate,
@@ -731,132 +733,139 @@ const invoiceService = {
             const failedInvoices = new Map()
 
             for (const inv of invoiceMap.values()) {
-                try {
-                    const errors = []
+                const errors = []
 
-                    let customer = await CustomerModel.findOne({
-                        $or: [
-                            { taxCode: inv.taxCode },
-                            { officialName: inv.customerName },
-                            { name: inv.customerCode },
-                        ],
-                    })
+                // 1) Kiểm tra customer tồn tại
+                const customer = await CustomerModel.findOne({
+                    code: inv.code,
+                }).session(session)
 
-                    if (!customer) {
-                        errors.push(
-                            `Không tìm được khách hàng với mã số thuế là ${inv.taxCode} có tên khách hàng là ${inv.customerName} mã khách hàng là ${inv.customerCode}`,
-                        )
-                    }
-
-                    const existed = await InvoiceModel.findOne({
-                        invoiceCode: inv.invoiceCode,
-                    })
-                    if (existed) {
-                        errors.push(`Hóa đơn đã tồn tại trong hệ thống`)
-                    }
-
-                    if (errors.length > 0) {
-                        failedInvoices.set(inv.invoiceCode, errors)
-                        continue
-                    }
-
-                    let configDebt = await ConfigDebtModel.findOne({
-                        customerId: customer._id,
-                    })
-                    let limitDue = configDebt ? configDebt.limitDue : 30
-                    let dueDate = new Date(inv.invoiceDate)
-                    dueDate.setDate(dueDate.getDate() + limitDue)
-
-                    const details = []
-                    const invalidProducts = []
-
-                    for (const d of inv.invoiceDetails) {
-                        const product = await ProductModel.findOne({
-                            code: d.productCode,
-                        })
-                        if (!product) {
-                            invalidProducts.push(d.productCode)
-                            continue
-                        }
-                        details.push({
-                            productId: product._id,
-                            quantity: d.quantity,
-                            price: d.price,
-                            discount: 0,
-                            totalAmountProduct: d.totalAmountProduct,
-                        })
-                    }
-
-                    if (invalidProducts.length > 0) {
-                        errors.push(
-                            `Không tìm được sản phẩm với mã hàng là ${invalidProducts.join(', ')}`,
-                        )
-                    }
-
-                    // Không nhập được sản phẩm, thì không tạo hóa đơn luôn, dù các sản phẩm khác vẫn nhập được
-                    if (invalidProducts.length > 0) {
-                        failedInvoices.set(inv.invoiceCode, errors)
-                        continue
-                    }
-
-                    const VATRate =
-                        inv.revenue > 0
-                            ? Math.round(
-                                  (inv.VATAmount / inv.revenue) * 100 * 100,
-                              ) / 100
-                            : 10
-
-                    const invoice = await InvoiceModel.create({
-                        customerId: customer._id,
-                        customerName: customer.name,
-                        invoiceCode: inv.invoiceCode,
-                        notVATtotalAmount: inv.revenue,
-                        totalAmount: inv.totalAmount,
-                        VATAmount: inv.VATAmount,
-                        VATRate,
-                        invoiceDate: new Date(inv.invoiceDate),
-                        dueDate,
-                        limitDue,
-                        isFullyPaid: false,
-                        orderBy: null,
-                        accountant: null,
-                        reminderContact: null,
-                        paymentBy: '',
-                        invoiceLink: null,
-                        invoiceDetails: details,
-                        notes: '',
-                    })
-
-                    savedInvoices.push(invoice)
-                } catch (err) {
-                    console.error(
-                        `Lỗi khi lưu invoice ${inv.invoiceCode}:`,
-                        err.message,
-                    )
-                    const existingErrors =
-                        failedInvoices.get(inv.invoiceCode) || []
-                    existingErrors.push(`Lỗi hệ thống: ${err.message}`)
-                    failedInvoices.set(inv.invoiceCode, existingErrors)
+                if (!customer) {
+                    errors.push(`Không tìm được khách hàng (MKH: ${inv.code})`)
                 }
+
+                // Kiểm tra invoice đã tồn tại chưa
+                const existed = await InvoiceModel.findOne({
+                    invoiceCode: inv.invoiceCode,
+                }).session(session)
+                if (existed) {
+                    errors.push(
+                        `Hóa đơn ${inv.invoiceCode} đã tồn tại trong hệ thống`,
+                    )
+                }
+
+                //  Kiểm tra sản phẩm
+                const invalidProducts = []
+                const details = []
+                for (const d of inv.invoiceDetails) {
+                    const product = await ProductModel.findOne({
+                        code: d.productCode,
+                    }).session(session)
+                    if (!product) {
+                        invalidProducts.push(d.productCode)
+                        continue
+                    }
+                    details.push({
+                        productId: product._id,
+                        quantity: d.quantity,
+                        price: d.price,
+                        discount: 0,
+                        totalAmountProduct: d.totalAmountProduct,
+                    })
+                }
+                if (invalidProducts.length > 0) {
+                    errors.push(
+                        `Không tìm được sản phẩm: ${invalidProducts.join(', ')}`,
+                    )
+                }
+
+                // Nếu có lỗi cho hóa đơn này -> lưu lỗi và bỏ qua tạo
+                if (errors.length > 0) {
+                    failedInvoices.set(inv.invoiceCode, errors)
+                    continue
+                }
+
+                // Nếu hợp lệ, chuẩn bị object invoice (chưa save)
+                const configDebt = await ConfigDebtModel.findOne({
+                    customerId: customer._id,
+                }).session(session)
+                const limitDue = configDebt ? configDebt.limitDue : 30
+                const dueDate = new Date(inv.invoiceDate)
+                dueDate.setDate(dueDate.getDate() + limitDue)
+
+                const VATRate =
+                    inv.revenue > 0
+                        ? Math.round(
+                              (inv.VATAmount / inv.revenue) * 100 * 100,
+                          ) / 100
+                        : 10
+
+                const invoiceDoc = new InvoiceModel({
+                    customerId: customer._id,
+                    customerName: customer.officialName,
+                    invoiceCode: inv.invoiceCode,
+                    notVATtotalAmount: inv.revenue,
+                    totalAmount: inv.totalAmount,
+                    VATAmount: inv.VATAmount,
+                    VATRate,
+                    invoiceDate: new Date(inv.invoiceDate),
+                    dueDate,
+                    limitDue,
+                    isFullyPaid: false,
+                    orderBy: null,
+                    accountant: null,
+                    reminderContact: null,
+                    paymentBy: '',
+                    invoiceLink: null,
+                    invoiceDetails: details,
+                    notes: '',
+                })
+
+                savedInvoices.push(invoiceDoc)
+            } // end for invoiceMap
+
+            // --- Sau khi duyệt hết file: nếu có lỗi -> rollback & trả lỗi 1 lần ---
+            if (failedInvoices.size > 0) {
+                await session.abortTransaction()
+                session.endSession()
+
+                const errorsArray = []
+                for (const [code, errs] of failedInvoices.entries()) {
+                    errorsArray.push({ invoiceCode: code, errors: errs })
+                }
+
+                // Trả về dưới dạng Error có message rõ ràng; controller có thể gửi errorsArray ra client
+                const errMessage = errorsArray
+                    .map(
+                        (e) =>
+                            `Hóa đơn ${e.invoiceCode}: ${e.errors.join('. ')}`,
+                    )
+                    .join(' \n ')
+                throw new Error(errMessage)
             }
 
-            const errorMessages = []
-            for (const [invoiceCode, errors] of failedInvoices) {
-                errorMessages.push(
-                    `Hóa đơn số ${invoiceCode} lỗi do: ${errors.join('. ')}.`,
-                )
+            // --- Nếu không có lỗi: lưu tất cả hóa đơn trong transaction ---
+            for (const invDoc of savedInvoices) {
+                await invDoc.save({ session })
             }
+
+            await session.commitTransaction()
+            session.endSession()
 
             return {
+                success: true,
                 totalInvoices: invoiceMap.size,
                 successCount: savedInvoices.length,
-                failedCount: failedInvoices.size,
-                failedInvoices: errorMessages,
             }
         } catch (err) {
+            try {
+                await session.abortTransaction()
+            } catch (e) {
+                // ignore
+            }
+            session.endSession()
             throw err
         }
     },
 }
-
 module.exports = invoiceService
