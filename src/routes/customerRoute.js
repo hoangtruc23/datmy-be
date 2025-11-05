@@ -70,6 +70,18 @@ module.exports = router
  *               phone:
  *                 type: string
  *                 example: "0988776655"
+ *               groupCustomers:
+ *                 type: string
+ *                 example: "string"
+ *               CMND:
+ *                 type: string
+ *                 example: "string"
+ *               dateOfIssue:
+ *                 type: string
+ *                 example: "string"
+ *               placeOfIssue:
+ *                 type: string
+ *                 example: "string"
  *               billingAddress:
  *                 type: string
  *                 example: "123 Đường Sức Khỏe, Phường 5, Quận 10, TP. HCM"
@@ -127,10 +139,9 @@ module.exports = router
  *                         name: { type: string }
  *                         phone: { type: string }
  *                     example:
- *                       - name: "Trần Văn Kho"
- *                         phone: "0901112222"
  *                       - name: "Lý Thị Giữ Hàng"
  *                         phone: "0902223333"
+ *                         email: "String"
  *                   sale:
  *                     type: array
  *                     items:

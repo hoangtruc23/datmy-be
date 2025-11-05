@@ -798,6 +798,38 @@ async function permissionSeeder() {
             code: 'khoa_mo_khoa-ky_thuat_vien',
             parentPermissionId: '68db8978cc41fa86439388cc',
         },
+
+        //cáu hình máy in
+        {
+            _id: new Types.ObjectId('69096eeb66eb1f282bec214b'),
+            name: 'Cấu hình máy in',
+            code: 'Cau_hinh_may_in',
+            parentPermissionId: null,
+        },
+        {
+            _id: new Types.ObjectId('69096f66ade3dff4e26b9192'),
+            name: 'Xem cấu hình máy in',
+            code: 'xem-cau_hinh_may_in',
+            parentPermissionId: '69096eeb66eb1f282bec214b',
+        },
+        {
+            _id: new Types.ObjectId('69096f66ade3dff4e26b9193'),
+            name: 'Tạo cấu hình máy in',
+            code: 'tạo-cau_hinh_may_in',
+            parentPermissionId: '69096eeb66eb1f282bec214b',
+        },
+        {
+            _id: new Types.ObjectId('69096f66ade3dff4e26b9194'),
+            name: 'Chỉnh sửa cấu hình máy in',
+            code: 'chinh_sua-cau_hinh_may_in',
+            parentPermissionId: '69096eeb66eb1f282bec214b',
+        },
+        {
+            _id: new Types.ObjectId('69096f66ade3dff4e26b9195'),
+            name: 'Xóa cấu hình máy in',
+            code: 'xoa-cau_hinh_may_in',
+            parentPermissionId: '69096eeb66eb1f282bec214b',
+        },
     ])
     logger.info('Permissions seeded')
 }

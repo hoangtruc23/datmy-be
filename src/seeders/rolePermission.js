@@ -559,6 +559,28 @@ async function rolePermissionSeeder() {
             permissionId: '68ff31af6de21eecbc535ad1', // Khóa/Mở khóa kỹ thuật viên
         },
         //#endregion
+        //#region Cấu hình máy in
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '69096eeb66eb1f282bec214b', // Cấu hình máy in
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '69096f66ade3dff4e26b9192', // Xem cấu hình máy in
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '69096f66ade3dff4e26b9193', // Tạo cấu hình máy in
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '69096f66ade3dff4e26b9194', // Chỉnh sửa cấu hình máy in
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '69096f66ade3dff4e26b9195', // Xóa cấu hình máy in
+        },
+        //#endregion
         //#endregion
 
         //#region Quản lý kho
@@ -1115,7 +1137,28 @@ async function rolePermissionSeeder() {
         //     roleId: '68f6f623dc799da9305e4347', // Quản lý kho
         //     permissionId: '68ff31af6de21eecbc535ad1', // Khóa/Mở khóa kỹ thuật viên
         // },
-        
+        //#endregion
+        //#region Cấu hình máy in
+        // {
+        //     roleId: '68f6f623dc799da9305e4347', // Quản lý kho
+        //     permissionId: '69096eeb66eb1f282bec214b', // Cấu hình máy in
+        // },
+        // {
+        //     roleId: '68f6f623dc799da9305e4347', // Quản lý kho
+        //     permissionId: '69096f66ade3dff4e26b9192', // Xem cấu hình máy in
+        // },
+        // {
+        //     roleId: '68f6f623dc799da9305e4347', // Quản lý kho
+        //     permissionId: '69096f66ade3dff4e26b9193', // Tạo cấu hình máy in
+        // },
+        // {
+        //     roleId: '68f6f623dc799da9305e4347', // Quản lý kho
+        //     permissionId: '69096f66ade3dff4e26b9194', // Chỉnh sửa cấu hình máy in
+        // },
+        // {
+        //     roleId: '68f6f623dc799da9305e4347', // Quản lý kho
+        //     permissionId: '69096f66ade3dff4e26b9195', // Xóa cấu hình máy in
+        // },
         //#endregion
         //#endregion
 
@@ -1670,6 +1713,28 @@ async function rolePermissionSeeder() {
         // {
         //     roleId: '68f6f623dc799da9305e4348', // Quản lý công nợ
         //     permissionId: '68ff31af6de21eecbc535ad1', // Khóa/Mở khóa kỹ thuật viên
+        // },
+        //#endregion
+        //#region Cấu hình máy in
+        // {
+        //     roleId: '68f6f623dc799da9305e4348', // Quản lý công nợ
+        //     permissionId: '69096eeb66eb1f282bec214b', // Cấu hình máy in
+        // },
+        // {
+        //     roleId: '68f6f623dc799da9305e4348', // Quản lý công nợ
+        //     permissionId: '69096f66ade3dff4e26b9192', // Xem cấu hình máy in
+        // },
+        // {
+        //     roleId: '68f6f623dc799da9305e4348', // Quản lý công nợ
+        //     permissionId: '69096f66ade3dff4e26b9193', // Tạo cấu hình máy in
+        // },
+        // {
+        //     roleId: '68f6f623dc799da9305e4348', // Quản lý công nợ
+        //     permissionId: '69096f66ade3dff4e26b9194', // Chỉnh sửa cấu hình máy in
+        // },
+        // {
+        //     roleId: '68f6f623dc799da9305e4348', // Quản lý công nợ
+        //     permissionId: '69096f66ade3dff4e26b9195', // Xóa cấu hình máy in
         // },
         //#endregion
         //#endregion
@@ -2227,8 +2292,29 @@ async function rolePermissionSeeder() {
             permissionId: '68ff31af6de21eecbc535ad1', // Khóa/Mở khóa kỹ thuật viên
         },
         //#endregion
+        //#region Cấu hình máy in
+        {
+            roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
+            permissionId: '69096eeb66eb1f282bec214b', // Cấu hình máy in
+        },
+        {
+            roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
+            permissionId: '69096f66ade3dff4e26b9192', // Xem cấu hình máy in
+        },
+        {
+            roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
+            permissionId: '69096f66ade3dff4e26b9193', // Tạo cấu hình máy in
+        },
+        {
+            roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
+            permissionId: '69096f66ade3dff4e26b9194', // Chỉnh sửa cấu hình máy in
+        },
+        {
+            roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
+            permissionId: '69096f66ade3dff4e26b9195', // Xóa cấu hình máy in
+        },
         //#endregion
-        
+        //#endregion
 
         // Nhân viên kho =======================================================================================
         // {

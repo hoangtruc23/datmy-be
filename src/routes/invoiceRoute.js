@@ -2,7 +2,7 @@ const express = require('express')
 const invoiceController = require('../controllers/invoiceController')
 const validate = require('../middlewares/validation')
 const invoiceValidation = require('../validations/invoiceValidation')
-
+const { uploadMemoryFile } = require('../middlewares/upload')
 const router = express.Router()
 
 router.post('/create', invoiceController.create)
@@ -11,7 +11,7 @@ router.get('/getAll', invoiceController.getAll)
 router.get('/getById/:id', invoiceController.getById)
 router.delete('/delete/:id', invoiceController.delete)
 router.get('/summary', invoiceController.getSummary)
-router.post('/import', invoiceController.importFromExcel)
+router.post('/import', uploadMemoryFile.single('file'), invoiceController.importFromExcel)
 module.exports = router
 
 /**
@@ -418,16 +418,16 @@ module.exports = router
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             required:
- *               - fileUrl
+ *               - file
  *             properties:
- *               fileUrl:
+ *               file:
  *                 type: string
- *                 description: Đường dẫn tới file Excel đã upload. Lấy từ api upload/file
- *                 example: "http://example.com/inventory/api/upload/file/1756202472355-sochitietbanhang---dulieu.xlsx"
+ *                 format: binary
+ *                 description: File Excel chứa dữ liệu hóa đơn (.xlsx)
  *     responses:
  *       200:
  *         description: Kết quả import hóa đơn

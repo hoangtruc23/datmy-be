@@ -10,15 +10,13 @@ const BadReq = require('../utils/response/requestError')
 const customerService = {
     create: async (customerData) => {
         try {
-            const latestCustomer = await CustomerModel.findOne().sort({
-                code: -1,
+            const existingCustomer = await CustomerModel.findOne({
+                code: customerData.code,
             })
-            const newCode = latestCustomer ? latestCustomer.code + 1 : 1
-
-            const newCustomer = await CustomerModel.create({
-                ...customerData,
-                code: newCode,
-            })
+            if (existingCustomer) {
+                throw new BadReq(errorCode.CUSTOMER_CODE_EXISTED)
+            }
+            const newCustomer = await CustomerModel.create(customerData)
             return newCustomer
         } catch (error) {
             throw error
@@ -31,7 +29,17 @@ const customerService = {
             if (!currentCustomer) {
                 throw new BadReq(errorCode.CUSTOMER_NOT_FOUND)
             }
-
+            if (
+                customerData.code &&
+                customerData.code !== currentCustomer.code
+            ) {
+                const existingCustomer = await CustomerModel.findOne({
+                    code: customerData.code,
+                })
+                if (existingCustomer) {
+                    throw new BadReq(errorCode.CUSTOMER_CODE_EXISTED)
+                }
+            }
             // Apply the updates from customerData to the found customer document
             currentCustomer.set(customerData)
             const updatedCustomer = await currentCustomer.save()
@@ -88,12 +96,10 @@ const customerService = {
                 : commonFields
 
             // 5. Execute the query with the select clause
-            const customer = await CustomerModel.findById(id)
-                .select(fieldsToSelect)
-                .populate({
-                    path: 'productsInUse',
-                    select: 'name', // chỉ lấy field name của
-                })
+            const customer = await CustomerModel.findById(id).populate({
+                path: 'productsInUse',
+                select: 'name code', // chỉ lấy field name của
+            })
 
             if (!customer) {
                 throw new BadReq(errorCode.CUSTOMER_NOT_FOUND)
@@ -123,7 +129,13 @@ const customerService = {
             // Search filter (by name or officialName)
             if (search) {
                 const regex = new RegExp(search.trim(), 'i')
-                filter.$or = [{ name: regex }, { officialName: regex }]
+                filter.$or = [
+                    { name: regex },
+                    { officialName: regex },
+                    { code: regex },
+                    { taxCode: regex },
+                    { billingAddress: regex },
+                ]
             }
 
             // Status filter (based on the isActive field)

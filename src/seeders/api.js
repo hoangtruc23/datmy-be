@@ -1010,6 +1010,46 @@ async function apiSeeder() {
             api: '/technician/getAllTechnicianStatus',
             note: 'Lấy ra tất cả trạng thái của KTV',
         },
+        {
+            _id: new Types.ObjectId('69096d1afbb88e9e19560630'),
+            api: '/machineSetting/getMachine',
+            note: 'Lấy ra tất cả các máy in',
+        },
+        {
+            _id: new Types.ObjectId('69096d1afbb88e9e19560631'),
+            api: '/machineSetting/getAllProperties',
+            note: 'Lấy ra tất cả các thuộc tính',
+        },
+        {
+            _id: new Types.ObjectId('69096d1afbb88e9e19560632'),
+            api: '/machineSetting/getDefaultValue',
+            note: 'Lấy ra tất cả các giá trị theo thuộc tính',
+        },
+        {
+            _id: new Types.ObjectId('69096d1afbb88e9e19560633'),
+            api: '/machineSetting/create',
+            note: 'Tạo cấu hình máy in',
+        },
+        {
+            _id: new Types.ObjectId('69096d1afbb88e9e19560634'),
+            api: '/machineSetting/getAll',
+            note: 'Lấy ra tất cả các cấu hình máy in đã có',
+        },
+        {
+            _id: new Types.ObjectId('69096d1afbb88e9e19560635'),
+            api: '/machineSetting/getById',
+            note: 'Lấy ra một cấu hình máy in',
+        },
+        {
+            _id: new Types.ObjectId('69096d1afbb88e9e19560636'),
+            api: '/machineSetting/update',
+            note: 'Cập nhập một cấu hình máy in',
+        },
+        {
+            _id: new Types.ObjectId('69096d1afbb88e9e19560637'),
+            api: '/machineSetting/delete',
+            note: 'Xóa một cấu hình máy in',
+        },
     ])
 
     logger.info('apis seeded')

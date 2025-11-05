@@ -146,7 +146,7 @@ const constant = {
     WORK_ORDER_TYPE: {
         NULL: {
             value: '',
-            name: '',
+            name: 'Tất cả',
         },
         REPAIR: {
             value: 'repair',
