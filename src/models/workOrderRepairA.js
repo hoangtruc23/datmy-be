@@ -18,20 +18,6 @@ const repairTimeSchema = new Schema(
     },
     { _id: false },
 )
-const failureSchema = new Schema(
-    {
-        printHead: {
-            type: [String],
-        },
-        inkSystem: {
-            type: [String],
-        },
-        electricalSystem: {
-            type: [String],
-        },
-    },
-    { _id: false },
-)
 
 const workOrderRepairASchema = new Schema({
     workOrderId: {
@@ -43,20 +29,9 @@ const workOrderRepairASchema = new Schema({
         type: Boolean,
     },
     repairDate: repairTimeSchema,
-    machineInfo: workOrderAMachineSchema,
-    machineSpecs: workOrderASpecsSchema,
-    failure: failureSchema,
-    handlingMethod: {
-        type: [String],
-    },
-    technicianOpinion: {
+    machineTypeId: {
         type: String,
-    },
-    customerOpinion: {
-        type: [String],
-    },
-    handling: {
-        type: String,
+        ref: 'products',
     },
 })
 
