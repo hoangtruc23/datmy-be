@@ -24,7 +24,7 @@ const workOrderService = {
                     { customerId: { $in: customerIds } },
                 ],
                 ...(status ? { status } : {}),
-                ...(typeWork ? { typeWork } : { typeWork: '' }),
+                ...(typeWork ? { typeWork } : {}),
                 ...(technician ? { technicianId: reqUserId } : {}),
             }
             const [workOrders, totalItems] = await Promise.all([

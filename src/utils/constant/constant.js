@@ -17,7 +17,7 @@ const constant = {
     },
     TECHNICIAN_PERMISSION_ID: {
         WORK_ORDER: '68d1166bba1c480c8180bf6b',
-        WORK_ORDER_READ: '68d1166bba1c480c8180bf6c',
+        WORK_ORDER_READ: '68d1166bba1c480c8180bf6c'
     },
     PRODUCT_MANAGEMENT_TYPE: {
         NONE: 'none',
@@ -146,7 +146,7 @@ const constant = {
     WORK_ORDER_TYPE: {
         NULL: {
             value: '',
-            name: '',
+            name: 'Tất cả',
         },
         REPAIR: {
             value: 'repair',
@@ -249,21 +249,6 @@ const constant = {
         WAREHOUSE: 'warehouse',
         FINANCE: 'finance',
         TECHNICAL: 'technical',
-    },
-    MACHINE_PROPERTIES_TYPE: {
-        NORMAL: 'normal',
-        LINKED: 'linked',
-        CUSTOM: 'custom',
-    },
-    CATEGORY_NAME: {
-        COMPONENT_PRINT_HEAD: 'LINH KIỆN - HỆ THỐNG ĐẦU IN',
-        COMPONENT_INK_SYSTEM: 'LINH KIỆN - HỆ THỐNG MỰC IN',
-        COMPONENT_ELECTRICAL_BOARD: 'LINH KIỆN - HỆ THỐNG BO MẠCH ĐIỆN',
-        ACCESSORY_SPARE_PARTS_MACHINE: 'PHỤ KIỆN & PHỤ TÙNG MÁY IN',
-        MACHINE: 'MÁY IN PHUN BAO BÌ CÔNG NGHIỆP',
-        MATERIAL_INK: 'NGUYÊN LIỆU - MỰC IN',
-        MATERIAL_SOLVENT: 'NGUYÊN LIỆU - DUNG MÔI HỖN HỢP HỮU CƠ',
-        MATERIAL_RIBBON: 'NGUYÊN LIỆU - RUY BĂNG',
     },
 }
 
