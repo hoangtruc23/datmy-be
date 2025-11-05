@@ -476,32 +476,36 @@ const errorCode = {
         code: 117,
         message: 'Kỹ thuật viên hiện đang có công việc chưa hoàn thành',
     },
-    MACHINE_NOT_FOUND: {
+    CUSTOMER_CODE_EXISTED: {
         code: 118,
+        message: 'Mã khách hàng đã tồn tại!',
+    },
+    MACHINE_NOT_FOUND: {
+        code: 119,
         message: 'Không tìm thấy sản phẩm',
     },
     MACHINE_SETTING_IS_EXISTED: {
-        code: 118,
+        code: 120,
         message: 'Cài đặt cho sản phẩm này đã tồn tại',
     },
     DEFAULT_VALUE_NOT_FOUND: {
-        code: 119,
+        code: 121,
         message: 'Sản phẩm mặc định của thuộc tính không tồn tại',
     },
     MACHINE_SETTING_NOT_FOUND: {
-        code: 120,
+        code: 122,
         message: 'Cài đặt cho sản phẩm này không tồn tại',
     },
     MACHINE_PROPERTIES_NOT_FOUND: {
-        code: 121,
+        code: 123,
         message: 'Thuộc tính không tồn tại',
     },
     MACHINE_PROPERTIES_NOT_LINKED_TYPE: {
-        code: 122,
+        code: 124,
         message: 'Thuộc tính không thuộc loại linked',
     },
     MACHINE_SETTING_NOT_FOUND: {
-        code: 123,
+        code: 125,
         message: 'Cấu hình cho máy không tồn tại',
     },
 }
