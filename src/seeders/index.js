@@ -8,6 +8,7 @@ const rolePermissionSeeder = require('./rolePermission')
 const roleSeeder = require('./role')
 const userSeeder = require('./user')
 const unitSeeder = require('./unit')
+const machineProperties = require('./machineProperties')
 const args = process.argv.slice(2)
 async function run() {
     try {
@@ -40,6 +41,10 @@ async function run() {
                 await unitSeeder()
                 break
             }
+            case 'machineProperties': {
+                await machineProperties()
+                break
+            }
             case 'all': {
                 await apiSeeder()
                 await permissionSeeder()
@@ -48,6 +53,7 @@ async function run() {
                 await rolePermissionSeeder()
                 await userSeeder()
                 await unitSeeder()
+                await machineProperties()
                 break
             }
             default:
