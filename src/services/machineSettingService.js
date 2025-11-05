@@ -174,8 +174,11 @@ const machineSettingService = {
     },
     getById: async (machineSettingId) => {
         try {
-            const machineSetting =
-                await MachineSettingModel.findById(machineSettingId).lean()
+            const machineSetting = await MachineSettingModel.findById(
+                machineSettingId,
+            )
+                .populate('machineId', 'name code')
+                .lean()
             if (!machineSetting) {
                 throw new BadReq(errorCode.MACHINE_NOT_FOUND)
             }
@@ -220,7 +223,15 @@ const machineSettingService = {
                     )
                 }
             }
-            return { ...machineSetting, props }
+            return {
+                _id: machineSetting._id,
+                machineInfo: {
+                    _id: machineSetting.machineId._id,
+                    name: machineSetting.machineId.name,
+                    code: machineSetting.machineId.code,
+                },
+                props,
+            }
         } catch (error) {
             throw error
         }
