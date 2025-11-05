@@ -856,6 +856,40 @@ async function permissionApiSeeder() {
             permissionId: '68db8978cc41fa86439388cd', // Xem kỹ thuật viên
             apiId: '68fee754df90864cd0ba5309', // /workOrder/getAllTechnicianStatus
         },
+
+        //cấu hình máy in
+        {
+            permissionId: '69096f66ade3dff4e26b9192', // Xem cấu hình máy in
+            apiId: '69096d1afbb88e9e19560634', //machineSetting/getAll
+        },
+        {
+            permissionId: '69096f66ade3dff4e26b9192', // Xem cấu hình máy in
+            apiId: '69096d1afbb88e9e19560635', //machineSetting/getById
+        },
+        {
+            permissionId: '69096f66ade3dff4e26b9193', // Tạo cấu hình máy in
+            apiId: '69096d1afbb88e9e19560630', //machineSetting/getMachine
+        },
+        {
+            permissionId: '69096f66ade3dff4e26b9193', // Tạo cấu hình máy in
+            apiId: '69096d1afbb88e9e19560631', //machineSetting/getAllProperties
+        },
+        {
+            permissionId: '69096f66ade3dff4e26b9193', // Tạo cấu hình máy in
+            apiId: '69096d1afbb88e9e19560632', //machineSetting/getDefaultValue
+        },
+        {
+            permissionId: '69096f66ade3dff4e26b9193', // Tạo cấu hình máy in
+            apiId: '69096d1afbb88e9e19560633', //machineSetting/create
+        },
+        {
+            permissionId: '69096f66ade3dff4e26b9194', // Chỉnh sửa cấu hình máy in
+            apiId: '69096d1afbb88e9e19560636', //machineSetting/update
+        },
+        {
+            permissionId: '69096f66ade3dff4e26b9195', // Xóa cấu hình máy in
+            apiId: '69096d1afbb88e9e19560637', //machineSetting/delete
+        },
     ])
     logger.info('PermissionApis seeded')
 }
