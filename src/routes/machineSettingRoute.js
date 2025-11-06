@@ -531,26 +531,15 @@ router.delete('/delete/:machineSettingId', machineSettingController.delete)
  *                           _id:
  *                             type: string
  *                             example: 6909a9198652109a0666aa6c
- *                           machineInfo:
- *                             type: object
- *                             properties:
- *                               machineId:
- *                                 type: string
- *                                 example: 689b2295324b9d06707ddf26
- *                               name:
- *                                 type: string
- *                                 example: Máy in phun bao bì công nghiệp hiệu DOMINO A100
- *                               code:
- *                                 type: string
- *                                 example: A100
- *                           createdAt:
+ *                           machineId:
  *                             type: string
- *                             format: date-time
- *                             example: 2025-11-04T07:19:53.612Z
- *                           updatedAt:
+ *                             example: 689b2295324b9d06707ddf26
+ *                           machineName:
  *                             type: string
- *                             format: date-time
- *                             example: 2025-11-04T07:19:53.612Z
+ *                             example: Máy in phun bao bì công nghiệp hiệu DOMINO A100
+ *                           machineCode:
+ *                             type: string
+ *                             example: A100
  *                     page:
  *                       type: integer
  *                       example: 1
@@ -657,6 +646,12 @@ router.delete('/delete/:machineSettingId', machineSettingController.delete)
  *                     machineId:
  *                       type: string
  *                       example: 689b2295324b9d06707ddf26
+ *                     machineName:
+ *                       type: string
+ *                       example: Máy in phun bao bì công nghiệp hiệu DOMINO A100
+ *                     machineCode:
+ *                       type: string
+ *                       example: A100
  *                     props:
  *                       type: array
  *                       items:
@@ -696,17 +691,6 @@ router.delete('/delete/:machineSettingId', machineSettingController.delete)
  *                                 items:
  *                                   type: string
  *                                   example: 30mm
- *                     createdAt:
- *                       type: string
- *                       format: date-time
- *                       example: 2025-11-04T07:19:53.612Z
- *                     updatedAt:
- *                       type: string
- *                       format: date-time
- *                       example: 2025-11-04T09:38:37.235Z
- *                     __v:
- *                       type: integer
- *                       example: 0
  *       401:
  *         description: Chưa đăng nhập
  *         content:

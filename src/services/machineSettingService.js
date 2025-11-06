@@ -151,19 +151,12 @@ const machineSettingService = {
             }),
         ])
 
-        const result = items.map((i) => {
-            const machineInfo = {
-                machineId: i.machineId._id,
-                name: i.machineId.name,
-                code: i.machineId.code,
-            }
-            return {
-                _id: i._id,
-                machineInfo,
-                createdAt: i.createdAt,
-                updatedAt: i.updatedAt,
-            }
-        })
+        const result = items.map((i) => ({
+            _id: i._id,
+            machineId: i.machineId._id,
+            machineName: i.machineId.name,
+            machineCode: i.machineId.code,
+        }))
 
         return {
             result,
@@ -174,8 +167,11 @@ const machineSettingService = {
     },
     getById: async (machineSettingId) => {
         try {
-            const machineSetting =
-                await MachineSettingModel.findById(machineSettingId).lean()
+            const machineSetting = await MachineSettingModel.findById(
+                machineSettingId,
+            )
+                .populate('machineId', 'name code')
+                .lean()
             if (!machineSetting) {
                 throw new BadReq(errorCode.MACHINE_NOT_FOUND)
             }
@@ -220,7 +216,13 @@ const machineSettingService = {
                     )
                 }
             }
-            return { ...machineSetting, props }
+            return {
+                _id: machineSetting._id,
+                machineId: machineSetting.machineId._id,
+                machineName: machineSetting.machineId.name,
+                machineCode: machineSetting.machineId.code,
+                props,
+            }
         } catch (error) {
             throw error
         }
