@@ -1,8 +1,5 @@
 const { model, Types, Schema } = require('mongoose')
-const {
-    workOrderAMachineSchema,
-    workOrderASpecsSchema,
-} = require('./workOrderA')
+const { propSchema } = require('./workOrderDetailHelp')
 
 const workOrderTestASchema = new Schema({
     workOrderId: {
@@ -13,20 +10,18 @@ const workOrderTestASchema = new Schema({
     testDate: {
         type: Date,
     },
-    machineInfo: workOrderAMachineSchema,
-    machineSpecs: workOrderASpecsSchema,
-    injectionPipeLength: {
-        type: Number,
+    testerId: {
+        type: Types.ObjectId,
+        ref: 'technicians',
     },
-    pumpType: {
-        type: String,
+    machineTypeId: {
+        type: Types.ObjectId,
+        ref: 'products',
     },
     language: {
         type: String,
     },
-    note: {
-        type: String,
-    },
+    props: [propSchema],
 })
 
 const WorkOrderTestAModel = model('workOrderTestA', workOrderTestASchema)

@@ -1,23 +1,5 @@
 const { model, Types, Schema } = require('mongoose')
-const {
-    workOrderAMachineSchema,
-    workOrderASpecsSchema,
-} = require('./workOrderA')
-
-const repairTimeSchema = new Schema(
-    {
-        repairDate: {
-            type: Date,
-        },
-        arrivalTime: {
-            type: String,
-        },
-        departureTime: {
-            type: String,
-        },
-    },
-    { _id: false },
-)
+const {propSchema} = require('./workOrderDetailHelp')
 
 const workOrderRepairASchema = new Schema({
     workOrderId: {
@@ -28,11 +10,20 @@ const workOrderRepairASchema = new Schema({
     maintainContract: {
         type: Boolean,
     },
-    repairDate: repairTimeSchema,
-    machineTypeId: {
+    repairDate: {
+        type: Date,
+    },
+    arrivalTime: {
         type: String,
+    },
+    departureTime: {
+        type: String,
+    },
+    machineTypeId: {
+        type: Types.ObjectId,
         ref: 'products',
     },
+    props: [propSchema],
 })
 
 const WorkOrderRepairAModel = model('workOrderRepairA', workOrderRepairASchema)

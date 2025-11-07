@@ -1,21 +1,5 @@
 const { model, Types, Schema } = require('mongoose')
-const constant = require('../utils/constant/constant')
-
-const workOrderTestBaseSchema = new Schema(
-    {
-        testDate: {
-            type: Date,
-        },
-        purposeTest: {
-            type: String,
-            enum: Object.values(constant.PURPOSE_TEST),
-        },
-        receiptDate: {
-            type: Date,
-        },
-    },
-    { _id: false },
-)
+const { propSchema, testBaseSchema } = require('./workOrderDetailHelp')
 
 const printHeadSchema = new Schema(
     {
@@ -38,25 +22,12 @@ const workOrderTestGSchema = new Schema({
         required: true,
         ref: 'workOrders',
     },
-    baseInfo: workOrderTestBaseSchema,
-    machineType: {
-        type: String,
+    baseInfo: testBaseSchema,
+    machineTypeId: {
+        type: Types.ObjectId,
+        ref: 'products',
     },
-    inkType: {
-        type: String,
-    },
-    controllerSerialNumber: {
-        type: String,
-    },
-    printHeadType: {
-        type: String,
-    },
-    singleHeadQuantity: {
-        type: Number,
-    },
-    coupledHeadQuantity: {
-        type: Number,
-    },
+    props: [propSchema],
     printHeads: [printHeadSchema],
 })
 

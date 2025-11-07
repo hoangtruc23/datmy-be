@@ -1,87 +1,5 @@
 const { Types, model, Schema } = require('mongoose')
-const constant = require('../utils/constant/constant')
-
-const machineInfoSchema = new Schema(
-    {
-        machineType: {
-            type: String,
-        },
-        machineSerialNumber: {
-            type: String,
-        },
-        applicatorType: {
-            type: String,
-        },
-        controllerSerialNumber: {
-            type: String,
-        },
-        labelSize: {
-            type: String,
-        },
-        ribbonType: {
-            type: String,
-        },
-        padSize: {
-            type: String,
-        },
-        conveyorSpeed: {
-            type: Number,
-        },
-    },
-    { _if: false },
-)
-
-const machineSpecsSchema = new Schema(
-    {
-        applicatorMode: {
-            type: String,
-            enum: Object.values(constant.APPLICATOR_MODE),
-        },
-        minLength: {
-            type: Number,
-        },
-        labelPerProduct: {
-            type: Number,
-        },
-        printHeadType: {
-            type: String,
-        },
-        printSpeed: {
-            level: {
-                type: String,
-                enum: Object.values(constant.PRINT_SPEED_LEVEL),
-            },
-            speed: {
-                type: Number,
-            },
-        },
-        printSignal: {
-            type: String,
-        },
-        labelApplySignal: {
-            type: String,
-        },
-        airPressure: {
-            type: Number,
-        },
-        padOffset: {
-            type: Number,
-        },
-        ACCfirwareVersion: {
-            type: String,
-        },
-        ACCBootloaderVersion: {
-            type: String,
-        },
-        installDirection: {
-            type: String,
-        },
-        otherFeatures: {
-            type: [String],
-        },
-    },
-    { _id: false },
-)
+const {propSchema} = require('./workOrderDetailHelp')
 
 const workOrderRepairMSchema = new Schema({
     workOrderId: {
@@ -89,20 +7,11 @@ const workOrderRepairMSchema = new Schema({
         required: true,
         ref: 'workOrders',
     },
-    machineInfo: machineInfoSchema,
-    machineSpecs: machineSpecsSchema,
-    failure: {
-        type: [String],
+    machineTypeId: {
+        type: Types.ObjectId,
+        ref: 'products',
     },
-    handle: {
-        type: [String],
-    },
-    technicianOpinions: {
-        type: String,
-    },
-    customerOpinions: {
-        type: [String],
-    },
+    props: [propSchema],
 })
 
 const WorkOrderRepairMModel = model('workOderRepairM', workOrderRepairMSchema)
