@@ -1,5 +1,5 @@
 const { Types, model, Schema } = require('mongoose')
-const {propSchema} = require('./workOrderDetailHelp')
+const { propSchema } = require('./workOrderDetailHelp')
 
 const workOrderRepairVSchema = new Schema({
     workOrderId: {
@@ -12,6 +12,20 @@ const workOrderRepairVSchema = new Schema({
         ref: 'products',
     },
     props: [propSchema],
+    repairVFault: [
+        {
+            fault: {
+                type: String,
+                required: true,
+            },
+            resolution: {
+                type: String,
+                required: true,
+            },
+        },
+    ],
+    technicalFeedback: [String],
+    customerFeedback: [String],
 })
 
 const WorkOrderRepairVModel = model('workOderRepairV', workOrderRepairVSchema)

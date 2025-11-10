@@ -1,23 +1,6 @@
 const { model, Types, Schema } = require('mongoose')
-const {
-    workOrderAMachineSchema,
-    workOrderASpecsSchema,
-} = require('./workOrderA')
+const { propSchema } = require('./workOrderDetailHelp')
 
-const maintainTimeSchema = new Schema(
-    {
-        maintainDate: {
-            type: Date,
-        },
-        arrivalTime: {
-            type: String,
-        },
-        departureTime: {
-            type: String,
-        },
-    },
-    { _id: false },
-)
 const workOrderMaintainASchema = new Schema({
     workOrderId: {
         type: Types.ObjectId,
@@ -25,23 +8,41 @@ const workOrderMaintainASchema = new Schema({
         ref: 'workOrders',
     },
     maintainContractDate: {
+        type: Date,
+    },
+    maintainDate: {
+        type: Date,
+    },
+    arrivalTime: {
         type: String,
     },
-    maintainDate: maintainTimeSchema,
-    machineInfo: workOrderAMachineSchema,
-    machineSpecs: workOrderASpecsSchema,
-    maintenanceOperation: {
-        type: [String],
-    },
-    replacementPart: {
-        type: [String],
-    },
-    technicianOpinion: {
+    departureTime: {
         type: String,
     },
-    customerOpinion: {
-        type: [String],
+    machineTypeId: {
+        type: String,
+        ref: 'products',
     },
+    props: [propSchema],
+    maintainOperations: [
+        {
+            operationName: {
+                type: String,
+                required: true,
+            },
+            hasValue: {
+                type: Boolean,
+                required: true,
+                default: false,
+            },
+        },
+    ],
+    replacement: {
+        type: Types.ObjectId,
+        ref: 'products',
+    },
+    technicalFeedback: [String],
+    customerFeedback: [String],
 })
 
 const WorkOrderMaintainAModel = model(

@@ -1,7 +1,7 @@
 const { Types, model, Schema } = require('mongoose')
 const { propSchema } = require('./workOrderDetailHelp')
 
-const workOrderRepairDSchema = new Schema({
+const workOrderMaintainVSchema = new Schema({
     workOrderId: {
         type: Types.ObjectId,
         required: true,
@@ -12,15 +12,16 @@ const workOrderRepairDSchema = new Schema({
         ref: 'products',
     },
     props: [propSchema],
-    repairDFault: [
+    maintainOperations: [
         {
-            fault: {
+            operationName: {
                 type: String,
                 required: true,
             },
-            resolution: {
-                type: String,
+            hasValue: {
+                type: Boolean,
                 required: true,
+                default: false,
             },
         },
     ],
@@ -28,5 +29,8 @@ const workOrderRepairDSchema = new Schema({
     customerFeedback: [String],
 })
 
-const WorkOrderRepairDModel = model('workOderRepairD', workOrderRepairDSchema)
-module.exports = WorkOrderRepairDModel
+const WorkOrderMaintainVModel = model(
+    'workOderMaintainV',
+    workOrderMaintainVSchema,
+)
+module.exports = WorkOrderMaintainVModel

@@ -31,6 +31,20 @@ const groupSchema = new Schema(
                 enum: Object.values(constant.SYNC_MODE),
             },
         },
+        repairGFault: [
+            {
+                fault: {
+                    type: String,
+                    required: true,
+                },
+                resolution: {
+                    type: String,
+                    required: true,
+                },
+            },
+        ],
+        technicalFeedback: [String],
+        customerFeedback: [String],
     },
     { _id: false },
 )

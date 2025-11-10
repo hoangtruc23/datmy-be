@@ -12,6 +12,20 @@ const workOrderRepairMSchema = new Schema({
         ref: 'products',
     },
     props: [propSchema],
+    repairMFault: [
+        {
+            fault: {
+                type: String,
+                required: true,
+            },
+            resolution: {
+                type: String,
+                required: true,
+            },
+        },
+    ],
+    technicalFeedback: [String],
+    customerFeedback: [String],
 })
 
 const WorkOrderRepairMModel = model('workOderRepairM', workOrderRepairMSchema)
