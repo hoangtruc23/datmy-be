@@ -1,74 +1,68 @@
-const WorkOrderInstallationModel = require('../models/workOrderInstallation')
-const WorkOrderMaintainAModel = require('../models/workOrderMaintainA')
-const WorkOrderMaintainDModel = require('../models/workOrderMaintainD')
-const WorkOrderMaintainMModel = require('../models/workOrderMaintainM')
-const WorkOrderMaintainVModel = require('../models/workOrderMaintainV')
-const WorkOrderRepairAModel = require('../models/workOrderRepairA')
-const WorkOrderRepairDModel = require('../models/workOrderRepairD')
-const WorkOrderRepairGModel = require('../models/workOrderRepairG')
-const WorkOrderRepairMModel = require('../models/workOrderRepairM')
-const WorkOrderRepairVModel = require('../models/workOrderRepairV')
-const WorkOrderTestAModel = require('../models/workOrderTestA')
-const WorkOrderTestDModel = require('../models/workOrderTestD')
-const WorkOrderTestGModel = require('../models/workOrderTestG')
-const WorkOrderTestMModel = require('../models/workOrderTestM')
-const WorkOrderTestVModel = require('../models/workOrderTestV')
-
 const WorkOrderBusinessModel = require('../models/workOrderBusiness')
+const WorkOrderModel = require('../models/workOrder')
 const constant = require('../utils/constant/constant')
+const BadReq = require('../utils/response/requestError')
+const errorCode = require('../utils/response/errorCode')
+const {
+    getWorkOrderModel,
+    checkExist,
+} = require('../utils/helper/workOrderDetailHelper')
 
 const workOrderDetailService = {
-    create: async (reqData) => {
+    create: async (workOrderId) => {
         try {
-            const { typeWork, type, data } = reqData
-            if (typeWork === constant.WORK_ORDER_TYPE.INSTALLATION) {
-                await WorkOrderInstallationModel.create(data)
-            } else if (typeWork === constant.WORK_ORDER_TYPE.MAINTENANCE) {
-                if (type === constant.WORK_ORDER_DETAIL_TYPE.A) {
-                    await WorkOrderMaintainAModel.create(data)
-                }
-                if (type === constant.WORK_ORDER_DETAIL_TYPE.D) {
-                    await WorkOrderMaintainDModel.create(data)
-                }
-                if (type === constant.WORK_ORDER_DETAIL_TYPE.M) {
-                    await WorkOrderMaintainMModel.create(data)
-                }
-                if (type === constant.WORK_ORDER_DETAIL_TYPE.V) {
-                    await WorkOrderMaintainVModel.create(data)
-                }
-            } else if (typeWork === constant.WORK_ORDER_TYPE.REPAIR){
-                if (type === constant.WORK_ORDER_DETAIL_TYPE.A) {
-                    await WorkOrderRepairAModel.create(data)
-                }
-                if (type === constant.WORK_ORDER_DETAIL_TYPE.D) {
-                    await WorkOrderRepairDModel.create(data)
-                }
-                if (type === constant.WORK_ORDER_DETAIL_TYPE.G) {
-                    await WorkOrderRepairGModel.create(data)
-                }
-                if (type === constant.WORK_ORDER_DETAIL_TYPE.M) {
-                    await WorkOrderRepairMModel.create(data)
-                }
-                if (type === constant.WORK_ORDER_DETAIL_TYPE.V) {
-                    await WorkOrderRepairVModel.create(data)
-                }
-            }else if(typeWork === constant.WORK_ORDER_TYPE.TEST_IO){
-                if (type === constant.WORK_ORDER_DETAIL_TYPE.A) {
-                    await WorkOrderTestAModel.create(data)
-                }
-                if (type === constant.WORK_ORDER_DETAIL_TYPE.D) {
-                    await WorkOrderTestDModel.create(data)
-                }
-                if (type === constant.WORK_ORDER_DETAIL_TYPE.G) {
-                    await WorkOrderTestGModel.create(data)
-                }
-                if (type === constant.WORK_ORDER_DETAIL_TYPE.M) {
-                    await WorkOrderTestMModel.create(data)
-                }
-                if (type === constant.WORK_ORDER_DETAIL_TYPE.V) {
-                    await WorkOrderTestVModel.create(data)
-                }
+            //check workOrder
+            const checkWorkOrder =
+                await WorkOrderModel.findById(workOrderId).lean()
+            if (!checkWorkOrder) {
+                throw new BadReq(errorCode.WORK_ORDER_NOT_FOUND)
             }
+            //Lấy model
+            const WorkOrderDetailModel = getWorkOrderModel(
+                checkWorkOrder.typeWork,
+                checkWorkOrder.type,
+            )
+            //check workOrderDetail có tồn tại hay không, nếu có thì không cho tạo
+            const existed = await checkExist(workOrderId)
+            if (existed) {
+                throw new BadReq(errorCode.WORK_ORDER_DETAIL_EXISTED)
+            }
+
+            await WorkOrderDetailModel.create(workOrderId)
+            return null
+        } catch (error) {
+            throw error
+        }
+    },
+    delete: async (workOrderId) => {
+        try {
+            //check WorkOrder
+            const checkWorkOrder =
+                await WorkOrderModel.findById(workOrderId).lean()
+            if (!checkWorkOrder) {
+                throw new BadReq(errorCode.WORK_ORDER_NOT_FOUND)
+            }
+            //Lấy model
+            const WorkOrderDetailModel = getWorkOrderModel(
+                checkWorkOrder.typeWork,
+                checkWorkOrder.type,
+            )
+            //check workOrderDetail có tồn tại hay không
+            const existed = await checkExist(workOrderId)
+            if (!existed) {
+                throw new BadReq(errorCode.WORK_ORDER_DETAIL_NOT_FOUND)
+            }
+            //check xem workOrderDetail đã có thông tin chưa, nếu có thì không cho xóa
+            const workOrderDetail = await WorkOrderDetailModel.findOne({
+                workOrderId,
+            })
+            if (workOrderDetail.machineTypeId) {
+                throw new BadReq(
+                    errorCode.WORK_ORDER_DETAIL_HAVE_DATA_SO_CAN_NOT_UPDATE_OR_DELETE,
+                )
+            }
+            await WorkOrderDetailModel.findOneAndDelete({ workOrderId })
+            return null
         } catch (error) {
             throw error
         }

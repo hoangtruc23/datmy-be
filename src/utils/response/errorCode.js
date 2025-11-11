@@ -508,6 +508,31 @@ const errorCode = {
         code: 125,
         message: 'Cấu hình cho máy không tồn tại',
     },
+    WORK_ORDER_TYPE_NOT_FOUND: {
+        code: 126,
+        message: 'Loại công việc không tồn tại',
+    },
+    WORK_ORDER_DETAIL_TYPE_NOT_FOUND: {
+        code: 127,
+        message: 'Loại chi tiết của công việc không tồn tại',
+    },
+    MODEL_NOT_FOUND_FOR_TYPE_WORK_AND_TYPE: {
+        code: 128,
+        message: 'Không tìm thấy model tương ứng với typeWork và type',
+    },
+    WORK_ORDER_DETAIL_EXISTED: {
+        code: 129,
+        message: 'Phiếu chi tiết của công việc này đã tồn tại',
+    },
+    WORK_ORDER_DETAIL_NOT_FOUND: {
+        code: 130,
+        message: 'Phiếu chi tiết của công việc này không tồn tại',
+    },
+    WORK_ORDER_DETAIL_HAVE_DATA_SO_CAN_NOT_UPDATE_OR_DELETE: {
+        code: 131,
+        message:
+            'Phiếu chi tiết của công việc này đã điền thông tin nên không thể cập nhật hay xóa',
+    },
 }
 
 module.exports = errorCode

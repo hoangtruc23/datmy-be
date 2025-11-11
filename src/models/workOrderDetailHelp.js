@@ -1,4 +1,5 @@
 const { model, Types, Schema } = require('mongoose')
+const constant = require('../utils/constant/constant')
 
 const propSchema = new Schema(
     {

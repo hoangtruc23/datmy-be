@@ -4,6 +4,8 @@ const errorCode = require('../utils/response/errorCode')
 const CustomerModel = require('../models/customer')
 const constant = require('../utils/constant/constant')
 const TechnicianModel = require('../models/technician')
+const workOrderDetailService = require('../services/workOrderDetailService')
+const { getWorkOrderModel } = require('../utils/helper/workOrderDetailHelper')
 
 const workOrderService = {
     getAll: async (reqUserId, query) => {
@@ -211,6 +213,8 @@ const workOrderService = {
             if (!checkWorkOrder) {
                 throw new BadReq(errorCode.WORK_ORDER_NOT_FOUND)
             }
+            const oldTypeWork = checkWorkOrder.typeWork
+            const oldType = checkWorkOrder.type
 
             const technician = await TechnicianModel.findOne({
                 _id: technicianId,
@@ -232,6 +236,25 @@ const workOrderService = {
                 overDueTime,
                 status,
             })
+
+            if (typeWork !== oldTypeWork || type !== oldType) {
+                if (
+                    oldTypeWork === constant.WORK_ORDER_TYPE.INSTALLATION ||
+                    (oldTypeWork !== constant.WORK_ORDER_TYPE.NULL &&
+                        oldType !== constant.WORK_ORDER_DETAIL_TYPE.NULL)
+                ) {
+                    await workOrderDetailService.delete(
+                        checkWorkOrder.workOrderId,
+                    )
+                }
+                if (
+                    typeWork === constant.WORK_ORDER_TYPE.INSTALLATION ||
+                    (typeWork !== constant.WORK_ORDER_TYPE.NULL &&
+                        type !== constant.WORK_ORDER_DETAIL_TYPE.NULL)
+                ) {
+                    await workOrderDetailService.create(checkWorkOrder._id)
+                }
+            }
 
             //cập nhật ktv
             if (technicianId && checkWorkOrder.technicianId !== technicianId) {
@@ -284,6 +307,13 @@ const workOrderService = {
                 throw new BadReq(errorCode.WORK_ORDER_NOT_FOUND)
             }
             await WorkOrderModel.findByIdAndDelete(workOrderId)
+            if (
+                oldTypeWork === constant.WORK_ORDER_TYPE.INSTALLATION ||
+                (oldTypeWork !== constant.WORK_ORDER_TYPE.NULL &&
+                    oldType !== constant.WORK_ORDER_DETAIL_TYPE.NULL)
+            ) {
+                await workOrderDetailService.delete(checkWorkOrder.workOrderId)
+            }
             //cập nhật ktv
             // ktv cũ nếu hết việc => cập nhật trạng thái
             const othersWorkOrder = await WorkOrderModel.findOne({

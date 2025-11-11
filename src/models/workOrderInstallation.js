@@ -26,7 +26,7 @@ const workOrderInstallationSchema = new Schema({
 })
 
 const WorkOrderInstallationModel = model(
-    'workOderInstallation',
+    'workOrderInstallation',
     workOrderInstallationSchema,
 )
 module.exports = WorkOrderInstallationModel

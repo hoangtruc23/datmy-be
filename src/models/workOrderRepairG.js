@@ -63,5 +63,5 @@ const workOrderRepairGSchema = new Schema({
     groups: [groupSchema],
 })
 
-const WorkOrderRepairGModel = model('workOderRepairG', workOrderRepairGSchema)
+const WorkOrderRepairGModel = model('workOrderRepairG', workOrderRepairGSchema)
 module.exports = WorkOrderRepairGModel

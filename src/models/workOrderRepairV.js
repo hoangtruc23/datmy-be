@@ -28,5 +28,5 @@ const workOrderRepairVSchema = new Schema({
     customerFeedback: [String],
 })
 
-const WorkOrderRepairVModel = model('workOderRepairV', workOrderRepairVSchema)
+const WorkOrderRepairVModel = model('workOrderRepairV', workOrderRepairVSchema)
 module.exports = WorkOrderRepairVModel

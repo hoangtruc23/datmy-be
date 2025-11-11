@@ -30,7 +30,7 @@ const workOrderMaintainVSchema = new Schema({
 })
 
 const WorkOrderMaintainVModel = model(
-    'workOderMaintainV',
+    'workOrderMaintainV',
     workOrderMaintainVSchema,
 )
 module.exports = WorkOrderMaintainVModel
