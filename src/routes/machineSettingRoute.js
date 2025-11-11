@@ -254,6 +254,12 @@ router.delete('/delete/:machineSettingId', machineSettingController.delete)
  *         type: string
  *       required: true
  *       description: ID của thuộc tính
+ *     - in: query
+ *       name: machineId
+ *       schema:
+ *         type: string
+ *       required: false
+ *       description: ID của machine (không bắt buộc)
  *     responses:
  *       200:
  *         description: Trả về danh sách 5 dòng máy in theo search
