@@ -508,6 +508,10 @@ const errorCode = {
         code: 125,
         message: 'Cấu hình cho máy không tồn tại',
     },
+    DUPLICATE_PROPS_DEFAULT_VALUE: {
+        code: 126,
+        message: 'Giá trị mặc định của thuộc tính không được trùng nhau',
+    },
 }
 
 module.exports = errorCode

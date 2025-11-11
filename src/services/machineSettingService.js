@@ -96,6 +96,21 @@ const machineSettingService = {
                     throw new BadReq(errorCode.MACHINE_PROPERTIES_NOT_FOUND)
                 }
                 if (
+                    checkProp.type ===
+                        constant.MACHINE_PROPERTIES_TYPE.CUSTOM ||
+                    checkProp.type === constant.MACHINE_PROPERTIES_TYPE.LINKED
+                ) {
+                    const seen = new Set()
+                    for (let v of p.defaultValue) {
+                        if (seen.has(v.toString())) {
+                            throw new BadReq(
+                                errorCode.DUPLICATE_PROPS_DEFAULT_VALUE,
+                            )
+                        }
+                        seen.add(v.toString())
+                    }
+                }
+                if (
                     checkProp.type === constant.MACHINE_PROPERTIES_TYPE.LINKED
                 ) {
                     const linkedCategory = await ProductCategoryModel.findOne({
@@ -272,6 +287,21 @@ const machineSettingService = {
                 const checkProp = allPropsMap[p.propId]
                 if (!checkProp) {
                     throw new BadReq(errorCode.MACHINE_PROPERTIES_NOT_FOUND)
+                }
+                if (
+                    checkProp.type ===
+                        constant.MACHINE_PROPERTIES_TYPE.CUSTOM ||
+                    checkProp.type === constant.MACHINE_PROPERTIES_TYPE.LINKED
+                ) {
+                    const seen = new Set()
+                    for (let v of p.defaultValue) {
+                        if (seen.has(v.toString())) {
+                            throw new BadReq(
+                                errorCode.DUPLICATE_PROPS_DEFAULT_VALUE,
+                            )
+                        }
+                        seen.add(v.toString())
+                    }
                 }
                 if (
                     checkProp.type === constant.MACHINE_PROPERTIES_TYPE.LINKED
