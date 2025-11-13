@@ -44,7 +44,32 @@ const machineSettingService = {
             if (prop.type !== constant.MACHINE_PROPERTIES_TYPE.LINKED) {
                 throw new BadReq(errorCode.MACHINE_PROPERTIES_NOT_LINKED_TYPE)
             }
-            let { search } = query
+
+            let { machineId, search } = query
+            let existedValueIds = []
+
+            if (machineId) {
+                const machine = await ProductModel.findById(machineId).populate(
+                    'categoryId',
+                    'name',
+                )
+                if (
+                    !machine ||
+                    machine.categoryId.name !== constant.CATEGORY_NAME.MACHINE
+                ) {
+                    throw new BadReq(errorCode.MACHINE_NOT_FOUND)
+                }
+                const machineSetting = await MachineSettingModel.findOne({
+                    machineId,
+                })
+                if (machineSetting) {
+                    for (let p of machineSetting.props) {
+                        if (p.propId.toString() === propId) {
+                            existedValueIds = p.defaultValue
+                        }
+                    }
+                }
+            }
             search = new RegExp(search, 'i')
             const category = await ProductCategoryModel.findOne({
                 name: prop.categoryLinkedName,
@@ -55,6 +80,7 @@ const machineSettingService = {
             const result = await ProductModel.find({
                 $or: [{ name: search }, { code: search }],
                 categoryId: category._id,
+                _id: { $nin: existedValueIds },
             }).select('name code')
             return result
         } catch (error) {
