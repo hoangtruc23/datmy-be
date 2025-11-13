@@ -16,20 +16,27 @@ const printHeadSchema = new Schema(
     { _id: false },
 )
 
-const workOrderTestGSchema = new Schema({
-    workOrderId: {
-        type: Types.ObjectId,
-        required: true,
-        ref: 'workOrders',
+const workOrderTestGSchema = new Schema(
+    {
+        workOrderId: {
+            type: Types.ObjectId,
+            required: true,
+            ref: 'workOrders',
+        },
+        baseInfo: {
+            type: testBaseSchema,
+            default: null,
+        },
+        machineTypeId: {
+            type: Types.ObjectId,
+            ref: 'products',
+            default: null
+        },
+        props: [propSchema],
+        printHeads: [printHeadSchema],
     },
-    baseInfo: testBaseSchema,
-    machineTypeId: {
-        type: Types.ObjectId,
-        ref: 'products',
-    },
-    props: [propSchema],
-    printHeads: [printHeadSchema],
-})
+    { timestamps: true },
+)
 
 const WorkOrderTestGModel = model('workOrderTestG', workOrderTestGSchema)
 module.exports = WorkOrderTestGModel

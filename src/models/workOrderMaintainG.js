@@ -1,7 +1,7 @@
 const { Types, model, Schema } = require('mongoose')
-const { propSchema } = require('./workOrderDetailHelp')
+const { propSchema, groupSchema } = require('./workOrderDetailHelp')
 
-const workOrderMaintainVSchema = new Schema(
+const workOrderMaintainGSchema = new Schema(
     {
         workOrderId: {
             type: Types.ObjectId,
@@ -15,6 +15,7 @@ const workOrderMaintainVSchema = new Schema(
         },
         machineInfo: [propSchema],
         machineSpecs: [propSchema],
+        groups: [groupSchema],
         maintainOperations: [
             {
                 _id: false,
@@ -36,8 +37,8 @@ const workOrderMaintainVSchema = new Schema(
     { timestamps: true },
 )
 
-const WorkOrderMaintainVModel = model(
-    'workOrderMaintainV',
-    workOrderMaintainVSchema,
+const WorkOrderMaintainGModel = model(
+    'workOrderMaintainG',
+    workOrderMaintainGSchema,
 )
-module.exports = WorkOrderMaintainVModel
+module.exports = WorkOrderMaintainGModel

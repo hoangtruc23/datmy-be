@@ -1,6 +1,9 @@
 const WorkOrderInstallationModel = require('../../models/workOrderInstallation')
+const WorkOrderDemoModel = require('../../models/workOrderDemo')
+const WorkOrderSamplePrintingModel = require('../../models/workOrderSamplePrinting')
 const WorkOrderMaintainAModel = require('../../models/workOrderMaintainA')
 const WorkOrderMaintainDModel = require('../../models/workOrderMaintainD')
+const WorkOrderMaintainGModel = require('../../models/workOrderMaintainG')
 const WorkOrderMaintainMModel = require('../../models/workOrderMaintainM')
 const WorkOrderMaintainVModel = require('../../models/workOrderMaintainV')
 const WorkOrderRepairAModel = require('../../models/workOrderRepairA')
@@ -19,26 +22,30 @@ const BadReq = require('../response/requestError')
 const errorCode = require('../response/errorCode')
 
 const modelMap = {
-    [constant.WORK_ORDER_TYPE.INSTALLATION]: WorkOrderInstallationModel,
-    [constant.WORK_ORDER_TYPE.MAINTENANCE]: {
-        [constant.WORK_ORDER_DETAIL_TYPE.A]: WorkOrderMaintainAModel,
-        [constant.WORK_ORDER_DETAIL_TYPE.D]: WorkOrderMaintainDModel,
-        [constant.WORK_ORDER_DETAIL_TYPE.M]: WorkOrderMaintainMModel,
-        [constant.WORK_ORDER_DETAIL_TYPE.V]: WorkOrderMaintainVModel,
+    [constant.WORK_ORDER_TYPE.INSTALLATION.value]: WorkOrderInstallationModel,
+    [constant.WORK_ORDER_TYPE.DEMO.value]: WorkOrderDemoModel,
+    [constant.WORK_ORDER_TYPE.SAMPLE_PRINTING.value]:
+        WorkOrderSamplePrintingModel,
+    [constant.WORK_ORDER_TYPE.MAINTENANCE.value]: {
+        [constant.WORK_ORDER_DETAIL_TYPE.A.value]: WorkOrderMaintainAModel,
+        [constant.WORK_ORDER_DETAIL_TYPE.D.value]: WorkOrderMaintainDModel,
+        [constant.WORK_ORDER_DETAIL_TYPE.G.value]: WorkOrderMaintainGModel,
+        [constant.WORK_ORDER_DETAIL_TYPE.M.value]: WorkOrderMaintainMModel,
+        [constant.WORK_ORDER_DETAIL_TYPE.V.value]: WorkOrderMaintainVModel,
     },
-    [constant.WORK_ORDER_TYPE.REPAIR]: {
-        [constant.WORK_ORDER_DETAIL_TYPE.A]: WorkOrderRepairAModel,
-        [constant.WORK_ORDER_DETAIL_TYPE.D]: WorkOrderRepairDModel,
-        [constant.WORK_ORDER_DETAIL_TYPE.G]: WorkOrderRepairGModel,
-        [constant.WORK_ORDER_DETAIL_TYPE.M]: WorkOrderRepairMModel,
-        [constant.WORK_ORDER_DETAIL_TYPE.V]: WorkOrderRepairVModel,
+    [constant.WORK_ORDER_TYPE.REPAIR.value]: {
+        [constant.WORK_ORDER_DETAIL_TYPE.A.value]: WorkOrderRepairAModel,
+        [constant.WORK_ORDER_DETAIL_TYPE.D.value]: WorkOrderRepairDModel,
+        [constant.WORK_ORDER_DETAIL_TYPE.G.value]: WorkOrderRepairGModel,
+        [constant.WORK_ORDER_DETAIL_TYPE.M.value]: WorkOrderRepairMModel,
+        [constant.WORK_ORDER_DETAIL_TYPE.V.value]: WorkOrderRepairVModel,
     },
-    [constant.WORK_ORDER_TYPE.TEST_IO]: {
-        [constant.WORK_ORDER_DETAIL_TYPE.A]: WorkOrderTestAModel,
-        [constant.WORK_ORDER_DETAIL_TYPE.D]: WorkOrderTestDModel,
-        [constant.WORK_ORDER_DETAIL_TYPE.G]: WorkOrderTestGModel,
-        [constant.WORK_ORDER_DETAIL_TYPE.M]: WorkOrderTestMModel,
-        [constant.WORK_ORDER_DETAIL_TYPE.V]: WorkOrderTestVModel,
+    [constant.WORK_ORDER_TYPE.TEST_IO.value]: {
+        [constant.WORK_ORDER_DETAIL_TYPE.A.value]: WorkOrderTestAModel,
+        [constant.WORK_ORDER_DETAIL_TYPE.D.value]: WorkOrderTestDModel,
+        [constant.WORK_ORDER_DETAIL_TYPE.G.value]: WorkOrderTestGModel,
+        [constant.WORK_ORDER_DETAIL_TYPE.M.value]: WorkOrderTestMModel,
+        [constant.WORK_ORDER_DETAIL_TYPE.V.value]: WorkOrderTestVModel,
     },
 }
 
@@ -47,11 +54,19 @@ function getWorkOrderModel(typeWork, type) {
         if (!typeWork) {
             throw new BadReq(errorCode.WORK_ORDER_TYPE_NOT_FOUND)
         }
-        if (!type && typeWork !== constant.WORK_ORDER_TYPE.INSTALLATION) {
-            throw new BadReq(errorCode.WORK_ORDER_DETAIL_TYPE_NOT_FOUND)
+        if (
+            typeWork !== constant.WORK_ORDER_TYPE.INSTALLATION.value &&
+            typeWork !== constant.WORK_ORDER_TYPE.DEMO.value &&
+            typeWork !== constant.WORK_ORDER_TYPE.SAMPLE_PRINTING.value
+        ) {
+            if (!type) {
+                throw new BadReq(errorCode.WORK_ORDER_DETAIL_TYPE_NOT_FOUND)
+            }
         }
         const model =
-            typeWork === constant.WORK_ORDER_TYPE.INSTALLATION
+            typeWork === constant.WORK_ORDER_TYPE.INSTALLATION.value ||
+            typeWork === constant.WORK_ORDER_TYPE.DEMO.value ||
+            typeWork === constant.WORK_ORDER_TYPE.SAMPLE_PRINTING.value
                 ? modelMap[typeWork]
                 : modelMap[typeWork]?.[type]
         if (!model) {

@@ -1,38 +1,24 @@
 const { Types, model, Schema } = require('mongoose')
-const { propSchema } = require('./workOrderDetailHelp')
-const constant = require('../utils/constant/constant')
+const { propSchema, groupSchema } = require('./workOrderDetailHelp')
 
-const groupSchema = new Schema(
+const workOrderRepairGSchema = new Schema(
     {
-        printHeadSerialNumber: {
-            type: String,
+        workOrderId: {
+            type: Types.ObjectId,
+            required: true,
+            ref: 'workOrders',
         },
-        setting: {
-            flipVertical: {
-                type: Boolean,
-            },
-            flipHorizontal: {
-                type: Boolean,
-            },
-            delay: {
-                type: String,
-            },
+        machineTypeId: {
+            type: Types.ObjectId,
+            ref: 'products',
+            default: null,
         },
-        sync: {
-            syncSignal: {
-                type: String,
-                enum: Object.values(constant.SYNC_SIGNAL),
-            },
-            syncRange: {
-                type: String,
-            },
-            syncMode: {
-                type: String,
-                enum: Object.values(constant.SYNC_MODE),
-            },
-        },
-        repairGFault: [
+        machineInfo: [propSchema],
+        machineSpecs: [propSchema],
+        groups: [groupSchema],
+        repairFault: [
             {
+                _id: false,
                 fault: {
                     type: String,
                     required: true,
@@ -46,22 +32,8 @@ const groupSchema = new Schema(
         technicalFeedback: [String],
         customerFeedback: [String],
     },
-    { _id: false },
+    { timestamps: true },
 )
-
-const workOrderRepairGSchema = new Schema({
-    workOrderId: {
-        type: Types.ObjectId,
-        required: true,
-        ref: 'workOrders',
-    },
-    machineTypeId: {
-        type: Types.ObjectId,
-        ref: 'products',
-    },
-    props: [propSchema],
-    groups: [groupSchema],
-})
 
 const WorkOrderRepairGModel = model('workOrderRepairG', workOrderRepairGSchema)
 module.exports = WorkOrderRepairGModel

@@ -1,54 +1,34 @@
 const { model, Schema } = require('mongoose')
-const repairFaultSchema = new Schema(
-    {
-        fault: {
-            type: String,
-            required: true,
-        },
-        resolution: {
-            type: String,
-            required: true,
-        },
-    },
-    { _id: false },
-)
 
 const workOrderBusinessSchema = new Schema({
-    repairDFault: [repairFaultSchema],
-    repairGFault: [repairFaultSchema],
-    repairVFault: [repairFaultSchema],
-    repairMFault: [repairFaultSchema],
+    repairFault: [
+        {
+            _id: false,
+            fault: {
+                type: String,
+                required: true,
+            },
+            resolution: {
+                type: String,
+                required: true,
+            },
+        },
+    ],
     repairAFault: {
         printHeaderFault: [String],
         inkSystemFault: [String],
         electricalSystemFault: [String],
-        resolution: [
-            {
-                name: {
-                    type: String,
-                    required: true,
-                },
-                isReplace: {
-                    type: Boolean,
-                    required: true,
-                },
-                isLoan: {
-                    type: Boolean,
-                    required: true,
-                },
-            },
-        ],
+        resolution: [String],
     },
     maintainOperations: [
         {
+            _id: false,
             operationName: {
                 type: String,
                 required: true,
             },
-            hasValue: {
-                type: Boolean,
-                required: true,
-                default: false,
+            valueName: {
+                type: String,
             },
         },
     ],

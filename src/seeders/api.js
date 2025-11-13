@@ -1010,6 +1010,7 @@ async function apiSeeder() {
             api: '/technician/getAllTechnicianStatus',
             note: 'Lấy ra tất cả trạng thái của KTV',
         },
+        //machineSetting
         {
             _id: new Types.ObjectId('69096d1afbb88e9e19560630'),
             api: '/machineSetting/getMachine',
@@ -1049,6 +1050,117 @@ async function apiSeeder() {
             _id: new Types.ObjectId('69096d1afbb88e9e19560637'),
             api: '/machineSetting/delete',
             note: 'Xóa một cấu hình máy in',
+        },
+        //workOrderDetail
+        {
+            _id: new Types.ObjectId('6914dec9b7188d8c5152cfb9'),
+            api: '/workOrderDetail/getByWorkOrderId',
+            note: 'Lấy phiếu chi tiết công việc theo id phiếu công việc',
+        },
+        {
+            _id: new Types.ObjectId('6914dec9b7188d8c5152cfba'),
+            api: '/workOrderDetail/updateMachineTypeId',
+            note: 'Cập nhật loại máy cho phiếu chi tiết của yêu cầu công việc',
+        },
+        {
+            _id: new Types.ObjectId('69152a3afee7e8134a27909d'),
+            api: '/workOrderDetail/updateData',
+            note: 'Cập nhật dữ liệu cho phiếu chi tiết của yêu cầu công việc',
+        },
+        {
+            _id: new Types.ObjectId('69159156a239d04f043f1868'),
+            api: '/workOrderDetail/getAllRepairFault',
+            note: 'Lấy ra các lỗi của phiếu cài đặt',
+        },
+        {
+            _id: new Types.ObjectId('69159156a239d04f043f1869'),
+            api: '/workOrderDetail/getAllPrintHeaderFault',
+            note: 'Lấy ra các lỗi đầu in',
+        },
+        {
+            _id: new Types.ObjectId('69159156a239d04f043f186a'),
+            api: '/workOrderDetail/getAllInkSystemFault',
+            note: 'Lấy ra các lỗi hệ thống in',
+        },
+        {
+            _id: new Types.ObjectId('69159156a239d04f043f186b'),
+            api: '/workOrderDetail/getAllElectricalSystemFault',
+            note: 'Lấy ra các lỗi hệ thống điện',
+        },
+        {
+            _id: new Types.ObjectId('69159156a239d04f043f186c'),
+            api: '/workOrderDetail/getAllResolution',
+            note: 'Lấy ra các giải pháp ',
+        },
+        {
+            _id: new Types.ObjectId('69159156a239d04f043f186d'),
+            api: '/workOrderDetail/getAllMaintainOperations',
+            note: 'Lấy ra các thao tác bảo trì',
+        },
+        {
+            _id: new Types.ObjectId('69159156a239d04f043f186e'),
+            api: '/workOrderDetail/getAllPowerControl',
+            note: 'Lấy ra các thao tác tắt mở máy',
+        },
+        {
+            _id: new Types.ObjectId('69159156a239d04f043f186f'),
+            api: '/workOrderDetail/getAllPrintProgramming',
+            note: 'Lấy ra các thao tác lập trình in',
+        },
+        {
+            _id: new Types.ObjectId('69159156a239d04f043f1870'),
+            api: '/workOrderDetail/getAllPrintSetting',
+            note: 'Lấy ra các thao tác cài đặt in',
+        },
+        {
+            _id: new Types.ObjectId('69159156a239d04f043f1871'),
+            api: '/workOrderDetail/getAllSaveProgram',
+            note: 'Lấy ra các thao tác lưu chương trình',
+        },
+        {
+            _id: new Types.ObjectId('69159156a239d04f043f1872'),
+            api: '/workOrderDetail/getAllViewSpecifications',
+            note: 'Lấy ra các thao tác xem thông tin',
+        },
+        {
+            _id: new Types.ObjectId('69159156a239d04f043f1873'),
+            api: '/workOrderDetail/getAllInkReplace',
+            note: 'Lấy ra các thao tác thay mực',
+        },
+        {
+            _id: new Types.ObjectId('69159156a239d04f043f1874'),
+            api: '/workOrderDetail/getAllErrorMessage',
+            note: 'Lấy ra các thao tác báo lỗi',
+        },
+        {
+            _id: new Types.ObjectId('69159156a239d04f043f1875'),
+            api: '/workOrderDetail/getAllTechnicianFeedback',
+            note: 'Lấy ra ý kiến kỹ thuật',
+        },
+        {
+            _id: new Types.ObjectId('69159156a239d04f043f1876'),
+            api: '/workOrderDetail/getAllCustomerFeedback',
+            note: 'Lấy ra ý kiến khách hàng',
+        },
+        {
+            _id: new Types.ObjectId('69159156a239d04f043f1877'),
+            api: '/workOrderDetail/getAllSamplePrintingMethodName',
+            note: 'Lấy ra tất cả các tên phương thức của phiếu in mẫu ',
+        },
+        {
+            _id: new Types.ObjectId('69159156a239d04f043f1878'),
+            api: '/workOrderDetail/getAllSamplePrintingInformationFrom',
+            note: 'Lấy ra tất cả các nguồn lấy thông tin của phiếu in mẫu',
+        },
+        {
+            _id: new Types.ObjectId('69159156a239d04f043f1879'),
+            api: '/workOrderDetail/getAllRepairAResolutionState',
+            note: 'Lấy ra tất cả các trạng thái của giải pháp trong phiếu sửa chữa A',
+        },
+        {
+            _id: new Types.ObjectId('6915a3aee5ce5d3507ee3acb'),
+            api: '/workOrderDetail/getMachineByWorkOrderId',
+            note: 'Lấy ra tất cả các máy phù hợp với phiếu',
         },
     ])
 

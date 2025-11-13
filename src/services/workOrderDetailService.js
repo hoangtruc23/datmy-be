@@ -3,6 +3,10 @@ const WorkOrderModel = require('../models/workOrder')
 const constant = require('../utils/constant/constant')
 const BadReq = require('../utils/response/requestError')
 const errorCode = require('../utils/response/errorCode')
+const MachineSettingModel = require('../models/machineSetting')
+const ProductModel = require('../models/product')
+const MachinePropertiesModel = require('../models/machineProperties')
+
 const {
     getWorkOrderModel,
     checkExist,
@@ -12,15 +16,14 @@ const workOrderDetailService = {
     create: async (workOrderId) => {
         try {
             //check workOrder
-            const checkWorkOrder =
-                await WorkOrderModel.findById(workOrderId).lean()
-            if (!checkWorkOrder) {
+            const workOrder = await WorkOrderModel.findById(workOrderId).lean()
+            if (!workOrder) {
                 throw new BadReq(errorCode.WORK_ORDER_NOT_FOUND)
             }
             //Lấy model
             const WorkOrderDetailModel = getWorkOrderModel(
-                checkWorkOrder.typeWork,
-                checkWorkOrder.type,
+                workOrder.typeWork,
+                workOrder.type,
             )
             //check workOrderDetail có tồn tại hay không, nếu có thì không cho tạo
             const existed = await checkExist(workOrderId)
@@ -28,7 +31,7 @@ const workOrderDetailService = {
                 throw new BadReq(errorCode.WORK_ORDER_DETAIL_EXISTED)
             }
 
-            await WorkOrderDetailModel.create(workOrderId)
+            await WorkOrderDetailModel.create({ workOrderId })
             return null
         } catch (error) {
             throw error
@@ -37,25 +40,24 @@ const workOrderDetailService = {
     delete: async (workOrderId) => {
         try {
             //check WorkOrder
-            const checkWorkOrder =
-                await WorkOrderModel.findById(workOrderId).lean()
-            if (!checkWorkOrder) {
+            const workOrder = await WorkOrderModel.findById(workOrderId).lean()
+            if (!workOrder) {
                 throw new BadReq(errorCode.WORK_ORDER_NOT_FOUND)
             }
             //Lấy model
             const WorkOrderDetailModel = getWorkOrderModel(
-                checkWorkOrder.typeWork,
-                checkWorkOrder.type,
+                workOrder.typeWork,
+                workOrder.type,
             )
-            //check workOrderDetail có tồn tại hay không
-            const existed = await checkExist(workOrderId)
-            if (!existed) {
-                throw new BadReq(errorCode.WORK_ORDER_DETAIL_NOT_FOUND)
-            }
-            //check xem workOrderDetail đã có thông tin chưa, nếu có thì không cho xóa
+
             const workOrderDetail = await WorkOrderDetailModel.findOne({
                 workOrderId,
             })
+            //check workOrderDetail có tồn tại hay không
+            if (!workOrderDetail) {
+                throw new BadReq(errorCode.WORK_ORDER_DETAIL_NOT_FOUND)
+            }
+            //check xem workOrderDetail đã có thông tin chưa, nếu có thì không cho xóa
             if (workOrderDetail.machineTypeId) {
                 throw new BadReq(
                     errorCode.WORK_ORDER_DETAIL_HAVE_DATA_SO_CAN_NOT_UPDATE_OR_DELETE,
@@ -63,6 +65,757 @@ const workOrderDetailService = {
             }
             await WorkOrderDetailModel.findOneAndDelete({ workOrderId })
             return null
+        } catch (error) {
+            throw error
+        }
+    },
+    getByWorkOrderId: async (workOrderId) => {
+        try {
+            //check workOrder
+            const workOrder = await WorkOrderModel.findById(workOrderId)
+                .populate('customerId', 'officialName ')
+                .lean()
+            if (!workOrder) {
+                throw new BadReq(errorCode.WORK_ORDER_NOT_FOUND)
+            }
+            //Lấy model
+            const WorkOrderDetailModel = getWorkOrderModel(
+                workOrder.typeWork,
+                workOrder.type,
+            )
+
+            const workOrderDetail = await WorkOrderDetailModel.findOne({
+                workOrderId,
+            }).lean()
+            //check workOrderDetail có tồn tại hay không
+            if (!workOrderDetail) {
+                throw new BadReq(errorCode.WORK_ORDER_DETAIL_NOT_FOUND)
+            }
+
+            let result = {}
+            if (
+                workOrder.typeWork === constant.WORK_ORDER_TYPE.REPAIR.value ||
+                workOrder.typeWork ===
+                    constant.WORK_ORDER_TYPE.INSTALLATION.value ||
+                workOrder.typeWork ===
+                    constant.WORK_ORDER_TYPE.MAINTENANCE.value
+            ) {
+                result = {
+                    customerInfo: {
+                        officialName: workOrder.customerId.officialName,
+                        contactPerson: workOrder.contactPerson.contactName,
+                        phone: workOrder.contactPerson.contactPhone,
+                        address: workOrder.address,
+                        reportDate: workOrder.createdAt,
+                    },
+                    ...workOrderDetail,
+                }
+            } else if (
+                workOrder.typeWork === constant.WORK_ORDER_TYPE.TEST_IO.value ||
+                workOrder.typeWork === constant.WORK_ORDER_TYPE.DEMO.value ||
+                workOrder.typeWork ===
+                    constant.WORK_ORDER_TYPE.SAMPLE_PRINTING.value
+            ) {
+                result = workOrderDetail
+            }
+            return result
+        } catch (error) {
+            throw error
+        }
+    },
+    updateMachineTypeId: async (workOrderId, reqData) => {
+        try {
+            //check workOrder
+            const workOrder = await WorkOrderModel.findById(workOrderId).lean()
+            if (!workOrder) {
+                throw new BadReq(errorCode.WORK_ORDER_NOT_FOUND)
+            }
+            //Lấy model
+            const WorkOrderDetailModel = getWorkOrderModel(
+                workOrder.typeWork,
+                workOrder.type,
+            )
+
+            const workOrderDetail = await WorkOrderDetailModel.findOne({
+                workOrderId,
+            })
+            //check workOrderDetail có tồn tại hay không
+            if (!workOrderDetail) {
+                throw new BadReq(errorCode.WORK_ORDER_DETAIL_NOT_FOUND)
+            }
+
+            if (
+                workOrderDetail.machineTypeId &&
+                workOrderDetail.props?.some((p) => p.value) &&
+                workOrderDetail.machineInfo?.some((p) => p.value) &&
+                workOrderDetail.machineSpecs?.some((p) => p.value)
+            ) {
+                throw new BadReq(
+                    errorCode.WORK_ORDER_DETAIL_PROPS_HAVE_DATA_SO_CAN_NOT_UPDATE_MACHINE_TYPE,
+                )
+            }
+
+            const { machineTypeId } = reqData
+            const machine = await ProductModel.findById(machineTypeId).populate(
+                'categoryId',
+                'name',
+            )
+            if (
+                !machine ||
+                machine.categoryId.name !== constant.CATEGORY_NAME.MACHINE
+            ) {
+                throw new BadReq(errorCode.MACHINE_NOT_FOUND)
+            }
+
+            let propData = []
+            let infoData = []
+            let specData = []
+            let result = {}
+            const machineSetting = await MachineSettingModel.findOne({
+                machineId: machineTypeId,
+            })
+            if (!machineSetting) {
+                throw new BadReq(errorCode.MACHINE_SETTING_NOT_FOUND)
+            } else if (
+                workOrder.typeWork ===
+                constant.WORK_ORDER_TYPE.SAMPLE_PRINTING.value
+            ) {
+                let defaultValueIds = []
+                let defaultValue = []
+                for (let p of machineSetting.props) {
+                    const prop = await MachinePropertiesModel.findById(p.propId)
+                    if (prop._id.toString() === constant.PROPERTY_ID.INK_TYPE) {
+                        defaultValueIds = p.defaultValue
+                        break
+                    }
+                }
+                if (defaultValueIds.length === 0) {
+                    throw new BadReq(
+                        errorCode.MACHINE_TYPE_NOT_SUITABLE_FOR_SAMPLE_PRINTING_TYPE,
+                    )
+                }
+                for (let d of defaultValueIds) {
+                    const ink = await ProductModel.findById(d)
+                        .select('name code')
+                        .lean()
+                    defaultValue.push(ink)
+                }
+                result = { defaultValue }
+            } else {
+                propIds = machineSetting.props.map((p) => p.propId.toString())
+
+                for (let p of machineSetting.props) {
+                    const prop = await MachinePropertiesModel.findById(p.propId)
+                        .select('-__v')
+                        .lean()
+                    if (!prop) {
+                        throw new BadReq(errorCode.MACHINE_PROPERTIES_NOT_FOUND)
+                    }
+                    let defaultValue = p.defaultValue
+                    if (prop.type === constant.MACHINE_PROPERTIES_TYPE.LINKED) {
+                        defaultValue = []
+                        for (let d of p.defaultValue) {
+                            const value =
+                                await ProductModel.findById(d).select(
+                                    'name code',
+                                )
+                            defaultValue.push(value)
+                        }
+                    }
+                    if (prop.type === constant.MACHINE_PROPERTIES_TYPE.NORMAL) {
+                        defaultValue = undefined
+                    }
+                    propData.push({
+                        ...prop,
+                        group: undefined,
+                        defaultValue,
+                    })
+                    if (
+                        prop.group ===
+                        constant.MACHINE_PROPERTIES_GROUP_NAME.INFO
+                    ) {
+                        infoData.push({
+                            ...prop,
+                            group: undefined,
+                            defaultValue,
+                        })
+                    }
+                    if (
+                        prop.group ===
+                        constant.MACHINE_PROPERTIES_GROUP_NAME.SPECS
+                    ) {
+                        specData.push({
+                            ...prop,
+                            group: undefined,
+                            defaultValue,
+                        })
+                    }
+                }
+                if (
+                    workOrder.typeWork ===
+                        constant.WORK_ORDER_TYPE.REPAIR.value ||
+                    workOrder.typeWork ===
+                        constant.WORK_ORDER_TYPE.MAINTENANCE.value ||
+                    workOrder.typeWork ===
+                        constant.WORK_ORDER_TYPE.INSTALLATION.value
+                ) {
+                    const infos = infoData.map((info) => ({
+                        propId: info._id.toString(),
+                        value: '',
+                    }))
+                    const specs = specData.map((spec) => ({
+                        propId: spec._id.toString(),
+                        value: '',
+                    }))
+                    await WorkOrderDetailModel.findByIdAndUpdate(
+                        workOrderDetail._id,
+                        {
+                            machineTypeId,
+                            machineInfo: infos,
+                            machineSpecs: specs,
+                        },
+                        { new: true },
+                    )
+                    result = {
+                        machineInfo: infoData,
+                        machineSpecs: specData,
+                    }
+                } else if (
+                    workOrder.typeWork ===
+                        constant.WORK_ORDER_TYPE.TEST_IO.value ||
+                    workOrder.typeWork === constant.WORK_ORDER_TYPE.DEMO.value
+                ) {
+                    const props = propData.map((prop) => ({
+                        propId: prop._id.toString(),
+                        value: '',
+                    }))
+                    await WorkOrderDetailModel.findByIdAndUpdate(
+                        workOrderDetail._id,
+                        {
+                            machineTypeId,
+                            props,
+                        },
+                        { new: true },
+                    )
+                    result = {
+                        machineProps: propData,
+                    }
+                }
+            }
+
+            return result
+        } catch (error) {
+            throw error
+        }
+    },
+    updateData: async (workOrderId, reqData) => {
+        try {
+            //check workOrder
+            const workOrder = await WorkOrderModel.findById(workOrderId).lean()
+            if (!workOrder) {
+                throw new BadReq(errorCode.WORK_ORDER_NOT_FOUND)
+            }
+            //Lấy model
+            const WorkOrderDetailModel = getWorkOrderModel(
+                workOrder.typeWork,
+                workOrder.type,
+            )
+
+            const workOrderDetail = await WorkOrderDetailModel.findOne({
+                workOrderId,
+            })
+            //check workOrderDetail có tồn tại hay không
+            if (!workOrderDetail) {
+                throw new BadReq(errorCode.WORK_ORDER_DETAIL_NOT_FOUND)
+            }
+            const typeWork = workOrder.typeWork
+            const type = workOrder.type
+
+            const { machineProps, machineInfo, machineSpecs } = reqData
+            if (
+                !workOrderDetail.machineTypeId &&
+                (machineSpecs.length !== 0 ||
+                    machineInfo.length !== 0 ||
+                    machineProps.length !== 0)
+            ) {
+                throw new BadReq(errorCode.MACHINE_TYPE_ID_NOT_FOUND)
+            }
+            const checkProps = [
+                ...(machineProps ?? []),
+                ...(machineInfo ?? []),
+                ...(machineSpecs ?? []),
+            ]
+            for (let p of checkProps) {
+                const prop = await MachinePropertiesModel.findById(p.propId)
+                if (!prop) {
+                    throw new BadReq(errorCode.MACHINE_PROPERTIES_NOT_FOUND)
+                }
+            }
+            if (type === constant.WORK_ORDER_DETAIL_TYPE.G.value) {
+                const { machineInfo, groups } = reqData
+                if (machineInfo || groups) {
+                    if (
+                        !machineInfo.some(
+                            (i) =>
+                                i.propId ===
+                                constant.PROPERTY_ID.PRINT_HEAD_QUANTITY,
+                        )
+                    ) {
+                        throw new BadReq(
+                            errorCode.MACHINE_TYPE_NOT_SUITABLE_FOR_G_TYPE,
+                        )
+                    }
+                    const printHeadQuantity = machineInfo.find(
+                        (i) =>
+                            i.propId ===
+                            constant.PROPERTY_ID.PRINT_HEAD_QUANTITY,
+                    ).value
+                    if (groups.length !== printHeadQuantity) {
+                        throw new BadReq(
+                            errorCode.PRINT_HEAD_QUANTITY_AND_NUMBER_OF_GROUP_NOT_MATCH,
+                        )
+                    }
+                }
+            }
+
+            if (typeWork === constant.WORK_ORDER_TYPE.MAINTENANCE.value) {
+                if (type === constant.WORK_ORDER_DETAIL_TYPE.A.value) {
+                    const {
+                        maintainContractDate,
+                        maintainDate,
+                        arrivalTime,
+                        departureTime,
+                        machineInfo,
+                        machineSpecs,
+                        maintainOperations,
+                        replacement,
+                        technicalFeedback,
+                        customerFeedback,
+                    } = reqData
+
+                    for (let i of replacement) {
+                        const product = await ProductModel.findById(i)
+                        if (!product) {
+                            throw new BadReq(errorCode.REPLACEMENT_NOT_FOUND)
+                        }
+                    }
+                    await WorkOrderDetailModel.findByIdAndUpdate(
+                        workOrderDetail._id,
+                        {
+                            maintainContractDate,
+                            maintainDate,
+                            arrivalTime,
+                            departureTime,
+                            machineInfo,
+                            machineSpecs,
+                            maintainOperations,
+                            replacement,
+                            technicalFeedback,
+                            customerFeedback,
+                        },
+                    )
+                    return null
+                } else {
+                    const {
+                        machineInfo,
+                        machineSpecs,
+                        groups,
+                        maintainOperations,
+                        technicalFeedback,
+                        customerFeedback,
+                    } = reqData
+
+                    await WorkOrderDetailModel.findByIdAndUpdate(
+                        workOrderDetail._id,
+                        {
+                            machineInfo,
+                            machineSpecs,
+                            groups,
+                            maintainOperations,
+                            technicalFeedback,
+                            customerFeedback,
+                        },
+                    )
+                    return null
+                }
+            }
+            if (typeWork === constant.WORK_ORDER_TYPE.REPAIR.value) {
+                if (type === constant.WORK_ORDER_DETAIL_TYPE.A.value) {
+                    const {
+                        maintainContract,
+                        repairDate,
+                        arrivalTime,
+                        departureTime,
+                        machineInfo,
+                        machineSpecs,
+                        repairAFault,
+                        technicalFeedback,
+                        customerFeedback,
+                    } = reqData
+                    await WorkOrderDetailModel.findByIdAndUpdate(
+                        workOrderDetail._id,
+                        {
+                            maintainContract,
+                            repairDate,
+                            arrivalTime,
+                            departureTime,
+                            machineInfo,
+                            machineSpecs,
+                            repairAFault,
+                            technicalFeedback,
+                            customerFeedback,
+                        },
+                    )
+                    return null
+                } else {
+                    const {
+                        machineInfo,
+                        machineSpecs,
+                        groups,
+                        repairFault,
+                        technicalFeedback,
+                        customerFeedback,
+                    } = reqData
+                    await WorkOrderDetailModel.findByIdAndUpdate(
+                        workOrderDetail._id,
+                        {
+                            machineInfo,
+                            machineSpecs,
+                            groups,
+                            repairFault,
+                            technicalFeedback,
+                            customerFeedback,
+                        },
+                    )
+                    return null
+                }
+            }
+            if (typeWork === constant.WORK_ORDER_TYPE.INSTALLATION.value) {
+                const {
+                    deliveryDate,
+                    installDate,
+                    handOverDate,
+                    machineInfo,
+                    machineSpecs,
+                    includedAccessories,
+                    guide,
+                } = reqData
+                await WorkOrderDetailModel.findByIdAndUpdate(
+                    workOrderDetail._id,
+                    {
+                        deliveryDate,
+                        installDate,
+                        handOverDate,
+                        machineInfo,
+                        machineSpecs,
+                        includedAccessories,
+                        guide,
+                    },
+                )
+                return null
+            }
+            if (typeWork === constant.WORK_ORDER_TYPE.SAMPLE_PRINTING.value) {
+                const {
+                    inkTypeId,
+                    sellMachineTypeId,
+                    packagingMaterial,
+                    temperature,
+                    method,
+                    informationFrom,
+                    customerRequest,
+                    managerOpinion,
+                    solution,
+                    testInkTypeIds,
+                    managerOpinionOnSample,
+                    receivingTime,
+                    returnTime,
+                    note,
+                } = reqData
+                await WorkOrderDetailModel.findByIdAndUpdate(
+                    workOrderDetail._id,
+                    {
+                        inkTypeId,
+                        sellMachineTypeId,
+                        packagingMaterial,
+                        temperature,
+                        method,
+                        informationFrom,
+                        customerRequest,
+                        managerOpinion,
+                        solution,
+                        testInkTypeIds,
+                        managerOpinionOnSample,
+                        receivingTime,
+                        returnTime,
+                        note,
+                    },
+                )
+                return null
+            }
+            if (typeWork === constant.WORK_ORDER_TYPE.DEMO.value) {
+                const { props, technicalFeedback, customerFeedback } = reqData
+                await WorkOrderDetailModel.findByIdAndUpdate(
+                    workOrderDetail._id,
+                    {
+                        props,
+                        technicalFeedback,
+                        customerFeedback,
+                    },
+                )
+                return null
+            }
+            if (typeWork === constant.WORK_ORDER_TYPE.TEST_IO.value) {
+                if (type === constant.WORK_ORDER_DETAIL_TYPE.A.value) {
+                    const { testDate, testerId, props } = reqData
+                    await WorkOrderDetailModel.findByIdAndUpdate(
+                        workOrderDetail._id,
+                        { testDate, testerId, props },
+                    )
+                    return null
+                }
+                const {
+                    testDate,
+                    testerId,
+                    purposeTest,
+                    receiptDate,
+                    props,
+                    image,
+                    printHeads,
+                } = reqData
+                await WorkOrderDetailModel.findByIdAndUpdate(
+                    workOrderDetail._id,
+                    {
+                        testDate,
+                        testerId,
+                        purposeTest,
+                        receiptDate,
+                        props,
+                        image,
+                        printHeads,
+                    },
+                )
+                return null
+            }
+        } catch (error) {
+            throw error
+        }
+    },
+    getAllRepairFault: async (query) => {
+        try {
+            let { search } = query
+            search = new RegExp(search, 'i')
+            const business = await WorkOrderBusinessModel.findOne({}).lean()
+            let items = business?.repairFault
+            items = items.filter((f) => search.test(f.fault))
+            return items
+        } catch (error) {
+            throw error
+        }
+    },
+    getAllPrintHeaderFault: async (query) => {
+        try {
+            let { search } = query
+            search = new RegExp(search, 'i')
+            const business = await WorkOrderBusinessModel.findOne({}).lean()
+            let items = business?.repairAFault.printHeaderFault
+            items = items.filter((f) => search.test(f))
+            return items
+        } catch (error) {
+            throw error
+        }
+    },
+    getAllInkSystemFault: async (query) => {
+        try {
+            let { search } = query
+            search = new RegExp(search, 'i')
+            const business = await WorkOrderBusinessModel.findOne({}).lean()
+            let items = business?.repairAFault.inkSystemFault
+            items = items.filter((f) => search.test(f))
+            return items
+        } catch (error) {
+            throw error
+        }
+    },
+    getAllElectricalSystemFault: async (query) => {
+        try {
+            let { search } = query
+            search = new RegExp(search, 'i')
+            const business = await WorkOrderBusinessModel.findOne({}).lean()
+            let items = business?.repairAFault.electricalSystemFault
+            items = items.filter((f) => search.test(f))
+            return items
+        } catch (error) {
+            throw error
+        }
+    },
+    getAllResolution: async (query) => {
+        try {
+            let { search } = query
+            search = new RegExp(search, 'i')
+            const business = await WorkOrderBusinessModel.findOne({}).lean()
+            let items = business?.repairAFault.resolution
+            items = items.filter((f) => search.test(f))
+            return items
+        } catch (error) {
+            throw error
+        }
+    },
+    getAllMaintainOperations: async (query) => {
+        try {
+            let { search } = query
+            search = new RegExp(search, 'i')
+            const business = await WorkOrderBusinessModel.findOne({}).lean()
+            let items = business?.maintainOperations
+            items = items.filter((f) => search.test(f.operationName))
+            return items
+        } catch (error) {
+            throw error
+        }
+    },
+    getAllPowerControl: async (query) => {
+        try {
+            let { search } = query
+            search = new RegExp(search, 'i')
+            const business = await WorkOrderBusinessModel.findOne({}).lean()
+            let items = business?.guide.powerControl
+            items = items.filter((f) => search.test(f))
+            return items
+        } catch (error) {
+            throw error
+        }
+    },
+    getAllPrintProgramming: async (query) => {
+        try {
+            let { search } = query
+            search = new RegExp(search, 'i')
+            const business = await WorkOrderBusinessModel.findOne({}).lean()
+            let items = business?.guide.printProgramming
+            items = items.filter((f) => search.test(f))
+            return items
+        } catch (error) {
+            throw error
+        }
+    },
+    getAllPrintSetting: async (query) => {
+        try {
+            let { search } = query
+            search = new RegExp(search, 'i')
+            const business = await WorkOrderBusinessModel.findOne({}).lean()
+            let items = business?.guide.printSetting
+            items = items.filter((f) => search.test(f))
+            return items
+        } catch (error) {
+            throw error
+        }
+    },
+    getAllSaveProgram: async (query) => {
+        try {
+            let { search } = query
+            search = new RegExp(search, 'i')
+            const business = await WorkOrderBusinessModel.findOne({}).lean()
+            let items = business?.guide.saveProgram
+            items = items.filter((f) => search.test(f))
+            return items
+        } catch (error) {
+            throw error
+        }
+    },
+    getAllViewSpecifications: async (query) => {
+        try {
+            let { search } = query
+            search = new RegExp(search, 'i')
+            const business = await WorkOrderBusinessModel.findOne({}).lean()
+            let items = business?.guide.viewSpecifications
+            items = items.filter((f) => search.test(f))
+            return items
+        } catch (error) {
+            throw error
+        }
+    },
+    getAllInkReplace: async (query) => {
+        try {
+            let { search } = query
+            search = new RegExp(search, 'i')
+            const business = await WorkOrderBusinessModel.findOne({}).lean()
+            let items = business?.guide.inkReplace
+            items = items.filter((f) => search.test(f))
+            return items
+        } catch (error) {
+            throw error
+        }
+    },
+    getAllErrorMessage: async (query) => {
+        try {
+            let { search } = query
+            search = new RegExp(search, 'i')
+            const business = await WorkOrderBusinessModel.findOne({}).lean()
+            let items = business?.guide.errorMessages
+            items = items.filter((f) => search.test(f))
+            return items
+        } catch (error) {
+            throw error
+        }
+    },
+    getAllTechnicianFeedback: async (query) => {
+        try {
+            let { search } = query
+            search = new RegExp(search, 'i')
+            const business = await WorkOrderBusinessModel.findOne({}).lean()
+            let items = business?.technicalFeedback
+            items = items.filter((f) => search.test(f))
+            return items
+        } catch (error) {
+            throw error
+        }
+    },
+    getAllCustomerFeedback: async (query) => {
+        try {
+            let { search } = query
+            search = new RegExp(search, 'i')
+            const business = await WorkOrderBusinessModel.findOne({}).lean()
+            let items = business?.customerFeedback
+            items = items.filter((f) => search.test(f))
+            return items
+        } catch (error) {
+            throw error
+        }
+    },
+    getAllSamplePrintingMethodName: () =>
+        Object.values(constant.SAMPLE_PRINTING_METHOD_NAME),
+    getAllSamplePrintingInformationFrom: () =>
+        Object.values(constant.SAMPLE_PRINTING_INFORMATION_FROM),
+    getAllRepairAResolutionState: () =>
+        Object.values(constant.REPAIR_A_RESOLUTION_STATE),
+    getMachineByWorkOrderId: async (workOrderId, query) => {
+        try {
+            let { search } = query
+            search = new RegExp(search, 'i')
+            const category = await ProductCategoryModel.findOne({
+                name: constant.CATEGORY_NAME.MACHINE,
+            })
+            if (!category) {
+                throw new BadReq(errorCode.PRODUCT_CATEGORY_NOT_FOUND)
+            }
+            const workOrder = await WorkOrderModel.findById(workOrderId)
+            if (!workOrder) {
+                throw new BadReq(errorCode.WORK_ORDER_NOT_FOUND)
+            }
+            let conditions = [
+                { $or: [{ name: search }, { code: search }] },
+                { categoryId: category._id },
+            ]
+            if (
+                workOrder.typeWork === constant.WORK_ORDER_TYPE.MAINTENANCE ||
+                workOrder.typeWork === constant.WORK_ORDER_TYPE.REPAIR ||
+                workOrder.typeWork === constant.WORK_ORDER_TYPE.TEST_IO
+            ) {
+                const codeRegex = new RegExp(`${workOrder.type}`, 'i')
+                conditions.push({ code: codeRegex })
+            }
+            const result = await ProductModel.find({ $and: conditions }).select(
+                'name code',
+            )
+            return result
         } catch (error) {
             throw error
         }

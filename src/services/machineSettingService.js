@@ -83,6 +83,22 @@ const machineSettingService = {
             }
 
             const propIds = props.map((p) => p.propId)
+
+            if (
+                machine.code.startsWith(constant.WORK_ORDER_DETAIL_TYPE.G.value)
+            ) {
+                if (
+                    !propIds.some(
+                        (id) =>
+                            id.toString() ===
+                            constant.PROPERTY_ID.PRINT_HEAD_QUANTITY,
+                    )
+                ) {
+                    throw new BadReq(
+                        errorCode.MACHINE_TYPE_G_MUST_HAVE_PRINT_HEAD_QUANTITY_PROPERTY,
+                    )
+                }
+            }
             const allProps = await MachinePropertiesModel.find({
                 _id: { $in: propIds },
             }).lean()

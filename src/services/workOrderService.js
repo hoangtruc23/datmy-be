@@ -178,6 +178,13 @@ const workOrderService = {
                 estimatedTime,
                 overDueTime,
             })
+            if (
+                typeWork === constant.WORK_ORDER_TYPE.INSTALLATION.value ||
+                typeWork === constant.WORK_ORDER_TYPE.SAMPLE_PRINTING.value ||
+                typeWork === constant.WORK_ORDER_TYPE.DEMO.value
+            ) {
+                await workOrderDetailService.create(workOrder._id)
+            }
 
             if (technicianId) {
                 //ktv có việc => status = working
@@ -216,6 +223,28 @@ const workOrderService = {
             const oldTypeWork = checkWorkOrder.typeWork
             const oldType = checkWorkOrder.type
 
+            if (
+                oldTypeWork === constant.WORK_ORDER_TYPE.INSTALLATION.value ||
+                oldTypeWork === constant.WORK_ORDER_TYPE.DEMO.value ||
+                oldTypeWork === constant.WORK_ORDER_TYPE.SAMPLE_PRINTING.value
+            ) {
+                if (typeWork === oldTypeWork && type !== oldType) {
+                    throw new BadReq(errorCode.WORK_ORDER_NOT_HAVE_DETAIL_TYPE)
+                }
+            } else {
+                if (
+                    typeWork === constant.WORK_ORDER_TYPE.INSTALLATION.value ||
+                    typeWork === constant.WORK_ORDER_TYPE.DEMO.value ||
+                    typeWork === constant.WORK_ORDER_TYPE.SAMPLE_PRINTING.value
+                ) {
+                    if (type !== constant.WORK_ORDER_DETAIL_TYPE.NULL.value) {
+                        throw new BadReq(
+                            errorCode.WORK_ORDER_NOT_HAVE_DETAIL_TYPE,
+                        )
+                    }
+                }
+            }
+
             const technician = await TechnicianModel.findOne({
                 _id: technicianId,
                 isActive: true,
@@ -224,6 +253,16 @@ const workOrderService = {
                 throw new BadReq(errorCode.TECHNICIAN_NOT_FOUND)
             }
 
+            if (typeWork !== oldTypeWork || type !== oldType) {
+                if (
+                    oldTypeWork ===
+                        constant.WORK_ORDER_TYPE.INSTALLATION.value ||
+                    (oldTypeWork !== constant.WORK_ORDER_TYPE.NULL.value &&
+                        oldType !== constant.WORK_ORDER_DETAIL_TYPE.NULL.value)
+                ) {
+                    await workOrderDetailService.delete(workOrderId)
+                }
+            }
             await WorkOrderModel.findByIdAndUpdate(workOrderId, {
                 technicianId,
                 typeWork,
@@ -239,23 +278,13 @@ const workOrderService = {
 
             if (typeWork !== oldTypeWork || type !== oldType) {
                 if (
-                    oldTypeWork === constant.WORK_ORDER_TYPE.INSTALLATION ||
-                    (oldTypeWork !== constant.WORK_ORDER_TYPE.NULL &&
-                        oldType !== constant.WORK_ORDER_DETAIL_TYPE.NULL)
+                    typeWork === constant.WORK_ORDER_TYPE.INSTALLATION.value ||
+                    (typeWork !== constant.WORK_ORDER_TYPE.NULL.value &&
+                        type !== constant.WORK_ORDER_DETAIL_TYPE.NULL.value)
                 ) {
-                    await workOrderDetailService.delete(
-                        checkWorkOrder.workOrderId,
-                    )
-                }
-                if (
-                    typeWork === constant.WORK_ORDER_TYPE.INSTALLATION ||
-                    (typeWork !== constant.WORK_ORDER_TYPE.NULL &&
-                        type !== constant.WORK_ORDER_DETAIL_TYPE.NULL)
-                ) {
-                    await workOrderDetailService.create(checkWorkOrder._id)
+                    await workOrderDetailService.create(workOrderId)
                 }
             }
-
             //cập nhật ktv
             if (technicianId && checkWorkOrder.technicianId !== technicianId) {
                 await WorkOrderModel.findByIdAndUpdate(workOrderId, {
@@ -306,14 +335,17 @@ const workOrderService = {
             if (!checkWorkOrder) {
                 throw new BadReq(errorCode.WORK_ORDER_NOT_FOUND)
             }
-            await WorkOrderModel.findByIdAndDelete(workOrderId)
+            const oldTypeWork = checkWorkOrder.typeWork
+            const oldType = checkWorkOrder.type
             if (
-                oldTypeWork === constant.WORK_ORDER_TYPE.INSTALLATION ||
-                (oldTypeWork !== constant.WORK_ORDER_TYPE.NULL &&
-                    oldType !== constant.WORK_ORDER_DETAIL_TYPE.NULL)
+                oldTypeWork === constant.WORK_ORDER_TYPE.INSTALLATION.value ||
+                (oldTypeWork !== constant.WORK_ORDER_TYPE.NULL.value &&
+                    oldType !== constant.WORK_ORDER_DETAIL_TYPE.NULL.value)
             ) {
-                await workOrderDetailService.delete(checkWorkOrder.workOrderId)
+                await workOrderDetailService.delete(workOrderId)
             }
+            await WorkOrderModel.findByIdAndDelete(workOrderId)
+
             //cập nhật ktv
             // ktv cũ nếu hết việc => cập nhật trạng thái
             const othersWorkOrder = await WorkOrderModel.findOne({

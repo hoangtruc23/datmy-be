@@ -890,6 +890,96 @@ async function permissionApiSeeder() {
             permissionId: '69096f66ade3dff4e26b9195', // Xóa cấu hình máy in
             apiId: '69096d1afbb88e9e19560637', //machineSetting/delete
         },
+
+        //phiếu chi tiết công việc
+        {
+            permissionId: '6914e05ccf9e7d1d96f5a0f1', // Xem phiếu chi tiết công việc
+            apiId: '6914dec9b7188d8c5152cfb9', //workOrderDetail/getByWorkOrderId
+        },
+        {
+            permissionId: '6914e05ccf9e7d1d96f5a0f2', // Chỉnh sửa phiếu chi tiết công việc
+            apiId: '6914dec9b7188d8c5152cfba', //workOrderDetail/updateMachineTypeId
+        },
+        {
+            permissionId: '6914e05ccf9e7d1d96f5a0f2', // Chỉnh sửa phiếu chi tiết công việc
+            apiId: '69152a3afee7e8134a27909d', //workOrderDetail/updateMachineTypeId
+        },
+        {
+            permissionId: '6914e05ccf9e7d1d96f5a0f2',
+            apiId: '69159156a239d04f043f1868', //workOrderDetail/getAllRepairFault
+        },
+        {
+            permissionId: '6914e05ccf9e7d1d96f5a0f2',
+            apiId: '69159156a239d04f043f1869', //workOrderDetail/getAllPrintHeaderFault
+        },
+        {
+            permissionId: '6914e05ccf9e7d1d96f5a0f2',
+            apiId: '69159156a239d04f043f186a', //workOrderDetail/getAllInkSystemFault
+        },
+        {
+            permissionId: '6914e05ccf9e7d1d96f5a0f2',
+            apiId: '69159156a239d04f043f186b', //workOrderDetail/getAllElectricalSystemFault
+        },
+        {
+            permissionId: '6914e05ccf9e7d1d96f5a0f2',
+            apiId: '69159156a239d04f043f186c', //workOrderDetail/getAllResolution
+        },
+        {
+            permissionId: '6914e05ccf9e7d1d96f5a0f2',
+            apiId: '69159156a239d04f043f186d', //workOrderDetail/getAllMaintainOperations
+        },
+        {
+            permissionId: '6914e05ccf9e7d1d96f5a0f2',
+            apiId: '69159156a239d04f043f186e', //workOrderDetail/getAllPowerControl
+        },
+        {
+            permissionId: '6914e05ccf9e7d1d96f5a0f2',
+            apiId: '69159156a239d04f043f186f', //workOrderDetail/getAllPrintProgramming
+        },
+        {
+            permissionId: '6914e05ccf9e7d1d96f5a0f2',
+            apiId: '69159156a239d04f043f1870', //workOrderDetail/getAllPrintSetting
+        },
+        {
+            permissionId: '6914e05ccf9e7d1d96f5a0f2',
+            apiId: '69159156a239d04f043f1871', //workOrderDetail/getAllSaveProgram
+        },
+        {
+            permissionId: '6914e05ccf9e7d1d96f5a0f2',
+            apiId: '69159156a239d04f043f1872', //workOrderDetail/getAllViewSpecifications
+        },
+        {
+            permissionId: '6914e05ccf9e7d1d96f5a0f2',
+            apiId: '69159156a239d04f043f1873', //workOrderDetail/getAllInkReplace
+        },
+        {
+            permissionId: '6914e05ccf9e7d1d96f5a0f2',
+            apiId: '69159156a239d04f043f1874', //workOrderDetail/getAllErrorMessage
+        },
+        {
+            permissionId: '6914e05ccf9e7d1d96f5a0f2',
+            apiId: '69159156a239d04f043f1875', //workOrderDetail/getAllTechnicianFeedback
+        },
+        {
+            permissionId: '6914e05ccf9e7d1d96f5a0f2',
+            apiId: '69159156a239d04f043f1876', //workOrderDetail/getAllCustomerFeedback
+        },
+        {
+            permissionId: '6914e05ccf9e7d1d96f5a0f2',
+            apiId: '69159156a239d04f043f1877', //workOrderDetail/getAllSamplePrintingMethodName
+        },
+        {
+            permissionId: '6914e05ccf9e7d1d96f5a0f2',
+            apiId: '69159156a239d04f043f1878', //workOrderDetail/getAllSamplePrintingInformationFrom
+        },
+        {
+            permissionId: '6914e05ccf9e7d1d96f5a0f2',
+            apiId: '69159156a239d04f043f1879', //workOrderDetail/getAllRepairAResolutionState
+        },
+        {
+            permissionId: '6914e05ccf9e7d1d96f5a0f2',
+            apiId: '6915a3aee5ce5d3507ee3acb', //workOrderDetail/getMachineByWorkOrderId
+        },
     ])
     logger.info('PermissionApis seeded')
 }

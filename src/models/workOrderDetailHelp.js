@@ -35,4 +35,37 @@ const testBaseSchema = new Schema(
     { _id: false },
 )
 
-module.exports = { propSchema, testBaseSchema }
+const groupSchema = new Schema(
+    {
+        printHeadSerialNumber: {
+            type: String,
+        },
+        setting: {
+            flipVertical: {
+                type: Boolean,
+            },
+            flipHorizontal: {
+                type: Boolean,
+            },
+            delay: {
+                type: String,
+            },
+        },
+        sync: {
+            syncSignal: {
+                type: String,
+                enum: Object.values(constant.SYNC_SIGNAL),
+            },
+            syncRange: {
+                type: String,
+            },
+            syncMode: {
+                type: String,
+                enum: Object.values(constant.SYNC_MODE),
+            },
+        },
+    },
+    { _id: false },
+)
+
+module.exports = { propSchema, testBaseSchema, groupSchema }

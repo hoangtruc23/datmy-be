@@ -28,6 +28,7 @@ const workOrderRoute = require('./workOrderRoute')
 const technicianRoute = require('./technicianRoute')
 const orderRoute = require('./orderRoute')
 const machineSettingRoute = require('./machineSettingRoute')
+const workOrderDetailRoute = require('./workOrderDetailRoute')
 
 router.use('/auth', authRoute)
 router.use('/user', userRoute)
@@ -56,5 +57,6 @@ router.use('/order', orderRoute)
 router.use('/workOrder', workOrderRoute)
 router.use('/technician', technicianRoute)
 router.use('/machineSetting', machineSettingRoute)
+router.use('/workOrderDetail', workOrderDetailRoute)
 
 module.exports = router

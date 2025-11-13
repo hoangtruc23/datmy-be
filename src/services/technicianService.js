@@ -8,15 +8,19 @@ const jwt = require('jsonwebtoken')
 const { envConfig } = require('../config/envConfg')
 const { clientRedis } = require('../config/redisConfig')
 const PermissionApiModel = require('../models/permissionApi')
+const UserModel = require('../models/user')
 
 const technicianService = {
     create: async (reqData) => {
         try {
             const { fullname, username, email, phoneNumber, password, area } =
                 reqData
-            const checkUsername = await TechnicianModel.findOne({ username })
-            if (checkUsername) {
-                throw new BadReq(errorCode.TECHNICIAN_EXISTED)
+            const [checkUsername1, checkUsername2] = await Promise.all([
+                TechnicianModel.findOne({ username }),
+                UserModel.findOne({ username }),
+            ])
+            if (checkUsername1 || checkUsername2) {
+                throw new BadReq(errorCode.USER_EXISTED)
             }
             const latestTechnician = await TechnicianModel.findOne()
                 .sort({ code: -1 })
