@@ -18,6 +18,9 @@ const constant = {
     TECHNICIAN_PERMISSION_ID: {
         WORK_ORDER: '68d1166bba1c480c8180bf6b',
         WORK_ORDER_READ: '68d1166bba1c480c8180bf6c',
+        WORK_ORDER_DETAIL: '6914e05ccf9e7d1d96f5a0f0',
+        WORK_ORDER_DETAIL_READ: '6914e05ccf9e7d1d96f5a0f1',
+        WORK_ORDER_DETAIL_UPDATE: '6914e05ccf9e7d1d96f5a0f2',
     },
     PRODUCT_MANAGEMENT_TYPE: {
         NONE: 'none',
@@ -264,6 +267,103 @@ const constant = {
         MATERIAL_INK: 'NGUYÊN LIỆU - MỰC IN',
         MATERIAL_SOLVENT: 'NGUYÊN LIỆU - DUNG MÔI HỖN HỢP HỮU CƠ',
         MATERIAL_RIBBON: 'NGUYÊN LIỆU - RUY BĂNG',
+    },
+    INK_DROP_LEVEL_TYPE: {
+        AUTOMATIC: 'automatic',
+        MANUAL: 'manual',
+        NULL: '',
+    },
+    PURPOSE_TEST: {
+        HANDOVER: 'handover',
+        RENTAL: 'rental',
+        REPAIR: 'repair',
+        DEMO: 'demo',
+        LOAN: 'loan',
+        RECEIPT: 'receipt',
+    },
+    PRINT_SPEED_LEVEL: {
+        BASIC: 'basic',
+        MEDIUM: 'medium',
+        MAXIMUM: 'maximum',
+    },
+    PRODUCT_MOVEMENT: {
+        STATIC: 'Static',
+        MOF: 'Mark on the Fly',
+    },
+    ENCODER_SOURCE: {
+        ENCODER_INPUT: 'Encoder Input',
+        FIXED_SPEED: 'Fixed Speed',
+    },
+    REPAIR_D_SOFTWARE_TYPE: {
+        RAINBOW: 'Rainbow',
+        QUICKSTEP: 'Quickstep',
+    },
+    SYNC_SIGNAL: {
+        INTERNAL: 'Internal',
+        EXTERNAL_1: 'External 1',
+        EXTERNAL_2: 'External 2',
+        EXTERNAL_1_PHOTOCELL: 'External-1Photocell',
+        EXTERNAL_2_PHOTOCELLS: 'External-2Photocells',
+    },
+    SYNC_MODE: {
+        SINGLE: 'Single',
+        BACKLASH: 'Backlash',
+        BACKLASH_SUPPRESSED: 'Backlash suppressed',
+        BACKLASH_FORWARD: 'Backlash forward',
+    },
+    PRINTHEAD_DIRECTION: {
+        LEFT: 'left',
+        RIGHT: 'right',
+    },
+    PRINT_MODE: {
+        IM: 'static',
+        CM: 'moving',
+    },
+    APPLICATOR_MODE: {
+        STATIC: 'static',
+        DYNAMIC: 'dynamic',
+    },
+    SAMPLE_PRINTING_METHOD_NAME: {
+        CONVEYOR: {
+            value: 'conveyor',
+            name: 'Băng tải',
+        },
+        CUSTOMER_LINE: {
+            value: 'customer line',
+            name: 'Lắp đặt dây chuyền của khách hàng',
+        },
+        OTHER: {
+            value: 'other',
+            name: 'Khác',
+        },
+    },
+    SAMPLE_PRINTING_INFORMATION_FROM: {
+        TECHNICIAN: {
+            value: 'technician',
+            name: 'Kỹ thuật lấy về',
+        },
+        BUSINESS: {
+            value: 'business',
+            name: 'Kinh doanh lấy về',
+        },
+    },
+    MACHINE_PROPERTIES_GROUP_NAME: {
+        INFO: 'info',
+        SPECS: 'specs',
+    },
+    PROPERTY_ID: {
+        INK_TYPE: '69081ac30879097d22c84abe',
+        PRINT_HEAD_QUANTITY: '691508159d647f9729da4a9c',
+    },
+    REPAIR_A_RESOLUTION_STATE: {
+        REPLACE: {
+            value: 'replace',
+            name: 'Thay mới',
+        },
+        LOAN: {
+            value: 'loan',
+            name: 'Tạm mượn',
+        },
     },
 }
 

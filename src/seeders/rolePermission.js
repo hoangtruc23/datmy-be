@@ -581,6 +581,20 @@ async function rolePermissionSeeder() {
             permissionId: '69096f66ade3dff4e26b9195', // Xóa cấu hình máy in
         },
         //#endregion
+        //#region Phiếu chi tiết công việc
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '6914e05ccf9e7d1d96f5a0f0', // Phiếu chi tiết công việc
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '6914e05ccf9e7d1d96f5a0f1', // Xem phiếu chi tiết công việc
+        },
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '6914e05ccf9e7d1d96f5a0f2', // Chỉnh sửa phiếu chi tiết công việc
+        },
+        //#endregion
         //#endregion
 
         //#region Quản lý kho
@@ -1160,6 +1174,20 @@ async function rolePermissionSeeder() {
         //     permissionId: '69096f66ade3dff4e26b9195', // Xóa cấu hình máy in
         // },
         //#endregion
+        //#region Phiếu chi tiết công việc
+        // {
+        //     roleId: '68f6f623dc799da9305e4347', // Quản lý kho
+        //     permissionId: '6914e05ccf9e7d1d96f5a0f0', // Phiếu chi tiết công việc
+        // },
+        // {
+        //     roleId: '68f6f623dc799da9305e4347', // Quản lý kho
+        //     permissionId: '6914e05ccf9e7d1d96f5a0f1', // Xem phiếu chi tiết công việc
+        // },
+        // {
+        //     roleId: '68f6f623dc799da9305e4347', // Quản lý kho
+        //     permissionId: '6914e05ccf9e7d1d96f5a0f2', // Chỉnh sửa phiếu chi tiết công việc
+        // },
+        //#endregion
         //#endregion
 
         //#region Quản lý công nợ
@@ -1737,6 +1765,20 @@ async function rolePermissionSeeder() {
         //     permissionId: '69096f66ade3dff4e26b9195', // Xóa cấu hình máy in
         // },
         //#endregion
+        //#region Phiếu chi tiết công việc
+        // {
+        //     roleId: '68f6f623dc799da9305e4348', // Quản lý công nợ
+        //     permissionId: '6914e05ccf9e7d1d96f5a0f0', // Phiếu chi tiết công việc
+        // },
+        // {
+        //     roleId: '68f6f623dc799da9305e4348', // Quản lý công nợ
+        //     permissionId: '6914e05ccf9e7d1d96f5a0f1', // Xem phiếu chi tiết công việc
+        // },
+        // {
+        //     roleId: '68f6f623dc799da9305e4348', // Quản lý công nợ
+        //     permissionId: '6914e05ccf9e7d1d96f5a0f2', // Chỉnh sửa phiếu chi tiết công việc
+        // },
+        //#endregion
         //#endregion
 
         //#region Quản lý kỹ thuật
@@ -2312,6 +2354,20 @@ async function rolePermissionSeeder() {
         {
             roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
             permissionId: '69096f66ade3dff4e26b9195', // Xóa cấu hình máy in
+        },
+        //#endregion
+        //#region Phiếu chi tiết công việc
+        {
+            roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
+            permissionId: '6914e05ccf9e7d1d96f5a0f0', // Phiếu chi tiết công việc
+        },
+        {
+            roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
+            permissionId: '6914e05ccf9e7d1d96f5a0f1', // Xem phiếu chi tiết công việc
+        },
+        {
+            roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
+            permissionId: '6914e05ccf9e7d1d96f5a0f2', // Chỉnh sửa phiếu chi tiết công việc
         },
         //#endregion
         //#endregion

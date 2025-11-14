@@ -11,13 +11,17 @@ const RolePermissionModel = require('../models/rolePermission')
 const ApiModel = require('../models/api')
 const PermissionApiModel = require('../models/permissionApi')
 const PermissionModel = require('../models/permission')
+const technicianService = require('./technicianService')
 
 const authService = {
     login: async (username, password) => {
         try {
             const user = await UserModel.findOne({ username })
             if (!user) {
-                throw new BadReq(errorCode.INCORRECT_USERNAME)
+                return await technicianService.login({
+                    username,
+                    password,
+                })
             }
             const comparePassword = await bcrypt.compare(
                 password,

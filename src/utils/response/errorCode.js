@@ -512,6 +512,65 @@ const errorCode = {
         code: 126,
         message: 'Giá trị mặc định của thuộc tính không được trùng nhau',
     },
+    WORK_ORDER_TYPE_NOT_FOUND: {
+        code: 127,
+        message: 'Loại công việc không tồn tại',
+    },
+    WORK_ORDER_DETAIL_TYPE_NOT_FOUND: {
+        code: 128,
+        message: 'Loại chi tiết của công việc không tồn tại',
+    },
+    MODEL_NOT_FOUND_FOR_TYPE_WORK_AND_TYPE: {
+        code: 129,
+        message: 'Không tìm thấy model tương ứng với typeWork và type',
+    },
+    WORK_ORDER_DETAIL_EXISTED: {
+        code: 130,
+        message: 'Phiếu chi tiết của công việc này đã tồn tại',
+    },
+    WORK_ORDER_DETAIL_NOT_FOUND: {
+        code: 131,
+        message: 'Phiếu chi tiết của công việc này không tồn tại',
+    },
+    WORK_ORDER_DETAIL_HAVE_DATA_SO_CAN_NOT_UPDATE_OR_DELETE: {
+        code: 132,
+        message:
+            'Phiếu chi tiết của công việc này đã điền thông tin nên không thể cập nhật hay xóa',
+    },
+    WORK_ORDER_NOT_HAVE_DETAIL_TYPE: {
+        code: 133,
+        message:
+            'Phiếu công việc loại lặp đặt, demo, in mâũ không có loại chi tiết',
+    },
+    WORK_ORDER_DETAIL_PROPS_HAVE_DATA_SO_CAN_NOT_UPDATE_MACHINE_TYPE: {
+        code: 134,
+        message:
+            'Thuộc tính của phiếu chi tiết này đã có dữ liệu nên không thể cập nhật loại máy',
+    },
+    MACHINE_TYPE_NOT_SUITABLE_FOR_SAMPLE_PRINTING_TYPE: {
+        code: 135,
+        message: 'Loại máy không phù hợp với loại công việc in thử',
+    },
+    MACHINE_TYPE_ID_NOT_FOUND: {
+        code: 136,
+        message: 'Cần nhập loại máy trước thông số máy và thông tin máy',
+    },
+    REPLACEMENT_NOT_FOUND: {
+        code: 137,
+        message: 'Linh kiện thay thế không tồn tại',
+    },
+    MACHINE_TYPE_NOT_SUITABLE_FOR_G_TYPE: {
+        code: 138,
+        message: 'Loại máy không phù hợp với phiếu thử việc loại G',
+    },
+    PRINT_HEAD_QUANTITY_AND_NUMBER_OF_GROUP_NOT_MATCH: {
+        code: 139,
+        message: 'Số lượng đầu in không khớp với số nhóm',
+    },
+    MACHINE_TYPE_G_MUST_HAVE_PRINT_HEAD_QUANTITY_PROPERTY: {
+        code: 140,
+        message: 'Loại máy G bắt buộc phải có thuộc tính số đầu in',
+    },
 }
 
 module.exports = errorCode

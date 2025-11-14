@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs')
 
 const UserModel = require('../models/user')
+const TechnicianModel = require('../models/technician')
 const errorCode = require('../utils/response/errorCode')
 const BadReq = require('../utils/response/requestError')
 const RoleModel = require('../models/role')
@@ -138,8 +139,12 @@ const userService = {
                 department,
                 roleIds,
             } = user
-            const checkUsername = await UserModel.findOne({ username })
-            if (checkUsername) {
+
+            const [checkUsername1, checkUsername2] = await Promise.all([
+                TechnicianModel.findOne({ username }),
+                UserModel.findOne({ username }),
+            ])
+            if (checkUsername1 || checkUsername2) {
                 throw new BadReq(errorCode.USER_EXISTED)
             }
 

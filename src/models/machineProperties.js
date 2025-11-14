@@ -17,6 +17,10 @@ const machinePropertiesSchema = new Schema({
             (v) => v !== constant.CATEGORY_NAME.MACHINE,
         ),
     },
+    group: {
+        type: String,
+        enum: Object.values(constant.MACHINE_PROPERTIES_GROUP_NAME),
+    },
 })
 
 const MachinePropertiesModel = model(
