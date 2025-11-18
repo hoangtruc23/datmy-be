@@ -85,7 +85,7 @@ const authService = {
                 __v: 0,
             }).lean()
             if (!user) {
-                throw new BadReq(errorCode.USER_NOT_FOUND)
+                return technicianService.getTechnicianLoginDetail(userId)
             }
 
             if (
@@ -120,7 +120,7 @@ const authService = {
         try {
             const user = await UserModel.findById(userId)
             if (!user) {
-                throw new BadReq(errorCode.USER_NOT_FOUND)
+                return technicianService.changPassword(userId, { newPassword })
             }
             const hashPass = await bcrypt.hash(newPassword, 10)
             await UserModel.findByIdAndUpdate(userId, { password: hashPass })

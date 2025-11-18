@@ -5,7 +5,8 @@ const CustomerModel = require('../models/customer')
 const constant = require('../utils/constant/constant')
 const TechnicianModel = require('../models/technician')
 const workOrderDetailService = require('../services/workOrderDetailService')
-const { getWorkOrderModel } = require('../utils/helper/workOrderDetailHelper')
+const contactPersonCustomerService = require('./contactPersonCustomerService')
+const ContactPersonCustomerModel = require('../models/contactPersonCustomer')
 
 const workOrderService = {
     getAll: async (reqUserId, query) => {
@@ -164,6 +165,12 @@ const workOrderService = {
                 ? `JOB-${String(Number(latestOrder.code.slice(4)) + 1).padStart(5, '0')}`
                 : 'JOB-00001'
 
+            await contactPersonCustomerService.create({
+                customerId,
+                contactName,
+                contactEmail,
+                contactPhone,
+            })
             const workOrder = await WorkOrderModel.create({
                 code,
                 technicianId,
@@ -214,6 +221,9 @@ const workOrderService = {
                 estimatedTime,
                 overDueTime,
                 status,
+                contactName,
+                contactEmail,
+                contactPhone,
             } = reqData
 
             const checkWorkOrder = await WorkOrderModel.findById(workOrderId)
@@ -263,6 +273,18 @@ const workOrderService = {
                     await workOrderDetailService.delete(workOrderId)
                 }
             }
+            if (
+                contactEmail !== checkWorkOrder.contactPerson.contactEmail ||
+                contactName !== checkWorkOrder.contactPerson.contactName ||
+                contactPhone !== checkWorkOrder.contactPerson.contactPhone
+            ) {
+                await contactPersonCustomerService.create({
+                    customerId: checkWorkOrder.customerId,
+                    contactName,
+                    contactEmail,
+                    contactPhone,
+                })
+            }
             await WorkOrderModel.findByIdAndUpdate(workOrderId, {
                 technicianId,
                 typeWork,
@@ -274,6 +296,11 @@ const workOrderService = {
                 estimatedTime,
                 overDueTime,
                 status,
+                contactPerson: {
+                    contactName,
+                    contactEmail,
+                    contactPhone,
+                },
             })
 
             if (typeWork !== oldTypeWork || type !== oldType) {

@@ -404,7 +404,7 @@ router.get(
  *                 example: ""
  *     responses:
  *       200:
- *         description: Tạo yêu cầu công việc thành công
+ *         description: Cập nhật loại máy thành công
  *         content:
  *           application/json:
  *             schema:
@@ -421,7 +421,33 @@ router.get(
  *                   example: OK!
  *                 data:
  *                   type: object
- *                   example: null
+ *                   properties:
+ *                     machineInfo:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           _id:
+ *                             type: string
+ *                           name:
+ *                             type: string
+ *                           type:
+ *                             type: string
+ *                     machineSpecs:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           _id:
+ *                             type: string
+ *                           name:
+ *                             type: string
+ *                           type:
+ *                             type: string
+ *                           defaultValue:
+ *                             type: array
+ *                             items:
+ *                               type: string
  *       400:
  *         description: Lỗi input
  *         content:

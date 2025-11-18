@@ -819,8 +819,24 @@ async function permissionApiSeeder() {
             apiId: '68d1153524419859fede4ebf', // /workOrder/create
         },
         {
+            permissionId: '68d1166bba1c480c8180bf6d', // Tạo phiếu yêu cầu công việc
+            apiId: '691c2c10cc14068cd86a1bf7', // /contactPerson/getAll
+        },
+        {
+            permissionId: '68d1166bba1c480c8180bf6d', // Tạo phiếu yêu cầu công việc
+            apiId: '691c2c10cc14068cd86a1bf8', // /contactPerson/delete
+        },
+        {
             permissionId: '68d3750d4828a7c4347ad1bd', // Chỉnh sửa phiếu yêu cầu công việc
             apiId: '68d37503136efac69b7bcad3', // /workOrder/update
+        },
+        {
+            permissionId: '68d3750d4828a7c4347ad1bd', // Tạo phiếu yêu cầu công việc
+            apiId: '691c2c10cc14068cd86a1bf7', // /contactPerson/getAll
+        },
+        {
+            permissionId: '68d3750d4828a7c4347ad1bd', // Tạo phiếu yêu cầu công việc
+            apiId: '691c2c10cc14068cd86a1bf8', // /contactPerson/delete
         },
         {
             permissionId: '68d3750d4828a7c4347ad1be', // Xóa phiếu yêu cầu công việc

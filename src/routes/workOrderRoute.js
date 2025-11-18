@@ -1159,12 +1159,15 @@ router.get(
  *             required:
  *               - header
  *               - typeWork
- *               - typel
+ *               - type
  *               - description
  *               - priority
  *               - estimatedTime
  *               - overDueTime
  *               - requestSource
+ *               - contactEmail
+ *               - contactName
+ *               - contactPhone
  *             properties:
  *               technicianId:
  *                 type: string
@@ -1202,6 +1205,15 @@ router.get(
  *                 type: string
  *                 enum: ["pending", "inProgress", "completed", "overdue"]
  *                 example: "inProgress"
+ *               contactName:
+ *                 type: string
+ *                 example: Nguyễn Văn A
+ *               contactPhone:
+ *                 type: string
+ *                 example: "0912345678"
+ *               contactEmail:
+ *                 type: string
+ *                 example: test@gmail.com
  *     responses:
  *       200:
  *         description: Tạo yêu cầu công việc thành công

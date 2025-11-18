@@ -575,6 +575,10 @@ const errorCode = {
         code: 141,
         message: 'Loại máy không phù hợp với loại công việc',
     },
+    CONTACT_PERSON_NOT_FOUND: {
+        code: 142,
+        message: 'Thông tin liên lạc không tìm thấy'
+    }
 }
 
 module.exports = errorCode
