@@ -1162,6 +1162,18 @@ async function apiSeeder() {
             api: '/workOrderDetail/getMachineByWorkOrderId',
             note: 'Lấy ra tất cả các máy phù hợp với phiếu',
         },
+
+        //contactPersonCustomer
+        {
+            _id: new Types.ObjectId('691c2c10cc14068cd86a1bf7'),
+            api: '/contactPerson/getAll',
+            note: 'Lấy toàn bộ các người liên hệ theo khách hàng',
+        },
+        {
+            _id: new Types.ObjectId('691c2c10cc14068cd86a1bf8'),
+            api: '/contactPerson/deleteContact',
+            note: 'Xóa liên hệ',
+        },
     ])
 
     logger.info('apis seeded')
