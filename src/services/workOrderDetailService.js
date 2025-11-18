@@ -6,6 +6,7 @@ const errorCode = require('../utils/response/errorCode')
 const MachineSettingModel = require('../models/machineSetting')
 const ProductModel = require('../models/product')
 const MachinePropertiesModel = require('../models/machineProperties')
+const ProductCategoryModel = require('../models/productCategory')
 
 const {
     getWorkOrderModel,
@@ -160,6 +161,9 @@ const workOrderDetailService = {
                 'categoryId',
                 'name',
             )
+
+            console.log(machine.categoryId.name)
+            console.log(constant.CATEGORY_NAME.MACHINE)
             if (
                 !machine ||
                 machine.categoryId.name !== constant.CATEGORY_NAME.MACHINE
@@ -174,9 +178,10 @@ const workOrderDetailService = {
             const machineSetting = await MachineSettingModel.findOne({
                 machineId: machineTypeId,
             })
-            if (!machineSetting) {
-                throw new BadReq(errorCode.MACHINE_SETTING_NOT_FOUND)
-            } else if (
+            // if (!machineSetting) {
+            //     throw new BadReq(errorCode.MACHINE_SETTING_NOT_FOUND)
+            // } else 
+            if (
                 workOrder.typeWork ===
                 constant.WORK_ORDER_TYPE.SAMPLE_PRINTING.value
             ) {
@@ -274,7 +279,6 @@ const workOrderDetailService = {
                             machineInfo: infos,
                             machineSpecs: specs,
                         },
-                        { new: true },
                     )
                     result = {
                         machineInfo: infoData,
@@ -295,7 +299,6 @@ const workOrderDetailService = {
                             machineTypeId,
                             props,
                         },
-                        { new: true },
                     )
                     result = {
                         machineProps: propData,
@@ -805,11 +808,12 @@ const workOrderDetailService = {
                 { categoryId: category._id },
             ]
             if (
-                workOrder.typeWork === constant.WORK_ORDER_TYPE.MAINTENANCE ||
-                workOrder.typeWork === constant.WORK_ORDER_TYPE.REPAIR ||
-                workOrder.typeWork === constant.WORK_ORDER_TYPE.TEST_IO
+                workOrder.typeWork ===
+                    constant.WORK_ORDER_TYPE.MAINTENANCE.value ||
+                workOrder.typeWork === constant.WORK_ORDER_TYPE.REPAIR.value ||
+                workOrder.typeWork === constant.WORK_ORDER_TYPE.TEST_IO.value
             ) {
-                const codeRegex = new RegExp(`${workOrder.type}`, 'i')
+                const codeRegex = new RegExp(`^${workOrder.type}`, 'i')
                 conditions.push({ code: codeRegex })
             }
             const result = await ProductModel.find({ $and: conditions }).select(

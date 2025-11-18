@@ -8,7 +8,7 @@ router.get(
     workOrderDetailController.getByWorkOrderId,
 )
 router.get(
-    '/getMachineByWorkOrderId',
+    '/getMachineByWorkOrderId/:workOrderId',
     workOrderDetailController.getMachineByWorkOrderId,
 )
 router.post(
@@ -267,7 +267,7 @@ router.get(
 
 /**
  * @swagger
- * /workOrderDetail/getMachineByWorkOrderId:
+ * /workOrderDetail/getMachineByWorkOrderId/{workOrderId}:
  *   get:
  *     summary: Lấy toàn bộ dòng máy in theo search để làm dropdown
  *     security:
