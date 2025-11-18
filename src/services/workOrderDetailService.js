@@ -162,13 +162,17 @@ const workOrderDetailService = {
                 'name',
             )
 
-            console.log(machine.categoryId.name)
-            console.log(constant.CATEGORY_NAME.MACHINE)
             if (
                 !machine ||
                 machine.categoryId.name !== constant.CATEGORY_NAME.MACHINE
             ) {
                 throw new BadReq(errorCode.MACHINE_NOT_FOUND)
+            } else {
+                if (!machine.code.startsWith(workOrder.type)) {
+                    throw new BadReq(
+                        errorCode.MACHINE_NOT_MATCH_WORK_ORDER_TYPE,
+                    )
+                }
             }
 
             let propData = []
@@ -178,130 +182,138 @@ const workOrderDetailService = {
             const machineSetting = await MachineSettingModel.findOne({
                 machineId: machineTypeId,
             })
-            // if (!machineSetting) {
-            //     throw new BadReq(errorCode.MACHINE_SETTING_NOT_FOUND)
-            // } else 
-            if (
-                workOrder.typeWork ===
-                constant.WORK_ORDER_TYPE.SAMPLE_PRINTING.value
-            ) {
-                let defaultValueIds = []
-                let defaultValue = []
-                for (let p of machineSetting.props) {
-                    const prop = await MachinePropertiesModel.findById(p.propId)
-                    if (prop._id.toString() === constant.PROPERTY_ID.INK_TYPE) {
-                        defaultValueIds = p.defaultValue
-                        break
-                    }
-                }
-                if (defaultValueIds.length === 0) {
-                    throw new BadReq(
-                        errorCode.MACHINE_TYPE_NOT_SUITABLE_FOR_SAMPLE_PRINTING_TYPE,
-                    )
-                }
-                for (let d of defaultValueIds) {
-                    const ink = await ProductModel.findById(d)
-                        .select('name code')
-                        .lean()
-                    defaultValue.push(ink)
-                }
-                result = { defaultValue }
+            if (!machineSetting) {
+                await WorkOrderDetailModel.findByIdAndUpdate(
+                    workOrderDetail._id,
+                    { machineTypeId },
+                )
             } else {
-                propIds = machineSetting.props.map((p) => p.propId.toString())
-
-                for (let p of machineSetting.props) {
-                    const prop = await MachinePropertiesModel.findById(p.propId)
-                        .select('-__v')
-                        .lean()
-                    if (!prop) {
-                        throw new BadReq(errorCode.MACHINE_PROPERTIES_NOT_FOUND)
-                    }
-                    let defaultValue = p.defaultValue
-                    if (prop.type === constant.MACHINE_PROPERTIES_TYPE.LINKED) {
-                        defaultValue = []
-                        for (let d of p.defaultValue) {
-                            const value =
-                                await ProductModel.findById(d).select(
-                                    'name code',
-                                )
-                            defaultValue.push(value)
-                        }
-                    }
-                    if (prop.type === constant.MACHINE_PROPERTIES_TYPE.NORMAL) {
-                        defaultValue = undefined
-                    }
-                    propData.push({
-                        ...prop,
-                        group: undefined,
-                        defaultValue,
-                    })
-                    if (
-                        prop.group ===
-                        constant.MACHINE_PROPERTIES_GROUP_NAME.INFO
-                    ) {
-                        infoData.push({
-                            ...prop,
-                            group: undefined,
-                            defaultValue,
-                        })
-                    }
-                    if (
-                        prop.group ===
-                        constant.MACHINE_PROPERTIES_GROUP_NAME.SPECS
-                    ) {
-                        specData.push({
-                            ...prop,
-                            group: undefined,
-                            defaultValue,
-                        })
-                    }
-                }
                 if (
                     workOrder.typeWork ===
-                        constant.WORK_ORDER_TYPE.REPAIR.value ||
-                    workOrder.typeWork ===
-                        constant.WORK_ORDER_TYPE.MAINTENANCE.value ||
-                    workOrder.typeWork ===
-                        constant.WORK_ORDER_TYPE.INSTALLATION.value
+                    constant.WORK_ORDER_TYPE.SAMPLE_PRINTING.value
                 ) {
-                    const infos = infoData.map((info) => ({
-                        propId: info._id.toString(),
-                        value: '',
-                    }))
-                    const specs = specData.map((spec) => ({
-                        propId: spec._id.toString(),
-                        value: '',
-                    }))
-                    await WorkOrderDetailModel.findByIdAndUpdate(
-                        workOrderDetail._id,
-                        {
-                            machineTypeId,
-                            machineInfo: infos,
-                            machineSpecs: specs,
-                        },
+                    const inkProp = machineSetting.props.find(
+                        (p) =>
+                            p.propId.toString() ===
+                            constant.PROPERTY_ID.INK_TYPE,
                     )
-                    result = {
-                        machineInfo: infoData,
-                        machineSpecs: specData,
+                    if (inkProp) {
+                        const inkDefaultValue = await ProductModel.findById({
+                            _id: { $in: inkProp.defaultValue },
+                        })
+                            .select('name code')
+                            .lean()
+                        await WorkOrderDetailModel.findByIdAndUpdate(
+                            workOrderDetail._id,
+                            { machineTypeId },
+                        )
+                        result = { inkDefaultValue }
                     }
-                } else if (
-                    workOrder.typeWork ===
-                        constant.WORK_ORDER_TYPE.TEST_IO.value ||
-                    workOrder.typeWork === constant.WORK_ORDER_TYPE.DEMO.value
-                ) {
-                    const props = propData.map((prop) => ({
-                        propId: prop._id.toString(),
-                        value: '',
-                    }))
-                    await WorkOrderDetailModel.findByIdAndUpdate(
-                        workOrderDetail._id,
-                        {
-                            machineTypeId,
-                            props,
-                        },
+                } else {
+                    propIds = machineSetting.props.map((p) =>
+                        p.propId.toString(),
                     )
-                    result = {
-                        machineProps: propData,
+
+                    for (let p of machineSetting.props) {
+                        const prop = await MachinePropertiesModel.findById(
+                            p.propId,
+                        )
+                            .select('-__v -categoryLinkedName')
+                            .lean()
+                        if (!prop) {
+                            throw new BadReq(
+                                errorCode.MACHINE_PROPERTIES_NOT_FOUND,
+                            )
+                        }
+                        let defaultValue = p.defaultValue
+                        if (
+                            prop.type ===
+                            constant.MACHINE_PROPERTIES_TYPE.LINKED
+                        ) {
+                            defaultValue = await ProductModel.find({
+                                _id: { $in: p.defaultValue },
+                            }).select('name code')
+                        }
+                        if (
+                            prop.type ===
+                            constant.MACHINE_PROPERTIES_TYPE.NORMAL
+                        ) {
+                            defaultValue = undefined
+                        }
+                        propData.push({
+                            ...prop,
+                            group: undefined,
+                            defaultValue,
+                        })
+                        if (
+                            prop.group ===
+                            constant.MACHINE_PROPERTIES_GROUP_NAME.INFO
+                        ) {
+                            infoData.push({
+                                ...prop,
+                                group: undefined,
+                                defaultValue,
+                            })
+                        }
+                        if (
+                            prop.group ===
+                            constant.MACHINE_PROPERTIES_GROUP_NAME.SPECS
+                        ) {
+                            specData.push({
+                                ...prop,
+                                group: undefined,
+                                defaultValue,
+                            })
+                        }
+                    }
+                    if (
+                        workOrder.typeWork ===
+                            constant.WORK_ORDER_TYPE.REPAIR.value ||
+                        workOrder.typeWork ===
+                            constant.WORK_ORDER_TYPE.MAINTENANCE.value ||
+                        workOrder.typeWork ===
+                            constant.WORK_ORDER_TYPE.INSTALLATION.value
+                    ) {
+                        const infos = infoData.map((info) => ({
+                            propId: info._id.toString(),
+                            value: '',
+                        }))
+                        const specs = specData.map((spec) => ({
+                            propId: spec._id.toString(),
+                            value: '',
+                        }))
+                        await WorkOrderDetailModel.findByIdAndUpdate(
+                            workOrderDetail._id,
+                            {
+                                machineTypeId,
+                                machineInfo: infos,
+                                machineSpecs: specs,
+                            },
+                        )
+                        result = {
+                            machineInfo: infoData,
+                            machineSpecs: specData,
+                        }
+                    } else if (
+                        workOrder.typeWork ===
+                            constant.WORK_ORDER_TYPE.TEST_IO.value ||
+                        workOrder.typeWork ===
+                            constant.WORK_ORDER_TYPE.DEMO.value
+                    ) {
+                        const props = propData.map((prop) => ({
+                            propId: prop._id.toString(),
+                            value: '',
+                        }))
+                        await WorkOrderDetailModel.findByIdAndUpdate(
+                            workOrderDetail._id,
+                            {
+                                machineTypeId,
+                                props,
+                            },
+                        )
+                        result = {
+                            machineProps: propData,
+                        }
                     }
                 }
             }

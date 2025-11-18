@@ -571,6 +571,10 @@ const errorCode = {
         code: 140,
         message: 'Loại máy G bắt buộc phải có thuộc tính số đầu in',
     },
+    MACHINE_NOT_MATCH_WORK_ORDER_TYPE: {
+        code: 141,
+        message: 'Loại máy không phù hợp với loại công việc',
+    },
 }
 
 module.exports = errorCode
