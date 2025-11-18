@@ -144,6 +144,18 @@ module.exports = router
  *                       type: string
  *                       description: ID sản phẩm
  *                       example: "64fce248a67d3e4d93db7390"
+ *                     code:
+ *                       type: string
+ *                       description: Mã sản phẩm
+ *                       example: "Mã sản phẩm"
+ *                     name:
+ *                       type: string
+ *                       description: Tên sản phẩm
+ *                       example: "Tên sản phẩm"
+ *                     unit:
+ *                       type: string
+ *                       description: Đơn vị
+ *                       example: "Đơn vị"
  *                     quantity:
  *                       type: number
  *                       minimum: 1
@@ -295,6 +307,18 @@ module.exports = router
  *                       type: string
  *                       description: ID sản phẩm
  *                       example: "64fce248a67d3e4d93db7390"
+ *                     code:
+ *                       type: string
+ *                       description: Mã sản phẩm
+ *                       example: "Mã sản phẩm"
+ *                     name:
+ *                       type: string
+ *                       description: Tên sản phẩm
+ *                       example: "Tên sản phẩm"
+ *                     unit:
+ *                       type: string
+ *                       description: Đơn vị
+ *                       example: "Đơn vị"
  *                     quantity:
  *                       type: number
  *                       example: 5

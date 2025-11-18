@@ -5,12 +5,12 @@ const contactPersonSchema = new Schema(
     {
         name: {
             type: String,
-            required: true,
+            // required: true,
             trim: true,
         },
         phone: {
             type: String,
-            required: true,
+            // required: true,
             trim: true,
         },
     },
@@ -23,6 +23,17 @@ const invoiceDetail = new Schema(
             type: Types.ObjectId,
             ref: 'products',
             //required: true,
+        },
+        // tên sản phẩm
+        name: {
+            type: String,
+        },
+        // mã sản phẩm
+        code: {
+            type: String,
+        },
+        unit: {
+            type: String,
         },
         quantity: {
             type: Number,

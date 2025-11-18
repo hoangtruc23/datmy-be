@@ -399,7 +399,7 @@ const invoiceService = {
                 throw new BadReq(errorCode.INVALID_ID)
             const invoice = await InvoiceModel.findById(id)
                 //.populate('customerId', 'name code')
-                .populate('invoiceDetails.productId', 'name shortName code')
+                // .populate('invoiceDetails.productId', 'name shortName code')
             if (!invoice) throw new BadReq(errorCode.INVOICE_NOT_FOUND)
             return invoice
         } catch (err) {
@@ -707,6 +707,8 @@ const invoiceService = {
 
                 inv.invoiceDetails.push({
                     productCode,
+                    productName,
+                    unit,
                     quantity: Number(quantity) || 0,
                     price: Number(price) || 0,
                     totalAmountProduct: Number(revenue) || 0,
@@ -749,12 +751,15 @@ const invoiceService = {
                     const product = await ProductModel.findOne({
                         code: d.productCode,
                     }).session(session)
-                    if (!product) {
-                        invalidProducts.push(d.productCode)
-                        continue
-                    }
+                    // if (!product) {
+                    //     invalidProducts.push(d.productCode)
+                    //     continue
+                    // }
                     details.push({
-                        productId: product._id,
+                        productId: product?._id || null,
+                        name: d.productName,
+                        code: d.productCode,
+                        unit: d.unit,
                         quantity: d.quantity,
                         price: d.price,
                         discount: 0,

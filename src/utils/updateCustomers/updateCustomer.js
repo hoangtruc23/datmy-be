@@ -168,15 +168,16 @@ const updateCustomers = async () => {
                 existing = await CustomerModel.findOne({ taxCode }).session(
                     session,
                 )
-            } else if (officialName) {
-                existing = await CustomerModel.findOne({
-                    officialName,
-                }).session(session)
-                if (existing) {
-                    // Ghi đè lại taxCode về chuỗi rỗng trong DB
-                    existing.taxCode = ''
-                }
             }
+            // else if (officialName) {
+            //     existing = await CustomerModel.findOne({
+            //         officialName,
+            //     }).session(session)
+            //     if (existing) {
+            //         // Ghi đè lại taxCode về chuỗi rỗng trong DB
+            //         existing.taxCode = ''
+            //     }
+            // }
 
             if (existing) {
                 // Update nếu taxCode duy nhất

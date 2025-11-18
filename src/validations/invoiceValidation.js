@@ -2,19 +2,9 @@ const joi = require('joi')
 const constant = require('../utils/constant/constant')
 
 const contactPersonSchema = joi.object({
-    name: joi.string().trim().required().messages({
-        'string.empty': 'Tên người liên hệ là bắt buộc',
-        'any.required': 'Tên người liên hệ là bắt buộc',
-    }),
+    name: joi.string().trim(),
     phone: joi
         .string()
-        .pattern(/^[0-9]{4,15}$/)
-        .required()
-        .messages({
-            'string.empty': 'Số điện thoại người liên hệ là bắt buộc',
-            'string.pattern.base': 'Số điện thoại phải có từ 4 đến 15 chữ số',
-            'any.required': 'Số điện thoại người liên hệ là bắt buộc',
-        }),
 })
 
 const invoiceBaseSchema = {
