@@ -12,6 +12,7 @@ const {
     getWorkOrderModel,
     checkExist,
 } = require('../utils/helper/workOrderDetailHelper')
+const TechnicianModel = require('../models/technician')
 
 const workOrderDetailService = {
     create: async (workOrderId) => {
@@ -31,8 +32,31 @@ const workOrderDetailService = {
             if (existed) {
                 throw new BadReq(errorCode.WORK_ORDER_DETAIL_EXISTED)
             }
-
-            await WorkOrderDetailModel.create({ workOrderId })
+            if (workOrder.typeWork === constant.WORK_ORDER_TYPE.TEST_IO.value) {
+                let testerId = null
+                if (workOrder.technicianId) {
+                    testerId = workOrder.technicianId
+                }
+                if (
+                    workOrder.type === constant.WORK_ORDER_DETAIL_TYPE.A.value
+                ) {
+                    await WorkOrderDetailModel.create({ workOrderId, testerId })
+                    return null
+                } else {
+                    await WorkOrderDetailModel.create({
+                        workOrderId,
+                        baseInfo: {
+                            testDate: null,
+                            testerId,
+                            purposeTest: null,
+                            receiptDate: null,
+                        },
+                    })
+                    return null
+                }
+            } else {
+                await WorkOrderDetailModel.create({ workOrderId })
+            }
             return null
         } catch (error) {
             throw error
@@ -57,12 +81,6 @@ const workOrderDetailService = {
             //check workOrderDetail có tồn tại hay không
             if (!workOrderDetail) {
                 throw new BadReq(errorCode.WORK_ORDER_DETAIL_NOT_FOUND)
-            }
-            //check xem workOrderDetail đã có thông tin chưa, nếu có thì không cho xóa
-            if (workOrderDetail.machineTypeId) {
-                throw new BadReq(
-                    errorCode.WORK_ORDER_DETAIL_HAVE_DATA_SO_CAN_NOT_UPDATE_OR_DELETE,
-                )
             }
             await WorkOrderDetailModel.findOneAndDelete({ workOrderId })
             return null
@@ -101,25 +119,157 @@ const workOrderDetailService = {
                 workOrder.typeWork ===
                     constant.WORK_ORDER_TYPE.MAINTENANCE.value
             ) {
+                let returnInfo = []
+                if (workOrderDetail.machineInfo.length) {
+                    for (let info of workOrderDetail.machineInfo) {
+                        const prop = await MachinePropertiesModel.findById(
+                            info.propId,
+                        )
+                        const machineSetting =
+                            await MachineSettingModel.findOne({
+                                machineId: workOrderDetail.machineId,
+                            })
+                        let defaultValue = []
+                        if (machineSetting) {
+                            for (let p of machineSetting.props) {
+                                if (p.propId === info.propId) {
+                                    defaultValue = p.defaultValue
+                                }
+                            }
+                        }
+                        returnInfo.push({
+                            _id: prop._id,
+                            name: prop.name,
+                            type: prop.type,
+                            defaultValue:
+                                prop.type !==
+                                constant.MACHINE_PROPERTIES_TYPE.NORMAL
+                                    ? defaultValue
+                                    : undefined,
+                            value: info.value,
+                        })
+                    }
+                }
+                let returnSpecs = []
+                if (workOrderDetail.machineSpecs.length) {
+                    for (let spec of workOrderDetail.machineSpecs) {
+                        const prop = await MachinePropertiesModel.findById(
+                            spec.propId,
+                        )
+                        const machineSetting =
+                            await MachineSettingModel.findOne({
+                                machineId: workOrderDetail.machineId,
+                            })
+                        let defaultValue = []
+                        if (machineSetting) {
+                            for (let p of machineSetting.props) {
+                                if (p.propId === spec.propId) {
+                                    defaultValue = p.defaultValue
+                                }
+                            }
+                        }
+                        returnSpecs.push({
+                            _id: prop._id,
+                            name: prop.name,
+                            type: prop.type,
+                            defaultValue:
+                                prop.type !==
+                                constant.MACHINE_PROPERTIES_TYPE.NORMAL
+                                    ? defaultValue
+                                    : undefined,
+                            value: spec.value,
+                        })
+                    }
+                }
                 result = {
-                    customerInfo: {
-                        officialName: workOrder.customerId.officialName,
-                        contactPerson: workOrder.contactPerson.contactName,
-                        phone: workOrder.contactPerson.contactPhone,
-                        address: workOrder.address,
-                        reportDate: workOrder.createdAt,
-                    },
                     ...workOrderDetail,
+                    machineInfo: returnInfo,
+                    machineSpecs: returnSpecs,
                 }
             } else if (
                 workOrder.typeWork === constant.WORK_ORDER_TYPE.TEST_IO.value ||
-                workOrder.typeWork === constant.WORK_ORDER_TYPE.DEMO.value ||
+                workOrder.typeWork === constant.WORK_ORDER_TYPE.DEMO.value
+            ) {
+                let returnProps = []
+                if (workOrderDetail.props.length) {
+                    for (let mp of workOrderDetail.props) {
+                        const prop = await MachinePropertiesModel.findById(
+                            mp.propId,
+                        )
+                        const machineSetting =
+                            await MachineSettingModel.findOne({
+                                machineId: workOrderDetail.machineId,
+                            })
+                        let defaultValue = []
+                        if (machineSetting) {
+                            for (let p of machineSetting.props) {
+                                if (p.propId === mp.propId) {
+                                    defaultValue = p.defaultValue
+                                }
+                            }
+                        }
+                        returnProps.push({
+                            _id: prop._id,
+                            name: prop.name,
+                            type: prop.type,
+                            defaultValue:
+                                prop.type !==
+                                constant.MACHINE_PROPERTIES_TYPE.NORMAL
+                                    ? defaultValue
+                                    : undefined,
+                            value: mp.value,
+                        })
+                    }
+                }
+                result = {
+                    ...workOrderDetail,
+                    props: returnProps,
+                }
+                let tester = null
+                if (
+                    workOrder.typeWork ===
+                    constant.WORK_ORDER_TYPE.TEST_IO.value
+                ) {
+                    const testerId =
+                        workOrder.type ===
+                        constant.WORK_ORDER_DETAIL_TYPE.A.value
+                            ? workOrderDetail.testerId
+                            : workOrderDetail.baseInfo.testerId
+                    if (testerId) {
+                        tester = await TechnicianModel.findById(testerId)
+                            .select('fullname')
+                            .lean()
+                    }
+                    if (
+                        workOrder.type ===
+                        constant.WORK_ORDER_DETAIL_TYPE.A.value
+                    ) {
+                        result.testerName = tester.fullname
+                    } else {
+                        result.baseInfo.testerName = tester.fullname
+                    }
+                }
+            } else if (
                 workOrder.typeWork ===
-                    constant.WORK_ORDER_TYPE.SAMPLE_PRINTING.value
+                constant.WORK_ORDER_TYPE.SAMPLE_PRINTING.value
             ) {
                 result = workOrderDetail
             }
-            return result
+            return {
+                customerInfo:
+                    workOrder.typeWork !==
+                    constant.WORK_ORDER_TYPE.TEST_IO.value
+                        ? {
+                              officialName: workOrder.customerId.officialName,
+                              contactPerson:
+                                  workOrder.contactPerson.contactName,
+                              phone: workOrder.contactPerson.contactPhone,
+                              address: workOrder.address,
+                              reportDate: workOrder.createdAt,
+                          }
+                        : undefined,
+                ...result,
+            }
         } catch (error) {
             throw error
         }
@@ -385,7 +535,7 @@ const workOrderDetailService = {
                             i.propId ===
                             constant.PROPERTY_ID.PRINT_HEAD_QUANTITY,
                     ).value
-                    if (groups.length !== printHeadQuantity) {
+                    if (groups.length !== Number(printHeadQuantity)) {
                         throw new BadReq(
                             errorCode.PRINT_HEAD_QUANTITY_AND_NUMBER_OF_GROUP_NOT_MATCH,
                         )
@@ -587,19 +737,8 @@ const workOrderDetailService = {
                         { testDate, testerId, props },
                     )
                     return null
-                }
-                const {
-                    testDate,
-                    testerId,
-                    purposeTest,
-                    receiptDate,
-                    props,
-                    image,
-                    printHeads,
-                } = reqData
-                await WorkOrderDetailModel.findByIdAndUpdate(
-                    workOrderDetail._id,
-                    {
+                } else {
+                    const {
                         testDate,
                         testerId,
                         purposeTest,
@@ -607,9 +746,23 @@ const workOrderDetailService = {
                         props,
                         image,
                         printHeads,
-                    },
-                )
-                return null
+                    } = reqData
+                    await WorkOrderDetailModel.findByIdAndUpdate(
+                        workOrderDetail._id,
+                        {
+                            baseInfo: {
+                                testDate,
+                                testerId,
+                                purposeTest,
+                                receiptDate,
+                            },
+                            props,
+                            image,
+                            printHeads,
+                        },
+                    )
+                    return null
+                }
             }
         } catch (error) {
             throw error
