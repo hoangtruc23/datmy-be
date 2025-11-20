@@ -6,8 +6,13 @@ const CustomerModel = require('../models/customer')
 const contactPersonCustomerService = {
     create: async (reqData) => {
         try {
-            const { customerId, contactName, contactPhone, contactEmail } =
-                reqData
+            const {
+                customerId,
+                contactName,
+                contactPhone,
+                contactEmail,
+                address,
+            } = reqData
             const customer = await CustomerModel.findById(customerId)
             if (!customer) {
                 throw new BadReq(errorCode.CUSTOMER_NOT_FOUND)
@@ -21,15 +26,16 @@ const contactPersonCustomerService = {
                     contactPerson: [
                         { contactName, contactEmail, contactPhone },
                     ],
+                    address: [address],
                 })
             } else {
-                const existed = record.contactPerson.some(
+                const existedPerson = record.contactPerson.some(
                     (r) =>
                         r.contactName === contactName &&
                         r.contactEmail === contactEmail &&
                         r.contactPhone === contactPhone,
                 )
-                if (!existed) {
+                if (!existedPerson) {
                     await ContactPersonCustomerModel.findByIdAndUpdate(
                         record._id,
                         {
@@ -43,13 +49,20 @@ const contactPersonCustomerService = {
                         },
                     )
                 }
-                return null
+                const existedAddress = record.address.some((r) => r === address)
+                if (!existedAddress) {
+                    await ContactPersonCustomerModel.findByIdAndUpdate(
+                        record._id,
+                        { $push: { address: address } },
+                    )
+                }
             }
+            return null
         } catch (error) {
             throw error
         }
     },
-    getAll: async (customerId, query) => {
+    getAllPerson: async (customerId, query) => {
         try {
             const customer = await CustomerModel.findById(customerId)
             if (!customer) {
@@ -67,7 +80,23 @@ const contactPersonCustomerService = {
             throw error
         }
     },
-    delete: async (customerId, reqData) => {
+    getAllAddress: async (customerId, query) => {
+        try {
+            const customer = await CustomerModel.findById(customerId)
+            if (!customer) {
+                throw new BadReq(errorCode.CUSTOMER_NOT_FOUND)
+            }
+            let { search } = query
+            search = new RegExp(search, 'i')
+            const record = await ContactPersonCustomerModel.findOne({
+                customerId,
+            }).lean()
+            return record ? record.address.filter((a) => search.test(a)) : []
+        } catch (error) {
+            throw error
+        }
+    },
+    deletePerson: async (customerId, reqData) => {
         try {
             const { contactName, contactPhone, contactEmail } = reqData
             const customer = await CustomerModel.findById(customerId)
@@ -92,7 +121,6 @@ const contactPersonCustomerService = {
             if (!existed) {
                 throw new BadReq(errorCode.CONTACT_PERSON_NOT_FOUND)
             }
-            console.log(2)
 
             await ContactPersonCustomerModel.findByIdAndUpdate(record._id, {
                 $pull: {
@@ -102,6 +130,36 @@ const contactPersonCustomerService = {
                         contactEmail,
                     },
                 },
+            })
+
+            return null
+        } catch (error) {
+            throw error
+        }
+    },
+    deleteAddress: async (customerId, reqData) => {
+        try {
+            const { address } = reqData
+            const customer = await CustomerModel.findById(customerId)
+            if (!customer) {
+                throw new BadReq(errorCode.CUSTOMER_NOT_FOUND)
+            }
+
+            const record = await ContactPersonCustomerModel.findOne({
+                customerId,
+            }).lean()
+            if (!record) {
+                throw new BadReq(errorCode.CONTACT_PERSON_NOT_FOUND)
+            }
+
+            const existed = record.address.some((a) => a === address)
+
+            if (!existed) {
+                throw new BadReq(errorCode.CONTACT_PERSON_NOT_FOUND)
+            }
+
+            await ContactPersonCustomerModel.findByIdAndUpdate(record._id, {
+                $pull: { address: address },
             })
 
             return null

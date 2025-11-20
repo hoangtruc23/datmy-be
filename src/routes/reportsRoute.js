@@ -510,7 +510,7 @@ module.exports = router
  *     tags: [Reports]
  *     parameters:
  *       - in: query
- *         name: fromDate
+ *         name: startDate
  *         required: true
  *         schema:
  *           type: string
@@ -518,7 +518,7 @@ module.exports = router
  *           example: "01/01/2025"
  *         description: Ngày bắt đầu
  *       - in: query
- *         name: toDate
+ *         name: endDate
  *         required: true
  *         schema:
  *           type: string
