@@ -787,7 +787,7 @@ const invoiceService = {
                 dueDate.setDate(dueDate.getDate() + limitDue)
 
                 const VATRate =
-                    inv.revenue > 0
+                    inv.revenue !== 0
                         ? Math.round(
                               (inv.VATAmount / inv.revenue) * 100 * 100,
                           ) / 100

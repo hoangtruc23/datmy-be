@@ -1166,13 +1166,23 @@ async function apiSeeder() {
         //contactPersonCustomer
         {
             _id: new Types.ObjectId('691c2c10cc14068cd86a1bf7'),
-            api: '/contactPerson/getAll',
+            api: '/contactPerson/getAllPerson',
             note: 'Lấy toàn bộ các người liên hệ theo khách hàng',
         },
         {
+            _id: new Types.ObjectId('691ebf6e7cd69b4b32fa3b5f'),
+            api: '/contactPerson/getAllAddress',
+            note: 'Lấy toàn bộ các địa chỉ theo khách hàng',
+        },
+        {
             _id: new Types.ObjectId('691c2c10cc14068cd86a1bf8'),
-            api: '/contactPerson/deleteContact',
-            note: 'Xóa liên hệ',
+            api: '/contactPerson/deletePerson',
+            note: 'Xóa người liên hệ',
+        },
+        {
+            _id: new Types.ObjectId('691ebf6e7cd69b4b32fa3b60'),
+            api: '/contactPerson/deleteAddress',
+            note: 'Xóa địa chỉ liên hệ',
         },
     ])
 

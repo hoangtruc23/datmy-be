@@ -2,9 +2,9 @@ const contactPersonCustomerServices = require('../services/contactPersonCustomer
 const response = require('../utils/response/response')
 
 const contactPersonCustomerController = {
-    getAll: async (req, res, next) => {
+    getAllPerson: async (req, res, next) => {
         try {
-            const result = await contactPersonCustomerServices.getAll(
+            const result = await contactPersonCustomerServices.getAllPerson(
                 req.params.customerId,
                 req.query,
             )
@@ -13,9 +13,31 @@ const contactPersonCustomerController = {
             next(error)
         }
     },
-    delete: async (req, res, next) => {
+    getAllAddress: async (req, res, next) => {
         try {
-            const result = await contactPersonCustomerServices.delete(
+            const result = await contactPersonCustomerServices.getAllAddress(
+                req.params.customerId,
+                req.query,
+            )
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
+    deletePerson: async (req, res, next) => {
+        try {
+            const result = await contactPersonCustomerServices.deletePerson(
+                req.params.customerId,
+                req.body,
+            )
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
+    deleteAddress: async (req, res, next) => {
+        try {
+            const result = await contactPersonCustomerServices.deleteAddress(
                 req.params.customerId,
                 req.body,
             )

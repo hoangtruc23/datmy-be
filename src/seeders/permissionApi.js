@@ -820,11 +820,19 @@ async function permissionApiSeeder() {
         },
         {
             permissionId: '68d1166bba1c480c8180bf6d', // Tạo phiếu yêu cầu công việc
-            apiId: '691c2c10cc14068cd86a1bf7', // /contactPerson/getAll
+            apiId: '691c2c10cc14068cd86a1bf7', // /contactPerson/getAllPerson
         },
         {
             permissionId: '68d1166bba1c480c8180bf6d', // Tạo phiếu yêu cầu công việc
-            apiId: '691c2c10cc14068cd86a1bf8', // /contactPerson/delete
+            apiId: '691c2c10cc14068cd86a1bf8', // /contactPerson/deletePerson
+        },
+        {
+            permissionId: '68d3750d4828a7c4347ad1bd', // Tạo phiếu yêu cầu công việc
+            apiId: '691ebf6e7cd69b4b32fa3b5f', // /contactPerson/getAllAddress
+        },
+        {
+            permissionId: '68d3750d4828a7c4347ad1bd', // Tạo phiếu yêu cầu công việc
+            apiId: '691ebf6e7cd69b4b32fa3b60', // /contactPerson/deleteAddress
         },
         {
             permissionId: '68d3750d4828a7c4347ad1bd', // Chỉnh sửa phiếu yêu cầu công việc
@@ -832,11 +840,19 @@ async function permissionApiSeeder() {
         },
         {
             permissionId: '68d3750d4828a7c4347ad1bd', // Tạo phiếu yêu cầu công việc
-            apiId: '691c2c10cc14068cd86a1bf7', // /contactPerson/getAll
+            apiId: '691c2c10cc14068cd86a1bf7', // /contactPerson/getAllPerson
         },
         {
             permissionId: '68d3750d4828a7c4347ad1bd', // Tạo phiếu yêu cầu công việc
-            apiId: '691c2c10cc14068cd86a1bf8', // /contactPerson/delete
+            apiId: '691c2c10cc14068cd86a1bf8', // /contactPerson/deletePerson
+        },
+        {
+            permissionId: '68d3750d4828a7c4347ad1bd', // Tạo phiếu yêu cầu công việc
+            apiId: '691ebf6e7cd69b4b32fa3b5f', // /contactPerson/getAllAddress
+        },
+        {
+            permissionId: '68d3750d4828a7c4347ad1bd', // Tạo phiếu yêu cầu công việc
+            apiId: '691ebf6e7cd69b4b32fa3b60', // /contactPerson/deleteAddress
         },
         {
             permissionId: '68d3750d4828a7c4347ad1be', // Xóa phiếu yêu cầu công việc

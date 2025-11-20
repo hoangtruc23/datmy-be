@@ -170,6 +170,7 @@ const workOrderService = {
                 contactName,
                 contactEmail,
                 contactPhone,
+                address,
             })
             const workOrder = await WorkOrderModel.create({
                 code,
@@ -283,6 +284,7 @@ const workOrderService = {
                     contactName,
                     contactEmail,
                     contactPhone,
+                    address,
                 })
             }
             await WorkOrderModel.findByIdAndUpdate(workOrderId, {

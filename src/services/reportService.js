@@ -54,7 +54,7 @@ const reportService = {
             let customerName = ''
             if (customerId) {
                 const customer = await CustomerModel.findById(customerId).lean()
-                customerName = customer ? customer.name : ''
+                customerName = customer ? customer.officialName : ''
             }
 
             const createSalesData = async (invoicesList) => {
@@ -70,14 +70,13 @@ const reportService = {
                         const unit = product
                             ? await UnitModel.findById(product.unit).lean()
                             : null
-
                         const totalAmount = detail.totalAmountProduct
-                        const vatAmount = Math.round(totalAmount * 0.1)
+                        const vatAmount = Math.round(totalAmount * invoice.VATRate * 0.01)
                         const totalPayment = totalAmount + vatAmount
 
                         data.push({
                             customerName: customer
-                                ? customer.name
+                                ? customer.officialName
                                 : invoice.customerName,
                             invoiceCode: invoice.invoiceCode,
                             invoiceDate: formatDateToVietnamese(
@@ -479,7 +478,7 @@ const reportService = {
             let customerName = ''
             if (customerId) {
                 const customer = await CustomerModel.findById(customerId).lean()
-                customerName = customer ? customer.name : ''
+                customerName = customer ? customer.officialName : ''
             }
 
             const customerCache = {}
@@ -524,7 +523,7 @@ const reportService = {
 
                     salesData.push({
                         customerName: customer
-                            ? customer.name
+                            ? customer.officialName
                             : invoice.customerName,
                         invoiceCode: invoice.invoiceCode,
                         invoiceDate: formatDateToVietnamese(

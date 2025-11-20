@@ -23,6 +23,7 @@ const contactPersonCustomerSchema = new Schema({
         ref: 'customers',
     },
     contactPerson: [contactPersonSchema],
+    address: [String],
 })
 
 const ContactPersonCustomerModel = model(
