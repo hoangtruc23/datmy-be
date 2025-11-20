@@ -9,6 +9,7 @@ const { envConfig } = require('../config/envConfg')
 const { clientRedis } = require('../config/redisConfig')
 const PermissionApiModel = require('../models/permissionApi')
 const UserModel = require('../models/user')
+const PermissionModel = require('../models/permission')
 
 const technicianService = {
     create: async (reqData) => {
@@ -277,6 +278,14 @@ const technicianService = {
             if (!technician) {
                 throw new BadReq(errorCode.TECHNICIAN_NOT_FOUND)
             }
+            const permission = await PermissionModel.find({
+                _id: { $in: Object.values(constant.TECHNICIAN_PERMISSION_ID) },
+            })
+            const permissionCodeList = new Set()
+            permission.forEach((item) => {
+                permissionCodeList.add(item?.code)
+            })
+            technician.permissionCodeList = [...permissionCodeList]
             return technician
         } catch (error) {
             throw error

@@ -22,58 +22,59 @@ const authService = {
                     username,
                     password,
                 })
-            }
-            const comparePassword = await bcrypt.compare(
-                password,
-                user.password,
-            )
-            if (!comparePassword) {
-                throw new BadReq(errorCode.INCORRECT_PASSWORD)
-            }
-            const ts = Date.now()
-            const accessToken = jwt.sign(
-                { userId: user._id, ts },
-                envConfig.JWT_ACCESS_TOKEN_PRIVATE_KEY,
-                { expiresIn: Number(envConfig.JWT_ACCESS_TOKEN_EXPIRES) },
-            )
-
-            // set redis
-            await clientRedis.set(
-                `${constant.REDIS_PREFIX_ACCESS_TOKEN}_${user._id}_${ts}`,
-                accessToken,
-                {
-                    EX: envConfig.JWT_ACCESS_TOKEN_EXPIRES,
-                },
-            )
-
-            let apis
-            if (
-                user.username == constant.USER_ROOT ||
-                user.username == constant.USER_BGD
-            ) {
-                apis = await ApiModel.find()
-                apis = apis.map((api) => api.api)
             } else {
-                const permissions = await RolePermissionModel.find({
-                    roleId: { $in: user.roleIds },
-                })
-                const permissonIds = permissions.map(
-                    (permission) => permission.permissionId,
+                const comparePassword = await bcrypt.compare(
+                    password,
+                    user.password,
                 )
-                apis = await PermissionApiModel.find({
-                    permissionId: { $in: permissonIds },
-                }).populate('apiId')
-                apis = apis.map((api) => api?.apiId?.api)
-            }
+                if (!comparePassword) {
+                    throw new BadReq(errorCode.INCORRECT_PASSWORD)
+                }
+                const ts = Date.now()
+                const accessToken = jwt.sign(
+                    { userId: user._id, ts },
+                    envConfig.JWT_ACCESS_TOKEN_PRIVATE_KEY,
+                    { expiresIn: Number(envConfig.JWT_ACCESS_TOKEN_EXPIRES) },
+                )
 
-            await clientRedis.set(
-                `${constant.REDIS_PREFIX_PERMISSION}_${user.id}`,
-                JSON.stringify(apis),
-                {
-                    EX: envConfig.JWT_ACCESS_TOKEN_EXPIRES,
-                },
-            )
-            return accessToken
+                // set redis
+                await clientRedis.set(
+                    `${constant.REDIS_PREFIX_ACCESS_TOKEN}_${user._id}_${ts}`,
+                    accessToken,
+                    {
+                        EX: envConfig.JWT_ACCESS_TOKEN_EXPIRES,
+                    },
+                )
+
+                let apis
+                if (
+                    user.username == constant.USER_ROOT ||
+                    user.username == constant.USER_BGD
+                ) {
+                    apis = await ApiModel.find()
+                    apis = apis.map((api) => api.api)
+                } else {
+                    const permissions = await RolePermissionModel.find({
+                        roleId: { $in: user.roleIds },
+                    })
+                    const permissonIds = permissions.map(
+                        (permission) => permission.permissionId,
+                    )
+                    apis = await PermissionApiModel.find({
+                        permissionId: { $in: permissonIds },
+                    }).populate('apiId')
+                    apis = apis.map((api) => api?.apiId?.api)
+                }
+
+                await clientRedis.set(
+                    `${constant.REDIS_PREFIX_PERMISSION}_${user.id}`,
+                    JSON.stringify(apis),
+                    {
+                        EX: envConfig.JWT_ACCESS_TOKEN_EXPIRES,
+                    },
+                )
+                return accessToken
+            }
         } catch (error) {
             throw error
         }
@@ -86,32 +87,32 @@ const authService = {
             }).lean()
             if (!user) {
                 return technicianService.getTechnicianLoginDetail(userId)
-            }
-
-            if (
-                user.username == constant.USER_ROOT ||
-                user.username == constant.USER_BGD
-            ) {
-                const permissions = await PermissionModel.find()
-
-                const permissionCodeList = new Set()
-                permissions.forEach((item) => {
-                    permissionCodeList.add(item?.code)
-                })
-                user.permissionCodeList = [...permissionCodeList]
             } else {
-                // Lấy tất cả các permission
-                const rolePermissions = await RolePermissionModel.find({
-                    roleId: { $in: user.roleIds },
-                }).populate('permissionId', 'code')
-                const permissionCodeList = new Set()
-                rolePermissions.forEach((item) => {
-                    permissionCodeList.add(item?.permissionId?.code)
-                })
-                user.permissionCodeList = [...permissionCodeList]
-            }
+                if (
+                    user.username == constant.USER_ROOT ||
+                    user.username == constant.USER_BGD
+                ) {
+                    const permissions = await PermissionModel.find()
 
-            return user
+                    const permissionCodeList = new Set()
+                    permissions.forEach((item) => {
+                        permissionCodeList.add(item?.code)
+                    })
+                    user.permissionCodeList = [...permissionCodeList]
+                } else {
+                    // Lấy tất cả các permission
+                    const rolePermissions = await RolePermissionModel.find({
+                        roleId: { $in: user.roleIds },
+                    }).populate('permissionId', 'code')
+                    const permissionCodeList = new Set()
+                    rolePermissions.forEach((item) => {
+                        permissionCodeList.add(item?.permissionId?.code)
+                    })
+                    user.permissionCodeList = [...permissionCodeList]
+                }
+
+                return user
+            }
         } catch (error) {
             throw error
         }
