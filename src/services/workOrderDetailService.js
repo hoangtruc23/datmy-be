@@ -105,7 +105,7 @@ const workOrderDetailService = {
 
             const workOrderDetail = await WorkOrderDetailModel.findOne({
                 workOrderId,
-            }).lean()
+            }).populate('machineTypeId', '_id name').lean()
             //check workOrderDetail có tồn tại hay không
             if (!workOrderDetail) {
                 throw new BadReq(errorCode.WORK_ORDER_DETAIL_NOT_FOUND)
