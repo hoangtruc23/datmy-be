@@ -241,7 +241,7 @@ const machineSettingService = {
                 const prop = await MachinePropertiesModel.findById(
                     p.propId,
                 ).lean()
-                if (prop.type === constant.MACHINE_PROPERTIES_TYPE.LINKED) {
+                if (prop?.type === constant.MACHINE_PROPERTIES_TYPE.LINKED) {
                     linkedIds.push(...p.defaultValue)
                 }
             }

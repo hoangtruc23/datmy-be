@@ -225,8 +225,8 @@ const workOrderService = {
                 contactName,
                 contactEmail,
                 contactPhone,
+                address,
             } = reqData
-
             const checkWorkOrder = await WorkOrderModel.findById(workOrderId)
             if (!checkWorkOrder) {
                 throw new BadReq(errorCode.WORK_ORDER_NOT_FOUND)
@@ -277,7 +277,8 @@ const workOrderService = {
             if (
                 contactEmail !== checkWorkOrder.contactPerson.contactEmail ||
                 contactName !== checkWorkOrder.contactPerson.contactName ||
-                contactPhone !== checkWorkOrder.contactPerson.contactPhone
+                contactPhone !== checkWorkOrder.contactPerson.contactPhone ||
+                address !== checkWorkOrder.contactPerson.contactPhone
             ) {
                 await contactPersonCustomerService.create({
                     customerId: checkWorkOrder.customerId,
@@ -303,6 +304,7 @@ const workOrderService = {
                     contactEmail,
                     contactPhone,
                 },
+                address,
             })
 
             if (typeWork !== oldTypeWork || type !== oldType) {
