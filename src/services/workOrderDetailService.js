@@ -127,14 +127,29 @@ const workOrderDetailService = {
                         )
                         const machineSetting =
                             await MachineSettingModel.findOne({
-                                machineId: workOrderDetail.machineId,
+                                machineId: workOrderDetail.machineTypeId,
                             })
                         let defaultValue = []
                         if (machineSetting) {
                             for (let p of machineSetting.props) {
-                                if (p.propId === info.propId) {
+                                if (
+                                    p.propId.toString() ===
+                                    info.propId.toString()
+                                ) {
                                     defaultValue = p.defaultValue
                                 }
+                            }
+                        }
+                        if (
+                            prop.type ===
+                            constant.MACHINE_PROPERTIES_TYPE.LINKED
+                        ) {
+                            if (defaultValue) {
+                                defaultValue = await ProductModel.find({
+                                    _id: { $in: defaultValue },
+                                })
+                                    .select('name code')
+                                    .lean()
                             }
                         }
                         returnInfo.push({
@@ -158,14 +173,29 @@ const workOrderDetailService = {
                         )
                         const machineSetting =
                             await MachineSettingModel.findOne({
-                                machineId: workOrderDetail.machineId,
+                                machineId: workOrderDetail.machineTypeId,
                             })
                         let defaultValue = []
                         if (machineSetting) {
                             for (let p of machineSetting.props) {
-                                if (p.propId === spec.propId) {
+                                if (
+                                    p.propId.toString() ===
+                                    spec.propId.toString()
+                                ) {
                                     defaultValue = p.defaultValue
                                 }
+                            }
+                        }
+                        if (
+                            prop.type ===
+                            constant.MACHINE_PROPERTIES_TYPE.LINKED
+                        ) {
+                            if (defaultValue) {
+                                defaultValue = await ProductModel.find({
+                                    _id: { $in: defaultValue },
+                                })
+                                    .select('name code')
+                                    .lean()
                             }
                         }
                         returnSpecs.push({
@@ -198,14 +228,28 @@ const workOrderDetailService = {
                         )
                         const machineSetting =
                             await MachineSettingModel.findOne({
-                                machineId: workOrderDetail.machineId,
+                                machineId: workOrderDetail.machineTypeId,
                             })
                         let defaultValue = []
                         if (machineSetting) {
                             for (let p of machineSetting.props) {
-                                if (p.propId === mp.propId) {
+                                if (
+                                    p.propId.toString() === mp.propId.toString()
+                                ) {
                                     defaultValue = p.defaultValue
                                 }
+                            }
+                        }
+                        if (
+                            prop.type ===
+                            constant.MACHINE_PROPERTIES_TYPE.LINKED
+                        ) {
+                            if (defaultValue) {
+                                defaultValue = await ProductModel.find({
+                                    _id: { $in: defaultValue },
+                                })
+                                    .select('name code')
+                                    .lean()
                             }
                         }
                         returnProps.push({
