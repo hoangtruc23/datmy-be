@@ -44,9 +44,17 @@ const invoiceDetail = new Schema(
             type: Number,
             required: true,
         },
-        discount: {
+        VATRateProduct: {
             type: Number,
-            default: 0,
+            default: 10,
+        },
+        notVATtotalAmountProduct: {
+            type: Number,
+            required: true,
+        },
+        VATAmountProduct: {
+            type: Number,
+            required: true,
         },
         totalAmountProduct: {
             type: Number,
@@ -77,14 +85,8 @@ const invoiceSchema = new Schema(
             required: true,
             unique: true,
         },
-        //theo phần trăm
-        VATRate: { type: Number, default: 10 },
-        //Tiền thuế GTGT
-        VATAmount: { type: Number, required: true },
-
-        //tiền tổng cộng không VAT
         notVATtotalAmount: { type: Number, required: true },
-        //tiền tổng cộng có VAT
+        VATAmount: { type: Number, required: true },
         totalAmount: { type: Number, required: true },
         invoiceDate: { type: Date },
         //Cộng từ createdAt và  limitDue trong configDebt

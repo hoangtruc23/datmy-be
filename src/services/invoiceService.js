@@ -27,7 +27,6 @@ const invoiceService = {
                 invoiceLink,
                 paymentBy,
                 dueDate,
-                VATRate,
                 VATAmount,
                 notVATtotalAmount,
             } = data
@@ -42,12 +41,28 @@ const invoiceService = {
                 (new Date(dueDate) - new Date(invoiceDate)) /
                     (1000 * 60 * 60 * 24),
             )
+            let checkNotVATtotalAmount = 0
+            let checkVATAmount = 0
+            let checkTotalAmount = 0
+            for (let d of invoiceDetails) {
+                checkNotVATtotalAmount += d.notVATtotalAmountProduct
+                checkVATAmount += d.VATAmountProduct
+                checkTotalAmount += d.totalAmountProduct
+            }
+            if (
+                checkVATAmount !== VATAmount ||
+                checkTotalAmount !== totalAmount ||
+                checkNotVATtotalAmount !== notVATtotalAmount
+            ) {
+                throw new BadReq(errorCode.INVOICE_DATA_INVALID)
+            }
 
-            const invoice = await InvoiceModel.create({
+            await InvoiceModel.create({
                 customerId,
                 customerName,
                 invoiceCode,
                 notVATtotalAmount,
+                VATAmount,
                 totalAmount,
                 dueDate,
                 limitDue,
@@ -59,8 +74,6 @@ const invoiceService = {
                 invoiceLink,
                 paymentBy,
                 notes,
-                VATRate,
-                VATAmount,
             })
 
             return null
@@ -92,15 +105,30 @@ const invoiceService = {
                 invoice.limitDue = limitDue
             }
 
+            let checkNotVATtotalAmount = 0
+            let checkVATAmount = 0
+            let checkTotalAmount = 0
+            for (let d of data.invoiceDetails) {
+                checkNotVATtotalAmount += d.notVATtotalAmountProduct
+                checkVATAmount += d.VATAmountProduct
+                checkTotalAmount += d.totalAmountProduct
+            }
+            if (
+                checkVATAmount !== data.VATAmount ||
+                checkTotalAmount !== data.totalAmount ||
+                checkNotVATtotalAmount !== data.notVATtotalAmount
+            ) {
+                throw new BadReq(errorCode.INVOICE_DATA_INVALID)
+            }
+
             Object.assign(invoice, {
                 customerId: data.customerId ?? invoice.customerId,
                 customerName: data.customerName ?? invoice.customerName,
                 invoiceCode: data.invoiceCode ?? invoice.invoiceCode,
-                totalAmount: data.totalAmount ?? invoice.totalAmount,
                 notVATtotalAmount:
                     data.notVATtotalAmount ?? invoice.notVATtotalAmount,
-                VATRate: data.VATRate ?? invoice.VATRate,
                 VATAmount: data.VATAmount ?? invoice.VATAmount,
+                totalAmount: data.totalAmount ?? invoice.totalAmount,
                 orderBy: data.orderBy ?? invoice.orderBy,
                 accountant: data.accountant ?? invoice.accountant,
                 invoiceDate: data.invoiceDate ?? invoice.invoiceDate,
@@ -273,10 +301,9 @@ const invoiceService = {
                         invoiceCode: 1,
                         customerName: 1,
                         notVATtotalAmount: 1,
+                        VATAmount: 1,
                         totalAmount: 1,
                         totalPaid: 1,
-                        VATRate: 1,
-                        VATAmount: 1,
                         remainingDebt: 1,
                         dueDate: 1,
                         status: 1,
@@ -398,8 +425,6 @@ const invoiceService = {
             if (!Types.ObjectId.isValid(id))
                 throw new BadReq(errorCode.INVALID_ID)
             const invoice = await InvoiceModel.findById(id)
-                //.populate('customerId', 'name code')
-                // .populate('invoiceDetails.productId', 'name shortName code')
             if (!invoice) throw new BadReq(errorCode.INVOICE_NOT_FOUND)
             return invoice
         } catch (err) {
@@ -679,6 +704,7 @@ const invoiceService = {
                     quantity,
                     price,
                     revenue,
+                    vatRate,
                     vatAmount,
                     totalAmount,
                     address,
@@ -711,7 +737,10 @@ const invoiceService = {
                     unit,
                     quantity: Number(quantity) || 0,
                     price: Number(price) || 0,
-                    totalAmountProduct: Number(revenue) || 0,
+                    VATRateProduct: Number(vatRate),
+                    notVATtotalAmountProduct: Number(revenue) || 0,
+                    VATAmountProduct: Number(vatAmount) || 0,
+                    totalAmountProduct: Number(totalAmount) || 0,
                 })
             })
 
@@ -762,7 +791,9 @@ const invoiceService = {
                         unit: d.unit,
                         quantity: d.quantity,
                         price: d.price,
-                        discount: 0,
+                        VATRateProduct: d.VATRateProduct,
+                        notVATtotalAmountProduct: d.notVATtotalAmountProduct,
+                        VATAmountProduct: d.VATAmountProduct,
                         totalAmountProduct: d.totalAmountProduct,
                     })
                 }
@@ -786,13 +817,6 @@ const invoiceService = {
                 const dueDate = new Date(inv.invoiceDate)
                 dueDate.setDate(dueDate.getDate() + limitDue)
 
-                const VATRate =
-                    inv.revenue !== 0
-                        ? Math.round(
-                              (inv.VATAmount / inv.revenue) * 100 * 100,
-                          ) / 100
-                        : 10
-
                 const invoiceDoc = new InvoiceModel({
                     customerId: customer._id,
                     customerName: customer.officialName,
@@ -800,7 +824,6 @@ const invoiceService = {
                     notVATtotalAmount: inv.revenue,
                     totalAmount: inv.totalAmount,
                     VATAmount: inv.VATAmount,
-                    VATRate,
                     invoiceDate: new Date(inv.invoiceDate),
                     dueDate,
                     limitDue,
