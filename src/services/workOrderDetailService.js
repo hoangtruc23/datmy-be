@@ -105,7 +105,10 @@ const workOrderDetailService = {
 
             const workOrderDetail = await WorkOrderDetailModel.findOne({
                 workOrderId,
-            }).populate('machineTypeId', '_id name').lean()
+            })
+                .select('-__v')
+                .populate('machineTypeId', '_id name')
+                .lean()
             //check workOrderDetail có tồn tại hay không
             if (!workOrderDetail) {
                 throw new BadReq(errorCode.WORK_ORDER_DETAIL_NOT_FOUND)
@@ -265,10 +268,6 @@ const workOrderDetailService = {
                         })
                     }
                 }
-                result = {
-                    ...workOrderDetail,
-                    props: returnProps,
-                }
                 let tester = null
                 if (
                     workOrder.typeWork ===
@@ -284,14 +283,26 @@ const workOrderDetailService = {
                             .select('fullname')
                             .lean()
                     }
+                    result.testerName = tester.fullname
                     if (
-                        workOrder.type ===
+                        workOrder.type !==
                         constant.WORK_ORDER_DETAIL_TYPE.A.value
                     ) {
-                        result.testerName = tester.fullname
-                    } else {
-                        result.baseInfo.testerName = tester.fullname
+                        result.testDate = workOrderDetail.baseInfo.testDate
+                        result.testerId = workOrderDetail.baseInfo.testerId
+                        result.purposeTest =
+                            workOrderDetail.baseInfo.purposeTest
+                        result.receiptDate =
+                            workOrderDetail.baseInfo.receiptDate
                     }
+                }
+                const { _id, ...restDetail } = workOrderDetail
+                result = {
+                    _id,
+                    ...result,
+                    ...restDetail,
+                    props: returnProps,
+                    baseInfo: undefined,
                 }
             } else if (
                 workOrder.typeWork ===
