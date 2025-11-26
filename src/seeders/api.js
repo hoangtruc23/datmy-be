@@ -1162,6 +1162,26 @@ async function apiSeeder() {
             api: '/workOrderDetail/getMachineByWorkOrderId',
             note: 'Lấy ra tất cả các máy phù hợp với phiếu',
         },
+        {
+            _id: new Types.ObjectId('6926c0fa284e72cfe4ed6a4f'),
+            api: '/workOrderDetail/getAllSyncSignal',
+            note: 'Lấy ra tất cả các tín hiệu đồng tốc ',
+        },
+        {
+            _id: new Types.ObjectId('6926c0fa284e72cfe4ed6a50'),
+            api: '/workOrderDetail/getAllSyncMode',
+            note: 'Lấy ra tất cả các chế độ đồng tốc',
+        },
+        {
+            _id: new Types.ObjectId('6926c0fa284e72cfe4ed6a51'),
+            api: '/workOrderDetail/getAllPurposeTest',
+            note: 'Lấy ra tất cả các mục đích sửa chữa',
+        },
+        {
+            _id: new Types.ObjectId('6926c0fa284e72cfe4ed6a52'),
+            api: '/workOrderDetail/getAllIncludeAccessories',
+            note: 'Lấy ra tất cả các linh kiện đi kèm',
+        },
 
         //contactPersonCustomer
         {

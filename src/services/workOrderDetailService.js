@@ -1044,5 +1044,20 @@ const workOrderDetailService = {
             throw error
         }
     },
+    getAllIncludeAccessories: async (query) => {
+        try {
+            let { search } = query
+            search = new RegExp(search, 'i')
+            const business = await WorkOrderBusinessModel.findOne({}).lean()
+            let items = business?.includedAccessories
+            items = items.filter((f) => search.test(f))
+            return items
+        } catch (error) {
+            throw error
+        }
+    },
+    getAllSyncSignal: () => Object.values(constant.SYNC_SIGNAL),
+    getAllSyncMode: () => Object.values(constant.SYNC_MODE),
+    getAllPurposeTest: () => Object.values(constant.PURPOSE_TEST),
 }
 module.exports = workOrderDetailService

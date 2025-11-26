@@ -274,12 +274,30 @@ const constant = {
         NULL: '',
     },
     PURPOSE_TEST: {
-        HANDOVER: 'handover',
-        RENTAL: 'rental',
-        REPAIR: 'repair',
-        DEMO: 'demo',
-        LOAN: 'loan',
-        RECEIPT: 'receipt',
+        HANDOVER: {
+            value: 'handover',
+            name: 'Giao máy',
+        },
+        RENTAL: {
+            value: 'rental',
+            name: 'Thuê máy',
+        },
+        REPAIR: {
+            value: 'repair',
+            name: 'Sửa chữa',
+        },
+        DEMO: {
+            value: 'demo',
+            name: 'Demo',
+        },
+        LOAN: {
+            value: 'loan',
+            name: 'Tạm mượn',
+        },
+        RECEIPT: {
+            value: 'receipt',
+            name: 'Test nhập kho',
+        },
     },
     PRINT_SPEED_LEVEL: {
         BASIC: 'basic',

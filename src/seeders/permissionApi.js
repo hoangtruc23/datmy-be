@@ -1012,6 +1012,22 @@ async function permissionApiSeeder() {
             permissionId: '6914e05ccf9e7d1d96f5a0f2',
             apiId: '6915a3aee5ce5d3507ee3acb', //workOrderDetail/getMachineByWorkOrderId
         },
+        {
+            permissionId: '6914e05ccf9e7d1d96f5a0f2',
+            apiId: '6926c0fa284e72cfe4ed6a4f',
+        },
+        {
+            permissionId: '6914e05ccf9e7d1d96f5a0f2',
+            apiId: '6926c0fa284e72cfe4ed6a50',
+        },
+        {
+            permissionId: '6914e05ccf9e7d1d96f5a0f2',
+            apiId: '6926c0fa284e72cfe4ed6a51',
+        },
+        {
+            permissionId: '6914e05ccf9e7d1d96f5a0f2',
+            apiId: '6926c0fa284e72cfe4ed6a52',
+        },
     ])
     logger.info('PermissionApis seeded')
 }
