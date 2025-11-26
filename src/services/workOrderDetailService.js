@@ -403,7 +403,7 @@ const workOrderDetailService = {
                             constant.PROPERTY_ID.INK_TYPE,
                     )
                     if (inkProp) {
-                        const inkDefaultValue = await ProductModel.findById({
+                        const inkDefaultValue = await ProductModel.find({
                             _id: { $in: inkProp.defaultValue },
                         })
                             .select('name code')
@@ -412,7 +412,10 @@ const workOrderDetailService = {
                             workOrderDetail._id,
                             { machineTypeId },
                         )
-                        result = { inkDefaultValue }
+                        result = {
+                            inkPropId: inkProp.propId,
+                            inkDefaultValue,
+                        }
                     }
                 } else {
                     propIds = machineSetting.props.map((p) =>
