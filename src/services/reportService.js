@@ -70,9 +70,9 @@ const reportService = {
                         const unit = product
                             ? await UnitModel.findById(product.unit).lean()
                             : null
-                        const totalAmount = detail.totalAmountProduct
-                        const vatAmount = Math.round(totalAmount * invoice.VATRate * 0.01)
-                        const totalPayment = totalAmount + vatAmount
+                        const totalAmount = detail.notVATtotalAmountProduct
+                        const vatAmount = detail.VATAmountProduct
+                        const totalPayment = detail.totalAmountProduct
 
                         data.push({
                             customerName: customer
@@ -89,7 +89,6 @@ const reportService = {
                             unit: unit ? unit.name : '',
                             quantity: detail.quantity,
                             unitPrice: detail.price,
-                            discount: detail.discount || 0,
                             totalAmount: totalAmount,
                             vatAmount: vatAmount,
                             totalPayment: totalPayment,
@@ -516,10 +515,10 @@ const reportService = {
                             (await UnitModel.findById(product.unit).lean())
                         unitCache[product.unit] = unit
                     }
-                    const vatRate = invoice.VATRate || 0
-                    const totalAmount = detail.totalAmountProduct || 0
-                    const vatAmount = Math.round(totalAmount * vatRate * 0.01)
-                    const totalPayment = totalAmount + vatAmount
+                    const vatRate = detail.VATRate || 0
+                    const totalAmount = detail.notVATtotalAmountProduct || 0
+                    const vatAmount = detail.VATAmountProduct || 0
+                    const totalPayment = detail.totalAmountProduct || 0
 
                     salesData.push({
                         customerName: customer
@@ -536,7 +535,6 @@ const reportService = {
                         unit: unit ? unit.name : '',
                         quantity: detail.quantity || 0,
                         unitPrice: detail.price || 0,
-                        discount: detail.discount || 0,
                         totalAmount: totalAmount,
                         vatRate,
                         vatAmount,
