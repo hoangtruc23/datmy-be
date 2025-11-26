@@ -802,7 +802,7 @@ const debtService = {
                 (acc, item) => acc + item.lineTotal,
                 0,
             )
-            const vatRate = invoice.VATRate || 0
+            // const vatRate = invoice.VATRate || 0
             const vat = invoice.VATAmount
             const total = invoice.totalAmount
             const totalDebtInWords = convertNumberToVietnameseWords(total)
@@ -819,7 +819,7 @@ const debtService = {
                 products: products,
 
                 subtotal: subtotal,
-                vatRate: vatRate,
+                // vatRate: vatRate,
                 vat: vat,
                 total: total,
                 totalDebtInWords: totalDebtInWords,

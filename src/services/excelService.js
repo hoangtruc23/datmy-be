@@ -484,10 +484,14 @@ const excelService = {
             const workbook = new ExcelJS.Workbook()
             const worksheet = workbook.addWorksheet('Chi tiết bán hàng')
 
-            worksheet.mergeCells('A1:M1')
-            worksheet.mergeCells('A2:M2')
-            worksheet.mergeCells('A3:M3')
-            worksheet.mergeCells('A4:M4')
+            // worksheet.mergeCells('A1:M1')
+            // worksheet.mergeCells('A2:M2')
+            // worksheet.mergeCells('A3:M3')
+            // worksheet.mergeCells('A4:M4')
+            worksheet.mergeCells('A1:N1')
+            worksheet.mergeCells('A2:N2')
+            worksheet.mergeCells('A3:N3')
+            worksheet.mergeCells('A4:N4')
 
             worksheet.getCell('A1').value = 'SỔ CHI TIẾT BÁN HÀNG'
             worksheet.getCell('A2').value =
@@ -511,7 +515,7 @@ const excelService = {
                 'ĐVT',
                 'Số lượng bán',
                 'Đơn giá (VND)',
-                'Giảm giá (VND)',
+                // 'Giảm giá (VND)',
                 'Doanh số bán (VND)',
                 'Thuế suất GTGT (%)',
                 'Tiền thuế GTGT (VND)',
@@ -547,7 +551,7 @@ const excelService = {
                     sale.unit || '',
                     sale.quantity || 0,
                     sale.unitPrice || 0,
-                    sale.discount || 0,
+                    // sale.discount || 0,
                     sale.totalAmount || 0,
                     sale.vatRate || 0,
                     sale.vatAmount || 0,
@@ -573,7 +577,7 @@ const excelService = {
                 '',
                 data.summary.totalQuantity || 0,
                 '',
-                '',
+                // '',
                 data.summary.totalSalesAmount || 0,
                 '',
                 data.summary.totalVatAmount || 0,

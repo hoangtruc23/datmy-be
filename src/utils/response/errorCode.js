@@ -577,8 +577,12 @@ const errorCode = {
     },
     CONTACT_PERSON_NOT_FOUND: {
         code: 142,
-        message: 'Thông tin liên lạc không tìm thấy'
-    }
+        message: 'Thông tin liên lạc không tìm thấy',
+    },
+    INVOICE_DATA_INVALID: {
+        code: 143,
+        message: 'Dữ liệu của hóa đơn bị tính toán chưa đúng',
+    },
 }
 
 module.exports = errorCode

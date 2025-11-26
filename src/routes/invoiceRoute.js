@@ -42,7 +42,6 @@ module.exports = router
  *               - totalAmount
  *               - invoiceDate
  *               - invoiceDetails
- *               - VATRate
  *               - VATAmount
  *               - notVATtotalAmount
  *             properties:
@@ -66,10 +65,6 @@ module.exports = router
  *                 type: number
  *                 description: Tổng giá trị hóa đơn chưa VAT
  *                 example: 1335000
- *               VATRate:
- *                 type: number
- *                 description: Thuế suất VAT (%)
- *                 example: 10
  *               VATAmount:
  *                 type: number
  *                 description: Số tiền VAT
@@ -164,30 +159,50 @@ module.exports = router
  *                       type: number
  *                       minimum: 0
  *                       example: 100000
- *                     discount:
+ *                     VATRateProduct:
  *                       type: number
- *                       minimum: 0
- *                       example: 5000
+ *                       example: 10
+ *                     VATAmountProduct:
+ *                       type: number
+ *                       example: 40000
+ *                     notVATtotalAmountProduct:
+ *                       type: number
+ *                       example: 500000
  *                     totalAmountProduct:
  *                       type: number
  *                       minimum: 0
- *                       example: 475000
+ *                       example: 460000            
  *                 example:
  *                   - productId: "64fce248a67d3e4d93db7390"
+ *                     code: "SP001"
+ *                     name: "Sản phẩm A"
+ *                     unit: "Cái"
  *                     quantity: 5
  *                     price: 100000
- *                     discount: 5000
- *                     totalAmountProduct: 495000
+ *                     VATRateProduct: 10
+ *                     notVATtotalAmountProduct: 500000
+ *                     VATAmountProduct: 50000
+ *                     totalAmountProduct: 550000
  *                   - productId: "64fce248a67d3e4d93db7391"
+ *                     code: "SP002"
+ *                     name: "Sản phẩm B"
+ *                     unit: "Cái"
  *                     quantity: 2
  *                     price: 200000
- *                     discount: 10000
- *                     totalAmountProduct: 390000
+ *                     VATRateProduct: 10
+ *                     notVATtotalAmountProduct: 400000
+ *                     VATAmountProduct: 40000
+ *                     totalAmountProduct: 440000
  *                   - productId: "64fce248a67d3e4d93db7392"
+ *                     code: "SP003"
+ *                     name: "Sản phẩm C"
+ *                     unit: "Cái"
  *                     quantity: 1
  *                     price: 500000
- *                     discount: 50000
- *                     totalAmountProduct: 450000
+ *                     VATRateProduct: 8
+ *                     notVATtotalAmountProduct: 500000
+ *                     VATAmountProduct: 40000
+ *                     totalAmountProduct: 540000
  *               notes:
  *                 type: string
  *                 description: Ghi chú thêm
@@ -240,10 +255,6 @@ module.exports = router
  *                 type: number
  *                 description: Tổng giá trị hóa đơn chưa VAT
  *                 example: 1335000
- *               VATRate:
- *                 type: number
- *                 description: Thuế suất VAT (%)
- *                 example: 10
  *               VATAmount:
  *                 type: number
  *                 description: Số tiền VAT
@@ -302,6 +313,8 @@ module.exports = router
  *                 description: Danh sách sản phẩm trong hóa đơn
  *                 items:
  *                   type: object
+ *                   required:
+ *                     - productId
  *                   properties:
  *                     productId:
  *                       type: string
@@ -321,16 +334,56 @@ module.exports = router
  *                       example: "Đơn vị"
  *                     quantity:
  *                       type: number
+ *                       minimum: 1
  *                       example: 5
  *                     price:
  *                       type: number
+ *                       minimum: 0
  *                       example: 100000
- *                     discount:
+ *                     VATRateProduct:
  *                       type: number
- *                       example: 5000
+ *                       example: 10
+ *                     VATAmountProduct:
+ *                       type: number
+ *                       example: 40000
+ *                     notVATtotalAmountProduct:
+ *                       type: number
+ *                       example: 500000
  *                     totalAmountProduct:
  *                       type: number
- *                       example: 495000
+ *                       minimum: 0
+ *                       example: 460000
+ *                 example:
+ *                   - productId: "64fce248a67d3e4d93db7390"
+ *                     code: "SP001"
+ *                     name: "Sản phẩm A"
+ *                     unit: "Cái"
+ *                     quantity: 5
+ *                     price: 100000
+ *                     VATRateProduct: 10
+ *                     notVATtotalAmountProduct: 500000
+ *                     VATAmountProduct: 50000
+ *                     totalAmountProduct: 550000
+ *                   - productId: "64fce248a67d3e4d93db7391"
+ *                     code: "SP002"
+ *                     name: "Sản phẩm B"
+ *                     unit: "Cái"
+ *                     quantity: 2
+ *                     price: 200000
+ *                     VATRateProduct: 10
+ *                     notVATtotalAmountProduct: 400000
+ *                     VATAmountProduct: 40000
+ *                     totalAmountProduct: 440000
+ *                   - productId: "64fce248a67d3e4d93db7392"
+ *                     code: "SP003"
+ *                     name: "Sản phẩm C"
+ *                     unit: "Cái"
+ *                     quantity: 1
+ *                     price: 500000
+ *                     VATRateProduct: 8
+ *                     notVATtotalAmountProduct: 500000
+ *                     VATAmountProduct: 40000
+ *                     totalAmountProduct: 540000 
  *               notes:
  *                 type: string
  *                 description: Ghi chú thêm

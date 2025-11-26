@@ -49,6 +49,10 @@ const imageStorage = multer.diskStorage({
     destination: (req, file, cb) => {
         const dir = path.join(__dirname, '../public/upload/image')
 
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true })
+        }
+
         cb(null, dir)
     },
     filename: (req, file, cb) => {
@@ -88,8 +92,8 @@ const uploadFile = multer({
 
 const uploadMemoryFile = multer({
     storage: memoryStorage,
-    limits: { fileSize: 5 * 1024 * 1024 }, 
-    fileFilter: fileFileFilter, 
+    limits: { fileSize: 5 * 1024 * 1024 },
+    fileFilter: fileFileFilter,
 })
 
 module.exports = { uploadImage, uploadFile, uploadMemoryFile }
