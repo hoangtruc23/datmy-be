@@ -298,7 +298,7 @@ const pdfService = {
                 .replace(/{{invoiceDate}}/g, data.invoiceDate || '')
                 .replace(/{{productRows}}/g, productRows)
                 .replace(/{{subtotal}}/g, formattedSubtotal)
-                .replace(/{{vatRate}}/g, data.vatRate || '')
+                // .replace(/{{vatRate}}/g, data.vatRate || '')
                 .replace(/{{vat}}/g, formattedVat)
                 .replace(/{{total}}/g, formattedTotal)
                 .replace(/{{totalDebtInWords}}/g, data.totalDebtInWords || '')

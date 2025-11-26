@@ -42,7 +42,6 @@ module.exports = router
  *               - totalAmount
  *               - invoiceDate
  *               - invoiceDetails
- *               - VATRate
  *               - VATAmount
  *               - notVATtotalAmount
  *             properties:
