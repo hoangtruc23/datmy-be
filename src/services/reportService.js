@@ -515,7 +515,7 @@ const reportService = {
                             (await UnitModel.findById(product.unit).lean())
                         unitCache[product.unit] = unit
                     }
-                    const vatRate = detail.VATRate || 0
+                    const vatRate = detail.VATRateProduct || 0
                     const totalAmount = detail.notVATtotalAmountProduct || 0
                     const vatAmount = detail.VATAmountProduct || 0
                     const totalPayment = detail.totalAmountProduct || 0
@@ -1025,7 +1025,7 @@ const reportService = {
                                         postingDate: '$createdAt',
                                         invoiceDate: '$invoiceDate',
                                         invoiceCode: '$invoiceCode',
-                                        VATRate: '$VATRate',
+                                        // VATRate: '$VATRate',
                                         invoiceDetails: '$invoiceDetails',
                                         payments: '$payments',
                                         totalAmount: {
@@ -1111,9 +1111,7 @@ const reportService = {
                                                         debtAccount: '131',
                                                         contraAccount: '5111',
                                                         amountDebt:
-                                                            detail.quantity *
-                                                                detail.price -
-                                                            detail.discount,
+                                                            detail.notVATtotalAmountProduct,
                                                         amountPay: 0,
                                                     },
                                                     {
@@ -1126,16 +1124,8 @@ const reportService = {
                                                         description: `Thuế GTGT - Phí mua sản phẩm: ${name}`,
                                                         debtAccount: '131',
                                                         contraAccount: '33311',
-                                                        amountDebt: inv.VATRate
-                                                            ? (detail.quantity *
-                                                                  detail.price -
-                                                                  detail.discount) *
-                                                              (inv.VATRate /
-                                                                  100)
-                                                            : (detail.quantity *
-                                                                  detail.price -
-                                                                  detail.discount) *
-                                                              0.1,
+                                                        amountDebt:
+                                                            detail.VATAmountProduct,
                                                         amountPay: 0,
                                                     },
                                                 ]
