@@ -220,5 +220,38 @@ const workOrderDetailController = {
             throw error
         }
     },
+    getAllIncludeAccessories: async (req, res, next) => {
+        try {
+            const result =
+                await workOrderDetailService.getAllIncludeAccessories(req.query)
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
+    getAllSyncSignal: (req, res, next) => {
+        try {
+            const result = workOrderDetailService.getAllSyncSignal()
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
+    getAllSyncMode: (req, res, next) => {
+        try {
+            const result = workOrderDetailService.getAllSyncMode()
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
+    getAllPurposeTest: (req, res, next) => {
+        try {
+            const result = workOrderDetailService.getAllPurposeTest()
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
 }
 module.exports = workOrderDetailController

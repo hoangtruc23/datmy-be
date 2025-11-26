@@ -26,7 +26,9 @@ const testBaseSchema = new Schema(
         },
         purposeTest: {
             type: String,
-            enum: Object.values(constant.PURPOSE_TEST),
+            enum: Object.values(constant.PURPOSE_TEST).map(
+                (item) => item.value,
+            ),
         },
         receiptDate: {
             type: Date,

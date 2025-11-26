@@ -43,6 +43,7 @@ const workOrderBusinessSchema = new Schema({
     },
     technicalFeedback: [String],
     customerFeedback: [String],
+    includedAccessories: [String],
 })
 
 const WorkOrderBusinessModel = model(

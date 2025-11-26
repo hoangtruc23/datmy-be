@@ -552,6 +552,16 @@ async function workOrderBusinessSeeder() {
                 'Tôi đồng ý thay linh kiện',
                 'Tôi đồng ý và sẽ trình ban giám đốc',
             ],
+            includedAccessories: [
+                'Hộp mực',
+                'Dung môi hỗn hợp hữu cơ ( MC)',
+                'Dung môi hỗn hợp hữu cơ ( WL)',
+                'Dụng cụ vệ sinh',
+                'Giá đỡ đầu in',
+                'Sách hướng dẫn',
+                'Sensor',
+                'Băng Tải',
+            ],
         },
     ])
     logger.info('WorkOrderBusiness seeded')
