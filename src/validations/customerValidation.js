@@ -55,8 +55,8 @@ const customerBaseSchema = {
         .items(deliveryAddressSchema)
         .min(0)
         .max(5)
-        .allow(null) 
-        .default([]) 
+        .allow(null)
+        .default([])
         .messages({
             'array.max': 'Không được nhiều hơn 5 địa chỉ giao hàng',
         }),

@@ -11,7 +11,11 @@ router.get('/getAll', invoiceController.getAll)
 router.get('/getById/:id', invoiceController.getById)
 router.delete('/delete/:id', invoiceController.delete)
 router.get('/summary', invoiceController.getSummary)
-router.post('/import', uploadMemoryFile.single('file'), invoiceController.importFromExcel)
+router.post(
+    '/import',
+    uploadMemoryFile.single('file'),
+    invoiceController.importFromExcel,
+)
 module.exports = router
 
 /**
@@ -171,7 +175,7 @@ module.exports = router
  *                     totalAmountProduct:
  *                       type: number
  *                       minimum: 0
- *                       example: 460000            
+ *                       example: 460000
  *                 example:
  *                   - productId: "64fce248a67d3e4d93db7390"
  *                     code: "SP001"
@@ -383,7 +387,7 @@ module.exports = router
  *                     VATRateProduct: 8
  *                     notVATtotalAmountProduct: 500000
  *                     VATAmountProduct: 40000
- *                     totalAmountProduct: 540000 
+ *                     totalAmountProduct: 540000
  *               notes:
  *                 type: string
  *                 description: Ghi chú thêm

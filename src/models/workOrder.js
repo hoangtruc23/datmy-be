@@ -39,7 +39,9 @@ const workOrderSchema = new Schema(
         },
         type: {
             type: String,
-            enum: Object.values(constant.WORK_ORDER_DETAIL_TYPE).map((s) => s.value),
+            enum: Object.values(constant.WORK_ORDER_DETAIL_TYPE).map(
+                (s) => s.value,
+            ),
             default: constant.WORK_ORDER_DETAIL_TYPE.NULL.value,
         },
         requestSource: {

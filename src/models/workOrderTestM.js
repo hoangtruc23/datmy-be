@@ -15,12 +15,12 @@ const workOrderTestMSchema = new Schema(
         machineTypeId: {
             type: Types.ObjectId,
             ref: 'products',
-            default: null
+            default: null,
         },
         props: [propSchema],
         image: {
             type: String,
-            default: null
+            default: null,
         },
     },
     { timestamps: true },

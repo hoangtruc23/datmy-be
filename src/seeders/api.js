@@ -1204,6 +1204,31 @@ async function apiSeeder() {
             api: '/contactPerson/deleteAddress',
             note: 'Xóa địa chỉ liên hệ',
         },
+        {
+            _id: new Types.ObjectId('691ebf6e7cd69b4b32fa3b61'),
+            api: '/contract/getAll',
+            note: 'Lấy danh sách hợp đồng',
+        },
+        {
+            _id: new Types.ObjectId('691ebf6e7cd69b4b32fa3b62'),
+            api: '/contract/getById',
+            note: 'Lấy thông tin chi tiết hợp đồng',
+        },
+        {
+            _id: new Types.ObjectId('691ebf6e7cd69b4b32fa3b63'),
+            api: '/contract/create',
+            note: 'Tạo hợp đồng',
+        },
+        {
+            _id: new Types.ObjectId('691ebf6e7cd69b4b32fa3b64'),
+            api: '/contract/update',
+            note: 'Cập nhật hợp đồng',
+        },
+        {
+            _id: new Types.ObjectId('691ebf6e7cd69b4b32fa3b65'),
+            api: '/contract/getOverview',
+            note: 'Lấy tổng quan hợp đồng',
+        },
     ])
 
     logger.info('apis seeded')

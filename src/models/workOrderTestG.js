@@ -30,7 +30,7 @@ const workOrderTestGSchema = new Schema(
         machineTypeId: {
             type: Types.ObjectId,
             ref: 'products',
-            default: null
+            default: null,
         },
         props: [propSchema],
         printHeads: [printHeadSchema],
