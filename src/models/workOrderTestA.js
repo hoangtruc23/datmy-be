@@ -10,17 +10,17 @@ const workOrderTestASchema = new Schema(
         },
         testDate: {
             type: Date,
-            default: null
+            default: null,
         },
         testerId: {
             type: Types.ObjectId,
             ref: 'technicians',
-            default: null
+            default: null,
         },
         machineTypeId: {
             type: Types.ObjectId,
             ref: 'products',
-            default: null
+            default: null,
         },
         props: [propSchema],
     },

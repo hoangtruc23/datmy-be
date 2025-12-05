@@ -3,8 +3,7 @@ const constant = require('../utils/constant/constant')
 
 const contactPersonSchema = joi.object({
     name: joi.string().trim(),
-    phone: joi
-        .string()
+    phone: joi.string(),
 })
 
 const invoiceBaseSchema = {

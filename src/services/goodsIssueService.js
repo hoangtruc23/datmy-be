@@ -323,17 +323,17 @@ const goodsIssueService = {
                         }
                     }
                     if (goodsIssueDetail.orderDetailId) {
-
-                        const deatail = await OrderDetailModel.findByIdAndUpdate(
-                            goodsIssueDetail.orderDetailId,
-                            {
-                                $inc: {
-                                    quantityExported:
-                                        goodsIssueDetail.issuedQuantity,
+                        const deatail =
+                            await OrderDetailModel.findByIdAndUpdate(
+                                goodsIssueDetail.orderDetailId,
+                                {
+                                    $inc: {
+                                        quantityExported:
+                                            goodsIssueDetail.issuedQuantity,
+                                    },
                                 },
-                            },
-                            { session },
-                        )
+                                { session },
+                            )
                     }
                 }
             }

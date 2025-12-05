@@ -290,7 +290,7 @@ async function updateCustomerNamesInGoodsIssues() {
     try {
         const goodsIssues = await GoodsIssueModel.find(
             { customerId: { $ne: null } },
-            { _id: 1, customerId: 1 }
+            { _id: 1, customerId: 1 },
         ).session(session)
         let updatedCount = 0
         for (const issue of goodsIssues) {
@@ -302,7 +302,7 @@ async function updateCustomerNamesInGoodsIssues() {
                 await GoodsIssueModel.updateOne(
                     { _id: issue._id },
                     { $set: { customer: customer.officialName } },
-                    { session }
+                    { session },
                 )
                 updatedCount++
             }

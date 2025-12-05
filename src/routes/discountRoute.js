@@ -499,7 +499,6 @@ module.exports = router
  *                   example: Lỗi server!
  */
 
-
 /**
  * @swagger
  * /discount/getById/{id}:
