@@ -527,6 +527,11 @@ async function apiSeeder() {
             api: '/dashboard/getTopCustomerRevenue',
             note: 'Xem Top khách hàng có doanh thu cao nhất',
         },
+        {
+            _id: new Types.ObjectId('689c01a260903c30215b25c7'),
+            api: '/dashboard/getBestSellingItems',
+            note: 'Xem mặt hàng bán chạy nhất trong tuần',
+        },
 
         //hóa đơn
         {

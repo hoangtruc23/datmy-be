@@ -8,6 +8,7 @@ router.get('/getTopCustomersDebt', dashBoardController.getTopCustomersDebt)
 router.get('/getRevenueMonthly', dashBoardController.getRevenueMonthly)
 router.get('/getInvoiceRecent', dashBoardController.getRecentInvoices)
 router.get('/getTopCustomerRevenue', dashBoardController.getTopCustomerRevenue)
+router.get('/getBestSellingItems', dashBoardController.getBestSellingItems)
 
 module.exports = router
 

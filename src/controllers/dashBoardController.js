@@ -65,7 +65,20 @@ const dashBoardController = {
 
     getTopCustomerRevenue: async (req, res, next) => {
         try {
-            const result = await dashBoardService.getTopCustomerRevenue()
+            const result = await dashBoardService.getTopCustomerRevenue(req.query)
+            return res.status(200).json(
+                response.success({
+                    result,
+                }),
+            )
+        } catch (err) {
+            next(err)
+        }
+    },
+
+    getBestSellingItems: async (req, res, next) => {
+        try {
+            const result = await dashBoardService.getBestSellingItems()
 
             return res.status(200).json(
                 response.success({
