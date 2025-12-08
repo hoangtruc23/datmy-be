@@ -1,6 +1,9 @@
+const moment = require('moment');
 const PaymentHistoryModel = require('../models/paymentHistory')
 const InvoiceModel = require('../models/invoice')
+const OrderDetailModel = require('../models/orderDetail')
 const constant = require('../utils/constant/constant')
+
 const dashBoardService = {
     getSumaryDashBoard: async () => {
         try {
@@ -387,9 +390,24 @@ const dashBoardService = {
         }
     },
 
-    getTopCustomerRevenue: async (limit = 4) => {
+    getTopCustomerRevenue: async (query) => {
         try {
+            const { startTime, endTime } = query
+            const startMomentLocal = moment(startTime).startOf('day');
+            const startDateQuery = startMomentLocal.utc().toDate();
+
+            const endMomentLocal = moment(endTime).endOf('day');
+            const endDateQuery = endMomentLocal.utc().toDate();
+
             const result = await InvoiceModel.aggregate([
+                {
+                    $match: {
+                        invoiceDate: {
+                            $gte: new Date(startDateQuery),
+                            $lte: new Date(endDateQuery)
+                        }
+                    }
+                },
                 {
                     $group: {
                         _id: '$customerId',
@@ -443,6 +461,86 @@ const dashBoardService = {
                     },
                 },
             ])
+            return result
+        } catch (err) {
+            throw err
+        }
+    },
+
+    getBestSellingItems: async () => {
+        try {
+            const now = moment();
+            const lastMonday = now.clone()
+                .subtract(1, 'isoWeek')
+                .startOf('isoWeek')
+                .toDate();
+
+            const lastSunday = now.clone()
+                .subtract(1, 'isoWeek')
+                .endOf('isoWeek')
+                .toDate();
+
+            const pineline = [
+                {
+                    $match: {
+                        createdAt: {
+                            $gte: lastMonday,
+                            $lte: lastSunday
+                        }
+                    }
+                },
+                {
+                    $group: {
+                        _id: "$productId",
+                        totalQuantitySold: {
+                            $sum: "$quantity"
+                        }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'products',
+                        localField: '_id',
+                        foreignField: '_id',
+                        as: 'productInfo',
+                    }
+                },
+                {
+                    $unwind: '$productInfo',
+                },
+                {
+                    $lookup: {
+                        from: 'units',
+                        localField: 'productInfo.unit',
+                        foreignField: '_id',
+                        as: 'unitInfo',
+                    }
+                },
+                {
+                    $unwind: '$unitInfo',
+                },
+                // Tổng số lượng giảm dần
+                {
+                    $sort: {
+                        totalQuantitySold: -1
+                    }
+                },
+                {
+                    $limit: 5
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        productId: '$_id',
+                        productName: '$productInfo.name',
+                        productCode: '$productInfo.code',
+                        unit: '$unitInfo.name',
+                        totalQuantitySold: 1,
+                    }
+                },
+
+            ]
+            const result = await OrderDetailModel.aggregate(pineline)
             return result
         } catch (err) {
             throw err
