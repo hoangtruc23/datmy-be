@@ -39,7 +39,7 @@ const invoiceService = {
 
             const limitDue = Math.ceil(
                 (new Date(dueDate) - new Date(invoiceDate)) /
-                    (1000 * 60 * 60 * 24),
+                (1000 * 60 * 60 * 24),
             )
             let checkNotVATtotalAmount = 0
             let checkVATAmount = 0
@@ -311,6 +311,7 @@ const invoiceService = {
                         accountant: 1,
                         reminderContact: 1,
                         notes: 1,
+                        invoiceDate: 1
                     },
                 },
             ]
@@ -590,8 +591,8 @@ const invoiceService = {
                                         $eq: [
                                             '$status',
                                             constant.INVOICE_STATUS.PENDING ||
-                                                constant.INVOICE_STATUS
-                                                    .PARTIALLY_PAID,
+                                            constant.INVOICE_STATUS
+                                                .PARTIALLY_PAID,
                                         ],
                                     },
                                     then: 1,
