@@ -530,7 +530,7 @@ async function apiSeeder() {
         {
             _id: new Types.ObjectId('689c01a260903c30215b25c7'),
             api: '/dashboard/getBestSellingItems',
-            note: 'Xem mặt hàng bán chạy nhất trong tuần',
+            note: 'Xem mặt hàng bán chạy nhất',
         },
 
         //hóa đơn
