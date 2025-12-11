@@ -518,6 +518,10 @@ async function permissionApiSeeder() {
             permissionId: '689c01a260903c30215b25c0', //Xem Top khách hàng có doanh thu cao nhất
             apiId: '689c01a260903c30215b25c6', // /dashboard/getTopCustomerRevenue
         },
+        {
+            permissionId: '689c01a260903c30215b25c9', //Xem mặt hàng bán chạy nhất
+            apiId: '689c01a260903c30215b25c7', // /dashboard/getTopCustomerRevenue
+        },
 
         // Hóa đơn
         {

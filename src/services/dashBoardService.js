@@ -485,64 +485,55 @@ const dashBoardService = {
             const pineline = [
                 {
                     $match: {
-                        createdAt: {
+                        invoiceDate: {
                             $gte: start,
                             $lte: end,
                         }
                     }
                 },
                 {
-                    $group: {
-                        _id: "$productId",
-                        totalQuantitySold: {
-                            $sum: "$quantity"
-                        }
-                    }
-                },
-                {
-                    $lookup: {
-                        from: 'products',
-                        localField: '_id',
-                        foreignField: '_id',
-                        as: 'productInfo',
-                    }
-                },
-                {
-                    $unwind: '$productInfo',
-                },
-                {
-                    $lookup: {
-                        from: 'units',
-                        localField: 'productInfo.unit',
-                        foreignField: '_id',
-                        as: 'unitInfo',
-                    }
-                },
-                {
-                    $unwind: '$unitInfo',
-                },
-                // Tổng số lượng giảm dần
-                {
-                    $sort: {
-                        totalQuantitySold: -1
-                    }
-                },
-                {
-                    $limit: 5
+                    $unwind: '$invoiceDetails'
                 },
                 {
                     $project: {
                         _id: 0,
-                        productId: '$_id',
-                        productName: '$productInfo.name',
-                        productCode: '$productInfo.code',
-                        unit: '$unitInfo.name',
-                        totalQuantitySold: 1,
+                        invoiceDetails: 1
+                    },
+
+                },
+                {
+                    $lookup: {
+                        from: 'products',
+                        localField: 'invoiceDetails.productId',
+                        foreignField: '_id',
+                        as: 'productInfo'
                     }
                 },
+                {
+                    $addFields: {
+                        productName: { $arrayElemAt: ['$productInfo.name', 0] }
+                    }
+                },
+                {
+                    $group: {
+                        _id: '$invoiceDetails.productId',
+                        totalQuantitySold: { $sum: '$invoiceDetails.quantity' },
+                        productName: { $first: '$productName' },
+                        productCode: { $first: '$invoiceDetails.code' },
+                        unit: { $first: '$invoiceDetails.unit' },
+                    }
+                },
+                {
+                    $sort: {
+                        totalQuantitySold: -1 //Giảm dần
+                    }
+                },
+                {
+                    $limit: 5
+                }
 
             ]
-            const result = await OrderDetailModel.aggregate(pineline)
+            const result = await InvoiceModel.aggregate(pineline)
             return result
         } catch (err) {
             throw err
