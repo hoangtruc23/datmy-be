@@ -434,6 +434,13 @@ async function permissionSeeder() {
             parentPermissionId: '689c01a260903c30215b25c1',
         },
 
+        {
+            _id: new Types.ObjectId('689c01a260903c30215b25c9'),
+            name: 'Xem',
+            code: 'best_selling_items-xem', //getBestSellingItems
+            parentPermissionId: '689c01a260903c30215b25c1',
+        },
+
         //hóa đơn
         {
             _id: new Types.ObjectId('686dd0b535512a73e076c3a7'),

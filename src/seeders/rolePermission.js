@@ -336,6 +336,12 @@ async function rolePermissionSeeder() {
             roleId: '684927c871287f2ae7d8130b', // Quản trị viên
             permissionId: '689c01a260903c30215b25c0', // dashboard - xem
         },
+
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '689c01a260903c30215b25c9', // dashboard getBestSellingItems
+        },
+
         //#endregion
         //#region Hóa đơn
         {

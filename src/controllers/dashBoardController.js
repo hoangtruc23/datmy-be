@@ -78,7 +78,7 @@ const dashBoardController = {
 
     getBestSellingItems: async (req, res, next) => {
         try {
-            const result = await dashBoardService.getBestSellingItems()
+            const result = await dashBoardService.getBestSellingItems(req.query)
 
             return res.status(200).json(
                 response.success({
