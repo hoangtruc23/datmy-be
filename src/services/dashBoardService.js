@@ -467,25 +467,27 @@ const dashBoardService = {
         }
     },
 
-    getBestSellingItems: async () => {
+    getBestSellingItems: async (query) => {
         try {
-            const now = moment();
-            const lastMonday = now.clone()
-                .subtract(1, 'isoWeek')
-                .startOf('isoWeek')
+            const { startTime, endTime } = query
+
+            const start = moment(startTime)
+                .startOf('day')
+                .subtract(7, 'hours')
                 .toDate();
 
-            const lastSunday = now.clone()
-                .subtract(1, 'isoWeek')
-                .endOf('isoWeek')
+            const end = moment(endTime)
+                .endOf('day')
+                .subtract(7, 'hours')
                 .toDate();
+
 
             const pineline = [
                 {
                     $match: {
                         createdAt: {
-                            $gte: lastMonday,
-                            $lte: lastSunday
+                            $gte: start,
+                            $lte: end,
                         }
                     }
                 },
