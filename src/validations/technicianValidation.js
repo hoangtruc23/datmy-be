@@ -56,25 +56,25 @@ const technicianValidation = {
                             'Tên đăng nhập không được vượt quá 30 ký tự',
                         'any.required': 'Tên đăng nhập là bắt buộc',
                     }),
-                email: joi
-                    .string()
-                    .email({ tlds: { allow: false } })
-                    .required()
-                    .messages({
-                        'string.empty': 'Email là bắt buộc',
-                        'string.email': 'Email không đúng định dạng',
-                        'any.required': 'Email là bắt buộc',
-                    }),
-                phoneNumber: joi
-                    .string()
-                    .pattern(/^[0-9]{4,15}$/)
-                    .required()
-                    .messages({
-                        'string.empty': 'Số điện thoại là bắt buộc',
-                        'string.pattern.base':
-                            'Số điện thoại phải có từ 4 đến 15 chữ số',
-                        'any.required': 'Số điện thoại là bắt buộc',
-                    }),
+                // email: joi
+                //     .string()
+                //     .email({ tlds: { allow: false } })
+                //     .required()
+                //     .messages({
+                //         'string.empty': 'Email là bắt buộc',
+                //         'string.email': 'Email không đúng định dạng',
+                //         'any.required': 'Email là bắt buộc',
+                //     }),
+                // phoneNumber: joi
+                //     .string()
+                //     .pattern(/^[0-9]{4,15}$/)
+                //     .required()
+                //     .messages({
+                //         'string.empty': 'Số điện thoại là bắt buộc',
+                //         'string.pattern.base':
+                //             'Số điện thoại phải có từ 4 đến 15 chữ số',
+                //         'any.required': 'Số điện thoại là bắt buộc',
+                //     }),
                 password: joi
                     .string()
                     .pattern(/^(?=(.*[a-zA-Z]))(?=(.*\d))(?=(.*[\W_])).{3,30}$/)

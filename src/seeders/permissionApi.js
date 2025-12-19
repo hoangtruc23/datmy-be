@@ -519,7 +519,7 @@ async function permissionApiSeeder() {
             apiId: '689c01a260903c30215b25c6', // /dashboard/getTopCustomerRevenue
         },
         {
-            permissionId: '689c01a260903c30215b25c9', //Xem mặt hàng bán chạy nhất
+            permissionId: '689c01a260903c30215b25c9', //Xem mặt hàng bán chạy nhất getBestSellingItems
             apiId: '689c01a260903c30215b25c7', // /dashboard/getTopCustomerRevenue
         },
 
@@ -834,6 +834,7 @@ async function permissionApiSeeder() {
             permissionId: '68d3750d4828a7c4347ad1bd', // Tạo phiếu yêu cầu công việc
             apiId: '691ebf6e7cd69b4b32fa3b5f', // /contactPerson/getAllAddress
         },
+
         {
             permissionId: '68d3750d4828a7c4347ad1bd', // Tạo phiếu yêu cầu công việc
             apiId: '691ebf6e7cd69b4b32fa3b60', // /contactPerson/deleteAddress
@@ -862,7 +863,10 @@ async function permissionApiSeeder() {
             permissionId: '68d3750d4828a7c4347ad1be', // Xóa phiếu yêu cầu công việc
             apiId: '68d37503136efac69b7bcad4', // /workOrder/delete
         },
-
+        {
+            permissionId: '68db8978cc41fa86439366cd', // getSerialNumber
+            apiId: '691ebf6e7cd69b4b32fa3b12', // contactPerson/getSerialNumber
+        },
         // Kỹ thuật viên
         {
             permissionId: '68db8978cc41fa86439388cd', // Xem kỹ thuật viên

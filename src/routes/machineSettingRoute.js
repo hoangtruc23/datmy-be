@@ -10,14 +10,12 @@ router.get('/getAllProperties', machineSettingController.getAllProperties)
 router.get('/getDefaultValue/:propId', machineSettingController.getDefaultValue)
 router.post(
     '/create',
-    validate(machineSettingValidation.create),
     machineSettingController.create,
 )
 router.get('/getAll', machineSettingController.getAll)
 router.get('/getById/:machineSettingId', machineSettingController.getById)
 router.post(
     '/update/:machineSettingId',
-    validate(machineSettingValidation.update),
     machineSettingController.update,
 )
 router.delete('/delete/:machineSettingId', machineSettingController.delete)

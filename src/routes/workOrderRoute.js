@@ -2,24 +2,21 @@ const express = require('express')
 const router = express.Router()
 
 const workOrderController = require('../controllers/workOrderController')
-const workOrderValidation = require('../validations/workOrderValidation')
+// const workOrderValidation = require('../validations/workOrderValidation')
 const validate = require('../middlewares/validation')
 
 router.get(
     '/getAll',
-    validate(workOrderValidation.getAll),
     workOrderController.getAll,
 )
 router.get('/getById/:workOrderId', workOrderController.getById)
 router.get('/getOverall', workOrderController.getOverall)
 router.post(
     '/create',
-    validate(workOrderValidation.create),
     workOrderController.create,
 )
 router.post(
     '/update/:workOrderId',
-    validate(workOrderValidation.update),
     workOrderController.update,
 )
 router.delete('/delete/:workOrderId', workOrderController.delete)

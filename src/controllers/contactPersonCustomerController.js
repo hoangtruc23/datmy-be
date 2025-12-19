@@ -46,5 +46,13 @@ const contactPersonCustomerController = {
             next(error)
         }
     },
+    getSerialNumber: async (req, res, next) => {
+        try {
+            const result = await contactPersonCustomerServices.getSerialNumber(req.params, req.query)
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    }
 }
 module.exports = contactPersonCustomerController

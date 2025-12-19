@@ -5,15 +5,15 @@ const contactPersonSchema = new Schema({
     _id: false,
     contactName: {
         type: String,
-        required: true,
+        required: false,
     },
     contactPhone: {
         type: String,
-        required: true,
+        required: false,
     },
     contactEmail: {
         type: String,
-        required: true,
+        required: false,
     },
 })
 
@@ -27,6 +27,7 @@ const workOrderSchema = new Schema(
         technicianId: {
             type: Types.ObjectId,
             ref: 'technicians',
+            required: false,
         },
         code: {
             type: String,
@@ -37,20 +38,13 @@ const workOrderSchema = new Schema(
             enum: Object.values(constant.WORK_ORDER_TYPE).map((s) => s.value),
             default: constant.WORK_ORDER_TYPE.NULL.value,
         },
-        type: {
-            type: String,
-            enum: Object.values(constant.WORK_ORDER_DETAIL_TYPE).map(
-                (s) => s.value,
-            ),
-            default: constant.WORK_ORDER_DETAIL_TYPE.NULL.value,
-        },
         requestSource: {
             type: String,
-            enum: Object.values(constant.WORK_REQUEST_SOURCE).map(
-                (s) => s.value,
-            ),
-
-            default: constant.WORK_REQUEST_SOURCE.WAREHOUSE.value,
+            // enum: Object.values(constant.WORK_REQUEST_SOURCE).map(
+            //     (s) => s.value,
+            // ),
+            // default: constant.WORK_REQUEST_SOURCE.WAREHOUSE.value,
+            required: false,
         },
         header: {
             type: String,
@@ -58,7 +52,7 @@ const workOrderSchema = new Schema(
         },
         description: {
             type: String,
-            required: true,
+            required: false,
         },
         status: {
             type: String,
@@ -69,27 +63,50 @@ const workOrderSchema = new Schema(
         },
         priority: {
             type: String,
-            required: true,
-            enum: Object.values(constant.WORK_REQUEST_PRIORITY).map(
-                (s) => s.value,
-            ),
+            required: false,
+            // enum: Object.values(constant.WORK_REQUEST_PRIORITY).map(
+            //     (s) => s.value,
+            // ),
         },
         contactPerson: contactPersonSchema,
-        address: {
+        // type: { //Loại máy
+        //     type: String,
+        //     enum: Object.values(constant.WORK_ORDER_DETAIL_TYPE).map(
+        //         (s) => s.value,
+        //     ),
+        //     default: constant.WORK_ORDER_DETAIL_TYPE.NULL.value,
+        // },
+        type: { //Code của máy machine -> Ví dụ: A100
             type: String,
-            required: true,
+            required: false,
+        },
+        serialNumber: {
+            type: String,
+        },
+        address: {
+            provinceCity: {
+                type: String,
+                required: false,
+            },
+            ward: {
+                type: String,
+                required: false,
+            },
+            specificAddress: {
+                type: String,
+                required: false,
+            }
         },
         assignedTime: {
             type: Date,
         },
-        estimatedTime: {
-            //hour
+        estimatedTime: { //hour
             type: Number,
-            required: true,
+            required: false,
         },
         overDueTime: {
             type: Date,
-            required: true,
+            required: false,
         },
         result: {
             type: String,

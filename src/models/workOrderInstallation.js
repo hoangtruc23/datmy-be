@@ -8,15 +8,19 @@ const workOrderInstallationSchema = new Schema(
             required: true,
             ref: 'workOrders',
         },
-        deliveryDate: {
+        warrantyTime: { //Thời gian bảo hành
+            type: Number,
+            default: null,
+        },
+        deliveryDate: { //Ngày giao máy
             type: Date,
             default: null,
         },
-        installDate: {
+        installDate: { // Ngày lắp đặt
             type: Date,
             default: null,
         },
-        handOverDate: {
+        handOverDate: {  // Ngày bàn giao nghiệm thu
             type: Date,
             default: null,
         },
@@ -25,17 +29,21 @@ const workOrderInstallationSchema = new Schema(
             ref: 'products',
             default: null,
         },
-        machineInfo: [propSchema],
+        // machineInfo: [propSchema],
         machineSpecs: [propSchema],
-        includedAccessories: [String],
+        // includedAccessories: [String],
         guide: {
-            powerControl: [String],
-            printProgramming: [String],
-            printSetting: [String],
-            saveProgram: [String],
-            viewSpecifications: [String],
-            inkReplace: [String],
-            errorMessages: [String],
+            turningMachine: [String], //Thao tác tắt mở máy
+            inkjetProgramming: [String], //Lập trình in phun
+            inkjetSetting: [String], //Cài đặt in phun
+            saveProgram: [String], //Lưu chương trình
+            inkReplace: [String],// Cách thay mực
+            ITMTime: { //Thời gian ITM
+                type: Boolean,
+                default: null,
+            },
+            viewSpecifications: [String], //Xem thông số máy
+            errorMessages: [String], //Các báo lỗi của máy
         },
     },
     { timestamps: true },

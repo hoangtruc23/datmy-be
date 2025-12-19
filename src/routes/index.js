@@ -31,6 +31,8 @@ const machineSettingRoute = require('./machineSettingRoute')
 const workOrderDetailRoute = require('./workOrderDetailRoute')
 const contactPersonCustomerRoute = require('./contactPersonCustomerRoute')
 const contractRoute = require('./contractRoute')
+const machineProperyRoute = require('./machinePropertyRoute')
+const printExcelRoute = require('./printExcel')
 
 router.use('/auth', authRoute)
 router.use('/user', userRoute)
@@ -62,5 +64,7 @@ router.use('/machineSetting', machineSettingRoute)
 router.use('/workOrderDetail', workOrderDetailRoute)
 router.use('/contactPerson', contactPersonCustomerRoute)
 router.use('/contract', contractRoute)
+router.use('/machinePropery', machineProperyRoute)
+router.use('/printExcel', printExcelRoute)
 
 module.exports = router
