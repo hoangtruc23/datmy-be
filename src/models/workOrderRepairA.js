@@ -9,19 +9,39 @@ const workOrderRepairASchema = new Schema(
             required: true,
             ref: 'workOrders',
         },
-        maintainContract: {
+        maintainContract: { //Hợp đồng bảo trì
             type: Boolean,
             default: null,
         },
-        repairDate: {
+        installationDate: { //Ngày lắp đặt
+            type: Date,
+            required: false,
+        },
+        repairDate: { //Ngày sửa chữa
             type: Date,
             default: null,
         },
-        arrivalTime: {
+        arrivalTime: { //Giờ đến
             type: String,
             default: null,
         },
-        departureTime: {
+        leavingTime: { //Giờ ra
+            type: String,
+            default: null,
+        },
+        workingTime: {// Thời gian sửa chữa
+            type: String,
+            default: null,
+        },
+        inkCode: { // Mã số mực
+            type: String,
+            default: null,
+        },
+        machineStartup: { // Thời gian mở máy
+            type: String,
+            default: null,
+        },
+        inkjetTime: { // Thời gian in phun
             type: String,
             default: null,
         },
@@ -30,29 +50,12 @@ const workOrderRepairASchema = new Schema(
             ref: 'products',
             default: null,
         },
-        machineInfo: [propSchema],
-        machineSpecs: [propSchema],
-        repairAFault: {
-            printHeaderFault: [String],
-            inkSystemFault: [String],
-            electricalSystemFault: [String],
-            resolution: [
-                {
-                    _id: false,
-                    name: {
-                        type: String,
-                        required: true,
-                    },
-                    state: {
-                        type: String,
-                        enum: Object.values(
-                            constant.REPAIR_A_RESOLUTION_STATE,
-                        ).map((i) => i.value),
-                        required: true,
-                    },
-                },
-            ],
+        machineCode: {
+            type: String,
         },
+        machineSpecs: [propSchema], //Kỹ thuật điền thông tin sửa máy
+        failureSituation: [String],
+        differentApproach: [String], //Thao tác xử lý
         technicalFeedback: [String],
         customerFeedback: [String],
     },

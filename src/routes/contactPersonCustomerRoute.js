@@ -19,6 +19,10 @@ router.post(
     '/deleteAddress/:customerId',
     contactPersonCustomerController.deleteAddress,
 )
+router.get(
+    '/getSerialNumber/:customerId',
+    contactPersonCustomerController.getSerialNumber,
+)
 
 /**
  * @swagger

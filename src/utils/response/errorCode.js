@@ -500,6 +500,10 @@ const errorCode = {
         code: 123,
         message: 'Thuộc tính không tồn tại',
     },
+    MACHINE_PROPERTY_EXISTED: {
+        code: 123,
+        message: 'Thuộc tính đã tồn tại',
+    },
     MACHINE_PROPERTIES_NOT_LINKED_TYPE: {
         code: 124,
         message: 'Thuộc tính không thuộc loại linked',

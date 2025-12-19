@@ -8,23 +8,16 @@ const machinePropertiesSchema = new Schema({
     },
     type: {
         type: String,
-        enum: Object.values(constant.MACHINE_PROPERTIES_TYPE),
-        default: constant.MACHINE_PROPERTIES_TYPE.NORMAL,
+        default: constant.MACHINE_PROPERTIES_TYPE.TEXT,
     },
-    categoryLinkedName: {
-        type: String,
-        enum: Object.values(constant.CATEGORY_NAME).filter(
-            (v) => v !== constant.CATEGORY_NAME.MACHINE,
-        ),
-    },
-    group: {
-        type: String,
-        enum: Object.values(constant.MACHINE_PROPERTIES_GROUP_NAME),
-    },
+    childProp: [{ //Thuộc tính con của thuộc tính
+        type: Schema.Types.Mixed,
+        required: false,
+    }]
 })
 
-const MachinePropertiesModel = model(
+const MachinePropertyModel = model(
     'machineProperties',
     machinePropertiesSchema,
 )
-module.exports = MachinePropertiesModel
+module.exports = MachinePropertyModel

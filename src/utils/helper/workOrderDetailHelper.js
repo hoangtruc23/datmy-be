@@ -63,15 +63,20 @@ function getWorkOrderModel(typeWork, type) {
                 throw new BadReq(errorCode.WORK_ORDER_DETAIL_TYPE_NOT_FOUND)
             }
         }
+
         const model =
             typeWork === constant.WORK_ORDER_TYPE.INSTALLATION.value ||
-            typeWork === constant.WORK_ORDER_TYPE.DEMO.value ||
-            typeWork === constant.WORK_ORDER_TYPE.SAMPLE_PRINTING.value
+                typeWork === constant.WORK_ORDER_TYPE.DEMO.value ||
+                typeWork === constant.WORK_ORDER_TYPE.SAMPLE_PRINTING.value
                 ? modelMap[typeWork]
                 : modelMap[typeWork]?.[type]
+
+
         if (!model) {
             throw new BadReq(errorCode.MODEL_NOT_FOUND_FOR_TYPE_WORK_AND_TYPE)
         }
+
+
         return model
     } catch (error) {
         throw error

@@ -9,7 +9,7 @@ const propSchema = new Schema(
             ref: 'machineProperties',
         },
         value: {
-            type: String,
+            type: Schema.Types.Mixed,
         },
     },
     { _id: false },

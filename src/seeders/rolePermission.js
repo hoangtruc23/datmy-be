@@ -1847,6 +1847,8 @@ async function rolePermissionSeeder() {
         //     roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
         //     permissionId: '6853d1b6fa10ea77cf679911', // Xóa
         // },
+
+
         //#endregion
         //#region Nhà cung cấp
         {
@@ -2294,6 +2296,13 @@ async function rolePermissionSeeder() {
         //     permissionId: '688c7f601bb97636f19d6ad9', // Xem báo cáo đối chiếu công nợ
         // },
         //#endregion
+
+        //getSerialNumber
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản Trị Viên
+            permissionId: '68db8978cc41fa86439366cd', //getSerialNumber
+        },
+
 
         // ------------------------------------------------------------------------------------------ technical ----
         //#region Yêu cầu công việc

@@ -46,13 +46,7 @@ const workOrderValidation = {
                         'any.only':
                             "typeWork chỉ bao gồm '', 'repair', 'maintenance', 'installation', 'testIO', 'demo', 'samplePrinting'",
                     }),
-                contactName: joi.string().trim().min(1).required().messages({
-                    '*': 'Tên người liên hệ là bắt buộc',
-                }),
 
-                description: joi.string().trim().min(1).required().messages({
-                    '*': 'Mô tả công việc là bắt buộc',
-                }),
                 priority: joi
                     .string()
                     .valid(
@@ -107,33 +101,33 @@ const workOrderValidation = {
                         'any.only':
                             "typeWork chỉ bao gồm '', 'repair', 'maintenance', 'installation', 'testIO', 'demo', 'samplePrinting'",
                     }),
-                type: joi
-                    .string()
-                    .valid(
-                        ...Object.values(constant.WORK_ORDER_DETAIL_TYPE).map(
-                            (s) => s.value,
-                        ),
-                    )
-                    .messages({
-                        'any.only':
-                            "type chỉ bao gồm '', 'D', 'G', 'V', 'M', 'A'",
-                    }),
-                description: joi.string().trim().min(1).required().messages({
-                    '*': 'Mô tả công việc là bắt buộc',
-                }),
-                priority: joi
-                    .string()
-                    .valid(
-                        ...Object.values(constant.WORK_REQUEST_PRIORITY).map(
-                            (s) => s.value,
-                        ),
-                    )
-                    .required()
-                    .messages({
-                        'any.only':
-                            "priority chỉ bao gồm 'high', 'medium', 'low'",
-                        'any.required': 'Loại ưu tiên là bắt buộc',
-                    }),
+                // type: joi
+                //     .string()
+                //     .valid(
+                //         ...Object.values(constant.WORK_ORDER_DETAIL_TYPE).map(
+                //             (s) => s.value,
+                //         ),
+                //     )
+                //     .messages({
+                //         'any.only':
+                //             "type chỉ bao gồm '', 'D', 'G', 'V', 'M', 'A'",
+                //     }),
+                // description: joi.string().trim().min(1).required().messages({
+                //     '*': 'Mô tả công việc là bắt buộc',
+                // }),
+                // priority: joi
+                //     .string()
+                //     .valid(
+                //         ...Object.values(constant.WORK_REQUEST_PRIORITY).map(
+                //             (s) => s.value,
+                //         ),
+                //     )
+                //     .required()
+                //     .messages({
+                //         'any.only':
+                //             "priority chỉ bao gồm 'high', 'medium', 'low'",
+                //         'any.required': 'Loại ưu tiên là bắt buộc',
+                //     }),
                 estimatedTime: joi.number().positive().required().messages({
                     'number.base': 'Thời gian ước tính phải là số',
                     'number.positive': 'Thời gian ước tính phải lớn hơn 0',

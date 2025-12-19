@@ -1210,6 +1210,11 @@ async function apiSeeder() {
             note: 'Xóa địa chỉ liên hệ',
         },
         {
+            _id: new Types.ObjectId('691ebf6e7cd69b4b32fa3b12'),
+            api: '/contactPerson/getSerialNumber',
+            note: 'Lấy ra số Serial Number',
+        },
+        {
             _id: new Types.ObjectId('691ebf6e7cd69b4b32fa3b61'),
             api: '/contract/getAll',
             note: 'Lấy danh sách hợp đồng',
@@ -1233,6 +1238,25 @@ async function apiSeeder() {
             _id: new Types.ObjectId('691ebf6e7cd69b4b32fa3b65'),
             api: '/contract/getOverview',
             note: 'Lấy tổng quan hợp đồng',
+        },
+
+        //Machine Property
+        {
+            _id: new Types.ObjectId('691ebf6e7cd69b4b32fa3e98'),
+            api: '/machinePropery/create',
+            note: 'Tạo mới thông số máy',
+        },
+
+        //Print Excel
+        {
+            _id: new Types.ObjectId('691ebf6e7cd69b4b32fa3e12'),
+            api: '/printExcel/printExcelCustomer',
+            note: 'Export Customer',
+        },
+        {
+            _id: new Types.ObjectId('691ebf6e7cd69b4b32fa3e13'),
+            api: '/printExcel/printExcelMachine',
+            note: 'Export Customer',
         },
     ])
 

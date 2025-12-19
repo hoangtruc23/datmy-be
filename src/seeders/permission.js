@@ -837,6 +837,12 @@ async function permissionSeeder() {
             code: 'xoa-cau_hinh_may_in',
             parentPermissionId: '69096eeb66eb1f282bec214b',
         },
+        {
+            _id: new Types.ObjectId('68db8978cc41fa86439366cd'),
+            name: 'Lấy ra serial number', //getSerialNumber
+            code: 'lay_serial_number',
+            parentPermissionId: null,
+        },
 
         //phiếu chi tiết công việc
         {

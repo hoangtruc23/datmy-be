@@ -4,15 +4,20 @@ const errorCode = require('../utils/response/errorCode.js')
 const CustomerModel = require('../models/customer')
 
 const contactPersonCustomerService = {
-    create: async (reqData) => {
+    create: async (reqData, typeAction) => {
         try {
             const {
                 customerId,
                 contactName,
                 contactPhone,
                 contactEmail,
-                address,
+                provinceCity,
+                ward,
+                specificAddress,
+                productCode,
+                serialNumber
             } = reqData
+
             const customer = await CustomerModel.findById(customerId)
             if (!customer) {
                 throw new BadReq(errorCode.CUSTOMER_NOT_FOUND)
@@ -20,14 +25,34 @@ const contactPersonCustomerService = {
             const record = await ContactPersonCustomerModel.findOne({
                 customerId,
             })
+
             if (!record) {
-                await ContactPersonCustomerModel.create({
+                const recordData = {
                     customerId,
                     contactPerson: [
                         { contactName, contactEmail, contactPhone },
                     ],
-                    address: [address],
-                })
+                    devices: { productCode }
+                    // productCode,
+                }
+
+                if (serialNumber && serialNumber !== "") {
+                    recordData.devices = { serialNumber }
+                    // recordData.serialNumber = serialNumber
+                }
+
+                if (provinceCity != undefined && ward != undefined && specificAddress != undefined) {
+                    if (provinceCity != "" && ward !== "" && specificAddress != "") {
+
+                        recordData.address = [{
+                            provinceCity,
+                            ward,
+                            specificAddress,
+                        }]
+                    }
+                }
+
+                await ContactPersonCustomerModel.create(recordData)
             } else {
                 const existedPerson = record.contactPerson.some(
                     (r) =>
@@ -49,13 +74,84 @@ const contactPersonCustomerService = {
                         },
                     )
                 }
-                const existedAddress = record.address.some((r) => r === address)
-                if (!existedAddress) {
+
+                const existedAddress = record.address.find((a) => a.specificAddress == specificAddress)
+                if (!existedAddress &&
+                    (provinceCity != null && ward != null && specificAddress != null)
+                ) {
                     await ContactPersonCustomerModel.findByIdAndUpdate(
                         record._id,
-                        { $push: { address: address } },
+                        {
+                            $push: {
+                                address: {
+                                    provinceCity,
+                                    ward,
+                                    specificAddress,
+                                },
+                            },
+
+                        },
                     )
                 }
+
+
+
+                // const check = record.devices.find((a) => a.productCode == productCode && a.serialNumber == serialNumber)
+                // if (!check) {
+
+                // }
+
+                const checkProductCode = record.devices.find((a) => a.productCode == productCode)
+                console.log(typeAction)
+                if (typeAction == 'update' && checkProductCode) {
+                    await ContactPersonCustomerModel.findOneAndUpdate(
+                        {
+                            _id: record._id,
+                            "devices._id": checkProductCode._id
+                        },
+                        {
+                            $set: { "devices.$.serialNumber": serialNumber }
+                        },
+                    )
+                }
+                else if (typeAction == 'installation') {
+                    console.log("Vô installation")
+                    await ContactPersonCustomerModel.findByIdAndUpdate(
+                        record._id,
+                        {
+                            $push: {
+                                devices: { productCode, serialNumber }
+                            },
+                        },
+                    )
+                }
+
+                // const existedProductCode = record.productCode.find((a) => a == productCode)
+                // if (!existedProductCode) {
+                //     await ContactPersonCustomerModel.findByIdAndUpdate(
+                //         record._id,
+                //         {
+                //             $push: {
+                //                 // productCode,
+                //                 device: { productCode }
+                //             },
+                //         },
+                //     )
+                // }
+
+                // const existedSerialNumber = record.serialNumber.find((a) => a == serialNumber)
+                // if (!existedSerialNumber && serialNumber != "") {
+                //     await ContactPersonCustomerModel.findByIdAndUpdate(
+                //         record._id,
+                //         {
+                //             $push: {
+                //                 // serialNumber,
+                //                 device: { serialNumber }
+                //             },
+
+                //         },
+                //     )
+                // }
             }
             return null
         } catch (error) {
@@ -91,7 +187,11 @@ const contactPersonCustomerService = {
             const record = await ContactPersonCustomerModel.findOne({
                 customerId,
             }).lean()
-            return record ? record.address.filter((a) => search.test(a)) : []
+
+            if (record?.address) {
+                return record ? record?.address.filter((a) => search.test(a)) : []
+            }
+            return null
         } catch (error) {
             throw error
         }
@@ -137,35 +237,53 @@ const contactPersonCustomerService = {
             throw error
         }
     },
-    deleteAddress: async (customerId, reqData) => {
+    // deleteAddress: async (customerId, reqData) => {
+    //     try {
+    //         const { address } = reqData
+    //         const customer = await CustomerModel.findById(customerId)
+    //         if (!customer) {
+    //             throw new BadReq(errorCode.CUSTOMER_NOT_FOUND)
+    //         }
+
+    //         const record = await ContactPersonCustomerModel.findOne({
+    //             customerId,
+    //         }).lean()
+    //         if (!record) {
+    //             throw new BadReq(errorCode.CONTACT_PERSON_NOT_FOUND)
+    //         }
+
+    //         const existed = record.address.some((a) => a === address)
+
+    //         if (!existed) {
+    //             throw new BadReq(errorCode.CONTACT_PERSON_NOT_FOUND)
+    //         }
+
+    //         await ContactPersonCustomerModel.findByIdAndUpdate(record._id, {
+    //             $pull: { address: address },
+    //         })
+
+    //         return null
+    //     } catch (error) {
+    //         throw error
+    //     }
+    // },
+    getSerialNumber: async (params, query) => {
         try {
-            const { address } = reqData
-            const customer = await CustomerModel.findById(customerId)
-            if (!customer) {
-                throw new BadReq(errorCode.CUSTOMER_NOT_FOUND)
+            const { customerId } = params
+            const { productCode } = query
+            const contact = await ContactPersonCustomerModel.findOne({ customerId })
+            let result = []
+            if (contact) {
+                for (let device of contact?.devices) {
+                    if (device.productCode == productCode) {
+                        result.push(device.serialNumber)
+                    }
+                }
             }
-
-            const record = await ContactPersonCustomerModel.findOne({
-                customerId,
-            }).lean()
-            if (!record) {
-                throw new BadReq(errorCode.CONTACT_PERSON_NOT_FOUND)
-            }
-
-            const existed = record.address.some((a) => a === address)
-
-            if (!existed) {
-                throw new BadReq(errorCode.CONTACT_PERSON_NOT_FOUND)
-            }
-
-            await ContactPersonCustomerModel.findByIdAndUpdate(record._id, {
-                $pull: { address: address },
-            })
-
-            return null
+            return result
         } catch (error) {
             throw error
         }
-    },
+    }
 }
 module.exports = contactPersonCustomerService

@@ -1,31 +1,27 @@
-const { Types, model, Schema } = require('mongoose')
-
-const propSchema = new Schema({
-    _id: false,
-    propId: {
-        type: Types.ObjectId,
-        required: true,
-        ref: 'productCategories',
-    },
-    defaultValue: {
-        type: [String],
-    },
-})
+const { Schema, model, Types } = require('mongoose')
 
 const machineSettingSchema = new Schema(
     {
-        machineId: {
-            type: Types.ObjectId,
+        workType: { // Loại phiếu
+            type: String,
             required: true,
-            ref: 'products',
         },
-        props: {
-            type: [propSchema],
-            default: [],
+        nameType: { // Tên dòng máy -> A,B,C,D,..
+            type: String,
+            required: true,
         },
+        props: [{  // Thuộc tính
+            // type: Types.ObjectId,
+            type: Schema.Types.Mixed,
+            ref: 'machineProperties',
+            required: false,
+        }],
     },
     { timestamps: true },
 )
 
 const MachineSettingModel = model('machineSettings', machineSettingSchema)
+
 module.exports = MachineSettingModel
+
+

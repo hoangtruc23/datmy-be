@@ -16,7 +16,19 @@ const workOrderMaintainASchema = new Schema(
             type: Date,
             default: null,
         },
-        arrivalTime: {
+        arrivalTime: {   //Giờ đến
+            type: String,
+            default: null,
+        },
+        inkCode: { // Mã số mực
+            type: String,
+            default: null,
+        },
+        machineStartup: { // Thời gian mở máy
+            type: String,
+            default: null,
+        },
+        inkjetTime: { // Thời gian in phun
             type: String,
             default: null,
         },
@@ -29,29 +41,14 @@ const workOrderMaintainASchema = new Schema(
             ref: 'products',
             default: null,
         },
-        machineInfo: [propSchema],
-        machineSpecs: [propSchema],
-        maintainOperations: [
-            {
-                _id: false,
-                operationName: {
-                    type: String,
-                    required: true,
-                },
-                valueName: {
-                    type: String,
-                },
-                value: {
-                    type: Number,
-                },
-            },
-        ],
-        replacement: [
-            {
-                type: Types.ObjectId,
-                ref: 'products',
-            },
-        ],
+        machineSpecs: [propSchema], //Thông số
+        // replacement: [
+        //     {
+        //         type: Types.ObjectId,
+        //         ref: 'products',
+        //     },
+        // ],
+        differentApproach: [String], //Thao tác xử lý
         technicalFeedback: [String],
         customerFeedback: [String],
     },
