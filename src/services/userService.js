@@ -148,23 +148,23 @@ const userService = {
                 throw new BadReq(errorCode.USER_EXISTED)
             }
 
-            //nếu người dùng không phải bgđ hoặc quản trị viên thì phải có department
-            if (
-                !roleIds.includes(constant.ROLES.BGD) &&
-                !roleIds.includes(constant.ROLES.admin) &&
-                !department
-            ) {
-                throw new BadReq(errorCode.DEPARTMENT_IS_REQUIRED_FOR_THIS_USER)
-            }
+            // //nếu người dùng không phải bgđ hoặc quản trị viên thì phải có department
+            // if (
+            //     !roleIds.includes(constant.ROLES.BGD) &&
+            //     !roleIds.includes(constant.ROLES.admin) &&
+            //     !department
+            // ) {
+            //     throw new BadReq(errorCode.DEPARTMENT_IS_REQUIRED_FOR_THIS_USER)
+            // }
 
-            // root, bgđ, qtv được tạo tất cả người dùng
-            //quản lý chỉ được tạo người dùng trong phòng ban của mình
-            const forbidden = await userService.checkForbidden(reqUserId, user)
-            if (forbidden) {
-                throw new BadReq(
-                    errorCode.CANNOT_CREATE_USER_IN_OTHER_DEPARTMENT,
-                )
-            }
+            // // root, bgđ, qtv được tạo tất cả người dùng
+            // //quản lý chỉ được tạo người dùng trong phòng ban của mình
+            // const forbidden = await userService.checkForbidden(reqUserId, user)
+            // if (forbidden) {
+            //     throw new BadReq(
+            //         errorCode.CANNOT_CREATE_USER_IN_OTHER_DEPARTMENT,
+            //     )
+            // }
 
             const hashPass = await bcrypt.hash(password, 10)
             await UserModel.create({
