@@ -519,7 +519,7 @@ async function permissionApiSeeder() {
             apiId: '689c01a260903c30215b25c6', // /dashboard/getTopCustomerRevenue
         },
         {
-            permissionId: '689c01a260903c30215b25c9', //Xem mặt hàng bán chạy nhất getBestSellingItems
+            permissionId: '689c01a260903c30215b25c9', //Xem mặt hàng bán chạy nhất 
             apiId: '689c01a260903c30215b25c7', // /dashboard/getTopCustomerRevenue
         },
 
