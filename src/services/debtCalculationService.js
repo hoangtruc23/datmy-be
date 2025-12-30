@@ -11,7 +11,7 @@ const debtCalculationService = {
      */
     getOpeningBalance: async (customerId, date) => {
         const invoicesBefore = await InvoiceModel.aggregate([
-            { $match: { customerId, createdAt: { $lt: date } } },
+            { $match: { customerId, invoiceDate: { $lt: date } } },
             { $group: { _id: null, total: { $sum: '$totalAmount' } } },
         ])
 
@@ -46,7 +46,7 @@ const debtCalculationService = {
             {
                 $match: {
                     customerId: customerId,
-                    createdAt: { $gte: startDate, $lte: endDate },
+                    invoiceDate: { $gte: startDate, $lte: endDate },
                 },
             },
             { $group: { _id: null, total: { $sum: '$totalAmount' } } },

@@ -37,13 +37,11 @@ const contactPersonCustomerService = {
                 }
 
                 if (serialNumber && serialNumber !== "") {
-                    recordData.devices = { serialNumber }
-                    // recordData.serialNumber = serialNumber
+                    recordData.serialNumber = { serialNumber }
                 }
 
                 if (provinceCity != undefined && ward != undefined && specificAddress != undefined) {
                     if (provinceCity != "" && ward !== "" && specificAddress != "") {
-
                         recordData.address = [{
                             provinceCity,
                             ward,
@@ -94,12 +92,6 @@ const contactPersonCustomerService = {
                     )
                 }
 
-
-
-                // const check = record.devices.find((a) => a.productCode == productCode && a.serialNumber == serialNumber)
-                // if (!check) {
-
-                // }
 
                 const checkProductCode = record.devices.find((a) => a.productCode == productCode)
                 console.log(typeAction)

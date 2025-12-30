@@ -397,7 +397,7 @@ const workOrderDetailService = {
             }
 
             //UPDATE WORKORDER
-            await WorkOrderModel.findByIdAndUpdate(workOrderId, { serialNumber })
+            await WorkOrderModel.findByIdAndUpdate(workOrderId, { status: "completed", serialNumber })
 
             //Lấy model
             const WorkOrderDetailModel = getWorkOrderModel(
@@ -583,6 +583,7 @@ const workOrderDetailService = {
                 )
                 return null
             }
+
             if (typeWork === constant.WORK_ORDER_TYPE.SAMPLE_PRINTING.value) {
                 const {
                     inkTypeId,
