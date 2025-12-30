@@ -10,6 +10,7 @@ const PaymentHistoryModel = require('../models/paymentHistory')
 const BadReq = require('../utils/response/requestError')
 const errorCode = require('../utils/response/errorCode')
 const { ObjectId } = require('mongodb')
+const PreviousDebtModel = require('../models/previousDebt')
 const reportService = {
     getSalesReport: async (
         startDate,
@@ -174,9 +175,9 @@ const reportService = {
         const allCustomerDetails = await Promise.all(
             allCustomers.map(async (customer) => {
                 const id = customer._id
-                const openingBalance =
+                let openingBalance =
                     await debtCalculationService.getOpeningBalance(id, start) // Tính số nợ trước kì
-                const incurredDebit =
+                let incurredDebit =
                     await debtCalculationService.getIncurredDebitForPeriod(
                         id,
                         start,
@@ -193,6 +194,15 @@ const reportService = {
                 const configDebt = await ConfigDebtModel.findOne({
                     customerId: id,
                 })
+
+                const preDebt = await PreviousDebtModel.findOne({ customerId: id })
+                if (preDebt) {
+                    if (start >= new Date(`${preDebt?.preMonth}`)) {
+                        openingBalance += preDebt.previousDebitBalance - preDebt.previousCreditBalance
+                    } else {
+                        incurredDebit += (preDebt.previousDebitBalance - preDebt.previousCreditBalance)
+                    }
+                }
 
                 return {
                     customerId: id,
@@ -878,6 +888,7 @@ const reportService = {
                     totalPages,
                 }
             }
+
             const customerData = await Promise.all(
                 customerIds.map(async (customerId) => {
                     const customer = await CustomerModel.findById(customerId)
@@ -931,7 +942,8 @@ const reportService = {
                             },
                         },
                     ])
-                    const totalAllDebtRemainingBefore = invoicesBefore.reduce(
+
+                    let totalAllDebtRemainingBefore = invoicesBefore.reduce(
                         (acc, cur) => acc + cur.totalRemainingDebt,
                         0,
                     )
@@ -1142,15 +1154,32 @@ const reportService = {
                             .sort((a, b) => a.postingDate - b.postingDate)
                     }
 
+
+
+
                     const data = invoices[0] ?? {
                         invoices: [],
                         totalAmountAll: 0,
                         totalPaidAll: 0,
                     }
+
+                    const preDebt = await PreviousDebtModel.findOne({ customerId }).select({ _id: 0, previousDebitBalance: 1, previousCreditBalance: 1, preMonth: 1 })
+                    let preDebtReturn = null
+                    if (preDebt) {
+                        const firstDayOfPreMonth = new Date(`${preDebt?.preMonth}`);
+                        if (start >= firstDayOfPreMonth) {
+                            preDebtReturn = preDebt
+                        } else {
+                            // preDebtReturn = preDebt
+                            data.totalAmountAll += (preDebt.previousDebitBalance - preDebt.previousCreditBalance)
+                        }
+                    }
+
                     return {
                         customerName: customer.officialName,
                         ...data,
                         totalAllDebtRemainingBefore,
+                        preDebt: preDebtReturn
                     }
                 }),
             )

@@ -587,6 +587,11 @@ const errorCode = {
         code: 143,
         message: 'Dữ liệu của hóa đơn bị tính toán chưa đúng',
     },
+    IMPORT_PREVIOUS_DEBT_FAILED: {
+        code: 144,
+        message: 'File import dư nợ trước bị lỗi',
+    },
+
 }
 
 module.exports = errorCode

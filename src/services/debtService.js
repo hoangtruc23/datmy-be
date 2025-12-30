@@ -9,6 +9,7 @@ const UnitModel = require('../models/unit')
 const BadReq = require('../utils/response/requestError')
 const errorCode = require('../utils/response/errorCode')
 const { ObjectId } = require('mongodb')
+const PreviousDebtModel = require('../models/previousDebt')
 const debtService = {
     getAll: async (page = 1, limit = 20, search = '', debtStatus = '') => {
         try {
@@ -24,11 +25,11 @@ const debtService = {
                         dueDate: { $lt: currentDate },
                         ...(search.trim()
                             ? {
-                                  customerName: {
-                                      $regex: search.trim(),
-                                      $options: 'i',
-                                  },
-                              }
+                                customerName: {
+                                    $regex: search.trim(),
+                                    $options: 'i',
+                                },
+                            }
                             : {}),
                     },
                 },
@@ -134,9 +135,9 @@ const debtService = {
                                                                 $multiply: [
                                                                     '$limitOverdue',
                                                                     1000 *
-                                                                        60 *
-                                                                        60 *
-                                                                        24,
+                                                                    60 *
+                                                                    60 *
+                                                                    24,
                                                                 ],
                                                             },
                                                         ],
@@ -215,10 +216,34 @@ const debtService = {
                     },
                 },
                 {
+                    $lookup: {
+                        from: 'previousdebts',
+                        localField: '_id',
+                        foreignField: 'customerId',
+                        as: 'previousdebtInfos',
+                    },
+                },
+                {
+                    // Làm phẳng dữ liệu
+                    $addFields: {
+                        prevDebit: { $ifNull: [{ $arrayElemAt: ['$previousdebtInfos.previousDebitBalance', 0] }, 0] },
+                        prevCredit: { $ifNull: [{ $arrayElemAt: ['$previousdebtInfos.previousCreditBalance', 0] }, 0] }
+                    }
+                },
+                {
                     $project: {
+                        // previousdebtInfos: 1,
+                        previousDebitBalance: '$prevDebit',
+                        previousCreditBalance: '$prevCredit',
                         customerId: '$_id',
                         customerName: 1,
-                        totalDebt: 1,
+                        // totalDebt: 1,
+                        totalDebt: {
+                            $subtract: [
+                                { $add: ['$totalDebt', '$prevDebit'] },
+                                '$prevCredit'
+                            ]
+                        },
                         overdueDebt: 1,
                         //invoices: 1,
                         maxDebtDays: { $round: ['$maxDebtDays', 0] },
@@ -249,6 +274,10 @@ const debtService = {
                 { $skip: skip },
                 { $limit: limit },
             ]
+
+
+
+
             const totalPipeline = [
                 {
                     $match: {
@@ -256,11 +285,11 @@ const debtService = {
                         dueDate: { $lt: currentDate },
                         ...(search.trim()
                             ? {
-                                  customerName: {
-                                      $regex: search.trim(),
-                                      $options: 'i',
-                                  },
-                              }
+                                customerName: {
+                                    $regex: search.trim(),
+                                    $options: 'i',
+                                },
+                            }
                             : {}),
                     },
                 },
@@ -383,6 +412,7 @@ const debtService = {
                         },
                     },
                 },
+
                 ...(debtStatus
                     ? [{ $match: { debtStatus: { $eq: debtStatus } } }]
                     : []),
@@ -394,10 +424,75 @@ const debtService = {
                 InvoiceModel.aggregate(totalPipeline),
             ])
 
-            const totalCount = total[0]?.total || 0
-            const totalPages = Math.ceil(totalCount / limit)
+            const existingCustomerIds = items.map(i => i.customerId).filter(Boolean)
+            let extraItems = []
 
-            return { items, total: totalCount, page, limit, totalPages }
+            if (existingCustomerIds.length === 0 || (await PreviousDebtModel.countDocuments({ customerId: { $nin: existingCustomerIds } })) > 0) {
+                const prevAgg = [
+                    {
+                        $match: {
+                            customerId: { $nin: existingCustomerIds },
+                        },
+                    },
+                    {
+                        $group: {
+                            _id: '$customerId',
+                            previousdebtInfos: {
+                                $push: {
+                                    previousDebitBalance: '$previousDebitBalance',
+                                    previousCreditBalance: '$previousCreditBalance',
+                                },
+                            },
+                            totalPrevDebt: {
+                                $sum: { $subtract: ['$previousDebitBalance', '$previousCreditBalance'] },
+                            },
+                        },
+                    },
+                    {
+                        $lookup: {
+                            from: 'customers',
+                            localField: '_id',
+                            foreignField: '_id',
+                            as: 'customer',
+                        },
+                    },
+                    {
+                        $project: {
+                            customerId: '$_id',
+                            customerName: {
+                                $ifNull: [
+                                    { $arrayElemAt: ['$customer.officialName', 0] },
+                                    { $arrayElemAt: ['$customer.name', 0] },
+                                    '',
+                                ],
+                            },
+                            totalDebt: '$totalPrevDebt',
+                            // previousdebtInfos: 1,
+                            previousDebitBalance: {
+                                $arrayElemAt: ['$previousdebtInfos.previousDebitBalance', 0]
+                            },
+                            previousCreditBalance: {
+                                $arrayElemAt: ['$previousdebtInfos.previousCreditBalance', 0]
+                            },
+                        },
+                    },
+                ]
+
+                extraItems = await PreviousDebtModel.aggregate(prevAgg)
+
+
+            }
+            // Kết hợp và cập nhật tổng
+            const allItems = items.concat(extraItems)
+            const totalCount = total[0]?.total || 0
+            // const totalPages = Math.ceil(totalCount / limit)
+
+            // return { allItems, total: totalCount, page, limit, totalPages }
+            const totalCountWithPrev = totalCount + extraItems.length
+            const totalPages = Math.ceil(totalCountWithPrev / limit)
+
+            return { items: allItems, total: totalCountWithPrev, page, limit, totalPages }
+
         } catch (err) {
             throw err
         }
@@ -476,6 +571,7 @@ const debtService = {
                         as: 'debtConfig',
                     },
                 },
+
                 {
                     $addFields: {
                         limitOverdue: {
@@ -524,9 +620,9 @@ const debtService = {
                                                                             [
                                                                                 '$limitOverdue',
                                                                                 1000 *
-                                                                                    60 *
-                                                                                    60 *
-                                                                                    24,
+                                                                                60 *
+                                                                                60 *
+                                                                                24,
                                                                             ],
                                                                     },
                                                                 ],
@@ -568,9 +664,9 @@ const debtService = {
                                                                             [
                                                                                 '$limitOverdue',
                                                                                 1000 *
-                                                                                    60 *
-                                                                                    60 *
-                                                                                    24,
+                                                                                60 *
+                                                                                60 *
+                                                                                24,
                                                                             ],
                                                                     },
                                                                     {
@@ -580,9 +676,9 @@ const debtService = {
                                                                                     .DEBT_STATUS_PERIOD
                                                                                     .BAD_DEBT,
                                                                                 1000 *
-                                                                                    60 *
-                                                                                    60 *
-                                                                                    24,
+                                                                                60 *
+                                                                                60 *
+                                                                                24,
                                                                             ],
                                                                     },
                                                                 ],
@@ -602,6 +698,30 @@ const debtService = {
                     },
                 },
                 {
+                    $lookup: {
+                        from: 'previousdebts',
+                        localField: '_id',
+                        foreignField: 'customerId',
+                        as: 'previousdebtInfos',
+                    },
+                },
+                {
+                    $addFields: {
+                        prevDebit: { $ifNull: [{ $arrayElemAt: ['$previousdebtInfos.previousDebitBalance', 0] }, 0] },
+                        prevCredit: { $ifNull: [{ $arrayElemAt: ['$previousdebtInfos.previousCreditBalance', 0] }, 0] }
+                    }
+                },
+                {
+                    $addFields: {
+                        totalDebtWithPrev: {
+                            $subtract: [
+                                '$prevDebit',
+                                '$prevCredit'
+                            ]
+                        }
+                    }
+                },
+                {
                     $group: {
                         _id: null,
                         totalDebt: { $sum: '$totalDebt' },
@@ -610,9 +730,19 @@ const debtService = {
                         customerCount: { $sum: 1 },
                     },
                 },
+                // {
+                //     $group: {
+                //         _id: null,
+                //         totalDebt: { $sum: '$totalDebt' },
+                //         overdueDebt: { $sum: '$overdueDebt' },
+                //         badDebt: { $sum: '$badDebt' },
+                //         customerCount: { $sum: 1 },
+                //     },
+                // },
                 {
                     $project: {
                         totalDebt: 1,
+                        totalDebtWithPrev: 1,
                         overdueDebt: 1,
                         badDebt: 1,
                         customerCount: 1,
@@ -657,8 +787,21 @@ const debtService = {
 
             const stats = currentStats[0] || {}
 
+            const totalBalances = await PreviousDebtModel.aggregate([
+                {
+                    $group: {
+                        _id: null, // Nhóm tất cả các document lại thành 1 nhóm
+                        totalDebit: { $sum: "$previousDebitBalance" },
+                        totalCredit: { $sum: "$previousCreditBalance" }
+                    }
+                }
+            ]);
+
+            //Tổng công nợ = Tổng công nợ hiện tại (có hóa đơn) + Số dư nợ đầu kỳ - Số dư có đầu kỳ
+            let totalDebt = (totalBalances[0]?.totalDebit || 0) - (totalBalances[0]?.totalCredit || 0) + (stats.totalDebt || 0)
+
             return {
-                totalDebt: stats.totalDebt || 0,
+                totalDebt: totalDebt || 0,
                 overdueDebt: stats.overdueDebt || 0,
                 badDebt: stats.badDebt || 0,
                 //tròn 2 sau phẩy

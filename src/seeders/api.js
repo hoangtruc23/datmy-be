@@ -645,6 +645,14 @@ async function apiSeeder() {
             note: 'Xóa cài đặt công nợ',
         },
 
+        //Dư nợ đầu kỳ
+        {
+            _id: new Types.ObjectId('6882fdc36f95b8b522848888'),
+            api: '/previousDebt/importFile',
+            note: 'Import File Dư Nợ Đầu Kỳ',
+        },
+
+
         // Nhắc nợ
         {
             _id: new Types.ObjectId('68899f050e446ab39960923a'),
