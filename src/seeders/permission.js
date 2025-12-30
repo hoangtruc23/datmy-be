@@ -440,6 +440,12 @@ async function permissionSeeder() {
             code: 'best_selling_items-xem', //getBestSellingItems
             parentPermissionId: '689c01a260903c30215b25c1',
         },
+        {
+            _id: new Types.ObjectId('689c01a260903c30215b25d9'),
+            name: 'Import',   //import số dư đầu kỳ
+            code: 'import_do_du_dau_ky', //previousDebt/importFile
+            parentPermissionId: '689c01a260903c30215b25c1',
+        },
 
         //hóa đơn
         {

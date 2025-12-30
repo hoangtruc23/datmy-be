@@ -32,7 +32,8 @@ const workOrderDetailRoute = require('./workOrderDetailRoute')
 const contactPersonCustomerRoute = require('./contactPersonCustomerRoute')
 const contractRoute = require('./contractRoute')
 const machineProperyRoute = require('./machinePropertyRoute')
-const printExcelRoute = require('./printExcel')
+// const printExcelRoute = require('./printExcel')
+const previousDebtRoute = require('./previousDebt')
 
 router.use('/auth', authRoute)
 router.use('/user', userRoute)
@@ -65,6 +66,7 @@ router.use('/workOrderDetail', workOrderDetailRoute)
 router.use('/contactPerson', contactPersonCustomerRoute)
 router.use('/contract', contractRoute)
 router.use('/machinePropery', machineProperyRoute)
-router.use('/printExcel', printExcelRoute)
+// router.use('/printExcel', printExcelRoute)
+router.use('/previousDebt', previousDebtRoute)
 
 module.exports = router

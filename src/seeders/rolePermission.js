@@ -434,6 +434,12 @@ async function rolePermissionSeeder() {
             roleId: '684927c871287f2ae7d8130b', // Quản trị viên
             permissionId: '6882fdc36f95b8b522848809', // Xóa
         },
+
+        {
+            roleId: '684927c871287f2ae7d8130b', // Quản trị viên
+            permissionId: '689c01a260903c30215b25d9', // Import số dư đầu kỳ 
+        },
+
         //#endregion
         //#region Nhắc nợ
         {
