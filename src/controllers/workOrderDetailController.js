@@ -27,6 +27,7 @@ const workOrderDetailController = {
         try {
             const result = await workOrderDetailService.updateData(
                 req.params.workOrderId,
+                req.query,
                 req.body,
             )
             return res.status(200).json(response.success(result))

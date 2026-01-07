@@ -12,9 +12,6 @@ const {
     getWorkOrderModel,
     checkExist,
 } = require('../utils/helper/workOrderDetailHelper')
-const TechnicianModel = require('../models/technician')
-const ContactPersonCustomerModel = require('../models/contactPersonCustomer')
-const WorkOrderRepairAModel = require('../models/workOrderRepairA')
 
 const workOrderDetailService = {
     create: async (workOrderId) => {
@@ -366,8 +363,9 @@ const workOrderDetailService = {
             throw error
         }
     },
-    updateData: async (workOrderId, reqData) => {
+    updateData: async (workOrderId, query, reqData) => {
         try {
+            const { isCompleted } = query
             //machineSpecs -> Thông số máy mà kỹ thuật viên tới nhập vào sau khi bảo trì
             const {
                 serialNumber,
@@ -376,6 +374,7 @@ const workOrderDetailService = {
                 departureTime,
                 machineInfo,
                 technicalFeedback,
+                replacement,
                 customerFeedback,
                 arrivalTime, // Thời gian đến
                 leavingTime, //Thời gian đi
@@ -388,12 +387,27 @@ const workOrderDetailService = {
                 failureSituation,
                 differentApproach,
                 machineSpecs,
+                evaluate
             } = reqData
 
             //check workOrder
             const workOrder = await WorkOrderModel.findById(workOrderId).lean()
             if (!workOrder) {
                 throw new BadReq(errorCode.WORK_ORDER_NOT_FOUND)
+            }
+
+            if (isCompleted === true || isCompleted === 'true') {
+                const isMachineSpecsValid = machineSpecs && machineSpecs.length > 0 && machineSpecs.every(spec => {
+                    // Kiểm tra value không được null, undefined hoặc chuỗi rỗng
+                    if (Array.isArray(spec.value)) {
+                        return spec.value.length > 0;
+                    }
+                    return spec.value !== '' && spec.value !== null && spec.value !== undefined;
+                });
+
+                if (!isMachineSpecsValid) {
+                    throw new BadReq(errorCode.MachineSpecs_IN_Valid)
+                }
             }
 
             //UPDATE WORKORDER
@@ -438,7 +452,8 @@ const workOrderDetailService = {
                         differentApproach,
                         inkCode,
                         machineStartup,
-                        inkjetTime
+                        inkjetTime,
+                        evaluate
                     } = reqData
 
                     // for (let i of replacement) {
@@ -452,17 +467,6 @@ const workOrderDetailService = {
                     await WorkOrderDetailModel.findByIdAndUpdate(
                         workOrderDetail._id,
                         {
-                            // serialNumber,
-                            // maintainDate,
-                            // arrivalTime,
-                            // departureTime,
-                            // machineInfo,
-                            // machineSpecs,
-                            // maintainOperations,
-                            // replacement,
-                            // technicalFeedback,
-                            // customerFeedback,
-                            // machineSpecs
                             customerInfo,
                             maintainDate,
                             arrivalTime,
@@ -475,10 +479,12 @@ const workOrderDetailService = {
                             failureSituation,
                             differentApproach,
                             technicalFeedback,
+                            replacement,
                             customerFeedback,
                             inkCode,
                             machineStartup,
-                            inkjetTime
+                            inkjetTime,
+                            evaluate
                         },
                     )
                     return null
@@ -529,7 +535,9 @@ const workOrderDetailService = {
                             machineInfo,
                             machineSpecs,
                             technicalFeedback,
+                            replacement,
                             customerFeedback,
+                            evaluate
                         },
                     )
                     return null

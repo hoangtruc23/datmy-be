@@ -49,8 +49,10 @@ const workOrderMaintainASchema = new Schema(
         //     },
         // ],
         differentApproach: [String], //Thao tác xử lý
-        technicalFeedback: [String],
-        customerFeedback: [String],
+        technicalFeedback: [String], // Ý kiến kỹ thuật (Linh kiện đề xuất thay)
+        replacement: [String], // Linh kiện đã thay
+        customerFeedback: [String], //Ý kiến khách hàng 
+        evaluate: Number, //Đánh giá khách hàng
     },
     { timestamps: true },
 )

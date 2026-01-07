@@ -428,16 +428,6 @@ const workOrderService = {
                 serialNumber,
             })
 
-            // if (typeWork !== oldTypeWork || type !== oldType) {
-            //     if (
-            //         typeWork === constant.WORK_ORDER_TYPE.INSTALLATION.value ||
-            //         (typeWork !== constant.WORK_ORDER_TYPE.NULL.value &&
-            //             type !== constant.WORK_ORDER_DETAIL_TYPE.NULL.value)
-            //     ) {
-            //         await workOrderDetailService.create(workOrderId)
-            //     }
-            // }
-
             //cập nhật ktv
             if (technicianId && checkWorkOrder.technicianId !== technicianId) {
                 await WorkOrderModel.findByIdAndUpdate(workOrderId, {

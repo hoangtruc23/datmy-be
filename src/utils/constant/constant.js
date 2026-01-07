@@ -254,9 +254,12 @@ const constant = {
         TECHNICAL: 'technical',
     },
     MACHINE_PROPERTIES_TYPE: {
-        NORMAL: 'normal',
-        LINKED: 'linked',
-        CUSTOM: 'custom',
+        // NORMAL: 'normal',
+        // LINKED: 'linked',
+        // CUSTOM: 'custom',
+        TEXT: 'String',
+        TRUEFALSE: 'Boolean',
+        LIST: 'Array'
     },
     CATEGORY_NAME: {
         COMPONENT_PRINT_HEAD: 'LINH KIỆN - HỆ THỐNG ĐẦU IN',
