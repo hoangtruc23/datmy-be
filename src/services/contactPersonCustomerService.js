@@ -40,7 +40,7 @@ const contactPersonCustomerService = {
                     recordData.serialNumber = { serialNumber }
                 }
 
-                if (provinceCity != undefined && ward != undefined && specificAddress != undefined) {
+                if (provinceCity != null && ward != null && specificAddress != null) {
                     if (provinceCity != "" && ward !== "" && specificAddress != "") {
                         recordData.address = [{
                             provinceCity,
@@ -94,7 +94,6 @@ const contactPersonCustomerService = {
 
 
                 const checkProductCode = record.devices.find((a) => a.productCode == productCode)
-                console.log(typeAction)
                 if (typeAction == 'update' && checkProductCode) {
                     await ContactPersonCustomerModel.findOneAndUpdate(
                         {
@@ -117,33 +116,6 @@ const contactPersonCustomerService = {
                         },
                     )
                 }
-
-                // const existedProductCode = record.productCode.find((a) => a == productCode)
-                // if (!existedProductCode) {
-                //     await ContactPersonCustomerModel.findByIdAndUpdate(
-                //         record._id,
-                //         {
-                //             $push: {
-                //                 // productCode,
-                //                 device: { productCode }
-                //             },
-                //         },
-                //     )
-                // }
-
-                // const existedSerialNumber = record.serialNumber.find((a) => a == serialNumber)
-                // if (!existedSerialNumber && serialNumber != "") {
-                //     await ContactPersonCustomerModel.findByIdAndUpdate(
-                //         record._id,
-                //         {
-                //             $push: {
-                //                 // serialNumber,
-                //                 device: { serialNumber }
-                //             },
-
-                //         },
-                //     )
-                // }
             }
             return null
         } catch (error) {
@@ -178,12 +150,23 @@ const contactPersonCustomerService = {
             search = new RegExp(search, 'i')
             const record = await ContactPersonCustomerModel.findOne({
                 customerId,
-            }).lean()
-
-            if (record?.address) {
+            }).populate('customerId', 'deliveryAddresses').lean()
+            if (record?.address.length > 0) {
                 return record ? record?.address.filter((a) => search.test(a)) : []
+            } else {
+                const deliveryAddresses = record?.customerId?.deliveryAddresses
+                let result = []
+                deliveryAddresses && deliveryAddresses.map((address) => {
+                    result.push({
+                        specificAddress: address.street,
+                        ward: address.ward,
+                        provinceCity: address.city,
+                    }
+                    )
+
+                })
+                return result
             }
-            return null
         } catch (error) {
             throw error
         }
