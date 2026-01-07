@@ -146,8 +146,7 @@ const workOrderDetailService = {
                     const propId = settingDetail._id.toString();
 
                     // Lấy giá trị từ Map
-                    const value = spectMap[propId] || null;
-
+                    const value = spectMap[propId] ?? null;
                     return {
                         ...settingDetail,
                         value: value,
@@ -440,7 +439,6 @@ const workOrderDetailService = {
                         arrivalTime,
                         departureTime,
                         machineSpecs,
-                        maintainOperations,
                         replacement,
                         technicalFeedback,
                         customerFeedback,
@@ -455,14 +453,6 @@ const workOrderDetailService = {
                         inkjetTime,
                         evaluate
                     } = reqData
-
-                    // for (let i of replacement) {
-                    //     const product = await ProductModel.findById(i)
-                    //     if (!product) {
-                    //         throw new BadReq(errorCode.REPLACEMENT_NOT_FOUND)
-                    //     }
-                    // }
-
 
                     await WorkOrderDetailModel.findByIdAndUpdate(
                         workOrderDetail._id,

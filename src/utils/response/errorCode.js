@@ -591,6 +591,10 @@ const errorCode = {
         code: 144,
         message: 'File import dư nợ trước bị lỗi',
     },
+    MachineSpecs_IN_Valid: {
+        code: 145,
+        message: 'Thông số máy không được để trống bất kỳ mục nào.',
+    },
 
 }
 
