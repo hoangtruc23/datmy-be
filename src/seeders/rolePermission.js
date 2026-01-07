@@ -548,6 +548,8 @@ async function rolePermissionSeeder() {
             roleId: '684927c871287f2ae7d8130b', // Quản trị viên
             permissionId: '68d3750d4828a7c4347ad1be', // Xóa phiếu yêu cầu công việc
         },
+
+
         //#endregion
         //#region Kỹ thuật viên
         {
@@ -2342,6 +2344,12 @@ async function rolePermissionSeeder() {
             roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
             permissionId: '68d3750d4828a7c4347ad1be', // Xóa phiếu yêu cầu công việc
         },
+
+        {
+            roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
+            permissionId: '6853d1b6fa10ea77cf67990b', // Xem danh sách customer - inventory/api/customer/getAll
+        },
+
         //#endregion
         //#region Kỹ thuật viên
         {
