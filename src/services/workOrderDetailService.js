@@ -34,6 +34,8 @@ const workOrderDetailService = {
                 throw new BadReq(errorCode.WORK_ORDER_DETAIL_EXISTED)
             }
 
+
+
             if (workOrder.typeWork === constant.WORK_ORDER_TYPE.TEST_IO.value) {
                 let testerId = null
                 if (workOrder.technicianId) {
@@ -144,7 +146,6 @@ const workOrderDetailService = {
 
                 machineValues = Object.values(settingMap).map((settingDetail) => {
                     const propId = settingDetail._id.toString();
-
                     // Lấy giá trị từ Map
                     const value = spectMap[propId] ?? null;
                     return {
@@ -154,7 +155,7 @@ const workOrderDetailService = {
                 });
             }
 
-            return { ...workOrder, machineSetting: machineValues, machineName: machine.name, workOrderDetail }
+            return { ...workOrder, machineSetting: Array.isArray(machineValues) ? machineValues : [] || [], machineName: machine.name, workOrderDetail }
         } catch (error) {
             throw error
         }
@@ -511,8 +512,8 @@ const workOrderDetailService = {
                         {
                             maintainContract,
                             repairDate,
-                            arrivalTime,
-                            leavingTime,
+                            arrivalTime,// Thời gian đến
+                            leavingTime, //Thời gian đi
                             workingTime,
                             departureTime,
                             installationDate,
@@ -533,6 +534,8 @@ const workOrderDetailService = {
                     return null
                 } else {
                     const {
+                        arrivalTime,// Thời gian đến
+                        leavingTime, //Thời gian đi
                         machineInfo,
                         machineSpecs,
                         groups,
@@ -543,6 +546,8 @@ const workOrderDetailService = {
                     await WorkOrderDetailModel.findByIdAndUpdate(
                         workOrderDetail._id,
                         {
+                            arrivalTime,// Thời gian đến
+                            leavingTime, //Thời gian đi
                             machineInfo,
                             machineSpecs,
                             groups,
@@ -620,6 +625,7 @@ const workOrderDetailService = {
                 )
                 return null
             }
+
             if (typeWork === constant.WORK_ORDER_TYPE.DEMO.value) {
                 const { props, technicalFeedback, customerFeedback } = reqData
                 await WorkOrderDetailModel.findByIdAndUpdate(
@@ -632,6 +638,7 @@ const workOrderDetailService = {
                 )
                 return null
             }
+
             if (typeWork === constant.WORK_ORDER_TYPE.TEST_IO.value) {
                 if (type === constant.WORK_ORDER_DETAIL_TYPE.A.value) {
                     const { testDate, testerId, props } = reqData
