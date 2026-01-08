@@ -154,7 +154,7 @@ const contactPersonCustomerService = {
             if (record?.address.length > 0) {
                 return record ? record?.address.filter((a) => search.test(a)) : []
             } else {
-                const deliveryAddresses = record?.customerId?.deliveryAddresses
+                const deliveryAddresses = customer?.deliveryAddresses
                 let result = []
                 deliveryAddresses && deliveryAddresses.map((address) => {
                     result.push({
