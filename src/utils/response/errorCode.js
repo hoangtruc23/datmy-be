@@ -595,7 +595,10 @@ const errorCode = {
         code: 145,
         message: 'Thông số máy không được để trống bất kỳ mục nào.',
     },
-
+    TYPE_MACHINE_INVALIB: {
+        code: 146,
+        message: 'Không thể thay đổi qua dòng máy khác.',
+    },
 }
 
 module.exports = errorCode

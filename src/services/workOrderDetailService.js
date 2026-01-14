@@ -7,11 +7,13 @@ const MachineSettingModel = require('../models/machineSetting')
 const ProductModel = require('../models/product')
 const MachinePropertyModel = require('../models/machineProperties')
 const ProductCategoryModel = require('../models/productCategory')
-
+const TechnicianModel = require('../models/technician')
 const {
     getWorkOrderModel,
     checkExist,
 } = require('../utils/helper/workOrderDetailHelper')
+const technicianService = require('./technicianService')
+const contactPersonCustomerService = require('./contactPersonCustomerService')
 
 const workOrderDetailService = {
     create: async (workOrderId) => {
@@ -95,10 +97,10 @@ const workOrderDetailService = {
     getByWorkOrderId: async (workOrderId) => {
         try {
             const workOrder = await WorkOrderModel.findById(workOrderId)
-                .select({ customerId: 1, contactPerson: 1, serialNumber: 1, type: 1, typeWork: 1, createdAt: 1, address: 1 })
+                .select({ customerId: 1, contactPerson: 1, serialNumber: 1, type: 1, typeWork: 1, createdAt: 1, address: 1, technicianId: 1 })
                 .populate(
-                    'customerId',
-                    'officialName representative.name phone email',
+                    'customerId technicianId',
+                    'officialName representative.name phone email fullname',
                 )
                 .lean()
 
@@ -125,7 +127,6 @@ const workOrderDetailService = {
 
             const spectValue = workOrderDetail?.machineSpecs
 
-
             //Thông số của phiếu theo dòng máy -> Dòng A , B,...
             const settingMap = machineSetting?.props.reduce((acc, setting) => {
                 acc[setting._id.toString()] = setting;
@@ -142,7 +143,6 @@ const workOrderDetailService = {
                         return acc;
                     }, {});
                 }
-
 
                 machineValues = Object.values(settingMap).map((settingDetail) => {
                     const propId = settingDetail._id.toString();
@@ -378,7 +378,7 @@ const workOrderDetailService = {
                 customerFeedback,
                 arrivalTime, // Thời gian đến
                 leavingTime, //Thời gian đi
-                workingTime, //Thời gian sửa chữa 
+                // workingTime, //Thời gian sửa chữa 
                 installationDate,
                 inkCode,
                 machineStartup,
@@ -387,7 +387,8 @@ const workOrderDetailService = {
                 failureSituation,
                 differentApproach,
                 machineSpecs,
-                evaluate
+                evaluate,
+                type,
             } = reqData
 
             //check workOrder
@@ -395,23 +396,6 @@ const workOrderDetailService = {
             if (!workOrder) {
                 throw new BadReq(errorCode.WORK_ORDER_NOT_FOUND)
             }
-
-            if (isCompleted === true || isCompleted === 'true') {
-                const isMachineSpecsValid = machineSpecs && machineSpecs.length > 0 && machineSpecs.every(spec => {
-                    // Kiểm tra value không được null, undefined hoặc chuỗi rỗng
-                    if (Array.isArray(spec.value)) {
-                        return spec.value.length > 0;
-                    }
-                    return spec.value !== '' && spec.value !== null && spec.value !== undefined;
-                });
-
-                if (!isMachineSpecsValid) {
-                    throw new BadReq(errorCode.MachineSpecs_IN_Valid)
-                }
-            }
-
-            //UPDATE WORKORDER
-            await WorkOrderModel.findByIdAndUpdate(workOrderId, { status: "completed", serialNumber })
 
             //Lấy model
             const WorkOrderDetailModel = getWorkOrderModel(
@@ -428,12 +412,61 @@ const workOrderDetailService = {
                 throw new BadReq(errorCode.WORK_ORDER_DETAIL_NOT_FOUND)
             }
 
+
+            if (isCompleted === true || isCompleted === 'true') {
+                const isMachineSpecsValid = machineSpecs && machineSpecs.length > 0 && machineSpecs.every(spec => {
+                    // Kiểm tra value không được null, undefined hoặc chuỗi rỗng
+                    if (Array.isArray(spec.value)) {
+                        return spec.value.length > 0;
+                    }
+                    return spec.value !== '' && spec.value !== null && spec.value !== undefined;
+                });
+
+                if (!isMachineSpecsValid) {
+                    throw new BadReq(errorCode.MachineSpecs_IN_Valid)
+                }
+            } else {
+                //Update WorkingTime
+                let workingTime = "";
+                if (leavingTime) {
+                    const timeMs = new Date(leavingTime) - new Date(workOrderDetail?.arrivalTime)
+                    const minutes = (timeMs / (1000 * 60)).toFixed(1);
+
+                    if (minutes >= 60) {
+                        const hours = Math.floor(minutes / 60)
+                        const mins = (minutes % 60).toFixed(1)
+                        workingTime = `${hours} giờ ${mins} phút`;
+                    }
+                    else {
+                        workingTime = `${minutes} phút`;
+                    }
+                }
+
+                const result = await WorkOrderDetailModel.findByIdAndUpdate(
+                    workOrderDetail._id,
+                    {
+                        arrivalTime,
+                        leavingTime,
+                        workingTime
+                    }, { new: true }
+                )
+                return { workingTime: result?.workingTime }
+            }
+
+
+
             const typeWork = workOrder.typeWork
-            const type = workOrder.type[0]
+            const workOrderType = workOrder.type[0]
+
+
+            //Check xem có thay đổi cùng dòng máy không 
+            if (workOrder.type[0] != type[0]) {
+                throw new BadReq(errorCode.TYPE_MACHINE_INVALIB)
+            }
 
             // Phiếu BẢO TRÌ MAINTENANCE
             if (typeWork === constant.WORK_ORDER_TYPE.MAINTENANCE.value) {
-                if (type === constant.WORK_ORDER_DETAIL_TYPE.A.value) {
+                if (workOrderType === constant.WORK_ORDER_DETAIL_TYPE.A.value) {
                     const {
                         maintainContractDate,
                         maintainDate,
@@ -444,7 +477,6 @@ const workOrderDetailService = {
                         technicalFeedback,
                         customerFeedback,
                         customerInfo,
-                        type,
                         machineName,
                         serialNumber,
                         failureSituation,
@@ -478,7 +510,7 @@ const workOrderDetailService = {
                             evaluate
                         },
                     )
-                    return null
+                    // return null
                 } else {
                     const {
                         machineInfo,
@@ -500,13 +532,13 @@ const workOrderDetailService = {
                             customerFeedback,
                         },
                     )
-                    return null
+                    // return null
                 }
             }
 
             //Phiếu SỬA CHỮA
             if (typeWork === constant.WORK_ORDER_TYPE.REPAIR.value) {
-                if (type === constant.WORK_ORDER_DETAIL_TYPE.A.value) {
+                if (workOrderType === constant.WORK_ORDER_DETAIL_TYPE.A.value) {
                     await WorkOrderDetailModel.findByIdAndUpdate(
                         workOrderDetail._id,
                         {
@@ -514,7 +546,7 @@ const workOrderDetailService = {
                             repairDate,
                             arrivalTime,// Thời gian đến
                             leavingTime, //Thời gian đi
-                            workingTime,
+                            // workingTime,
                             departureTime,
                             installationDate,
                             inkCode,
@@ -531,7 +563,7 @@ const workOrderDetailService = {
                             evaluate
                         },
                     )
-                    return null
+                    // return null
                 } else {
                     const {
                         arrivalTime,// Thời gian đến
@@ -556,7 +588,7 @@ const workOrderDetailService = {
                             customerFeedback,
                         },
                     )
-                    return null
+                    // return null
                 }
             }
 
@@ -584,96 +616,107 @@ const workOrderDetailService = {
                         guide,
                     },
                 )
-                return null
             }
 
-            if (typeWork === constant.WORK_ORDER_TYPE.SAMPLE_PRINTING.value) {
-                const {
-                    inkTypeId,
-                    sellMachineTypeId,
-                    packagingMaterial,
-                    temperature,
-                    method,
-                    informationFrom,
-                    customerRequest,
-                    managerOpinion,
-                    solution,
-                    testInkTypeIds,
-                    managerOpinionOnSample,
-                    receivingTime,
-                    returnTime,
-                    note,
-                } = reqData
-                await WorkOrderDetailModel.findByIdAndUpdate(
-                    workOrderDetail._id,
-                    {
-                        inkTypeId,
-                        sellMachineTypeId,
-                        packagingMaterial,
-                        temperature,
-                        method,
-                        informationFrom,
-                        customerRequest,
-                        managerOpinion,
-                        solution,
-                        testInkTypeIds,
-                        managerOpinionOnSample,
-                        receivingTime,
-                        returnTime,
-                        note,
-                    },
-                )
-                return null
-            }
+            // if (typeWork === constant.WORK_ORDER_TYPE.SAMPLE_PRINTING.value) {
+            //     const {
+            //         inkTypeId,
+            //         sellMachineTypeId,
+            //         packagingMaterial,
+            //         temperature,
+            //         method,
+            //         informationFrom,
+            //         customerRequest,
+            //         managerOpinion,
+            //         solution,
+            //         testInkTypeIds,
+            //         managerOpinionOnSample,
+            //         receivingTime,
+            //         returnTime,
+            //         note,
+            //     } = reqData
+            //     await WorkOrderDetailModel.findByIdAndUpdate(
+            //         workOrderDetail._id,
+            //         {
+            //             inkTypeId,
+            //             sellMachineTypeId,
+            //             packagingMaterial,
+            //             temperature,
+            //             method,
+            //             informationFrom,
+            //             customerRequest,
+            //             managerOpinion,
+            //             solution,
+            //             testInkTypeIds,
+            //             managerOpinionOnSample,
+            //             receivingTime,
+            //             returnTime,
+            //             note,
+            //         },
+            //     )
+            //     return null
+            // }
 
-            if (typeWork === constant.WORK_ORDER_TYPE.DEMO.value) {
-                const { props, technicalFeedback, customerFeedback } = reqData
-                await WorkOrderDetailModel.findByIdAndUpdate(
-                    workOrderDetail._id,
-                    {
-                        props,
-                        technicalFeedback,
-                        customerFeedback,
-                    },
-                )
-                return null
-            }
+            // if (typeWork === constant.WORK_ORDER_TYPE.DEMO.value) {
+            //     const { props, technicalFeedback, customerFeedback } = reqData
+            //     await WorkOrderDetailModel.findByIdAndUpdate(
+            //         workOrderDetail._id,
+            //         {
+            //             props,
+            //             technicalFeedback,
+            //             customerFeedback,
+            //         },
+            //     )
+            //     return null
+            // }
 
-            if (typeWork === constant.WORK_ORDER_TYPE.TEST_IO.value) {
-                if (type === constant.WORK_ORDER_DETAIL_TYPE.A.value) {
-                    const { testDate, testerId, props } = reqData
-                    await WorkOrderDetailModel.findByIdAndUpdate(
-                        workOrderDetail._id,
-                        { testDate, testerId, props },
-                    )
-                    return null
-                } else {
-                    const {
-                        testDate,
-                        testerId,
-                        purposeTest,
-                        receiptDate,
-                        props,
-                        image,
-                        printHeads,
-                    } = reqData
-                    await WorkOrderDetailModel.findByIdAndUpdate(
-                        workOrderDetail._id,
-                        {
-                            baseInfo: {
-                                testDate,
-                                testerId,
-                                purposeTest,
-                                receiptDate,
-                            },
-                            props,
-                            image,
-                            printHeads,
-                        },
-                    )
-                    return null
-                }
-            }
+            // if (typeWork === constant.WORK_ORDER_TYPE.TEST_IO.value) {
+            //     if (type === constant.WORK_ORDER_DETAIL_TYPE.A.value) {
+            //         const { testDate, testerId, props } = reqData
+            //         await WorkOrderDetailModel.findByIdAndUpdate(
+            //             workOrderDetail._id,
+            //             { testDate, testerId, props },
+            //         )
+            //         return null
+            //     } else {
+            //         const {
+            //             testDate,
+            //             testerId,
+            //             purposeTest,
+            //             receiptDate,
+            //             props,
+            //             image,
+            //             printHeads,
+            //         } = reqData
+            //         await WorkOrderDetailModel.findByIdAndUpdate(
+            //             workOrderDetail._id,
+            //             {
+            //                 baseInfo: {
+            //                     testDate,
+            //                     testerId,
+            //                     purposeTest,
+            //                     receiptDate,
+            //                 },
+            //                 props,
+            //                 image,
+            //                 printHeads,
+            //             },
+            //         )
+            //         return null
+            //     }
+            // }
+
+            //UPDATE WORKORDER
+            await WorkOrderModel.findByIdAndUpdate(workOrderId, { status: "completed", serialNumber })
+
+            //UPDATE STATUS KỸ THUẬT VIÊN
+            await technicianService.checkStatusTechnical(workOrder.technicianId)
+
+            // UPDATE KHÁCH HÀNG
+            const dataUpdate = { customerId: workOrder?.customerId, serialNumber: reqData?.serialNumber, productCode: reqData?.type }
+            await contactPersonCustomerService.create(dataUpdate, 'update')
+
+            return null
         } catch (error) {
             throw error
         }

@@ -2,6 +2,8 @@ const ContactPersonCustomerModel = require('../models/contactPersonCustomer')
 const BadReq = require('../utils/response/requestError')
 const errorCode = require('../utils/response/errorCode.js')
 const CustomerModel = require('../models/customer')
+const { Types } = require('mongoose')
+const WorkOrderModel = require('../models/workOrder.js')
 
 const contactPersonCustomerService = {
     create: async (reqData, typeAction) => {
@@ -33,7 +35,6 @@ const contactPersonCustomerService = {
                         { contactName, contactEmail, contactPhone },
                     ],
                     devices: { productCode }
-                    // productCode,
                 }
 
                 if (serialNumber && serialNumber !== "") {
@@ -73,7 +74,8 @@ const contactPersonCustomerService = {
                     )
                 }
 
-                const existedAddress = record.address.find((a) => a.specificAddress == specificAddress)
+                //-----XỬ LÝ ĐỊA CHỈ
+                const existedAddress = record.address.find((a) => a.specificAddress == specificAddress && a.ward === ward && a.provinceCity === provinceCity)
                 if (!existedAddress &&
                     (provinceCity != null && ward != null && specificAddress != null)
                 ) {
@@ -91,8 +93,7 @@ const contactPersonCustomerService = {
                         },
                     )
                 }
-
-
+                //-----XỬ LÝ MÃ SẢN PHẨM
                 const checkProductCode = record.devices.find((a) => a.productCode == productCode)
                 if (typeAction == 'update' && checkProductCode) {
                     await ContactPersonCustomerModel.findOneAndUpdate(
@@ -106,7 +107,6 @@ const contactPersonCustomerService = {
                     )
                 }
                 else if (typeAction == 'installation') {
-                    console.log("Vô installation")
                     await ContactPersonCustomerModel.findByIdAndUpdate(
                         record._id,
                         {
@@ -156,6 +156,7 @@ const contactPersonCustomerService = {
             } else {
                 const deliveryAddresses = customer?.deliveryAddresses
                 let result = []
+
                 deliveryAddresses && deliveryAddresses.map((address) => {
                     result.push({
                         specificAddress: address.street,
@@ -212,36 +213,46 @@ const contactPersonCustomerService = {
             throw error
         }
     },
-    // deleteAddress: async (customerId, reqData) => {
-    //     try {
-    //         const { address } = reqData
-    //         const customer = await CustomerModel.findById(customerId)
-    //         if (!customer) {
-    //             throw new BadReq(errorCode.CUSTOMER_NOT_FOUND)
-    //         }
+    deleteAddress: async (customerId, reqData) => {
+        try {
+            const { addressId } = reqData
+            const customer = await CustomerModel.findById(customerId)
+            if (!customer) {
+                throw new BadReq(errorCode.CUSTOMER_NOT_FOUND)
+            }
 
-    //         const record = await ContactPersonCustomerModel.findOne({
-    //             customerId,
-    //         }).lean()
-    //         if (!record) {
-    //             throw new BadReq(errorCode.CONTACT_PERSON_NOT_FOUND)
-    //         }
+            const record = await ContactPersonCustomerModel.findOne({
+                customerId,
+            }).lean()
+            if (!record) {
+                throw new BadReq(errorCode.CONTACT_PERSON_NOT_FOUND)
+            }
 
-    //         const existed = record.address.some((a) => a === address)
+            const workOrder = await WorkOrderModel.findOne({ customerId })
 
-    //         if (!existed) {
-    //             throw new BadReq(errorCode.CONTACT_PERSON_NOT_FOUND)
-    //         }
+            if (workOrder.address) {
+                const checkAddress = record?.address.find((add) => add._id == addressId)
+                if (checkAddress?.specificAddress == workOrder?.address?.specificAddress) {
+                    await WorkOrderModel.findOneAndUpdate({ customerId }, { address: { specificAddress: null, ward: null, provinceCity: null } })
+                }
+            }
 
-    //         await ContactPersonCustomerModel.findByIdAndUpdate(record._id, {
-    //             $pull: { address: address },
-    //         })
+            if (record?.address.length > 0) {
+                await ContactPersonCustomerModel.findOneAndUpdate(
+                    { customerId },
+                    {
+                        $pull: {
+                            address: { _id: new Types.ObjectId(addressId) }
+                        }
+                    },
+                )
+            }
 
-    //         return null
-    //     } catch (error) {
-    //         throw error
-    //     }
-    // },
+            return null
+        } catch (error) {
+            throw error
+        }
+    },
     getSerialNumber: async (params, query) => {
         try {
             const { customerId } = params
@@ -256,6 +267,53 @@ const contactPersonCustomerService = {
                 }
             }
             return result
+        } catch (error) {
+            throw error
+        }
+    },
+    deleteMachine: async (params, query) => {
+        try {
+            const { customerId } = params
+            const { machineId } = query
+
+            const customer = await CustomerModel.findById(customerId)
+            if (!customer) {
+                throw new BadReq(errorCode.CUSTOMER_NOT_FOUND)
+            }
+
+            const record = await ContactPersonCustomerModel.findOne({ customerId })
+            if (!record) {
+                throw new BadReq(errorCode.CONTACT_PERSON_NOT_FOUND)
+            }
+
+            const workOrder = await WorkOrderModel.findOne({ customerId })
+
+            if (workOrder.type) {
+                const checkType = record?.devices.find((type) => type._id == machineId)
+                if (checkType?.productCode == workOrder?.type?.specificAddress) {
+                    await WorkOrderModel.findOneAndUpdate({ customerId }, { type: null })
+                }
+            }
+
+            if (machineId) {
+                await ContactPersonCustomerModel.findOneAndUpdate(
+                    { customerId },
+                    {
+                        $set: { "devices.$[elem].isActive": false }
+                    },
+                    {
+                        arrayFilters: [{ "elem._id": new Types.ObjectId(machineId) }],
+                        new: true
+                    }
+                    // {
+                    //     $pull: {
+                    //         devices: { _id: new Types.ObjectId(machineId) }
+                    //     }
+                    // },
+                )
+            }
+
+            return null
         } catch (error) {
             throw error
         }

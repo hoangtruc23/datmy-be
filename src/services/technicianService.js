@@ -77,7 +77,24 @@ const technicianService = {
                     ],
                 })
                 technician.numOfWork = totalWorkOrder
+
+                const technicianId = technician._id
+                const pendingCount = await WorkOrderModel.countDocuments({
+                    technicianId,
+                    status: { $ne: constant.WORK_REQUEST_STATUS.COMPLETED.value },
+                })
+
+                if (pendingCount == 0) {
+                    await TechnicianModel.findByIdAndUpdate(technicianId, {
+                        status: constant.TECHNICIAN_STATUS.FREE.value,
+                    })
+                } else {
+                    await TechnicianModel.findByIdAndUpdate(technicianId, {
+                        status: constant.TECHNICIAN_STATUS.WORKING.value,
+                    })
+                }
             }
+
             return {
                 technicians,
                 page,
@@ -289,6 +306,33 @@ const technicianService = {
             return technician
         } catch (error) {
             throw error
+        }
+    },
+
+    checkStatusTechnical: async (technicianId) => {
+        try {
+            const technician = await TechnicianModel.findById(technicianId)
+            if (!technician) {
+                throw new BadReq(errorCode.TECHNICIAN_NOT_FOUND)
+            }
+
+            const pendingCount = await WorkOrderModel.countDocuments({
+                technicianId,
+                status: { $ne: constant.WORK_REQUEST_STATUS.COMPLETED.value },
+            })
+
+            if (pendingCount == 0) {
+                await TechnicianModel.findByIdAndUpdate(technicianId, {
+                    status: constant.TECHNICIAN_STATUS.FREE.value,
+                })
+            } else {
+                await TechnicianModel.findByIdAndUpdate(technicianId, {
+                    status: constant.TECHNICIAN_STATUS.WORKING.value,
+                })
+            }
+            return null
+        } catch (err) {
+            throw err
         }
     },
 }
