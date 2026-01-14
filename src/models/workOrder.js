@@ -46,9 +46,9 @@ const workOrderSchema = new Schema(
             // default: constant.WORK_REQUEST_SOURCE.WAREHOUSE.value,
             required: false,
         },
-        header: {
+        note: {
             type: String,
-            required: true,
+            required: false,
         },
         description: {
             type: String,
@@ -69,14 +69,11 @@ const workOrderSchema = new Schema(
             // ),
         },
         contactPerson: contactPersonSchema,
-        // type: { //Loại máy
-        //     type: String,
-        //     enum: Object.values(constant.WORK_ORDER_DETAIL_TYPE).map(
-        //         (s) => s.value,
-        //     ),
-        //     default: constant.WORK_ORDER_DETAIL_TYPE.NULL.value,
-        // },
         type: { //Code của máy machine -> Ví dụ: A100
+            type: String,
+            required: false,
+        },
+        detailType: {
             type: String,
             required: false,
         },

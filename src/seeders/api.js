@@ -1223,6 +1223,11 @@ async function apiSeeder() {
             note: 'Lấy ra số Serial Number',
         },
         {
+            _id: new Types.ObjectId('691ebf6e7cd69b4b32fa3b13'),
+            api: '/contactPerson/deleteMachine',
+            note: 'Xóa máy của khách hàng',
+        },
+        {
             _id: new Types.ObjectId('691ebf6e7cd69b4b32fa3b61'),
             api: '/contract/getAll',
             note: 'Lấy danh sách hợp đồng',

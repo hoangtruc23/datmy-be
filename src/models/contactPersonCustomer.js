@@ -39,7 +39,6 @@ const contactPersonCustomerSchema = new Schema({
             }
         }
     ],
-
     devices: [
         {
             productCode: { //Code của tên máy machine -> ví dụ: A100
@@ -49,6 +48,15 @@ const contactPersonCustomerSchema = new Schema({
             serialNumber: {
                 type: String,
                 required: false,
+            },
+            contractType: { // Máy thuê / mua ,...
+                type: String,
+                required: false,
+            },
+            isActive: {
+                type: Boolean,
+                required: true,
+                default: true
             }
         }
     ]

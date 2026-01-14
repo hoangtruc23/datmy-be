@@ -2350,6 +2350,10 @@ async function rolePermissionSeeder() {
             permissionId: '6853d1b6fa10ea77cf67990b', // Xem danh sách customer - inventory/api/customer/getAll
         },
 
+        {//Xóa thiết bị của Khách hàng
+            roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật 
+            permissionId: '6914e05ccf9e7d1d96f5a0f8', // contactPerson/deleteAddress 
+        },
         //#endregion
         //#region Kỹ thuật viên
         {
@@ -2437,10 +2441,15 @@ async function rolePermissionSeeder() {
         //     permissionId: '684927c871287f2ae7d81301', // xóa
         // },
 
+
         {
             roleId: '684927c871287f2ae7d8130c',
             permissionId: '684927c871287f2ae7d81302', // Khách hàng
         },
+
+
+
+
         // {
         //     roleId: '684927c871287f2ae7d8130c',
         //     permissionId: '685135a0f2a5cb3fcc6b8f03', // Thêm khách hàng

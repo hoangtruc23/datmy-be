@@ -53,6 +53,14 @@ const contactPersonCustomerController = {
         } catch (error) {
             next(error)
         }
+    },
+    deleteMachine: async (req, res, next) => {
+        try {
+            const result = await contactPersonCustomerServices.deleteMachine(req.params, req.body)
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
     }
 }
 module.exports = contactPersonCustomerController

@@ -79,6 +79,10 @@ async function permissionApiSeeder() {
             permissionId: '6853d1b6fa10ea77cf679911', // xoá khách hàng
             apiId: '6853d1b6fa10ea77cf679912', // /customer/delete
         },
+        {
+            permissionId: '6853d1b6fa10ea77cf679911', // xoá khách hàng
+            apiId: '6853d1b6fa10ea77cf679912', // /customer/delete
+        },
         // Nhà cung cấp
         {
             permissionId: '684bd4f6fa59db4b4781d2b2', // Thêm
@@ -871,6 +875,11 @@ async function permissionApiSeeder() {
         {
             permissionId: '68d3750d4828a7c4347ad1be', // Xóa phiếu yêu cầu công việc
             apiId: '68d37503136efac69b7bcad4', // /workOrder/delete
+        },
+
+        {
+            permissionId: '6914e05ccf9e7d1d96f5a0f8', // Xóa thiết bị của khách hàng
+            apiId: '691ebf6e7cd69b4b32fa3b13', // /contactPerson/deleteAddress
         },
 
         // Kỹ thuật viên

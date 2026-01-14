@@ -10,6 +10,7 @@ const ContactPersonCustomerModel = require('../models/contactPersonCustomer')
 const MachineSettingModel = require('../models/machineSetting')
 const ProductModel = require('../models/product')
 const { getWorkOrderModel } = require('../utils/helper/workOrderDetailHelper')
+const technicianService = require('./technicianService')
 
 const workOrderService = {
     getAll: async (reqUserId, query) => {
@@ -18,7 +19,6 @@ const workOrderService = {
             limit = Number(limit)
             page = Number(page)
             search = new RegExp(search, 'i')
-
 
             const technician = await TechnicianModel.findById(reqUserId)
             const customers = await CustomerModel.find({ officialName: search })
@@ -194,7 +194,7 @@ const workOrderService = {
         try {
             const {
                 technicianId,
-                header,
+                note,
                 typeWork,
                 customerId,
                 contactName,
@@ -207,7 +207,8 @@ const workOrderService = {
                 requestSource,
                 address,
                 type,
-                serialNumber
+                serialNumber,
+                detailType
             } = reqData
 
             const customer = await CustomerModel.findById(customerId)
@@ -245,15 +246,16 @@ const workOrderService = {
                 customerId,
                 typeWork,
                 requestSource,
-                header,
+                note,
                 description,
                 priority,
                 contactPerson: { contactName, contactPhone, contactEmail },
                 estimatedTime,
                 overDueTime,
                 type, //Loại máy
+                detailType,
                 serialNumber,
-                address
+                address,
             }
 
             if (
@@ -309,7 +311,7 @@ const workOrderService = {
                 typeWork,
                 type, //Loại máy
                 requestSource,
-                header,
+                note,
                 description,
                 priority,
                 estimatedTime,
@@ -320,15 +322,13 @@ const workOrderService = {
                 contactPhone,
                 address,
                 serialNumber,
+                detailType
             } = reqData
 
             const checkWorkOrder = await WorkOrderModel.findById(workOrderId)
             if (!checkWorkOrder) {
                 throw new BadReq(errorCode.WORK_ORDER_NOT_FOUND)
             }
-
-            const oldTypeWork = checkWorkOrder.typeWork
-            const oldType = checkWorkOrder.type //Loại Máy
 
             // if (
             //     oldTypeWork === constant.WORK_ORDER_TYPE.INSTALLATION.value ||
@@ -358,9 +358,9 @@ const workOrderService = {
                 isActive: true,
             })
 
-            if (technicianId && !technician) {
-                throw new BadReq(errorCode.TECHNICIAN_NOT_FOUND)
-            }
+            // if (technicianId && !technician) {
+            //     throw new BadReq(errorCode.TECHNICIAN_NOT_FOUND)
+            // }
 
             // if (typeWork !== oldTypeWork || type !== oldType) {
             //     if (
@@ -408,8 +408,9 @@ const workOrderService = {
                 technicianId,
                 typeWork,
                 type, //Loại máy
+                detailType,
                 requestSource,
-                header,
+                note,
                 description,
                 priority,
                 estimatedTime,
@@ -450,6 +451,9 @@ const workOrderService = {
                 await TechnicianModel.findByIdAndUpdate(technicianId, {
                     status: constant.TECHNICIAN_STATUS.WORKING.value,
                 })
+
+                // Update trạng thái KTV
+                // await technicianService.checkStatusTechnical(checkWorkOrder?.technicianId)
             }
 
             if (!technicianId && checkWorkOrder.technicianId) {
@@ -466,6 +470,8 @@ const workOrderService = {
                     )
                 }
             }
+
+
 
             return null
         } catch (error) {

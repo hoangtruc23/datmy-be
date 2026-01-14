@@ -16,7 +16,7 @@ const machineSettingService = {
             if (customerId && customerId !== "") {
                 const contact = await ContactPersonCustomerModel.findOne({ customerId }).lean();
                 if (contact) {
-                    const devices = contact?.devices
+                    const devices = contact?.devices.filter((d) => d.isActive)
                     const productCodes = devices.flatMap(device => device.productCode) || [];
                     const products = await ProductModel.find({ code: { $in: productCodes } }).select({ name: 1, code: 1 })
                     const productMap = new Map(products.map(p => [String(p.code), p]));

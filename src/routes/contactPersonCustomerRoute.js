@@ -23,6 +23,10 @@ router.get(
     '/getSerialNumber/:customerId',
     contactPersonCustomerController.getSerialNumber,
 )
+router.post(
+    '/deleteMachine/:customerId',
+    contactPersonCustomerController.deleteMachine,
+)
 
 /**
  * @swagger

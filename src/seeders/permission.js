@@ -869,6 +869,14 @@ async function permissionSeeder() {
             code: 'chinh_sua-phieu_chi_tiet_cong_viec',
             parentPermissionId: '6914e05ccf9e7d1d96f5a0f0',
         },
+
+        //  contactPerson/deleteMachine
+        {
+            _id: new Types.ObjectId('6914e05ccf9e7d1d96f5a0f8'),
+            name: 'Xóa thiết bị máy của khách hàng',
+            code: 'xoa_thiet-bi-may-cua-khach-hang',
+            parentPermissionId: null,
+        },
     ])
     logger.info('Permissions seeded')
 }
