@@ -21,6 +21,8 @@ const constant = {
         WORK_ORDER_DETAIL: '6914e05ccf9e7d1d96f5a0f0',
         WORK_ORDER_DETAIL_READ: '6914e05ccf9e7d1d96f5a0f1',
         WORK_ORDER_DETAIL_UPDATE: '6914e05ccf9e7d1d96f5a0f2',
+        GET_ALL_TECHNICIAN: '68db8978cc41fa86439388cd',
+        CREATE_WORK_ORDER: '68d3750d4828a7c4347ad1bd',
     },
     PRODUCT_MANAGEMENT_TYPE: {
         NONE: 'none',
