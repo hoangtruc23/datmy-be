@@ -45,6 +45,10 @@ const workOrderInstallationSchema = new Schema(
             viewSpecifications: [String], //Xem thông số máy
             errorMessages: [String], //Các báo lỗi của máy
         },
+        note: {
+            type: String,
+            default: null,
+        },
     },
     { timestamps: true },
 )
