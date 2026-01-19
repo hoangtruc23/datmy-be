@@ -81,10 +81,12 @@ const authService = {
     },
     getUserLoginDetail: async (userId) => {
         try {
+
             const user = await UserModel.findById(userId, {
                 password: 0,
                 __v: 0,
             }).lean()
+
             if (!user) {
                 return technicianService.getTechnicianLoginDetail(userId)
             } else {

@@ -156,6 +156,7 @@ const goodsIssueService = {
                 recipient,
                 note,
                 isDraft,
+                deductFromOrder,
                 createdAt = new Date(),
             } = goodsIssue
             const checkGoodsIssue = await GoodsIssueModel.findById(goodsIssueId)
@@ -166,6 +167,7 @@ const goodsIssueService = {
             if (!checkCustomer) {
                 throw new BadReq(errorCode.CUSTOMER_NOT_FOUND)
             }
+
             if (!isDraft && checkGoodsIssue.isDraft) {
                 const goodsIssueDetails = await GoodsIssueDetaileModel.find({
                     goodsIssueId,
@@ -202,7 +204,20 @@ const goodsIssueService = {
                         )
                     }
                 }
+
+                if (deductFromOrder) {
+                    const order = await OrderDetailModel.findOne({ orderId: deductFromOrder })
+                    const goodsIssueDetail = await GoodsIssueDetaileModel.findOne({ goodsIssueId: new Types.ObjectId(checkGoodsIssue?._id) })
+
+                    let updateQuantity = order?.quantity
+                    //mongo cung cấp sẵn equals
+                    if (goodsIssueDetail.productId.equals(order.productId)) {
+                        updateQuantity -= goodsIssueDetail?.issuedQuantity
+                    }
+                    await OrderDetailModel.findOneAndUpdate({ orderId: deductFromOrder }, { quantity: updateQuantity })
+                }
             }
+
             await GoodsIssueModel.findByIdAndUpdate(
                 goodsIssueId,
                 {
@@ -336,6 +351,17 @@ const goodsIssueService = {
                             )
                     }
                 }
+
+                if (deductFromOrder) {
+                    const order = await OrderDetailModel.findOne({ orderId: deductFromOrder })
+                    const goodsIssueDetail = await GoodsIssueDetaileModel.findOne({ goodsIssueId: new Types.ObjectId(checkGoodsIssue?._id) })
+
+                    let updateQuantity = order?.quantity
+                    if (goodsIssueDetail?.productId == order?.productId) {
+                        updateQuantity -= goodsIssueDetail?.issuedQuantity
+                    }
+                    await OrderDetailModel.findOneAndUpdate({ orderId: deductFromOrder }, { quantity: updateQuantity })
+                }
             }
             await GoodsIssueModel.findByIdAndUpdate(
                 goodsIssueId,
@@ -446,6 +472,7 @@ const goodsIssueService = {
                 orderId,
             } = product
             let orderDetail
+
             if (orderId) {
                 orderDetail = await OrderDetailModel.findOne({
                     orderId,
@@ -774,7 +801,7 @@ const goodsIssueService = {
                                 status:
                                     status == constant.APPROVAL_STATUS.APPROVED
                                         ? constant.GOODS_ISSUE_STATUS
-                                              .WAREHOUSE_ACCOUNTANT_APPROVAL
+                                            .WAREHOUSE_ACCOUNTANT_APPROVAL
                                         : status,
                             },
                             { session },
@@ -805,7 +832,7 @@ const goodsIssueService = {
                                 status:
                                     status == constant.APPROVAL_STATUS.APPROVED
                                         ? constant.GOODS_ISSUE_STATUS
-                                              .DEBT_ACCOUNTANT_APPROVAL
+                                            .DEBT_ACCOUNTANT_APPROVAL
                                         : status,
                             },
                             { session },
@@ -836,7 +863,7 @@ const goodsIssueService = {
                                 status:
                                     status == constant.APPROVAL_STATUS.APPROVED
                                         ? constant.GOODS_ISSUE_STATUS
-                                              .BILL_ACCOUNTANT_APPROVAL
+                                            .BILL_ACCOUNTANT_APPROVAL
                                         : status,
                             },
                             { session },
@@ -1026,15 +1053,15 @@ const goodsIssueService = {
             const finalStartDate = startDate
                 ? new Date(startDate).toLocaleDateString('vi-VN')
                 : results.length > 0
-                  ? new Date(
+                    ? new Date(
                         results[results.length - 1].date,
                     ).toLocaleDateString('vi-VN')
-                  : '...'
+                    : '...'
             const finalEndDate = endDate
                 ? new Date(endDate).toLocaleDateString('vi-VN')
                 : results.length > 0
-                  ? new Date(results[0].date).toLocaleDateString('vi-VN')
-                  : '...'
+                    ? new Date(results[0].date).toLocaleDateString('vi-VN')
+                    : '...'
 
             const reportConfig = {
                 worksheetName: 'Bảng kê chi tiết bán hàng',

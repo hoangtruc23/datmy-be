@@ -97,7 +97,10 @@ const workOrderDetailService = {
     getByWorkOrderId: async (workOrderId) => {
         try {
             const workOrder = await WorkOrderModel.findById(workOrderId)
-                .select({ customerId: 1, contactPerson: 1, serialNumber: 1, type: 1, typeWork: 1, createdAt: 1, address: 1, technicianId: 1 })
+                .select({
+                    customerId: 1, contactPerson: 1, serialNumber: 1, type: 1, typeWork: 1, createdAt: 1, address: 1, technicianId: 1,
+                    status: 1
+                })
                 .populate(
                     'customerId technicianId',
                     'officialName representative.name phone email fullname',

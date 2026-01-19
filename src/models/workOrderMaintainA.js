@@ -42,17 +42,15 @@ const workOrderMaintainASchema = new Schema(
             default: null,
         },
         machineSpecs: [propSchema], //Thông số
-        // replacement: [
-        //     {
-        //         type: Types.ObjectId,
-        //         ref: 'products',
-        //     },
-        // ],
         differentApproach: [String], //Thao tác xử lý
         technicalFeedback: [String], // Ý kiến kỹ thuật (Linh kiện đề xuất thay)
         replacement: [String], // Linh kiện đã thay
         customerFeedback: [String], //Ý kiến khách hàng 
         evaluate: Number, //Đánh giá khách hàng
+        note: {
+            type: String,
+            default: null,
+        },
     },
     { timestamps: true },
 )

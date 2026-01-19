@@ -827,16 +827,28 @@ async function permissionApiSeeder() {
             permissionId: '68d1166bba1c480c8180bf6c', // Xem phiếu yêu cầu công việc
             apiId: '68fee754df90864cd0ba5308', // /workOrder/getAllWorkRequestSource
         },
+        // {
+        //     permissionId: '68d1166bba1c480c8180bf6d', // Tạo phiếu yêu cầu công việc
+        //     apiId: '68d1153524419859fede4ebf', // /workOrder/create
+        // },
+        // {
+        //     permissionId: '68d1166bba1c480c8180bf6d', // Tạo phiếu yêu cầu công việc
+        //     apiId: '691c2c10cc14068cd86a1bf7', // /contactPerson/getAllPerson
+        // },
+        // {
+        //     permissionId: '68d1166bba1c480c8180bf6d', // Tạo phiếu yêu cầu công việc
+        //     apiId: '691c2c10cc14068cd86a1bf8', // /contactPerson/deletePerson
+        // },
         {
-            permissionId: '68d1166bba1c480c8180bf6d', // Tạo phiếu yêu cầu công việc
+            permissionId: '68d3750d4828a7c4347ad1bd', // Tạo phiếu yêu cầu công việc
             apiId: '68d1153524419859fede4ebf', // /workOrder/create
         },
         {
-            permissionId: '68d1166bba1c480c8180bf6d', // Tạo phiếu yêu cầu công việc
+            permissionId: '68d3750d4828a7c4347ad1bd', // Tạo phiếu yêu cầu công việc
             apiId: '691c2c10cc14068cd86a1bf7', // /contactPerson/getAllPerson
         },
         {
-            permissionId: '68d1166bba1c480c8180bf6d', // Tạo phiếu yêu cầu công việc
+            permissionId: '68d3750d4828a7c4347ad1bd', // Tạo phiếu yêu cầu công việc
             apiId: '691c2c10cc14068cd86a1bf8', // /contactPerson/deletePerson
         },
         {
@@ -862,7 +874,7 @@ async function permissionApiSeeder() {
         },
         {
             permissionId: '68d3750d4828a7c4347ad1bd', // Tạo phiếu yêu cầu công việc
-            apiId: '691ebf6e7cd69b4b32fa3b5f', // /contactPerson/getAllAddress
+            apiId: '69096d1afbb88e9e19560630', //machineSetting/getMachine
         },
         {
             permissionId: '68d3750d4828a7c4347ad1bd', // Tạo phiếu yêu cầu công việc

@@ -87,6 +87,7 @@ const workOrderService = {
             }
             const [workOrders, totalItems] = await Promise.all([
                 WorkOrderModel.find(conditions)
+                    .sort({ createdAt: -1 })
                     .skip((page - 1) * limit)
                     .limit(limit)
                     .populate(

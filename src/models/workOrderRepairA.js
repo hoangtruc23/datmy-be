@@ -60,6 +60,10 @@ const workOrderRepairASchema = new Schema(
         replacement: [String], // Linh kiện đã thay
         customerFeedback: [String],
         evaluate: Number, //Đánh giá của khách hàng
+        note: {
+            type: String,
+            default: null,
+        },
     },
     { timestamps: true },
 )
