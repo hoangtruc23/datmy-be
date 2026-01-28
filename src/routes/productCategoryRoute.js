@@ -11,7 +11,7 @@ router.post(
 )
 router.post(
     '/update/:id',
-    validate(productCategoryValidation.update),
+    // validate(productCategoryValidation.update),
     productCategoryController.update,
 )
 router.get('/getById/:id', productCategoryController.getById)

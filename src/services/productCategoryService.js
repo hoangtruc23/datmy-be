@@ -30,7 +30,6 @@ const productCategoryService = {
             if (!current) {
                 throw new BadReq(errorCode.PRODUCT_CATEGORY_NOT_FOUND)
             }
-
             current.set(productCategory)
             const updated = await current.save()
             return updated
@@ -67,8 +66,7 @@ const productCategoryService = {
                 ProductCategoryModel.find(filter)
                     .skip(skip)
                     .limit(limit)
-                    .sort({ createdAt: -1 })
-                    .select(' name description image isActive'),
+                    .sort({ createdAt: -1 }),
                 ProductCategoryModel.countDocuments(filter),
             ])
 

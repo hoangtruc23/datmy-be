@@ -144,12 +144,12 @@ const productCategoryService = {
             }
             const [products, total] = await Promise.all([
                 ProductModel.find(filter)
-                    .populate('unit', 'name -_id')
+                    .populate('unit categoryId', 'name productType -_id')
                     .skip(skip)
                     .limit(limit)
                     .sort({ createdAt: -1 })
                     .select(
-                        'code name shortName image safetyQuantity isActive managementType unit',
+                        'code name shortName image safetyQuantity isActive managementType unit categoryId productType',
                     ),
                 ProductModel.countDocuments(filter),
             ])

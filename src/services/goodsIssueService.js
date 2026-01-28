@@ -598,6 +598,7 @@ const goodsIssueService = {
                 issuedQuantity,
                 storages,
                 note,
+                explain
             } = product
             const checkGoodsIssueDetailExist =
                 await GoodsIssueDetaileModel.findOne({
@@ -684,6 +685,7 @@ const goodsIssueService = {
                 warehouseName: checkWarehouse.name,
                 storages,
                 note,
+                explain
             })
             return null
         } catch (error) {

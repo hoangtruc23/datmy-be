@@ -12,6 +12,11 @@ const productCategorySchema = new Schema(
         description: {
             type: String,
         },
+        productType: {
+            type: String, //component or material
+            required: false,
+            //Nguyên liệu hay là linh kiện
+        },
         isActive: {
             type: Boolean,
             required: true,
