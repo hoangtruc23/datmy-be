@@ -213,9 +213,21 @@ const constant = {
             value: 'warehouse',
             name: 'Kho',
         },
-        DEMO: {
-            value: 'demo',
-            name: 'Demo',
+        // DEMO: {
+        //     value: 'demo',
+        //     name: 'Demo',
+        // },
+        COMPANY: {
+            value: 'company',
+            name: 'Công ty',
+        },
+        BUSINESS: {
+            value: 'business',
+            name: 'Kinh doanh',
+        },
+        TECHNICIAN: {
+            value: 'technician',
+            name: 'Kỹ thuật',
         },
     },
     WORK_REQUEST_STATUS: {

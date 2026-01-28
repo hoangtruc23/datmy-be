@@ -380,7 +380,7 @@ const workOrderDetailService = {
                 replacement,
                 customerFeedback,
                 arrivalTime, // Thời gian đến
-                leavingTime, //Thời gian đi
+                leavingTime, //Thời gian đi ( thời gian rời khỏi)
                 // workingTime, //Thời gian sửa chữa 
                 installationDate,
                 inkCode,
@@ -431,18 +431,27 @@ const workOrderDetailService = {
             } else {
                 //Update WorkingTime
                 let workingTime = "";
+                const arrival = workOrderDetail?.arrivalTime;
                 if (leavingTime) {
-                    const timeMs = new Date(leavingTime) - new Date(workOrderDetail?.arrivalTime)
-                    const minutes = (timeMs / (1000 * 60)).toFixed(1);
-
-                    if (minutes >= 60) {
-                        const hours = Math.floor(minutes / 60)
-                        const mins = (minutes % 60).toFixed(1)
-                        workingTime = `${hours} giờ ${mins} phút`;
+                    if (!arrival) {
+                        throw new BadReq(errorCode.ARRIVAL_TIME_REQUIRED)
                     }
                     else {
-                        workingTime = `${minutes} phút`;
+                        const timeMs = new Date(leavingTime) - new Date(workOrderDetail?.arrivalTime)
+                        const minutes = (timeMs / (1000 * 60)).toFixed(1);
+
+                        if (minutes >= 60) {
+                            const hours = Math.floor(minutes / 60)
+                            const mins = (minutes % 60).toFixed(1)
+                            workingTime = `${hours} giờ ${mins} phút`;
+                        }
+                        else {
+                            workingTime = `${minutes} phút`;
+                        }
                     }
+
+                } else if (arrivalTime && workOrderDetail.leavingTime) {
+                    throw new BadReq(errorCode.CANT_UPDATE_TIME)
                 }
 
                 const result = await WorkOrderDetailModel.findByIdAndUpdate(
@@ -456,11 +465,8 @@ const workOrderDetailService = {
                 return { workingTime: result?.workingTime }
             }
 
-
-
             const typeWork = workOrder.typeWork
             const workOrderType = workOrder.type[0]
-
 
             //Check xem có thay đổi cùng dòng máy không 
             if (workOrder.type[0] != type[0]) {
@@ -473,7 +479,7 @@ const workOrderDetailService = {
                     const {
                         maintainContractDate,
                         maintainDate,
-                        arrivalTime,
+                        // arrivalTime,
                         departureTime,
                         machineSpecs,
                         replacement,
@@ -495,7 +501,7 @@ const workOrderDetailService = {
                         {
                             customerInfo,
                             maintainDate,
-                            arrivalTime,
+                            // arrivalTime,
                             departureTime,
                             type,
                             machineName,
@@ -547,8 +553,8 @@ const workOrderDetailService = {
                         {
                             maintainContract,
                             repairDate,
-                            arrivalTime,// Thời gian đến
-                            leavingTime, //Thời gian đi
+                            // arrivalTime,// Thời gian đến
+                            // leavingTime, //Thời gian đi
                             // workingTime,
                             departureTime,
                             installationDate,
@@ -569,8 +575,8 @@ const workOrderDetailService = {
                     // return null
                 } else {
                     const {
-                        arrivalTime,// Thời gian đến
-                        leavingTime, //Thời gian đi
+                        // arrivalTime,// Thời gian đến
+                        // leavingTime, //Thời gian đi
                         machineInfo,
                         machineSpecs,
                         groups,

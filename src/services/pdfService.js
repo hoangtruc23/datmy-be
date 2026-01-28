@@ -66,8 +66,12 @@ const pdfService = {
             const unit = await UnitModel.findById(item.unit)
             const unitName = unit ? unit.name : '—'
 
-            const product = await ProductModel.findById(item.productId)
-            const specification = product ? product.specification : ''
+            const product = await ProductModel.findById(item.productId).populate('categoryId', 'productType')
+            let specification = product ? product.specification : ''
+            if (product && item.explain) {
+                specification = product.code
+            }
+            console.log(product)
             total += item.issuedQuantity
             rows += `
             <tr>

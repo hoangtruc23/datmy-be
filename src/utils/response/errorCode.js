@@ -599,6 +599,14 @@ const errorCode = {
         code: 146,
         message: 'Không thể thay đổi qua dòng máy khác.',
     },
+    ARRIVAL_TIME_REQUIRED: {
+        code: 147,
+        message: 'Vui lòng cập nhật thời gian đến trước.',
+    },
+    CANT_UPDATE_TIME: {
+        code: 148,
+        message: 'Không thể check-in sau khi đã check-out.',
+    },
 }
 
 module.exports = errorCode

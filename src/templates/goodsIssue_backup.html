@@ -24,13 +24,13 @@
                 display: flex;
                 justify-content: space-between;
                 align-items: flex-start;
-                /* margin-bottom: 10px; */
+                margin-bottom: 10px;
             }
 
             .company-info,
             .office-info {
                 width: 30%;
-                /* white-space: pre-line; */
+                white-space: pre-line;
                 font-size: 13px;
             }
             .header {
@@ -41,7 +41,7 @@
             .header-center {
                 width: 40%;
                 text-align: center;
-                margin: 0 0; /* căn giữa theo chiều dọc trong khung header */
+                margin: auto 0; /* căn giữa theo chiều dọc trong khung header */
             }
             /* Office info lines với dấu : thẳng hàng */
             .info-lines {
@@ -68,7 +68,7 @@
             .title {
                 font-size: 26px;
                 font-weight: bold;
-                /* margin-bottom: 3px; */
+                margin-bottom: 3px;
             }
             .no-margin {
                 margin: 0;
@@ -92,7 +92,7 @@
 
             .company-info p {
                 margin: 0;
-                /* line-height: 0.5; */
+                line-height: 0.5;
             }
             /* Table */
             table,
@@ -102,8 +102,6 @@
                 word-wrap: break-word;
                 word-break: break-word;
                 white-space: normal;
-                font-weight: normal;
-                font-size: 14px;
             }
             table {
                 width: 100%;
@@ -167,12 +165,7 @@
     <body>
         <!-- Logo -->
         <div class="logo-container">
-            <img
-                class="logo"
-                style="width: 100px; height: auto"
-                src="{{logoPath}}"
-                alt="Logo"
-            />
+            <img class="logo" src="{{logoPath}}" alt="Logo" />
         </div>
 
         <!-- Header: 3 cột -->
@@ -182,7 +175,7 @@
                 <div>
                     <strong
                         style="
-                            font-size: 20px;
+                            font-size: 14px;
                             margin-bottom: 10px;
                             display: inline-block;
                         "
@@ -192,8 +185,14 @@
                     <p>Số 12 - 14 Khu dân cư An Lạc, Đường số 16</p>
                     <p>P.Bình Trị Đông B, Q.Bình Tân, TP.HCM</p>
                     <p>ĐT: 028-37511715, 626.00789, FAX: 028-37511714</p>
-                    <p>Email: info@datmy.com.vn</p>
+                    <p>Email: info@datmy.com.vn, MST: 0301427596</p>
                 </div>
+            </div>
+
+            <!-- Title in center -->
+            <div class="header-center">
+                <div class="title">PHIẾU GIAO HÀNG</div>
+                <div class="sub-title">KIÊM PHIẾU XUẤT KHO</div>
             </div>
 
             <!-- Office Info -->
@@ -201,60 +200,51 @@
                 <div>
                     <strong
                         style="
-                            font-size: 20px;
+                            font-size: 14px;
                             margin-bottom: 10px;
                             display: inline-block;
                         "
                     >
                         Văn phòng giao dịch tại Hà Nội</strong
                     >
-                    <p style="margin: 0">
-                        Ô số 31 dãy 16B3, Làng Việt kiều Châu Âu
-                    </p>
-                    <p style="margin: 0">
-                        KĐT Mỗ Lao, P.Mỗ Lao, Q.Hà Đông, Hà Nội
-                    </p>
-                    <p style="margin: 0">ĐT: 024-33.546.787, 33.547.028</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="" style="display: flex; justify-content: space-between">
-            <div style="width: 30%">
-                <p>MST: <span style="letter-spacing: 3px">0301427596</span></p>
-            </div>
-            <!-- Title in center -->
-            <div class="header-center">
-                <div class="title">PHIẾU GIAO HÀNG</div>
-                <div class="sub-title">KIÊM PHIẾU XUẤT KHO</div>
-            </div>
-
-            <div class="info-lines" style="width: 30%">
-                <div class="info-line">
-                    <span class="label">Ngày:</span>
-                    <span class="value">{{createdAt}}</span>
-                </div>
-                <div class="info-line">
-                    <span class="label">Số hóa đơn:</span>
-                    <span class="value">{{invoiceNumber}}</span>
-                </div>
-                <div class="info-line">
-                    <span class="label">Số phiếu:</span>
-                    <span class="value">{{issueNumber}}</span>
-                </div>
-                <div class="info-line">
-                    <span class="label">Số PO:</span>
-                    <span class="value">{{invoiceOrContractNumber}}</span>
+                    Ô số 31 dãy 16B3, Làng Việt kiều Châu Âu KĐT Mỗ Lao, P.Mỗ
+                    Lao, Q.Hà Đông, Hà Nội ĐT: 024-33.546.787, 33.547.028
+                    <div class="info-lines">
+                        <div class="info-line">
+                            <span class="label">Ngày:</span>
+                            <span class="value">{{createdAt}}</span>
+                        </div>
+                        <div class="info-line">
+                            <span class="label">Số hóa đơn:</span>
+                            <span class="value">{{invoiceNumber}}</span>
+                        </div>
+                        <div class="info-line">
+                            <span class="label">Số phiếu:</span>
+                            <span class="value">{{issueNumber}}</span>
+                        </div>
+                        <div class="info-line">
+                            <span class="label">Số PO:</span>
+                            <span class="value"
+                                >{{invoiceOrContractNumber}}</span
+                            >
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Customer info -->
         <div class="info-block">
-            <p>Khách hàng: {{customer}}</p>
-            <p>Người liên hệ: {{orderedBy.name}} - {{orderedBy.phone}}</p>
-            <p>Người nhận hàng: {{recipient.name}} - {{recipient.phone}}</p>
-            <p>Địa chỉ nhận hàng: {{deliveryAddresses}}</p>
+            <p><strong>Khách hàng:</strong> {{customer}}</p>
+            <p>
+                <strong>Người liên hệ:</strong> {{orderedBy.name}} -
+                {{orderedBy.phone}}
+            </p>
+            <p>
+                <strong>Người nhận hàng:</strong> {{recipient.name}} -
+                {{recipient.phone}}
+            </p>
+            <p><strong>Địa chỉ nhận hàng:</strong> {{deliveryAddresses}}</p>
         </div>
 
         <!-- Table -->
@@ -274,9 +264,7 @@
                 <tr>
                     <td>{{deliveryAddresses}}</td>
                     <td></td>
-                    <td colspan="2" style="text-align: right; font-weight: 600">
-                        TỔNG CỘNG
-                    </td>
+                    <td colspan="2" style="text-align: right">TỔNG CỘNG</td>
                     <td>{{totalIssuedQuantity}}</td>
                     <td style="text-align: left">{{goodsIssueNote}}</td>
                 </tr>

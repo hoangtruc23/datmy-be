@@ -71,6 +71,10 @@ const goodsIssueDetailSchema = new Schema({
         type: Types.ObjectId,
         ref: 'orderDetails',
     },
+    explain: { //Dùng để biết là có hiển thị mã code của component (product) lên PXK hay không
+        type: Boolean,
+        default: false,
+    }
 })
 
 const GoodsIssueDetaileModel = model(
