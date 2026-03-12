@@ -348,6 +348,172 @@ const pdfService = {
             throw err
         }
     },
+
+    generateWorkOrderPdf: async (data) => {
+        const templatePath = path.join(
+            __dirname,
+            "../templates/pdfDialogWorkOrder.html",
+        )
+
+        let html = fs.readFileSync(templatePath, 'utf8')
+        const logoPath = path.resolve(__dirname, '../public/logo.jpg')
+        const logoBuffer = fs.readFileSync(logoPath)
+        const logoBase64 = logoBuffer.toString('base64')
+        const logoDataUri = `data:image/jpeg;base64,${logoBase64}`
+        const typeWorkLabel = data.typeWork === 'repair'
+            ? "SỬA CHỮA"
+            : data.typeWork === "maintain"
+                ? "BẢO TRÌ"
+                : "LẮP ĐẶT"; // Default fallback
+
+
+        // Xử lý Linh kiện đã thay
+        const replacementHtml = data?.workOrderDetail?.replacement
+            ?.map(item => `<div style="color: #3b82f6;">- ${item}</div>`)
+            .join('') ?? '';
+
+        // Xử lý Ý kiến kỹ thuật (đề xuất thay)
+        const technicalFeedbackHtml = data?.workOrderDetail?.technicalFeedback
+            ?.map(item => `<div style="color: #3b82f6;">- ${item}</div>`)
+            .join('') ?? '';
+
+        console.log(data.workOrderDetail.machineSpecs)
+        // Xử lý Ý kiến khách hàng (Nếu có)
+        const customerFeedback = data?.workOrderDetail?.customerFeedback?.map(item => `<div style="color: #3b82f6;">- ${item}</div>`)
+            .join('') ?? '';
+
+        // Xử lý Tình hình sự cố máy
+        const failureHtml = data?.workOrderDetail?.failureSituation
+            ?.map(item => `<div style="color: #2563eb; padding: 2px 0;">- ${item}</div>`)
+            .join('') ?? '';
+
+        // Xử lý Cách xử lý khác
+        const approachHtml = data?.workOrderDetail?.differentApproach
+            ?.map(item => `<div style="color: #2563eb; padding: 2px 0;">- ${item}</div>`)
+            .join('') ?? '';
+
+        const specs = {};
+        data?.workOrderDetail?.machineSpecs?.forEach(item => {
+            specs[item?.propId?.name] = item.value ?? '';
+        });
+
+        const getValueSpec = (specName) => {
+            const value = specs[specName] || [];
+            return value
+        };
+
+        const inkConcentration = Object.fromEntries(getValueSpec("Nồng độ mực").map(item => [item.name, item.value])); //Nồng độ mực
+        const inkDropletLevel = Object.fromEntries(getValueSpec("Mức giọt mực").map(item => [item.name, item.value])); //Mức Giọt mực
+
+        html = html
+            .replace(/{{typeWorkLabel}}/g, typeWorkLabel ?? '')
+            .replace(/{{officialName}}/g, data?.customerId?.officialName ?? '')
+            .replace(
+                /{{createdAt}}/g,
+                new Intl.DateTimeFormat('vi-VN', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                }).format(new Date(data?.createdAt)),
+            )
+            .replace(/{{contactName}}/g, data?.contactPerson?.contactName ?? '')
+            .replace(/{{contactPhone}}/g, data?.contactPerson?.contactPhone ?? '')
+            .replace(
+                /{{repairDate}}/g,
+                new Intl.DateTimeFormat('vi-VN', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                }).format(new Date(data?.workOrderDetail?.repairDate)),
+            )
+            .replace(/{{fullAddress}}/g, data?.address?.specificAddress ?? '')
+            .replace(
+                /{{\s*arrivalTime\s*}}/g,
+                new Intl.DateTimeFormat('vi-VN', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    // day: '2-digit',
+                    // month: '2-digit',
+                    // year: 'numeric',
+                }).format(new Date(data?.workOrderDetail?.arrivalTime)),
+            )
+            .replace(
+                /{{\s*leavingTime\s*}}/g,
+                new Intl.DateTimeFormat('vi-VN', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    // day: '2-digit',
+                    // month: '2-digit',
+                    // year: 'numeric',
+                }).format(new Date(data?.workOrderDetail?.leavingTime)),
+            )
+            .replace(
+                /{{\s*maintainContract_Yes\s*}}/g,
+                data?.workOrderDetail?.maintainContract === true ? 'X' : ''
+            )
+            .replace(
+                /{{\s*maintainContract_No\s*}}/g,
+                data?.workOrderDetail?.maintainContract === false ? 'X' : ''
+            )
+            .replace(/{{\s*workingTime\s*}}/g, data?.workOrderDetail?.workingTime ?? '')
+            .replace(/{{type}}/g, data?.type ?? '')
+            .replace(/{{serialNumber}}/g, data?.serialNumber ?? '')
+            .replace(/{{inkCode}}/g, data?.workOrderDetail?.inkCode ?? '')
+            .replace(
+                /{{\s*installationDate\s*}}/g,
+                new Intl.DateTimeFormat('vi-VN', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                }).format(new Date(data?.workOrderDetail?.installationDate)),
+            )
+            .replace(/{{\s*machineStartup\s*}}/g, data?.workOrderDetail?.machineStartup ?? '')
+            .replace(/{{\s*inkjetTime\s*}}/g, data?.workOrderDetail?.inkjetTime ?? '')
+            .replace(/{{logoPath}}/g, logoDataUri)
+            .replace(/{{failureSituation}}/g, failureHtml)
+            .replace(/{{differentApproach}}/g, approachHtml)
+            .replace(/{{replacement}}/g, replacementHtml) //Linh kiện đã thay
+            .replace(/{{technicalFeedback}}/g, technicalFeedbackHtml)
+            .replace(/{{customerFeedback}}/g, customerFeedback) // Ý kiến khách hàng
+            .replace(/{{inkArrival}}/g, inkConcentration['Lúc đến']) //Nồng độ mực Lúc đến
+            .replace(/{{inkLeaving}}/g, inkConcentration['Lúc đi']) //Nồng độ mực Lúc đến
+            .replace(/{{inkDropletLevelAuto}}/g, inkDropletLevel['Cài tự động']) //Mức giọt mực - Cài tự động
+            .replace(/{{inkDropletLevelManual}}/g, inkDropletLevel['Thao tác tay']) //Mức giọt mực - Thao tác tay
+            .replace(/{{inkDropletLevelBUP}}/g, inkDropletLevel['BUP']) //Mức giọt mực - BUP
+            .replace(/{{inkStandard}}/g, getValueSpec("Nồng độ chuẩn"))
+            .replace(/{{pumpSpeed}}/g, getValueSpec("Tốc độ bơm"))
+            .replace(/{{standardPressure}}/g, getValueSpec("Áp suất chuẩn"))
+            .replace(/{{currentPressure}}/g, getValueSpec("Áp suất hiện hành"))
+            .replace(/{{nozzle}}/g, getValueSpec("Béc phun"))
+            .replace(/{{chargeLevel}}/g, getValueSpec("Charge level"))
+            .replace(/{{vacuumPressure}}/g, getValueSpec("Áp chân không"))
+            .replace(/{{vacuumPumpSpeed}}/g, getValueSpec("Tốc độ bơm chân không"))
+            .replace(/{{printContent}}/g, getValueSpec("Nội dung in phun")) //Nội dung in phun
+            .replace(/{{inkTemperature}}/g, getValueSpec("Nhiệt độ mực")) //Nhiệt độ mực
+            .replace(/{{ITM}}/g, getValueSpec("ITM")) //ITM
+            .replace(/{{softwareUsed}}/g, getValueSpec("Phần mềm sử dụng")) //Phần mềm sử dụng
+
+        const browser = await puppeteer.launch({
+            headless: true,
+            args: ['--no-sandbox', '--disable-setuid-sandbox'],
+        })
+        const page = await browser.newPage()
+        await page.setContent(html, { waitUntil: 'networkidle0' })
+
+        const pdfBuffer = await page.pdf({
+            format: 'A4',
+            printBackground: true,
+            margin: {
+                top: '10px',
+                bottom: '10px',
+                left: '10px',
+                right: '10px',
+            },
+        })
+
+        await browser.close()
+        return pdfBuffer
+    },
 }
 
 module.exports = pdfService

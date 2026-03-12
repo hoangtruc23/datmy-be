@@ -1195,7 +1195,11 @@ async function apiSeeder() {
             api: '/workOrderDetail/getAllIncludeAccessories',
             note: 'Lấy ra tất cả các linh kiện đi kèm',
         },
-
+        {
+            _id: new Types.ObjectId('6864fd7c1d9ec4d84204b79d'),
+            api: '/workOrderDetail/generatePdf',
+            note: 'Tải file PDF các phiếu',
+        },
         //contactPersonCustomer
         {
             _id: new Types.ObjectId('691c2c10cc14068cd86a1bf7'),
