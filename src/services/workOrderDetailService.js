@@ -14,6 +14,7 @@ const {
 } = require('../utils/helper/workOrderDetailHelper')
 const technicianService = require('./technicianService')
 const contactPersonCustomerService = require('./contactPersonCustomerService')
+const pdfService = require('./pdfService')
 
 const workOrderDetailService = {
     create: async (workOrderId) => {
@@ -966,5 +967,42 @@ const workOrderDetailService = {
     getAllSyncSignal: () => Object.values(constant.SYNC_SIGNAL),
     getAllSyncMode: () => Object.values(constant.SYNC_MODE),
     getAllPurposeTest: () => Object.values(constant.PURPOSE_TEST),
+
+
+    generatePdf: async (workOrderId) => {
+        //check workOrder
+        const workOrder = await WorkOrderModel.findById(workOrderId).populate('customerId', 'officialName').lean()
+        if (!workOrder) {
+            throw new BadReq(errorCode.WORK_ORDER_NOT_FOUND)
+        }
+
+        //Lấy model
+        const WorkOrderDetailModel = getWorkOrderModel(
+            workOrder.typeWork,
+            workOrder.type[0],
+        )
+
+        const workOrderDetail = await WorkOrderDetailModel.findOne({
+            workOrderId,
+        }).populate('machineSpecs.propId');
+
+        if (!workOrderDetail) {
+            throw new BadReq(errorCode.WORK_ORDER_DETAIL_NOT_FOUND)
+        }
+
+        const data = { ...workOrder, workOrderDetail }
+        const pdfBuffer = await pdfService.generateWorkOrderPdf(data)
+
+        const typeWorkLabel = data.typeWork === 'repair'
+            ? "sua_chua"
+            : data.typeWork === "maintain"
+                ? "bao_tri"
+                : "lap_dat";
+
+        return {
+            pdfBuffer: pdfBuffer,
+            typeWorkLabel: typeWorkLabel,
+        }
+    },
 }
 module.exports = workOrderDetailService

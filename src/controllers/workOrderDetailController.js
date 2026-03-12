@@ -254,5 +254,22 @@ const workOrderDetailController = {
             next(error)
         }
     },
+    generatePdf: async (req, res, next) => {
+        try {
+            const { workOrderId } = req.params
+            const { pdfBuffer, typeWorkLabel } =
+                await workOrderDetailService.generatePdf(workOrderId)
+
+            res.setHeader('Content-Type', 'application/pdf')
+            res.setHeader(
+                'Content-Disposition',
+                `attachment; filename=phieu_${typeWorkLabel}.pdf`,
+            )
+            res.send(pdfBuffer)
+        } catch (err) {
+            next(err)
+        }
+    },
+
 }
 module.exports = workOrderDetailController
