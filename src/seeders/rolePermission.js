@@ -2412,6 +2412,10 @@ async function rolePermissionSeeder() {
             roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
             permissionId: '6914e05ccf9e7d1d96f5a0f2', // Chỉnh sửa phiếu chi tiết công việc
         },
+        {
+            roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
+            permissionId: '6914e05ccf9e7d1d96f5a0f3', // Tải PDF phiếu chi tiết công việc
+        },
         //#endregion
         //#endregion
 

@@ -869,6 +869,12 @@ async function permissionSeeder() {
             code: 'chinh_sua-phieu_chi_tiet_cong_viec',
             parentPermissionId: '6914e05ccf9e7d1d96f5a0f0',
         },
+        {
+            _id: new Types.ObjectId('6914e05ccf9e7d1d96f5a0f3'),
+            name: 'Tải PDF phiếu chi tiết công việc',
+            code: 'tai_pdf-phieu_chi_tiet_cong_viec',
+            parentPermissionId: '6914e05ccf9e7d1d96f5a0f0',
+        },
 
         //  contactPerson/deleteMachine
         {

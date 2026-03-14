@@ -1063,6 +1063,10 @@ async function permissionApiSeeder() {
             permissionId: '6914e05ccf9e7d1d96f5a0f2',
             apiId: '6926c0fa284e72cfe4ed6a52',
         },
+        {
+            permissionId: '6914e05ccf9e7d1d96f5a0f3',
+            apiId: '6864fd7c1d9ec4d84204b79d',
+        },
     ])
     logger.info('PermissionApis seeded')
 }
