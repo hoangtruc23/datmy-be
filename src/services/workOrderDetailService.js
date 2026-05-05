@@ -129,6 +129,8 @@ const workOrderDetailService = {
                 workOrderId,
             }, { _id: 0 })
 
+
+
             const spectValue = workOrderDetail?.machineSpecs
 
             //Thông số của phiếu theo dòng máy -> Dòng A , B,...
@@ -164,7 +166,6 @@ const workOrderDetailService = {
             throw error
         }
     },
-
     updateMachineTypeId: async (workOrderId, reqData) => {
         try {
             //check workOrder
@@ -393,6 +394,10 @@ const workOrderDetailService = {
                 machineSpecs,
                 evaluate,
                 type,
+                laserHeadTime, //Thời gian laser head
+                controllerTime, //Thời gian controller
+                serialControllerNumber,
+                serialLaserHeadNumber,
             } = reqData
 
             //check workOrder
@@ -545,18 +550,14 @@ const workOrderDetailService = {
                     // return null
                 }
             }
-
             //Phiếu SỬA CHỮA
-            if (typeWork === constant.WORK_ORDER_TYPE.REPAIR.value) {
+            else if (typeWork === constant.WORK_ORDER_TYPE.REPAIR.value) {
                 if (workOrderType === constant.WORK_ORDER_DETAIL_TYPE.A.value) {
                     await WorkOrderDetailModel.findByIdAndUpdate(
                         workOrderDetail._id,
                         {
                             maintainContract,
                             repairDate,
-                            // arrivalTime,// Thời gian đến
-                            // leavingTime, //Thời gian đi
-                            // workingTime,
                             departureTime,
                             installationDate,
                             inkCode,
@@ -575,35 +576,56 @@ const workOrderDetailService = {
                     )
                     // return null
                 } else {
-                    const {
-                        // arrivalTime,// Thời gian đến
-                        // leavingTime, //Thời gian đi
-                        machineInfo,
-                        machineSpecs,
-                        groups,
-                        repairFault,
-                        technicalFeedback,
-                        customerFeedback,
-                    } = reqData
+                    // const {
+                    //     machineInfo,
+                    //     machineSpecs,
+                    //     groups,
+                    //     repairFault,
+                    //     technicalFeedback,
+                    //     customerFeedback,
+                    // } = reqData
+                    // await WorkOrderDetailModel.findByIdAndUpdate(
+                    //     workOrderDetail._id,
+                    //     {
+                    //         arrivalTime,// Thời gian đến
+                    //         leavingTime, //Thời gian đi
+                    //         machineInfo,
+                    //         machineSpecs,
+                    //         groups,
+                    //         repairFault,
+                    //         technicalFeedback,
+                    //         customerFeedback,
+                    //     },
+                    // )
+                    // return null
+
+
                     await WorkOrderDetailModel.findByIdAndUpdate(
                         workOrderDetail._id,
                         {
-                            arrivalTime,// Thời gian đến
-                            leavingTime, //Thời gian đi
+                            maintainContract,
+                            repairDate,
+                            departureTime,
+                            installationDate,
+                            serialControllerNumber,
+                            serialLaserHeadNumber,
+                            laserHeadTime,
+                            controllerTime,
+                            machineCode,
+                            failureSituation,
+                            differentApproach,
                             machineInfo,
                             machineSpecs,
-                            groups,
-                            repairFault,
                             technicalFeedback,
+                            replacement,
                             customerFeedback,
+                            evaluate
                         },
                     )
-                    // return null
                 }
             }
-
             //Phiếu lắp đặt
-            if (typeWork === constant.WORK_ORDER_TYPE.INSTALLATION.value) {
+            else if (typeWork === constant.WORK_ORDER_TYPE.INSTALLATION.value) {
                 const {
                     deliveryDate,
                     installDate,

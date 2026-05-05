@@ -1263,6 +1263,16 @@ async function apiSeeder() {
             api: '/machinePropery/create',
             note: 'Tạo mới thông số máy',
         },
+        {
+            _id: new Types.ObjectId('691ebf6e7cd69b4b32fa3e99'),
+            api: '/machinePropery/update',
+            note: 'Cập nhật mới thông số máy',
+        },
+        {
+            _id: new Types.ObjectId('691ebf6e7cd69b4b32fa3100'),
+            api: '/machinePropery/delete',
+            note: 'Xóa thông số máy',
+        },
 
         //Print Excel
         {

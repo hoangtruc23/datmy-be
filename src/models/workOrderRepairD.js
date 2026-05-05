@@ -15,6 +15,42 @@ const workOrderRepairDSchema = new Schema(
         },
         machineInfo: [propSchema],
         machineSpecs: [propSchema],
+        arrivalTime: { //Giờ đến
+            type: String,
+            default: null,
+        },
+        leavingTime: { //Giờ ra
+            type: String,
+            default: null,
+        },
+        workingTime: {// Thời gian sửa chữa
+            type: String,
+            default: null,
+        },
+        installationDate: { //Ngày lắp đặt
+            type: Date,
+            required: false,
+        },
+        serialControllerNumber: {
+            type: String,
+            required: false,
+        },
+        serialLaserHeadNumber: {
+            type: String,
+            required: false,
+        },
+        controllerTime: { // Thời gian Controller
+            type: String,
+            default: null,
+        },
+        laserHeadTime: { // Thời gian Laser head
+            type: String,
+            default: null,
+        },
+        // inkjetTime: { // Thời gian in phun
+        //     type: String,
+        //     default: null,
+        // },
         repairFault: [
             {
                 _id: false,
@@ -28,8 +64,12 @@ const workOrderRepairDSchema = new Schema(
                 },
             },
         ],
-        technicalFeedback: [String],
+        failureSituation: [String],
+        differentApproach: [String], //Thao tác xử lý
+        technicalFeedback: [String], // Ý kiến kỹ thuật (Linh kiện đề xuất thay)
+        replacement: [String], // Linh kiện đã thay
         customerFeedback: [String],
+        evaluate: Number, //Đánh giá của khách hàng
     },
     { timestamps: true },
 )

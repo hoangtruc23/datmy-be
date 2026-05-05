@@ -71,7 +71,6 @@ const pdfService = {
             if (product && item.explain) {
                 specification = product.code
             }
-            console.log(product)
             total += item.issuedQuantity
             rows += `
             <tr>
@@ -377,7 +376,6 @@ const pdfService = {
             ?.map(item => `<div style="color: #3b82f6;">- ${item}</div>`)
             .join('') ?? '';
 
-        console.log(data.workOrderDetail.machineSpecs)
         // Xử lý Ý kiến khách hàng (Nếu có)
         const customerFeedback = data?.workOrderDetail?.customerFeedback?.map(item => `<div style="color: #3b82f6;">- ${item}</div>`)
             .join('') ?? '';

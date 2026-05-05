@@ -55,9 +55,9 @@ const contactPersonCustomerService = {
             } else {
                 const existedPerson = record.contactPerson.some(
                     (r) =>
-                        r.contactName === contactName &&
-                        r.contactEmail === contactEmail &&
-                        r.contactPhone === contactPhone,
+                        r?.contactName === contactName &&
+                        r?.contactEmail === contactEmail &&
+                        r?.contactPhone === contactPhone,
                 )
                 if (!existedPerson) {
                     await ContactPersonCustomerModel.findByIdAndUpdate(
@@ -133,6 +133,7 @@ const contactPersonCustomerService = {
             const record = await ContactPersonCustomerModel.findOne({
                 customerId,
             }).lean()
+
             return record
                 ? record.contactPerson.filter((c) => search.test(c.contactName))
                 : []

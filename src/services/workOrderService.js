@@ -220,6 +220,7 @@ const workOrderService = {
                 _id: technicianId,
                 isActive: true,
             })
+
             if (technicianId && !technician) {
                 throw new BadReq(errorCode.TECHNICIAN_NOT_FOUND)
             }

@@ -19,6 +19,22 @@ const machinePropertyController = {
             next(error)
         }
     },
+    update: async (req, res, next) => {
+        try {
+            const result = await machinePropertyService.update(req.params, req.body)
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
+    delete: async (req, res, next) => {
+        try {
+            const result = await machinePropertyService.delete(req.params)
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
 }
 
 module.exports = machinePropertyController
