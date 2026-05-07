@@ -360,9 +360,9 @@ const workOrderService = {
                 isActive: true,
             })
 
-            // if (technicianId && !technician) {
-            //     throw new BadReq(errorCode.TECHNICIAN_NOT_FOUND)
-            // }
+            if (technicianId && !technician) {
+                throw new BadReq(errorCode.TECHNICIAN_NOT_FOUND)
+            }
 
             // if (typeWork !== oldTypeWork || type !== oldType) {
             //     if (

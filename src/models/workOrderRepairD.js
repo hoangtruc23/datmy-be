@@ -15,6 +15,10 @@ const workOrderRepairDSchema = new Schema(
         },
         machineInfo: [propSchema],
         machineSpecs: [propSchema],
+        maintainContract: { //Hợp đồng bảo trì
+            type: Boolean,
+            default: null,
+        },
         arrivalTime: { //Giờ đến
             type: String,
             default: null,
