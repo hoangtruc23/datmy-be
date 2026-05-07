@@ -13,6 +13,38 @@ const workOrderRepairVSchema = new Schema(
             ref: 'products',
             default: null,
         },
+        maintainContract: { //Hợp đồng bảo trì
+            type: Boolean,
+            default: null,
+        },
+        arrivalTime: { //Giờ đến
+            type: String,
+            default: null,
+        },
+        leavingTime: { //Giờ ra
+            type: String,
+            default: null,
+        },
+        workingTime: {// Thời gian sửa chữa
+            type: String,
+            default: null,
+        },
+        ribbonType: { //Loại ruy băng
+            type: String,
+            default: null,
+        },
+        printHeadDirection: { // Hướng đầu in
+            type: String,
+            default: null,
+        },
+        machineTime: { //Thời gian máy
+            type: String,
+            default: null,
+        },
+        installationDate: { //Ngày lắp đặt
+            type: Date,
+            required: false,
+        },
         machineInfo: [propSchema],
         machineSpecs: [propSchema],
         repairFault: [
