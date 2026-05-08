@@ -13,6 +13,50 @@ const workOrderRepairMSchema = new Schema(
             ref: 'products',
             default: null,
         },
+        maintainContract: { //Hợp đồng bảo trì
+            type: Boolean,
+            default: null,
+        },
+        arrivalTime: { //Giờ đến
+            type: String,
+            default: null,
+        },
+        leavingTime: { //Giờ ra
+            type: String,
+            default: null,
+        },
+        workingTime: {// Thời gian sửa chữa
+            type: String,
+            default: null,
+        },
+        installationDate: { //Ngày lắp đặt
+            type: Date,
+            required: false,
+        },
+        serialControllerNumber: { // Số serial controller
+            type: String,
+            required: false,
+        },
+        adhesiveType: { // Loại tay dán
+            type: String,
+            required: false,
+        },
+        ribbonType: { // Loại ruy băng
+            type: String,
+            required: false,
+        },
+        labelSize: { // Kích thước nhãn
+            type: String,
+            required: false,
+        },
+        padSize: { // Kích thước pad
+            type: String,
+            required: false,
+        },
+        beltSpeed: { // Tốc độ chuyền
+            type: String,
+            required: false,
+        },
         machineInfo: [propSchema],
         machineSpecs: [propSchema],
         repairFault: [

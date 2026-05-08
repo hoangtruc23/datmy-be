@@ -129,8 +129,6 @@ const workOrderDetailService = {
                 workOrderId,
             }, { _id: 0 })
 
-
-
             const spectValue = workOrderDetail?.machineSpecs
 
             //Thông số của phiếu theo dòng máy -> Dòng A , B,...
@@ -398,6 +396,11 @@ const workOrderDetailService = {
                 controllerTime, //Thời gian controller
                 serialControllerNumber,
                 serialLaserHeadNumber,
+                adhesiveType,
+                ribbonType,
+                labelSize,
+                padSize,
+                beltSpeed
             } = reqData
 
             //check workOrder
@@ -576,30 +579,6 @@ const workOrderDetailService = {
                     )
                     // return null
                 } else {
-                    // const {
-                    //     machineInfo,
-                    //     machineSpecs,
-                    //     groups,
-                    //     repairFault,
-                    //     technicalFeedback,
-                    //     customerFeedback,
-                    // } = reqData
-                    // await WorkOrderDetailModel.findByIdAndUpdate(
-                    //     workOrderDetail._id,
-                    //     {
-                    //         arrivalTime,// Thời gian đến
-                    //         leavingTime, //Thời gian đi
-                    //         machineInfo,
-                    //         machineSpecs,
-                    //         groups,
-                    //         repairFault,
-                    //         technicalFeedback,
-                    //         customerFeedback,
-                    //     },
-                    // )
-                    // return null
-
-
                     await WorkOrderDetailModel.findByIdAndUpdate(
                         workOrderDetail._id,
                         {
@@ -619,7 +598,12 @@ const workOrderDetailService = {
                             technicalFeedback,
                             replacement,
                             customerFeedback,
-                            evaluate
+                            evaluate,
+                            adhesiveType,
+                            ribbonType,
+                            labelSize,
+                            padSize,
+                            beltSpeed
                         },
                     )
                 }
