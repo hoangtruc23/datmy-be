@@ -42,10 +42,10 @@ async function run() {
                 await unitSeeder()
                 break
             }
-            case 'machineProperties': {
-                await machineProperties()
-                break
-            }
+            // case 'machineProperties': {
+            //     await machineProperties()
+            //     break
+            // }
             case 'workOrderBusiness': {
                 await workOrderBusiness()
                 break
@@ -58,7 +58,7 @@ async function run() {
                 await rolePermissionSeeder()
                 await userSeeder()
                 await unitSeeder()
-                await machineProperties()
+                // await machineProperties()
                 await workOrderBusiness()
                 break
             }

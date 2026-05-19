@@ -71,12 +71,9 @@ function getWorkOrderModel(typeWork, type) {
                 ? modelMap[typeWork]
                 : modelMap[typeWork]?.[type]
 
-
         if (!model) {
             throw new BadReq(errorCode.MODEL_NOT_FOUND_FOR_TYPE_WORK_AND_TYPE)
         }
-
-
         return model
     } catch (error) {
         throw error

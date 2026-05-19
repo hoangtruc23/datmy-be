@@ -32,7 +32,11 @@ const workOrderMaintainASchema = new Schema(
             type: String,
             default: null,
         },
-        departureTime: {
+        leavingTime: {
+            type: String,
+            default: null,
+        },
+        workingTime: {
             type: String,
             default: null,
         },
@@ -51,6 +55,10 @@ const workOrderMaintainASchema = new Schema(
             type: String,
             default: null,
         },
+        signature: {
+            type: String,
+            default: null
+        }
     },
     { timestamps: true },
 )

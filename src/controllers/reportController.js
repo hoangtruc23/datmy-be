@@ -115,6 +115,7 @@ const reportController = {
             next(error)
         }
     },
+
     getCustomerReceivableDetail: async (req, res, next) => {
         try {
             const result = await reportService.getCustomerReceivableDetail(
@@ -146,6 +147,31 @@ const reportController = {
             next(error)
         }
     },
+
+    reportHistoryMachine: async (req, res, next) => {
+        try {
+            // Gọi service nhận về file dạng nhị phân (Buffer)
+            const buffer = await excelService.reportHistoryMachine(
+                req.params,
+                req.query,
+            );
+
+            // Định cấu hình header để Trình duyệt nhận diện đây là file Excel cần tải về
+            res.setHeader(
+                'Content-Type',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            );
+            res.setHeader(
+                'Content-Disposition',
+                `attachment; filename=Bao_Cao_Lich_Su_Thiet_Bi.xlsx`
+            );
+
+            // Gửi trực tiếp Buffer về cho Client
+            return res.status(200).send(buffer);
+        } catch (error) {
+            next(error);
+        }
+    }
 }
 
 module.exports = reportController

@@ -129,8 +129,9 @@ const workOrderDetailService = {
                 workOrderId,
             }, { _id: 0 })
 
-            const spectValue = workOrderDetail?.machineSpecs
+            console.log(workOrderDetail)
 
+            const spectValue = workOrderDetail?.machineSpecs
             //Thông số của phiếu theo dòng máy -> Dòng A , B,...
             const settingMap = machineSetting?.props.reduce((acc, setting) => {
                 acc[setting._id.toString()] = setting;
@@ -381,7 +382,7 @@ const workOrderDetailService = {
                 customerFeedback,
                 arrivalTime, // Thời gian đến
                 leavingTime, //Thời gian đi ( thời gian rời khỏi)
-                // workingTime, //Thời gian sửa chữa 
+                workingTime, //Thời gian sửa chữa 
                 installationDate,
                 inkCode,
                 machineStartup,
@@ -400,7 +401,17 @@ const workOrderDetailService = {
                 ribbonType,
                 labelSize,
                 padSize,
-                beltSpeed
+                beltSpeed,
+
+                //Phiếu G
+                printHead,
+                inkSupply,
+                singlePrintHead,
+                compositePrintHead,
+                singleSerialNumber,
+                compositeSerialNumber,
+                // Chữ ký điện tử
+                signature
             } = reqData
 
             //check workOrder
@@ -433,9 +444,10 @@ const workOrderDetailService = {
                     }
                     return spec.value !== '' && spec.value !== null && spec.value !== undefined;
                 });
-
                 if (!isMachineSpecsValid) {
-                    throw new BadReq(errorCode.MachineSpecs_IN_Valid)
+                    if (workOrder.type[0] !== "G") {
+                        throw new BadReq(errorCode.MachineSpecs_IN_Valid)
+                    }
                 }
             } else {
                 //Update WorkingTime
@@ -489,7 +501,7 @@ const workOrderDetailService = {
                         maintainContractDate,
                         maintainDate,
                         // arrivalTime,
-                        departureTime,
+                        leavingTime,
                         machineSpecs,
                         replacement,
                         technicalFeedback,
@@ -511,7 +523,7 @@ const workOrderDetailService = {
                             customerInfo,
                             maintainDate,
                             // arrivalTime,
-                            departureTime,
+                            leavingTime,
                             type,
                             machineName,
                             serialNumber,
@@ -561,7 +573,7 @@ const workOrderDetailService = {
                         {
                             maintainContract,
                             repairDate,
-                            departureTime,
+                            leavingTime,
                             installationDate,
                             inkCode,
                             machineStartup,
@@ -579,33 +591,40 @@ const workOrderDetailService = {
                     )
                     // return null
                 } else {
-                    await WorkOrderDetailModel.findByIdAndUpdate(
-                        workOrderDetail._id,
-                        {
-                            maintainContract,
-                            repairDate,
-                            departureTime,
-                            installationDate,
-                            serialControllerNumber,
-                            serialLaserHeadNumber,
-                            laserHeadTime,
-                            controllerTime,
-                            machineCode,
-                            failureSituation,
-                            differentApproach,
-                            machineInfo,
-                            machineSpecs,
-                            technicalFeedback,
-                            replacement,
-                            customerFeedback,
-                            evaluate,
-                            adhesiveType,
-                            ribbonType,
-                            labelSize,
-                            padSize,
-                            beltSpeed
-                        },
-                    )
+                    if (workOrder.type[0] === "G") {
+                        await WorkOrderDetailModel.findByIdAndUpdate(
+                            workOrderDetail._id,
+                            reqData,
+                        )
+                    } else {
+                        await WorkOrderDetailModel.findByIdAndUpdate(
+                            workOrderDetail._id,
+                            {
+                                maintainContract,
+                                repairDate,
+                                leavingTime,
+                                installationDate,
+                                serialControllerNumber,
+                                serialLaserHeadNumber,
+                                laserHeadTime,
+                                controllerTime,
+                                machineCode,
+                                failureSituation,
+                                differentApproach,
+                                machineInfo,
+                                machineSpecs,
+                                technicalFeedback,
+                                replacement,
+                                customerFeedback,
+                                evaluate,
+                                adhesiveType,
+                                ribbonType,
+                                labelSize,
+                                padSize,
+                                beltSpeed
+                            },
+                        )
+                    }
                 }
             }
             //Phiếu lắp đặt
@@ -973,7 +992,6 @@ const workOrderDetailService = {
     getAllSyncSignal: () => Object.values(constant.SYNC_SIGNAL),
     getAllSyncMode: () => Object.values(constant.SYNC_MODE),
     getAllPurposeTest: () => Object.values(constant.PURPOSE_TEST),
-
 
     generatePdf: async (workOrderId) => {
         //check workOrder

@@ -57,27 +57,27 @@ async function permissionApiSeeder() {
         },
         {
             permissionId: '6853d1b6fa10ea77cf67990b', // Xem khách hàng
-            apiId: '6853d1b6fa10ea77cf679910', // /customer/getAll
+            apiId: '6853d1b6fa10ea77cf679910', // customer/getAll
         },
         {
             permissionId: '6853d1b6fa10ea77cf67990b', // Xem khách hàng
-            apiId: '689973596c78b8d2879bb340', // /customer/cities
+            apiId: '689973596c78b8d2879bb340', // customer/cities
         },
         {
             permissionId: '6853d1b6fa10ea77cf67990b', // Xem khách hàng
-            apiId: '689973596c78b8d2879bb341', // /customer/districts
+            apiId: '689973596c78b8d2879bb341', // customer/districts
         },
         // {
         //     permissionId: '6853d1b6fa10ea77cf67990f', // The existing 'Xem khách hàng' permission ID
-        //     apiId: '6853d1b6fa10ea77cf679910', // /customer/getAll
+        //     apiId: '6853d1b6fa10ea77cf679910', // customer/getAll
         // },
         {
             permissionId: '6853d1b6fa10ea77cf67990d', // khoá mở khoá khách hàng
-            apiId: '6853d1b6fa10ea77cf67990e', // /customer/lockUnlock
+            apiId: '6853d1b6fa10ea77cf67990e', // customer/lockUnlock
         },
         {
             permissionId: '6853d1b6fa10ea77cf679911', // xoá khách hàng
-            apiId: '6853d1b6fa10ea77cf679912', // /customer/delete
+            apiId: '6853d1b6fa10ea77cf679912', // customer/delete
         },
         {
             permissionId: '6853d1b6fa10ea77cf679911', // xoá khách hàng

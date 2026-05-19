@@ -44,6 +44,12 @@ router.get(
     '/generateCustomerReceivableDetail',
     reportController.generateCustomerReceivableDetail,
 )
+
+router.get(
+    '/reportHistoryMachine/:deviceId',
+    reportController.reportHistoryMachine,
+)
+
 module.exports = router
 
 /**

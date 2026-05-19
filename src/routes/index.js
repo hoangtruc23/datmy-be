@@ -65,7 +65,7 @@ router.use('/machineSetting', machineSettingRoute)
 router.use('/workOrderDetail', workOrderDetailRoute)
 router.use('/contactPerson', contactPersonCustomerRoute)
 router.use('/contract', contractRoute)
-router.use('/machinePropery', machineProperyRoute)
+router.use('/machineProperty', machineProperyRoute)
 // router.use('/printExcel', printExcelRoute)
 router.use('/previousDebt', previousDebtRoute)
 

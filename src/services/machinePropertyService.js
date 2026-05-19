@@ -19,11 +19,11 @@ const machinePropertyService = {
     update: async (params, property) => {
         try {
             const { id } = params
-            const { name, type } = property
-            const checkProperty = await MachinePropertyModel.findOne({ name, type })
-            if (!checkProperty) {
-                throw new BadReq(errorCode.MACHINE_PROPERTIES_NOT_FOUND)
-            }
+            // const { name, type } = property
+            // const checkProperty = await MachinePropertyModel.findOne({ name, type })
+            // if (!checkProperty) {
+            //     throw new BadReq(errorCode.MACHINE_PROPERTIES_NOT_FOUND)
+            // }
             await MachinePropertyModel.findByIdAndUpdate(id, property)
             return null
         } catch (error) {

@@ -110,7 +110,6 @@ const customerService = {
             throw error
         }
     },
-
     getAll: async (options = {}) => {
         try {
             const {

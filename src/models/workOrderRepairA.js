@@ -54,7 +54,7 @@ const workOrderRepairASchema = new Schema(
             type: String,
         },
         machineSpecs: [propSchema], //Kỹ thuật điền thông tin sửa máy
-        failureSituation: [String],
+        failureSituation: [String], //Tình trạng sự cố máy
         differentApproach: [String], //Thao tác xử lý
         technicalFeedback: [String], // Ý kiến kỹ thuật (Linh kiện đề xuất thay)
         replacement: [String], // Linh kiện đã thay

@@ -803,6 +803,11 @@ async function apiSeeder() {
             api: '/reports/generateCustomerReceivableDetail',
             note: 'Xuất excel báo cáo chi tiết công nợ cho từng khách hàng',
         },
+        {
+            _id: new Types.ObjectId('68ad58dfa053aa8a7b8dafd7'),
+            api: '/reports/reportHistoryMachine', //reports/reportHistoryMachine
+            note: 'Xuất excel báo cáo lịch sử mày của từng khách hàng',
+        },
         //System
         {
             _id: new Types.ObjectId('689c1a210dcf117a9db3a0aa'),
@@ -1260,17 +1265,17 @@ async function apiSeeder() {
         //Machine Property
         {
             _id: new Types.ObjectId('691ebf6e7cd69b4b32fa3e98'),
-            api: '/machinePropery/create',
+            api: '/machineProperty/create',
             note: 'Tạo mới thông số máy',
         },
         {
             _id: new Types.ObjectId('691ebf6e7cd69b4b32fa3e99'),
-            api: '/machinePropery/update',
+            api: '/machineProperty/update',
             note: 'Cập nhật mới thông số máy',
         },
         {
             _id: new Types.ObjectId('691ebf6e7cd69b4b32fa3100'),
-            api: '/machinePropery/delete',
+            api: '/machineProperty/delete',
             note: 'Xóa thông số máy',
         },
 
