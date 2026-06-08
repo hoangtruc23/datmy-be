@@ -24,6 +24,14 @@ const contactPersonCustomerController = {
             next(error)
         }
     },
+    getAddressesByFilter: async (req, res, next) => {
+        try {
+            const result = await contactPersonCustomerServices.getAddressesByFilter(req.query)
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
     deletePerson: async (req, res, next) => {
         try {
             const result = await contactPersonCustomerServices.deletePerson(

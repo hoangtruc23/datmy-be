@@ -2,6 +2,7 @@ const reportService = require('../services/reportService')
 const response = require('../utils/response/response')
 const excelService = require('../services/excelService')
 const pdfService = require('../services/pdfService')
+const moment = require('moment')
 
 const reportController = {
     getSalesReport: async (req, res, next) => {
@@ -171,7 +172,28 @@ const reportController = {
         } catch (error) {
             next(error);
         }
-    }
+    },
+    reportWorkOrder: async (req, res, next) => {
+        try {
+            // Gọi service nhận về file dạng nhị phân (Buffer)
+            const buffer = await excelService.reportWorkOrder(req.query)
+
+            // Định cấu hình header để Trình duyệt nhận diện đây là file Excel cần tải về
+            res.setHeader(
+                'Content-Type',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            );
+            res.setHeader(
+                'Content-Disposition',
+                `attachment; filename=CONG_VIEC_KY_THUAT_${moment().format('MM_YYYY')}.xlsx`
+            );
+
+            // Gửi trực tiếp Buffer về cho Client
+            return res.status(200).send(buffer);
+        } catch (error) {
+            next(error);
+        }
+    },
 }
 
 module.exports = reportController

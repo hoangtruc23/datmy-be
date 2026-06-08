@@ -776,6 +776,18 @@ async function permissionApiSeeder() {
             apiId: '68ad58dfa053aa8a7b8dafd6', // /reports/generateCustomerReceivableDetail
         },
 
+        {
+            permissionId: '6914e05ccf9e7d1d96f5b0f8', // Sinh báo cáo chi tiết khách hàng
+            apiId: '68ad58dfa053aa8a7b8dafd7', // reports/reportHistoryMachine
+        },
+        {
+            permissionId: '6914e05ccf9e7d1d96f5b0f9', // Get Addrress theo filter
+            apiId: '691ebf6e7cd69b4b32fa3b5d', // contactPerson/addressesByFilter
+        },
+        {
+            permissionId: '6914e05ccf9e7d1d96f5b0f8', // Get Addrress theo filter
+            apiId: '68ad58dfa053aa8a7b8dafdd', //  reports/reportWorkOrder
+        },
         //mail
         {
             permissionId: '68c12543e78783270db36263', // Tạo kết nối đến mail server
@@ -795,6 +807,10 @@ async function permissionApiSeeder() {
         },
 
         // Yêu cầu công việc
+        {
+            permissionId: '68d1166bba1c480c8180bf6c', // Xem phiếu yêu cầu công việc
+            apiId: '68d1153524419859fede4ebb', // /workOrder/dashboard
+        },
         {
             permissionId: '68d1166bba1c480c8180bf6c', // Xem phiếu yêu cầu công việc
             apiId: '68d1153524419859fede4ebe', // /workOrder/getAll

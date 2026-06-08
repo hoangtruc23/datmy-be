@@ -45,6 +45,18 @@ const workOrderMaintainASchema = new Schema(
             ref: 'products',
             default: null,
         },
+        ambientTemperature: { //Nhiệt độ môi trường
+            type: Number,
+            default: null,
+        },
+        environmentHumidity: { //Độ ẩm môi trường
+            type: Number,
+            default: null,
+        },
+        dustLevel: { //Mức độ bụi bẩn
+            type: String,
+            default: null,
+        },
         machineSpecs: [propSchema], //Thông số
         differentApproach: [String], //Thao tác xử lý
         technicalFeedback: [String], // Ý kiến kỹ thuật (Linh kiện đề xuất thay)

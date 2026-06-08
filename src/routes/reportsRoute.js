@@ -50,6 +50,12 @@ router.get(
     reportController.reportHistoryMachine,
 )
 
+router.get(
+    '/reportWorkOrder',
+    reportController.reportWorkOrder,
+)
+
+
 module.exports = router
 
 /**

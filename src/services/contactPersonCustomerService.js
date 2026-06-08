@@ -28,12 +28,20 @@ const contactPersonCustomerService = {
                 customerId,
             })
 
+            // 1. Kiểm tra xem thông tin contact có hợp lệ hay không (không trống, không chỉ chứa dấu cách)
+            const hasContactName = contactName && contactName.trim() !== "";
+            const hasContactPhone = contactPhone && contactPhone.trim() !== "";
+            const hasContactEmail = contactEmail && contactEmail.trim() !== "";
+            const isValidContact = hasContactName || hasContactPhone || hasContactEmail;
+
             if (!record) {
                 const recordData = {
                     customerId,
-                    contactPerson: [
-                        { contactName, contactEmail, contactPhone },
-                    ],
+                    contactPerson: isValidContact ? [{
+                        contactName: contactName?.trim() || "",
+                        contactEmail: contactEmail?.trim() || "",
+                        contactPhone: contactPhone?.trim() || ""
+                    }] : [],
                     devices: { productCode }
                 }
 
@@ -53,25 +61,30 @@ const contactPersonCustomerService = {
 
                 await ContactPersonCustomerModel.create(recordData)
             } else {
-                const existedPerson = record.contactPerson.some(
-                    (r) =>
-                        r?.contactName === contactName &&
-                        r?.contactEmail === contactEmail &&
-                        r?.contactPhone === contactPhone,
-                )
-                if (!existedPerson) {
-                    await ContactPersonCustomerModel.findByIdAndUpdate(
-                        record._id,
-                        {
-                            $push: {
-                                contactPerson: {
-                                    contactName,
-                                    contactEmail,
-                                    contactPhone,
-                                },
-                            },
-                        },
+                //-----XỬ LÝ THÔNG TIN LIÊN HỆ
+                // Chỉ xử lý nếu dữ liệu truyền lên có ít nhất 1 thông tin hợp lệ
+                if (isValidContact) {
+                    const existedPerson = record.contactPerson.some(
+                        (r) =>
+                            (r?.contactName || "").trim() === (contactName || "").trim() &&
+                            (r?.contactEmail || "").trim() === (contactEmail || "").trim() &&
+                            (r?.contactPhone || "").trim() === (contactPhone || "").trim()
                     )
+
+                    if (!existedPerson) {
+                        await ContactPersonCustomerModel.findByIdAndUpdate(
+                            record._id,
+                            {
+                                $push: {
+                                    contactPerson: {
+                                        contactName: contactName?.trim() || "",
+                                        contactEmail: contactEmail?.trim() || "",
+                                        contactPhone: contactPhone?.trim() || "",
+                                    },
+                                },
+                            }
+                        )
+                    }
                 }
 
                 //-----XỬ LÝ ĐỊA CHỈ
@@ -135,7 +148,7 @@ const contactPersonCustomerService = {
             }).lean()
 
             return record
-                ? record.contactPerson.filter((c) => search.test(c.contactName))
+                ? record.contactPerson?.filter((c) => search.test(c.contactName))
                 : []
         } catch (error) {
             throw error
@@ -171,6 +184,66 @@ const contactPersonCustomerService = {
             }
         } catch (error) {
             throw error
+        }
+    },
+    getAddressesByFilter: async (filterData) => {
+        try {
+            const { provinceCity, ward, specificAddress } = filterData;
+
+            // 1. Tự động xây dựng điều kiện lọc (Chỉ lấy các trường có dữ liệu hợp lệ)
+            const matchCondition = {};
+
+            if (provinceCity && provinceCity.trim() !== "") {
+                // Dùng Regex 'i' để tìm kiếm không phân biệt hoa thường
+                matchCondition["address.provinceCity"] = { $regex: new RegExp(`^${provinceCity.trim()}$`, 'i') };
+            }
+
+            if (ward && ward.trim() !== "") {
+                matchCondition["address.ward"] = { $regex: new RegExp(`^${ward.trim()}$`, 'i') };
+            }
+
+            if (specificAddress && specificAddress.trim() !== "") {
+                // Đối với địa chỉ cụ thể, dùng regex chứa (gần đúng) sẽ tiện hơn cho user search
+                matchCondition["address.specificAddress"] = { $regex: new RegExp(specificAddress.trim(), 'i') };
+            }
+
+            // 2. Thực hiện Aggregation Pipeline
+            const pipeline = [];
+
+            // Nếu người dùng không truyền bất kỳ điều kiện nào, matchCondition sẽ rỗng {}
+            // Ta chỉ $match vòng ngoài nếu có ít nhất 1 điều kiện để tối ưu tốc độ quét dữ liệu
+            if (Object.keys(matchCondition).length > 0) {
+                pipeline.push({ $match: matchCondition });
+            }
+
+            pipeline.push(
+                // Phẳng hóa mảng address để lọc chuẩn xác từng phần tử
+                { $unwind: "$address" }
+            );
+
+            // Bắt buộc phải $match lại lần 2 sau khi unwind để loại bỏ các địa chỉ sai điều kiện
+            if (Object.keys(matchCondition).length > 0) {
+                pipeline.push({ $match: matchCondition });
+            }
+
+            // Định dạng lại dữ liệu đầu ra cho gọn đẹp
+            pipeline.push({
+                $project: {
+                    _id: 0,
+                    customerId: 1,
+                    addressId: "$address._id",
+                    provinceCity: "$address.provinceCity",
+                    ward: "$address.ward",
+                    specificAddress: "$address.specificAddress"
+                }
+            });
+
+            const result = await ContactPersonCustomerModel.aggregate(pipeline);
+            return result;
+
+        } catch (error) {
+            console.error("Lỗi khi tìm kiếm địa chỉ:", error);
+            throw error;
         }
     },
     deletePerson: async (customerId, reqData) => {

@@ -6,6 +6,10 @@ const workOrderController = require('../controllers/workOrderController')
 const validate = require('../middlewares/validation')
 
 router.get(
+    '/dashboard',
+    workOrderController.dashboard,
+)
+router.get(
     '/getAll',
     workOrderController.getAll,
 )

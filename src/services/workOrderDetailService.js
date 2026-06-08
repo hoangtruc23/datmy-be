@@ -129,8 +129,6 @@ const workOrderDetailService = {
                 workOrderId,
             }, { _id: 0 })
 
-            console.log(workOrderDetail)
-
             const spectValue = workOrderDetail?.machineSpecs
             //Thông số của phiếu theo dòng máy -> Dòng A , B,...
             const settingMap = machineSetting?.props.reduce((acc, setting) => {
@@ -367,393 +365,481 @@ const workOrderDetailService = {
             throw error
         }
     },
+    // updateData: async (workOrderId, query, reqData) => {
+    //     try {
+    //         const { isCompleted } = query
+    //         //machineSpecs -> Thông số máy mà kỹ thuật viên tới nhập vào sau khi bảo trì
+    //         const {
+    //             serialNumber,
+    //             maintainContract,
+    //             repairDate,
+    //             departureTime,
+    //             machineInfo,
+    //             technicalFeedback,
+    //             replacement,
+    //             customerFeedback,
+    //             arrivalTime, // Thời gian đến
+    //             leavingTime, //Thời gian đi ( thời gian rời khỏi)
+    //             workingTime, //Thời gian sửa chữa 
+    //             ambientTemperature, //Nhiệt độ môi trường
+    //             environmentHumidity,//Độ ẩm môi trường
+    //             dustLevel, //Mức độ bụi bẩn
+    //             installationDate,
+    //             inkCode,
+    //             machineStartup,
+    //             inkjetTime,
+    //             machineCode,
+    //             failureSituation,
+    //             differentApproach,
+    //             machineSpecs,
+    //             evaluate,
+    //             type,
+    //             laserHeadTime, //Thời gian laser head
+    //             controllerTime, //Thời gian controller
+    //             serialControllerNumber,
+    //             serialLaserHeadNumber,
+    //             adhesiveType,
+    //             ribbonType,
+    //             labelSize,
+    //             padSize,
+    //             beltSpeed,
+
+    //             //Phiếu G
+    //             printHead,
+    //             inkSupply,
+    //             singlePrintHead,
+    //             compositePrintHead,
+    //             singleSerialNumber,
+    //             compositeSerialNumber,
+    //             // Chữ ký điện tử
+    //             signature
+    //         } = reqData
+
+    //         //check workOrder
+    //         const workOrder = await WorkOrderModel.findById(workOrderId).lean()
+    //         if (!workOrder) {
+    //             throw new BadReq(errorCode.WORK_ORDER_NOT_FOUND)
+    //         }
+
+    //         //Lấy model
+    //         const WorkOrderDetailModel = getWorkOrderModel(
+    //             workOrder.typeWork,
+    //             workOrder.type[0],
+    //         )
+
+    //         const workOrderDetail = await WorkOrderDetailModel.findOne({
+    //             workOrderId,
+    //         })
+
+    //         //check workOrderDetail có tồn tại hay không
+    //         if (!workOrderDetail) {
+    //             throw new BadReq(errorCode.WORK_ORDER_DETAIL_NOT_FOUND)
+    //         }
+
+
+    //         if (isCompleted === true || isCompleted === 'true') {
+    //             const isMachineSpecsValid = machineSpecs && machineSpecs.length > 0 && machineSpecs.every(spec => {
+    //                 // Kiểm tra value không được null, undefined hoặc chuỗi rỗng
+    //                 if (Array.isArray(spec.value)) {
+    //                     return spec.value.length > 0;
+    //                 }
+    //                 return spec.value !== '' && spec.value !== null && spec.value !== undefined;
+    //             });
+    //             if (!isMachineSpecsValid) {
+    //                 if (workOrder.type[0] !== "G") {
+    //                     throw new BadReq(errorCode.MachineSpecs_IN_Valid)
+    //                 }
+    //             }
+    //         } else {
+    //             //Update WorkingTime
+    //             let workingTime = "";
+    //             const arrival = workOrderDetail?.arrivalTime;
+    //             if (leavingTime) {
+    //                 if (!arrival) {
+    //                     throw new BadReq(errorCode.ARRIVAL_TIME_REQUIRED)
+    //                 }
+    //                 else {
+    //                     const timeMs = new Date(leavingTime) - new Date(workOrderDetail?.arrivalTime)
+    //                     const minutes = (timeMs / (1000 * 60)).toFixed(1);
+
+    //                     if (minutes >= 60) {
+    //                         const hours = Math.floor(minutes / 60)
+    //                         const mins = (minutes % 60).toFixed(1)
+    //                         workingTime = `${hours} giờ ${mins} phút`;
+    //                     }
+    //                     else {
+    //                         workingTime = `${minutes} phút`;
+    //                     }
+    //                 }
+
+    //             } else if (arrivalTime && workOrderDetail.leavingTime) {
+    //                 throw new BadReq(errorCode.CANT_UPDATE_TIME)
+    //             }
+
+    //             const result = await WorkOrderDetailModel.findByIdAndUpdate(
+    //                 workOrderDetail._id,
+    //                 {
+    //                     arrivalTime,
+    //                     leavingTime,
+    //                     workingTime
+    //                 }, { new: true }
+    //             )
+    //             return { workingTime: result?.workingTime }
+    //         }
+
+    //         const typeWork = workOrder.typeWork
+    //         const workOrderType = workOrder.type[0]
+
+    //         //Check xem có thay đổi cùng dòng máy không 
+    //         if (workOrder.type[0] != type[0]) {
+    //             throw new BadReq(errorCode.TYPE_MACHINE_INVALIB)
+    //         }
+
+    //         // Phiếu BẢO TRÌ MAINTENANCE
+    //         if (typeWork === constant.WORK_ORDER_TYPE.MAINTENANCE.value) {
+    //             //Dòng A
+    //             if (workOrderType === constant.WORK_ORDER_DETAIL_TYPE.A.value) {
+    //                 const {
+    //                     maintainContractDate,
+    //                     maintainDate,
+    //                     // arrivalTime,
+    //                     leavingTime,
+    //                     machineSpecs,
+    //                     replacement,
+    //                     technicalFeedback,
+    //                     customerFeedback,
+    //                     customerInfo,
+    //                     machineName,
+    //                     serialNumber,
+    //                     failureSituation,
+    //                     differentApproach,
+    //                     inkCode,
+    //                     machineStartup,
+    //                     inkjetTime,
+    //                     evaluate
+    //                 } = reqData
+
+    //                 await WorkOrderDetailModel.findByIdAndUpdate(
+    //                     workOrderDetail._id,
+    //                     {
+    //                         customerInfo,
+    //                         maintainDate,
+    //                         // arrivalTime,
+    //                         leavingTime,
+    //                         type,
+    //                         machineName,
+    //                         serialNumber,
+    //                         maintainContractDate,
+    //                         machineSpecs,
+    //                         failureSituation,
+    //                         differentApproach,
+    //                         technicalFeedback,
+    //                         replacement,
+    //                         customerFeedback,
+    //                         inkCode,
+    //                         machineStartup,
+    //                         inkjetTime,
+    //                         evaluate
+    //                     },
+    //                 )
+    //                 // return null
+    //             } else {
+    //                 const {
+    //                     machineInfo,
+    //                     machineSpecs,
+    //                     groups,
+    //                     maintainOperations,
+    //                     technicalFeedback,
+    //                     customerFeedback,
+    //                 } = reqData
+
+    //                 await WorkOrderDetailModel.findByIdAndUpdate(
+    //                     workOrderDetail._id,
+    //                     {
+    //                         machineInfo,
+    //                         machineSpecs,
+    //                         groups,
+    //                         maintainOperations,
+    //                         technicalFeedback,
+    //                         customerFeedback,
+    //                     },
+    //                 )
+    //                 // return null
+    //             }
+    //         }
+    //         //Phiếu SỬA CHỮA
+    //         else if (typeWork === constant.WORK_ORDER_TYPE.REPAIR.value) {
+    //             if (workOrderType === constant.WORK_ORDER_DETAIL_TYPE.A.value) {
+    //                 await WorkOrderDetailModel.findByIdAndUpdate(
+    //                     workOrderDetail._id,
+    //                     {
+    //                         maintainContract,
+    //                         repairDate,
+    //                         leavingTime,
+    //                         installationDate,
+    //                         inkCode,
+    //                         machineStartup,
+    //                         inkjetTime,
+    //                         machineCode,
+    //                         failureSituation,
+    //                         differentApproach,
+    //                         machineInfo,
+    //                         machineSpecs,
+    //                         technicalFeedback,
+    //                         replacement,
+    //                         customerFeedback,
+    //                         evaluate,
+    //                         ambientTemperature, //Nhiệt độ môi trường
+    //                         environmentHumidity,//Độ ẩm môi trường
+    //                         dustLevel, //Mức độ bụi bẩn
+    //                     },
+    //                 )
+    //                 // return null
+    //             } else {
+    //                 if (workOrder.type[0] === "G") {
+    //                     await WorkOrderDetailModel.findByIdAndUpdate(
+    //                         workOrderDetail._id,
+    //                         reqData,
+    //                     )
+    //                 } else {
+    //                     await WorkOrderDetailModel.findByIdAndUpdate(
+    //                         workOrderDetail._id,
+    //                         {
+    //                             maintainContract,
+    //                             repairDate,
+    //                             leavingTime,
+    //                             installationDate,
+    //                             serialControllerNumber,
+    //                             serialLaserHeadNumber,
+    //                             laserHeadTime,
+    //                             controllerTime,
+    //                             machineCode,
+    //                             failureSituation,
+    //                             differentApproach,
+    //                             machineInfo,
+    //                             machineSpecs,
+    //                             technicalFeedback,
+    //                             replacement,
+    //                             customerFeedback,
+    //                             evaluate,
+    //                             adhesiveType,
+    //                             ribbonType,
+    //                             labelSize,
+    //                             padSize,
+    //                             beltSpeed
+    //                         },
+    //                     )
+    //                 }
+    //             }
+    //         }
+    //         //Phiếu lắp đặt
+    //         else if (typeWork === constant.WORK_ORDER_TYPE.INSTALLATION.value) {
+    //             const {
+    //                 deliveryDate,
+    //                 installDate,
+    //                 handOverDate,
+    //                 machineSpecs,
+    //                 warrantyTime,
+    //                 technicalFeedback,
+    //                 customerFeedback,
+    //                 guide
+    //             } = reqData
+    //             await WorkOrderDetailModel.findByIdAndUpdate(
+    //                 workOrderDetail._id,
+    //                 {
+    //                     deliveryDate,
+    //                     installDate,
+    //                     handOverDate,
+    //                     warrantyTime,
+    //                     machineSpecs,
+    //                     // includedAccessories,
+    //                     guide,
+    //                 },
+    //             )
+    //         }
+
+    //         //UPDATE WORKORDER
+    //         await WorkOrderModel.findByIdAndUpdate(workOrderId, { status: "completed", serialNumber })
+
+    //         //UPDATE STATUS KỸ THUẬT VIÊN
+    //         await technicianService.checkStatusTechnical(workOrder.technicianId)
+
+    //         // UPDATE KHÁCH HÀNG
+    //         const dataUpdate = { customerId: workOrder?.customerId, serialNumber: reqData?.serialNumber, productCode: reqData?.type }
+    //         await contactPersonCustomerService.create(dataUpdate, 'update')
+
+    //         return null
+    //     } catch (error) {
+    //         throw error
+    //     }
+    // },
+
     updateData: async (workOrderId, query, reqData) => {
         try {
-            const { isCompleted } = query
-            //machineSpecs -> Thông số máy mà kỹ thuật viên tới nhập vào sau khi bảo trì
-            const {
-                serialNumber,
-                maintainContract,
-                repairDate,
-                departureTime,
-                machineInfo,
-                technicalFeedback,
-                replacement,
-                customerFeedback,
-                arrivalTime, // Thời gian đến
-                leavingTime, //Thời gian đi ( thời gian rời khỏi)
-                workingTime, //Thời gian sửa chữa 
-                installationDate,
-                inkCode,
-                machineStartup,
-                inkjetTime,
-                machineCode,
-                failureSituation,
-                differentApproach,
-                machineSpecs,
-                evaluate,
-                type,
-                laserHeadTime, //Thời gian laser head
-                controllerTime, //Thời gian controller
-                serialControllerNumber,
-                serialLaserHeadNumber,
-                adhesiveType,
-                ribbonType,
-                labelSize,
-                padSize,
-                beltSpeed,
+            const { isCompleted } = query;
+            const isComp = isCompleted === true || isCompleted === 'true';
 
-                //Phiếu G
-                printHead,
-                inkSupply,
-                singlePrintHead,
-                compositePrintHead,
-                singleSerialNumber,
-                compositeSerialNumber,
-                // Chữ ký điện tử
-                signature
-            } = reqData
-
-            //check workOrder
-            const workOrder = await WorkOrderModel.findById(workOrderId).lean()
+            // 1. Kiểm tra WorkOrder tồn tại
+            const workOrder = await WorkOrderModel.findById(workOrderId).lean();
             if (!workOrder) {
-                throw new BadReq(errorCode.WORK_ORDER_NOT_FOUND)
+                throw new BadReq(errorCode.WORK_ORDER_NOT_FOUND);
             }
 
-            //Lấy model
-            const WorkOrderDetailModel = getWorkOrderModel(
-                workOrder.typeWork,
-                workOrder.type[0],
-            )
+            const typeWork = workOrder.typeWork;
+            const workOrderType = workOrder.type[0]; // Dòng máy hiện tại của WorkOrder
 
-            const workOrderDetail = await WorkOrderDetailModel.findOne({
-                workOrderId,
-            })
+            // Check xem dữ liệu gửi lên có đổi dòng máy khác không
+            if (reqData.type && workOrderType !== reqData.type[0]) {
+                throw new BadReq(errorCode.TYPE_MACHINE_INVALIB);
+            }
 
-            //check workOrderDetail có tồn tại hay không
+            // 2. Lấy chi tiết WorkOrderDetail
+            const WorkOrderDetailModel = getWorkOrderModel(typeWork, workOrderType);
+            const workOrderDetail = await WorkOrderDetailModel.findOne({ workOrderId });
             if (!workOrderDetail) {
-                throw new BadReq(errorCode.WORK_ORDER_DETAIL_NOT_FOUND)
+                throw new BadReq(errorCode.WORK_ORDER_DETAIL_NOT_FOUND);
             }
 
-
-            if (isCompleted === true || isCompleted === 'true') {
+            // 3. Khối Logic KIỂM TRA ĐIỀU KIỆN HOÀN THÀNH (Validation)
+            if (isComp) {
+                const { machineSpecs } = reqData;
                 const isMachineSpecsValid = machineSpecs && machineSpecs.length > 0 && machineSpecs.every(spec => {
-                    // Kiểm tra value không được null, undefined hoặc chuỗi rỗng
-                    if (Array.isArray(spec.value)) {
-                        return spec.value.length > 0;
-                    }
+                    if (Array.isArray(spec.value)) return spec.value.length > 0;
                     return spec.value !== '' && spec.value !== null && spec.value !== undefined;
                 });
-                if (!isMachineSpecsValid) {
-                    if (workOrder.type[0] !== "G") {
-                        throw new BadReq(errorCode.MachineSpecs_IN_Valid)
-                    }
+
+                if (!isMachineSpecsValid && workOrderType !== "G") {
+                    throw new BadReq(errorCode.MachineSpecs_IN_Valid);
                 }
-            } else {
-                //Update WorkingTime
+            }
+
+            // 4. TÍNH TOÁN THỜI GIAN SỬA CHỮA
+            let timeUpdatePayload = {};
+            const { arrivalTime, leavingTime } = reqData;
+
+            if (leavingTime) {
+                const arrival = arrivalTime || workOrderDetail?.arrivalTime;
+                if (!arrival) {
+                    throw new BadReq(errorCode.ARRIVAL_TIME_REQUIRED);
+                }
+                const timeMs = new Date(leavingTime) - new Date(arrival);
+                const minutes = (timeMs / (1000 * 60)).toFixed(1);
                 let workingTime = "";
-                const arrival = workOrderDetail?.arrivalTime;
-                if (leavingTime) {
-                    if (!arrival) {
-                        throw new BadReq(errorCode.ARRIVAL_TIME_REQUIRED)
-                    }
-                    else {
-                        const timeMs = new Date(leavingTime) - new Date(workOrderDetail?.arrivalTime)
-                        const minutes = (timeMs / (1000 * 60)).toFixed(1);
 
-                        if (minutes >= 60) {
-                            const hours = Math.floor(minutes / 60)
-                            const mins = (minutes % 60).toFixed(1)
-                            workingTime = `${hours} giờ ${mins} phút`;
-                        }
-                        else {
-                            workingTime = `${minutes} phút`;
-                        }
-                    }
-
-                } else if (arrivalTime && workOrderDetail.leavingTime) {
-                    throw new BadReq(errorCode.CANT_UPDATE_TIME)
+                if (minutes >= 60) {
+                    const hours = Math.floor(minutes / 60);
+                    const mins = (minutes % 60).toFixed(1);
+                    workingTime = `${hours} giờ ${mins} phút`;
+                } else {
+                    workingTime = `${minutes} phút`;
                 }
-
-                const result = await WorkOrderDetailModel.findByIdAndUpdate(
-                    workOrderDetail._id,
-                    {
-                        arrivalTime,
-                        leavingTime,
-                        workingTime
-                    }, { new: true }
-                )
-                return { workingTime: result?.workingTime }
+                timeUpdatePayload = { arrivalTime, leavingTime, workingTime };
+            } else if (arrivalTime && workOrderDetail.leavingTime) {
+                throw new BadReq(errorCode.CANT_UPDATE_TIME);
+            } else if (arrivalTime) {
+                timeUpdatePayload = { arrivalTime };
             }
 
-            const typeWork = workOrder.typeWork
-            const workOrderType = workOrder.type[0]
+            // 5. PAYLOAD CẬP NHẬT THEO TỪNG LOẠI PHIẾU
+            let updateDetailPayload = { ...timeUpdatePayload };
 
-            //Check xem có thay đổi cùng dòng máy không 
-            if (workOrder.type[0] != type[0]) {
-                throw new BadReq(errorCode.TYPE_MACHINE_INVALIB)
-            }
-
-            // Phiếu BẢO TRÌ MAINTENANCE
+            // PHIẾU BẢO TRÌ
             if (typeWork === constant.WORK_ORDER_TYPE.MAINTENANCE.value) {
                 if (workOrderType === constant.WORK_ORDER_DETAIL_TYPE.A.value) {
                     const {
-                        maintainContractDate,
-                        maintainDate,
-                        // arrivalTime,
-                        leavingTime,
-                        machineSpecs,
-                        replacement,
-                        technicalFeedback,
-                        customerFeedback,
-                        customerInfo,
-                        machineName,
-                        serialNumber,
-                        failureSituation,
-                        differentApproach,
-                        inkCode,
-                        machineStartup,
-                        inkjetTime,
-                        evaluate
-                    } = reqData
+                        maintainContractDate, maintainDate, machineSpecs, replacement,
+                        technicalFeedback, customerFeedback, customerInfo, machineName,
+                        serialNumber, failureSituation, differentApproach, inkCode,
+                        machineStartup, inkjetTime, evaluate, type, ambientTemperature, environmentHumidity, dustLevel
+                    } = reqData;
 
-                    await WorkOrderDetailModel.findByIdAndUpdate(
-                        workOrderDetail._id,
-                        {
-                            customerInfo,
-                            maintainDate,
-                            // arrivalTime,
-                            leavingTime,
-                            type,
-                            machineName,
-                            serialNumber,
-                            maintainContractDate,
-                            machineSpecs,
-                            failureSituation,
-                            differentApproach,
-                            technicalFeedback,
-                            replacement,
-                            customerFeedback,
-                            inkCode,
-                            machineStartup,
-                            inkjetTime,
-                            evaluate
-                        },
-                    )
-                    // return null
+                    Object.assign(updateDetailPayload, {
+                        customerInfo, maintainDate, type, machineName, serialNumber,
+                        maintainContractDate, machineSpecs, failureSituation, differentApproach,
+                        technicalFeedback, replacement, customerFeedback, inkCode,
+                        machineStartup, inkjetTime, evaluate, ambientTemperature, environmentHumidity, dustLevel
+                    });
                 } else {
-                    const {
-                        machineInfo,
-                        machineSpecs,
-                        groups,
-                        maintainOperations,
-                        technicalFeedback,
-                        customerFeedback,
-                    } = reqData
-
-                    await WorkOrderDetailModel.findByIdAndUpdate(
-                        workOrderDetail._id,
-                        {
-                            machineInfo,
-                            machineSpecs,
-                            groups,
-                            maintainOperations,
-                            technicalFeedback,
-                            customerFeedback,
-                        },
-                    )
-                    // return null
+                    const { machineInfo, machineSpecs, groups, maintainOperations, technicalFeedback, customerFeedback } = reqData;
+                    Object.assign(updateDetailPayload, { machineInfo, machineSpecs, groups, maintainOperations, technicalFeedback, customerFeedback });
                 }
             }
-            //Phiếu SỬA CHỮA
+            // PHIẾU SỬA CHỮA
             else if (typeWork === constant.WORK_ORDER_TYPE.REPAIR.value) {
                 if (workOrderType === constant.WORK_ORDER_DETAIL_TYPE.A.value) {
-                    await WorkOrderDetailModel.findByIdAndUpdate(
-                        workOrderDetail._id,
-                        {
-                            maintainContract,
-                            repairDate,
-                            leavingTime,
-                            installationDate,
-                            inkCode,
-                            machineStartup,
-                            inkjetTime,
-                            machineCode,
-                            failureSituation,
-                            differentApproach,
-                            machineInfo,
-                            machineSpecs,
-                            technicalFeedback,
-                            replacement,
-                            customerFeedback,
-                            evaluate
-                        },
-                    )
-                    // return null
+                    const {
+                        maintainContract, repairDate, installationDate, inkCode, machineStartup,
+                        inkjetTime, machineCode, failureSituation, differentApproach, machineInfo,
+                        machineSpecs, technicalFeedback, replacement, customerFeedback, evaluate,
+                        ambientTemperature, environmentHumidity, dustLevel
+                    } = reqData;
+
+                    Object.assign(updateDetailPayload, {
+                        maintainContract, repairDate, installationDate, inkCode, machineStartup,
+                        inkjetTime, machineCode, failureSituation, differentApproach, machineInfo,
+                        machineSpecs, technicalFeedback, replacement, customerFeedback, evaluate,
+                        ambientTemperature, environmentHumidity, dustLevel
+                    });
+                } else if (workOrderType === "G") {
+                    updateDetailPayload = { ...updateDetailPayload, ...reqData };
                 } else {
-                    if (workOrder.type[0] === "G") {
-                        await WorkOrderDetailModel.findByIdAndUpdate(
-                            workOrderDetail._id,
-                            reqData,
-                        )
-                    } else {
-                        await WorkOrderDetailModel.findByIdAndUpdate(
-                            workOrderDetail._id,
-                            {
-                                maintainContract,
-                                repairDate,
-                                leavingTime,
-                                installationDate,
-                                serialControllerNumber,
-                                serialLaserHeadNumber,
-                                laserHeadTime,
-                                controllerTime,
-                                machineCode,
-                                failureSituation,
-                                differentApproach,
-                                machineInfo,
-                                machineSpecs,
-                                technicalFeedback,
-                                replacement,
-                                customerFeedback,
-                                evaluate,
-                                adhesiveType,
-                                ribbonType,
-                                labelSize,
-                                padSize,
-                                beltSpeed
-                            },
-                        )
-                    }
+                    const {
+                        maintainContract, repairDate, installationDate, serialControllerNumber,
+                        serialLaserHeadNumber, laserHeadTime, controllerTime, machineCode,
+                        failureSituation, differentApproach, machineInfo, machineSpecs,
+                        technicalFeedback, replacement, customerFeedback, evaluate,
+                        adhesiveType, ribbonType, labelSize, padSize, beltSpeed
+                    } = reqData;
+
+                    Object.assign(updateDetailPayload, {
+                        maintainContract, repairDate, installationDate, serialControllerNumber,
+                        serialLaserHeadNumber, laserHeadTime, controllerTime, machineCode,
+                        failureSituation, differentApproach, machineInfo, machineSpecs,
+                        technicalFeedback, replacement, customerFeedback, evaluate,
+                        adhesiveType, ribbonType, labelSize, padSize, beltSpeed
+                    });
                 }
             }
-            //Phiếu lắp đặt
+            // PHIẾU LẮP ĐẶT
             else if (typeWork === constant.WORK_ORDER_TYPE.INSTALLATION.value) {
-                const {
-                    deliveryDate,
-                    installDate,
-                    handOverDate,
-                    machineSpecs,
-                    warrantyTime,
-                    technicalFeedback,
-                    customerFeedback,
-                    guide
-                } = reqData
-                await WorkOrderDetailModel.findByIdAndUpdate(
-                    workOrderDetail._id,
-                    {
-                        deliveryDate,
-                        installDate,
-                        handOverDate,
-                        warrantyTime,
-                        machineSpecs,
-                        // includedAccessories,
-                        guide,
-                    },
-                )
+                const { deliveryDate, installDate, handOverDate, machineSpecs, warrantyTime, guide } = reqData;
+                Object.assign(updateDetailPayload, { deliveryDate, installDate, handOverDate, warrantyTime, machineSpecs, guide });
             }
 
-            // if (typeWork === constant.WORK_ORDER_TYPE.SAMPLE_PRINTING.value) {
-            //     const {
-            //         inkTypeId,
-            //         sellMachineTypeId,
-            //         packagingMaterial,
-            //         temperature,
-            //         method,
-            //         informationFrom,
-            //         customerRequest,
-            //         managerOpinion,
-            //         solution,
-            //         testInkTypeIds,
-            //         managerOpinionOnSample,
-            //         receivingTime,
-            //         returnTime,
-            //         note,
-            //     } = reqData
-            //     await WorkOrderDetailModel.findByIdAndUpdate(
-            //         workOrderDetail._id,
-            //         {
-            //             inkTypeId,
-            //             sellMachineTypeId,
-            //             packagingMaterial,
-            //             temperature,
-            //             method,
-            //             informationFrom,
-            //             customerRequest,
-            //             managerOpinion,
-            //             solution,
-            //             testInkTypeIds,
-            //             managerOpinionOnSample,
-            //             receivingTime,
-            //             returnTime,
-            //             note,
-            //         },
-            //     )
-            //     return null
-            // }
+            // Thực hiện cập nhật vào DB chi tiết phiếu
+            const updatedDetail = await WorkOrderDetailModel.findByIdAndUpdate(
+                workOrderDetail._id,
+                updateDetailPayload,
+                { new: true }
+            );
 
-            // if (typeWork === constant.WORK_ORDER_TYPE.DEMO.value) {
-            //     const { props, technicalFeedback, customerFeedback } = reqData
-            //     await WorkOrderDetailModel.findByIdAndUpdate(
-            //         workOrderDetail._id,
-            //         {
-            //             props,
-            //             technicalFeedback,
-            //             customerFeedback,
-            //         },
-            //     )
-            //     return null
-            // }
+            // 6. XỬ LÝ KHI HOÀN THÀNH PHIẾU (Chỉ chạy khi isCompleted thực sự bằng true)
+            if (isComp) {
+                // UPDATE WORKORDER thành completed
+                await WorkOrderModel.findByIdAndUpdate(workOrderId, {
+                    status: "completed",
+                    serialNumber: reqData.serialNumber || workOrder.serialNumber
+                });
 
-            // if (typeWork === constant.WORK_ORDER_TYPE.TEST_IO.value) {
-            //     if (type === constant.WORK_ORDER_DETAIL_TYPE.A.value) {
-            //         const { testDate, testerId, props } = reqData
-            //         await WorkOrderDetailModel.findByIdAndUpdate(
-            //             workOrderDetail._id,
-            //             { testDate, testerId, props },
-            //         )
-            //         return null
-            //     } else {
-            //         const {
-            //             testDate,
-            //             testerId,
-            //             purposeTest,
-            //             receiptDate,
-            //             props,
-            //             image,
-            //             printHeads,
-            //         } = reqData
-            //         await WorkOrderDetailModel.findByIdAndUpdate(
-            //             workOrderDetail._id,
-            //             {
-            //                 baseInfo: {
-            //                     testDate,
-            //                     testerId,
-            //                     purposeTest,
-            //                     receiptDate,
-            //                 },
-            //                 props,
-            //                 image,
-            //                 printHeads,
-            //             },
-            //         )
-            //         return null
-            //     }
-            // }
+                // UPDATE STATUS KỸ THUẬT VIÊN
+                await technicianService.checkStatusTechnical(workOrder.technicianId);
 
-            //UPDATE WORKORDER
-            await WorkOrderModel.findByIdAndUpdate(workOrderId, { status: "completed", serialNumber })
+                // UPDATE KHÁCH HÀNG
+                const dataUpdate = {
+                    customerId: workOrder?.customerId,
+                    serialNumber: reqData?.serialNumber,
+                    productCode: reqData?.type
+                };
+                await contactPersonCustomerService.create(dataUpdate, 'update');
 
-            //UPDATE STATUS KỸ THUẬT VIÊN
-            await technicianService.checkStatusTechnical(workOrder.technicianId)
+                return null; // Hoàn thành toàn bộ quy trình đơn hàng
+            }
 
-            // UPDATE KHÁCH HÀNG
-            const dataUpdate = { customerId: workOrder?.customerId, serialNumber: reqData?.serialNumber, productCode: reqData?.type }
-            await contactPersonCustomerService.create(dataUpdate, 'update')
+            // Nếu chỉ là update tiến độ/thời gian thông thường (isCompleted = false)
+            return { workingTime: updatedDetail?.workingTime };
 
-            return null
         } catch (error) {
-            throw error
+            throw error;
         }
     },
     getAllRepairFault: async (query) => {

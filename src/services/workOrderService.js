@@ -13,17 +13,275 @@ const { getWorkOrderModel } = require('../utils/helper/workOrderDetailHelper')
 const technicianService = require('./technicianService')
 
 const workOrderService = {
+    // dashboard: async () => {
+    //     try {
+    //         const totalWorkOrders = await WorkOrderModel.countDocuments()
+    //         const totalInProgress = await WorkOrderModel.find({ status: constant.WORK_REQUEST_STATUS.IN_PROGRESS.value }).countDocuments()
+    //         const totalCompleted = await WorkOrderModel.find({ status: constant.WORK_REQUEST_STATUS.COMPLETED.value }).countDocuments()
+    //         const totalOverdue = await WorkOrderModel.find({ status: constant.WORK_REQUEST_STATUS.OVERDUE.value }).countDocuments()
+    //         const totalPending = await WorkOrderModel.find({ status: constant.WORK_REQUEST_STATUS.PENDING.value }).countDocuments()
+    //         const technician = await TechnicianModel.countDocuments()
+    //         const customers = await ContactPersonCustomerModel.countDocuments()
+    //         return { totalWorkOrders, totalInProgress, totalCompleted, totalOverdue, totalPending, technician, customers }
+    //     } catch (error) {
+    //         throw error
+    //     }
+    // },
+    dashboard: async (query) => {
+        try {
+            const { fromDate, toDate } = query;
+            const matchStage = {};
+
+            // 1. Xử lý khoảng thời gian lọc (createdAt)
+            if (fromDate || toDate) {
+                matchStage.createdAt = {};
+                if (fromDate) matchStage.createdAt.$gte = new Date(fromDate);
+                if (toDate) matchStage.createdAt.$lte = new Date(toDate);
+            }
+
+            // 2. Sử dụng Promise.all để chạy song song các bảng khác nhau
+            const [workOrderStats, totalTechnicians, totalCustomers] = await Promise.all([
+                // Gom tất cả các điều kiện đếm của WorkOrder vào 1 cú quét duy nhất (Aggregation Facet)
+                WorkOrderModel.aggregate([
+                    { $match: matchStage },
+                    {
+                        $facet: {
+                            totalWorkOrders: [{ $count: "count" }],
+                            totalInProgress: [
+                                { $match: { status: constant.WORK_REQUEST_STATUS.IN_PROGRESS.value } },
+                                { $count: "count" }
+                            ],
+                            totalCompleted: [
+                                { $match: { status: constant.WORK_REQUEST_STATUS.COMPLETED.value } },
+                                { $count: "count" }
+                            ],
+                            totalOverdue: [
+                                { $match: { status: constant.WORK_REQUEST_STATUS.OVERDUE.value } },
+                                { $count: "count" }
+                            ],
+                            totalPending: [
+                                { $match: { status: constant.WORK_REQUEST_STATUS.PENDING.value } },
+                                { $count: "count" }
+                            ]
+                        }
+                    }
+                ]),
+                // Đếm số lượng kỹ thuật viên (Thường không bị ảnh hưởng bởi bộ lọc ngày của phiếu)
+                TechnicianModel.countDocuments(),
+                // Đếm số lượng khách hàng (Thường không bị ảnh hưởng bởi bộ lọc ngày của phiếu)
+                ContactPersonCustomerModel.countDocuments()
+            ]);
+
+            // 3. Bóc tách dữ liệu từ mảng kết quả Aggregation Facet
+            const stats = workOrderStats[0] || {};
+
+            const totalWorkOrders = stats.totalWorkOrders[0]?.count || 0;
+            const totalInProgress = stats.totalInProgress[0]?.count || 0;
+            const totalCompleted = stats.totalCompleted[0]?.count || 0;
+            const totalOverdue = stats.totalOverdue[0]?.count || 0;
+            const totalPending = stats.totalPending[0]?.count || 0;
+
+            return {
+                totalWorkOrders,
+                totalInProgress,
+                totalCompleted,
+                totalOverdue,
+                totalPending,
+                technician: totalTechnicians,
+                customers: totalCustomers
+            };
+
+        } catch (error) {
+            throw error;
+        }
+    },
+    // getAll: async (reqUserId, query) => {
+    //     try {
+    //         let { limit = 10, page = 1, search = '', status, typeWork, startTime, endTime, history, address, typeHistory } = query
+    //         limit = Number(limit)
+    //         page = Number(page)
+    //         search = new RegExp(search, 'i')
+    //         address = new RegExp(address, 'i')
+
+    //         const technician = await TechnicianModel.findById(reqUserId)
+    //         const customers = await CustomerModel.find({ officialName: search })
+    //         const customerIds = customers ? customers.map((c) => c._id) : []
+    //         let conditions = {};
+    //         if (history == undefined) {
+    //             conditions = {
+    //                 $or: [
+    //                     { code: search },
+    //                     { header: search },
+    //                     { customerId: { $in: customerIds } },
+    //                 ],
+    //                 ...(status ? { status } : {}),
+    //                 ...(typeWork ? { typeWork } : {}),
+    //                 ...(technician ? { technicianId: reqUserId } : {}),
+    //                 ...(startTime && endTime ? {
+    //                     createdAt: {
+    //                         $gte: startTime,
+    //                         $lte: endTime
+    //                     }
+    //                 } : {}),
+    //             }
+    //         } else {
+    //             history = new RegExp(history, 'i')
+
+    //             if (typeHistory == 'serialNumber') {
+    //                 conditions = {
+    //                     ...(history ? { serialNumber: history } : {}),
+    //                 }
+    //             } else {
+    //                 const customers = await CustomerModel.find({ officialName: history }).select({ _id: 1 })
+    //                 const customerIds = customers.map(c => c._id);
+    //                 const contacts = await ContactPersonCustomerModel.find({
+    //                     customerId: { $in: customerIds },
+    //                     address: {
+    //                         $elemMatch: {
+    //                             $or: [
+    //                                 { provinceCity: address },
+    //                                 { ward: address },
+    //                                 { specificAddress: address }
+    //                             ]
+    //                         }
+    //                     }
+    //                 })
+    //                     .populate('customerId', 'officialName billingAddress')
+    //                     .select({ customerId: 1, devices: 1 }).lean();
+
+    //                 const productCodes = contacts.flatMap(c => c.devices.flatMap(device => device.productCode) || []);
+    //                 const products = await ProductModel.find({ code: { $in: productCodes } }).select({ name: 1, code: 1 })
+    //                 const productMap = new Map(products.map(p => [String(p.code), p]));
+
+    //                 for (const contact of contacts) {
+    //                     const devices = contact.devices;
+    //                     for (const device of devices) {
+    //                         const matchedProduct = productMap.get(String(device.productCode));
+    //                         if (matchedProduct) {
+    //                             device.machineName = matchedProduct.name
+    //                         }
+    //                     }
+    //                 }
+
+    //                 //========= THỐNG KÊ ========
+    //                 const uniqueCustomerIds = new Set(contacts.map(c => String(c.customerId?._id || c.customerId)));
+    //                 const totalCustomers = uniqueCustomerIds.size;
+
+    //                 let totalDevices = 0;
+    //                 const deviceSummaryMap = {};
+
+    //                 contacts.forEach(contact => {
+    //                     if (contact.devices && Array.isArray(contact.devices)) {
+    //                         contact.devices.forEach(device => {
+    //                             totalDevices++;
+    //                             const code = device.productCode;
+    //                             const name = device.machineName || "Chưa xác định";
+
+    //                             if (!deviceSummaryMap[code]) {
+    //                                 deviceSummaryMap[code] = {
+    //                                     productCode: code,
+    //                                     machineName: name,
+    //                                     quantity: 0
+    //                                 };
+    //                             }
+    //                             deviceSummaryMap[code].quantity += 1;
+    //                         });
+    //                     }
+    //                 });
+
+    //                 return {
+    //                     statistics: {
+    //                         totalCustomers,
+    //                         totalDevices,
+    //                         deviceDetails: Object.values(deviceSummaryMap)
+    //                     },
+    //                     data: contacts
+    //                 };
+
+    //                 return contacts
+
+    //                 // const customers = await CustomerModel.find({ officialName: history }).select({ _id: 1, officialName: 1 })
+    //                 // const customerIds = customers.map(c => c._id);
+    //                 // const contacts = await ContactPersonCustomerModel.find({ customerId: { $in: customerIds } });
+    //                 // const productCodes = contacts.flatMap(c => c.productCode || []);
+
+
+    //                 // conditions = {
+    //                 //     $or: [
+    //                 //         { customerId: { $in: customerIds } },
+    //                 //         { productCode: { $in: productCodes } }
+    //                 //     ]
+    //                 // };
+    //             }
+    //         }
+    //         const [workOrders, totalItems] = await Promise.all([
+    //             WorkOrderModel.find(conditions)
+    //                 .sort({ createdAt: -1 })
+    //                 .skip((page - 1) * limit)
+    //                 .limit(limit)
+    //                 .populate(
+    //                     'customerId',
+    //                     'officialName representative.name phone email',
+    //                 )
+    //                 .populate('technicianId', 'fullname')
+    //                 .lean(),
+    //             WorkOrderModel.countDocuments(conditions),
+    //         ])
+
+    //         let fullAddress = ''
+    //         const result = workOrders.map((order) => {
+    //             let technicianInfo = null
+    //             if (order.technicianId) {
+    //                 technicianInfo = {
+    //                     technicianId: order.technicianId._id,
+    //                     fullname: order.technicianId.fullname,
+    //                 }
+    //             }
+    //             if (history) {
+    //                 const address = order?.address
+    //                 if (address?.specificAddress != null) {
+    //                     fullAddress = `${address?.specificAddress} ${address?.ward} ${address?.provinceCity}`
+    //                 }
+    //                 else {
+    //                     fullAddress = ''
+    //                 }
+    //             }
+
+
+    //             return {
+    //                 ...order,
+    //                 technicianInfo,
+    //                 technicianId: undefined,
+    //                 fullAddress
+    //             }
+    //         })
+    //         return {
+    //             result,
+    //             totalItems,
+    //             page,
+    //             totalPage: Math.ceil(totalItems / limit),
+    //         }
+    //     } catch (error) {
+    //         throw error
+    //     }
+    // },
     getAll: async (reqUserId, query) => {
         try {
-            let { limit = 10, page = 1, search = '', status, typeWork, startTime, endTime, history, typeHistory } = query
+            let { limit = 10, page = 1, search = '', status, typeWork, startTime, endTime, history, address, typeHistory } = query
             limit = Number(limit)
             page = Number(page)
+
+            // Giữ lại giá trị chuỗi thô của address để kiểm tra điều kiện bật filter
+            const rawAddress = address ? String(address).trim() : '';
+
             search = new RegExp(search, 'i')
+            address = new RegExp(address, 'i')
 
             const technician = await TechnicianModel.findById(reqUserId)
             const customers = await CustomerModel.find({ officialName: search })
             const customerIds = customers ? customers.map((c) => c._id) : []
             let conditions = {};
+
             if (history == undefined) {
                 conditions = {
                     $or: [
@@ -51,7 +309,27 @@ const workOrderService = {
                 } else {
                     const customers = await CustomerModel.find({ officialName: history }).select({ _id: 1 })
                     const customerIds = customers.map(c => c._id);
-                    const contacts = await ContactPersonCustomerModel.find({ customerId: { $in: customerIds } })
+
+                    // 1. Tự động xây dựng điều kiện tìm kiếm động cho Contact
+                    const contactConditions = {
+                        customerId: { $in: customerIds }
+                    };
+
+                    // FIX LỖI TẠI ĐÂY: Chỉ khi user thực sự nhập chữ vào ô địa chỉ (rawAddress !== "") 
+                    // thì ta mới đưa $elemMatch vào để lọc. Nếu ô địa chỉ trống, hiển thị ALL (kể cả mảng address: [])
+                    if (rawAddress !== "") {
+                        contactConditions.address = {
+                            $elemMatch: {
+                                $or: [
+                                    { provinceCity: address },
+                                    { ward: address },
+                                    { specificAddress: address }
+                                ]
+                            }
+                        };
+                    }
+
+                    const contacts = await ContactPersonCustomerModel.find(contactConditions)
                         .populate('customerId', 'officialName billingAddress')
                         .select({ customerId: 1, devices: 1 }).lean();
 
@@ -61,39 +339,60 @@ const workOrderService = {
 
                     for (const contact of contacts) {
                         const devices = contact.devices;
-                        for (const device of devices) {
-                            const matchedProduct = productMap.get(String(device.productCode));
-                            if (matchedProduct) {
-                                device.machineName = matchedProduct.name
+                        if (devices && Array.isArray(devices)) {
+                            for (const device of devices) {
+                                const matchedProduct = productMap.get(String(device.productCode));
+                                if (matchedProduct) {
+                                    device.machineName = matchedProduct.name
+                                }
                             }
                         }
                     }
 
-                    return contacts
+                    //========= THỐNG KÊ ========
+                    const uniqueCustomerIds = new Set(contacts.map(c => String(c.customerId?._id || c.customerId)));
+                    const totalCustomers = uniqueCustomerIds.size;
 
-                    // const customers = await CustomerModel.find({ officialName: history }).select({ _id: 1, officialName: 1 })
-                    // const customerIds = customers.map(c => c._id);
-                    // const contacts = await ContactPersonCustomerModel.find({ customerId: { $in: customerIds } });
-                    // const productCodes = contacts.flatMap(c => c.productCode || []);
+                    let totalDevices = 0;
+                    const deviceSummaryMap = {};
 
+                    contacts.forEach(contact => {
+                        if (contact.devices && Array.isArray(contact.devices)) {
+                            contact.devices.forEach(device => {
+                                totalDevices++;
+                                const code = device.productCode;
+                                const name = device.machineName || "Chưa xác định";
 
-                    // conditions = {
-                    //     $or: [
-                    //         { customerId: { $in: customerIds } },
-                    //         { productCode: { $in: productCodes } }
-                    //     ]
-                    // };
+                                if (!deviceSummaryMap[code]) {
+                                    deviceSummaryMap[code] = {
+                                        productCode: code,
+                                        machineName: name,
+                                        quantity: 0
+                                    };
+                                }
+                                deviceSummaryMap[code].quantity += 1;
+                            });
+                        }
+                    });
+
+                    return {
+                        statistics: {
+                            totalCustomers,
+                            totalDevices,
+                            deviceDetails: Object.values(deviceSummaryMap)
+                        },
+                        data: contacts
+                    };
                 }
             }
+
+            // Các khối lệnh chạy phân trang WorkOrder phía dưới...
             const [workOrders, totalItems] = await Promise.all([
                 WorkOrderModel.find(conditions)
                     .sort({ createdAt: -1 })
                     .skip((page - 1) * limit)
                     .limit(limit)
-                    .populate(
-                        'customerId',
-                        'officialName representative.name phone email',
-                    )
+                    .populate('customerId', 'officialName representative.name phone email')
                     .populate('technicianId', 'fullname')
                     .lean(),
                 WorkOrderModel.countDocuments(conditions),
@@ -112,11 +411,11 @@ const workOrderService = {
                     const address = order?.address
                     if (address?.specificAddress != null) {
                         fullAddress = `${address?.specificAddress} ${address?.ward} ${address?.provinceCity}`
-                    }
-                    else {
+                    } else {
                         fullAddress = ''
                     }
                 }
+
                 return {
                     ...order,
                     technicianInfo,
@@ -124,6 +423,7 @@ const workOrderService = {
                     fullAddress
                 }
             })
+
             return {
                 result,
                 totalItems,
@@ -277,6 +577,8 @@ const workOrderService = {
                 //Tạo thông tin khách qua bên kỹ thuật
                 await contactPersonCustomerService.create(contactPersonData, 'installation')
             }
+
+            //TẠO THÔNG TIN KHÁCH HÀNG VÀO BẢNG CONTACTPERSONCUSTOMER
             await contactPersonCustomerService.create(contactPersonData)
 
             const workOrder = await WorkOrderModel.create(workOrderData)
@@ -332,6 +634,15 @@ const workOrderService = {
                 throw new BadReq(errorCode.WORK_ORDER_NOT_FOUND)
             }
 
+            const technician = await TechnicianModel.findOne({
+                _id: technicianId,
+                isActive: true,
+            })
+
+            if (technicianId && !technician) {
+                throw new BadReq(errorCode.TECHNICIAN_NOT_FOUND)
+            }
+
             // if (
             //     oldTypeWork === constant.WORK_ORDER_TYPE.INSTALLATION.value ||
             //     oldTypeWork === constant.WORK_ORDER_TYPE.DEMO.value ||
@@ -355,14 +666,7 @@ const workOrderService = {
             //     }
             // }
 
-            const technician = await TechnicianModel.findOne({
-                _id: technicianId,
-                isActive: true,
-            })
 
-            if (technicianId && !technician) {
-                throw new BadReq(errorCode.TECHNICIAN_NOT_FOUND)
-            }
 
             // if (typeWork !== oldTypeWork || type !== oldType) {
             //     if (
@@ -374,7 +678,6 @@ const workOrderService = {
             //         await workOrderDetailService.delete(workOrderId)
             //     }
             // }
-
 
             // if (
             //     contactEmail !== checkWorkOrder.contactPerson.contactEmail ||

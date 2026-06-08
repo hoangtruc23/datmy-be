@@ -2375,6 +2375,10 @@ async function rolePermissionSeeder() {
             roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
             permissionId: '68ff31af6de21eecbc535ad1', // Khóa/Mở khóa kỹ thuật viên
         },
+        {
+            roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
+            permissionId: '6914e05ccf9e7d1d96f5b0f9', //  contactPerson/addressesByFilter
+        },
         //#endregion
         //#region Cấu hình máy in
         {
@@ -2416,6 +2420,10 @@ async function rolePermissionSeeder() {
             permissionId: '6914e05ccf9e7d1d96f5a0f3', // Tải PDF phiếu chi tiết công việc
         },
         //#endregion
+        {
+            roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
+            permissionId: '6914e05ccf9e7d1d96f5b0f8', // reports/reportHistoryMachine
+        },
         //#endregion
 
         // Nhân viên kho =======================================================================================

@@ -11,6 +11,10 @@ router.get(
     '/getAllAddress/:customerId',
     contactPersonCustomerController.getAllAddress,
 )
+router.get(
+    '/addressesByFilter',
+    contactPersonCustomerController.getAddressesByFilter,
+)
 router.post(
     '/deletePerson/:customerId',
     contactPersonCustomerController.deletePerson,

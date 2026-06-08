@@ -2,6 +2,14 @@ const response = require('../utils/response/response')
 const workOrderService = require('../services/workOrderService')
 
 const workOrderController = {
+    dashboard: async (req, res, next) => {
+        try {
+            const result = await workOrderService.dashboard(req.query)
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
     getAll: async (req, res, next) => {
         try {
             const result = await workOrderService.getAll(req.userId, req.query)

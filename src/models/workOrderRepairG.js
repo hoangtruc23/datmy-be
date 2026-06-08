@@ -33,6 +33,18 @@ const workOrderRepairGSchema = new Schema(
             type: String,
             default: null,
         },
+        ambientTemperature: { //Nhiệt độ môi trường
+            type: Number,
+            default: null,
+        },
+        environmentHumidity: { //Độ ẩm môi trường
+            type: Number,
+            default: null,
+        },
+        dustLevel: { //Mức độ bụi bẩn
+            type: String,
+            default: null,
+        },
         installationDate: { //Ngày lắp đặt
             type: Date,
             required: false,

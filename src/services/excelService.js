@@ -6,7 +6,9 @@ const WorkOrderModel = require('../models/workOrder')
 const {
     getWorkOrderModel,
     checkExist,
-} = require('../utils/helper/workOrderDetailHelper')
+} = require('../utils/helper/workOrderDetailHelper');
+const BadReq = require('../utils/response/requestError');
+const errorCode = require('../utils/response/errorCode');
 
 const excelService = {
     createCustomerReceivableDetailExcel: async (data) => {
@@ -653,7 +655,10 @@ const excelService = {
             }).lean();
 
             if (!customerContact) {
-                throw new Error("Không tìm thấy thiết bị với ID đã cung cấp");
+                throw new BadReq({
+                    code: "123",
+                    message: "Không có lịch sử máy",
+                })
             }
 
             // 2. Tìm chính xác object thiết bị trong mảng devices
@@ -663,17 +668,24 @@ const excelService = {
 
             // 3. Lấy ra số serial
             const serial = targetDevice ? targetDevice.serialNumber : null;
+            const model = targetDevice?.productCode[0]
+
+            if (serial == null || serial === undefined || serial.trim() === "") {
+                console.error("Không tìm thấy số serial cho thiết bị");
+            }
 
             // 4. Lấy danh sách các Work Order theo số Serial
-            const workOrders = await WorkOrderModel.find({ serialNumber: serial })
+            const workOrders = await WorkOrderModel.find({ serialNumber: serial, customerId: customerContact?.customerId })
                 .populate('customerId', 'officialName contractDate')
                 .populate('technicianId', 'fullname')
                 .lean();
 
             if (!workOrders || workOrders.length === 0) {
-                throw new Error("Không tìm thấy dữ liệu báo cáo");
+                throw new BadReq({
+                    code: "124",
+                    message: "Không tìm thấy dữ liệu báo cáo",
+                })
             }
-
             // 5. Thu thập chi tiết thông số kỹ thuật cho từng Work Order
             const fullWorkOrdersData = await Promise.all(
                 workOrders.map(async (order) => {
@@ -707,135 +719,410 @@ const excelService = {
             const worksheet = workbook.addWorksheet('Lịch sử thiết bị');
             worksheet.views = [{ showGridLines: true }];
 
-            // 7. Định nghĩa cấu trúc cột dữ liệu (Các key độc lập, chính xác)
-            worksheet.columns = [
-                { header: 'ContractDate', key: 'contractDate', width: 15 },
-                { header: 'Customer', key: 'customerName', width: 35 },
-                { header: 'Serial No', key: 'serialNo', width: 15 },
-                { header: 'Service Date', key: 'serviceDate', width: 15 },
-                { header: 'Call Type', key: 'callType', width: 15 },
-                { header: 'Technician', key: 'technician', width: 20 },
-                { header: 'Problems', key: 'problems', width: 30 },
-                { header: 'Actions', key: 'actions', width: 45 },
-                { header: 'Technical Feedback', key: 'technicalFeedback', width: 30 },
-                { header: 'Customer Feedback', key: 'customerFeedback', width: 30 },
-                { header: 'MCH Counter (thời gian mở máy)', key: 'mchCounter', width: 25 },
-                { header: 'JET Counter (thời gian in phun)', key: 'jetCounter', width: 25 },
-                { header: 'Pressure Target (áp suất chuẩn)', key: 'pressureTarget', width: 25 },
-                { header: 'Pump Speed (tốc độ bơm)', key: 'pumpSpeed', width: 20 },
-                { header: 'BTF Target (nồng độ chuẩn)', key: 'btfTarget', width: 20 },
-                { header: 'BTF Leave (nồng độ hiện hành)', key: 'btfLeave', width: 20 },
-                { header: 'Mod Level (mức giọt mực)', key: 'modLevel', width: 20 },
-                { header: 'BUP time', key: 'bupTime', width: 15 },
-                { header: 'Ink Temperature (nhiệt độ mực)', key: 'inkTemperature', width: 25 },
-                { header: 'Gutter pump speed (tốc độ bơm thu hồi)', key: 'gutterPumpSpeed', width: 30 },
-                { header: 'Vacuum pressure (áp chân không)', key: 'vacuumPressure', width: 25 },
-                { header: 'i-tech module expiry (thời hạn ITM)', key: 'itechModuleExpiry', width: 25 },
-                { header: 'Firmware (Phần mềm)', key: 'firmware', width: 20 },
-            ];
+            if (model === "A") {
+                // 7. Định nghĩa cấu trúc cột dữ liệu (Các key độc lập, chính xác)
+                worksheet.columns = [
+                    { header: 'ContractDate', key: 'contractDate', width: 15 },
+                    { header: 'Customer', key: 'customerName', width: 35 },
+                    { header: 'Serial No', key: 'serialNo', width: 15 },
+                    { header: 'Service Date', key: 'serviceDate', width: 15 },
+                    { header: 'Call Type', key: 'callType', width: 15 },
+                    { header: 'Technician', key: 'technician', width: 20 },
+                    { header: 'Problems', key: 'problems', width: 30 },
+                    { header: 'Actions', key: 'actions', width: 45 },
+                    { header: 'Technical Feedback', key: 'technicalFeedback', width: 30 },
+                    { header: 'Customer Feedback', key: 'customerFeedback', width: 30 },
+                    { header: 'MCH Counter (thời gian mở máy)', key: 'mchCounter', width: 25 },
+                    { header: 'JET Counter (thời gian in phun)', key: 'jetCounter', width: 25 },
+                    { header: 'Pressure Target (áp suất chuẩn)', key: 'pressureTarget', width: 25 },
+                    { header: 'Pump Speed (tốc độ bơm)', key: 'pumpSpeed', width: 20 },
+                    { header: 'BTF Target (nồng độ chuẩn)', key: 'btfTarget', width: 20 },
+                    { header: 'BTF Leave (nồng độ hiện hành)', key: 'btfLeave', width: 20 },
+                    { header: 'Mod Level (mức giọt mực)', key: 'modLevel', width: 20 },
+                    { header: 'BUP Time (thời gian tách)', key: 'bupTime', width: 15 },
+                    { header: 'Ink Temperature (nhiệt độ mực)', key: 'inkTemperature', width: 25 },
+                    { header: 'Gutter pump speed (tốc độ bơm thu hồi)', key: 'gutterPumpSpeed', width: 30 },
+                    { header: 'Vacuum pressure (áp chân không)', key: 'vacuumPressure', width: 25 },
+                    { header: 'i-tech module expiry (thời hạn ITM)', key: 'itechModuleExpiry', width: 25 },
+                    { header: 'Firmware (Phần mềm)', key: 'firmware', width: 20 },
+                    { header: 'Ambient temp (Nhiệt độ môi trường)', key: 'ambientTemperature', width: 20 },
+                    { header: 'Humadity (Độ ẩm)', key: 'humadity', width: 20 },
+                ];
 
-            // Hàm bổ trợ cải tiến: Quét chính xác dữ liệu dựa trên cấu trúc populate thực tế
-            const getSpecValue = (specs, matchName, subArrayKey = null) => {
-                if (!Array.isArray(specs)) return '';
+                //Lấy thông số
+                // const getSpecValue = (specs, matchName, subArrayKey = null) => {
+                //     if (!Array.isArray(specs)) return '';
 
-                // Tìm phần tử dựa trên trường propId.name tiếng Việt từ DB của bạn
-                const spec = specs.find(s =>
-                    s && s.propId && s.propId.name &&
-                    s.propId.name.toLowerCase().trim() === matchName.toLowerCase().trim()
-                );
+                //     // Tìm phần tử dựa trên trường propId.name tiếng Việt từ DB của bạn
+                //     const spec = specs.find(s =>
+                //         s && s.propId && s.propId.name &&
+                //         s.propId.name.toLowerCase().trim() === matchName.toLowerCase().trim()
+                //     );
 
-                if (!spec) return '';
+                //     if (!spec) return '';
 
-                // Xử lý đặc biệt nếu trường giá trị là một mảng lồng (như "Mức giọt mực")
-                if (Array.isArray(spec.value)) {
-                    if (subArrayKey) {
-                        const subItem = spec.value.find(item =>
-                            item && item.name && item.name.toLowerCase().trim() === subArrayKey.toLowerCase().trim()
-                        );
-                        return subItem ? (subItem.value ?? '') : '';
+                //     // Xử lý đặc biệt nếu trường giá trị là một mảng lồng (như "Mức giọt mực")
+                //     if (Array.isArray(spec.value)) {
+                //         if (subArrayKey) {
+                //             const subItem = spec.value.find(item =>
+                //                 item && item.name && item.name.toLowerCase().trim() === subArrayKey.toLowerCase().trim()
+                //             );
+                //             return subItem ? (subItem.value ?? '') : '';
+                //         }
+                //         // Fallback gom tất cả phần tử mảng lại nếu không truyền subArrayKey
+                //         return spec.value.map(item => `${item.name}: ${item.value}`).join(', ');
+                //     }
+
+                //     return spec.value ?? '';
+                // };
+
+                const getSpecValue = (specs, matchName, subArrayKey = null) => {
+                    if (!Array.isArray(specs)) return '';
+
+                    // 1. Tìm phần tử cha dựa trên trường propId.name (Ví dụ: 'Mức giọt mực')
+                    const spec = specs.find(s =>
+                        s && s.propId && s.propId.name &&
+                        s.propId.name.toLowerCase().trim() === matchName.toLowerCase().trim()
+                    );
+
+                    if (!spec) return '';
+
+                    // 2. Xử lý đặc biệt nếu trường giá trị là một mảng lồng (như "Mức giọt mực")
+                    if (Array.isArray(spec.value)) {
+                        if (subArrayKey) {
+                            // Tìm phần tử con khớp với subArrayKey (Ví dụ: 'Cài tự động', 'Thao tác tay', 'BUP')
+                            const subItem = spec.value.find(item => {
+                                if (!item) return false;
+
+                                // Trích xuất tên thuộc tính con (hỗ trợ cả TH trực tiếp hoặc bọc trong propId)
+                                const subName = item.name || (item.propId && item.propId.name);
+
+                                return subName && subName.toLowerCase().trim() === subArrayKey.toLowerCase().trim();
+                            });
+
+                            // Trả về value của ô con nếu tìm thấy, nếu không tìm thấy trả về chuỗi rỗng
+                            return subItem ? (subItem.value ?? '') : '';
+                        }
+
+                        // Fallback: Gom tất cả phần tử mảng lại bằng dấu phẩy nếu không truyền subArrayKey
+                        return spec.value.map(item => {
+                            const name = item.name || (item.propId && item.propId.name) || '';
+                            return `${name}: ${item.value ?? ''}`;
+                        }).join(', ');
                     }
-                    // Fallback gom tất cả phần tử mảng lại nếu không truyền subArrayKey
-                    return spec.value.map(item => `${item.name}: ${item.value}`).join(', ');
-                }
 
-                return spec.value ?? '';
-            };
-
-            // 8. Duyệt dữ liệu gộp & đổ vào các hàng hàng Excel
-            fullWorkOrdersData.forEach((order) => {
-                const detail = order.workOrderDetail || {};
-                const specs = detail.machineSpecs || [];
-
-                // Xử lý gộp Problems
-                let problemsText = '';
-                if (Array.isArray(detail.failureSituation)) {
-                    problemsText = detail.failureSituation.filter(item => item && item.trim() !== '').join('\n');
-                } else {
-                    problemsText = order.description || '';
-                }
-
-                // ====== GIỮ NGUYÊN KHÚC NÀY ĐÚNG NHƯ BẠN YÊU CẦU ======
-                // 2. Xử lý gộp Actions từ differentApproach
-                let actionsText = '';
-                if (Array.isArray(detail.differentApproach)) {
-                    actionsText = detail.differentApproach.filter(item => item && item.trim() !== '').join('\n');
-                } else {
-                    actionsText = order.note || ''; // Fallback về note tổng
-                }
-
-                let technicalFeedbackText = '';
-                if (Array.isArray(detail.technicalFeedback)) {
-                    technicalFeedbackText = detail.technicalFeedback.filter(item => item && item.trim() !== '').join('\n');
-                }
-
-                let customerFeedbackText = '';
-                if (Array.isArray(detail.customerFeedback)) {
-                    customerFeedbackText = detail.customerFeedback.filter(item => item && item.trim() !== '').join('\n');
-                }
-                // ===================================================
-
-                // Tạo đối tượng dòng dữ liệu map chuẩn với dữ liệu tiếng Việt thực tế từ DB
-                const rowData = {
-                    contractDate: order.customerId?.contractDate ? moment(order.customerId.contractDate).format('YYYY-MM-DD') : '2019-09-26',
-                    customerName: order.customerId?.officialName || 'CÔNG TY CỔ PHẦN BMC VIỆT NAM',
-                    serialNo: order.serialNumber || 'N/A',
-                    serviceDate: order.assignedTime ? moment(order.assignedTime).format('YYYY-MM-DD') : moment(order.createdAt).format('YYYY-MM-DD'),
-                    callType: order.typeWork === 'repair' ? 'SỬA CHỮA' : 'BẢO TRÌ',
-                    technician: order.technicianId?.fullname || 'CHƯA PHÂN CÔNG',
-                    problems: problemsText,
-                    actions: actionsText,
-                    technicalFeedback: technicalFeedbackText,
-                    customerFeedback: customerFeedbackText,
-
-                    // Đọc thông số kỹ thuật map chuẩn theo name tiếng Việt trong database của bạn
-                    mchCounter: getSpecValue(specs, 'Áp suất chuẩn'),
-                    jetCounter: getSpecValue(specs, 'Áp suất hiện hành'),
-                    pressureTarget: getSpecValue(specs, 'Nồng độ chuẩn'),
-                    pumpSpeed: getSpecValue(specs, 'Tốc độ bơm'),
-                    btfTarget: getSpecValue(specs, 'Béc phun'),
-                    btfLeave: getSpecValue(specs, 'Charge level'),
-                    vacuumPressure: getSpecValue(specs, 'Áp chân không'),
-                    gutterPumpSpeed: getSpecValue(specs, 'Tốc độ bơm chân không'),
-
-                    // Bóc tách mảng con từ cấu trúc "Mức giọt mực"
-                    modLevel: getSpecValue(specs, 'Mức giọt mực', 'Cài tự động'),
-                    bupTime: getSpecValue(specs, 'Mức giọt mực', 'BUP'),
-
-                    inkTemperature: getSpecValue(specs, 'Nhiệt độ mực'),
-                    itechModuleExpiry: getSpecValue(specs, 'ITM'),
-                    firmware: getSpecValue(specs, 'Phần mềm sử dụng'),
+                    // 3. Nếu value là text bình thường (không phải array)
+                    return spec.value ?? '';
                 };
 
-                const row = worksheet.addRow(rowData);
+                // 8. Duyệt dữ liệu gộp & đổ vào các hàng hàng Excel
+                fullWorkOrdersData.forEach((order) => {
+                    const detail = order.workOrderDetail || {};
+                    const specs = detail.machineSpecs || [];
+                    // Xử lý gộp Problems
+                    let problemsText = '';
+                    if (Array.isArray(detail.failureSituation)) {
+                        problemsText = detail.failureSituation.filter(item => item && item.trim() !== '').join('\n');
+                    } else {
+                        problemsText = order.description || '';
+                    }
 
-                // Bật wrapText giúp hiển thị xuống dòng (\n) đúng chuẩn trong ô Excel
-                row.alignment = { vertical: 'top', wrapText: true };
-            });
+                    // 2. Xử lý gộp Actions từ differentApproach
+                    let actionsText = '';
+                    if (Array.isArray(detail.differentApproach)) {
+                        actionsText = detail.differentApproach.filter(item => item && item.trim() !== '').join('\n');
+                    } else {
+                        actionsText = order.note || ''; // Fallback về note tổng
+                    }
+
+                    let technicalFeedbackText = '';
+                    if (Array.isArray(detail.technicalFeedback)) {
+                        technicalFeedbackText = detail.technicalFeedback.filter(item => item && item.trim() !== '').join('\n');
+                    }
+
+                    let customerFeedbackText = '';
+                    if (Array.isArray(detail.customerFeedback)) {
+                        customerFeedbackText = detail.customerFeedback.filter(item => item && item.trim() !== '').join('\n');
+                    }
+                    // ===================================================
+                    // Tạo đối tượng dòng dữ liệu map chuẩn với dữ liệu từ DB
+                    const rowData = {
+                        contractDate: order.customerId?.contractDate ? moment(order.customerId.contractDate).format('YYYY-MM-DD') : '2019-09-26',
+                        customerName: order.customerId?.officialName || 'CÔNG TY CỔ PHẦN BMC VIỆT NAM',
+                        serialNo: order.serialNumber || 'N/A',
+                        serviceDate: order.assignedTime ? moment(order.assignedTime).format('YYYY-MM-DD') : moment(order.createdAt).format('YYYY-MM-DD'),
+                        callType: order.typeWork === 'repair' ? 'SỬA CHỮA' : 'BẢO TRÌ',
+                        technician: order.technicianId?.fullname || 'CHƯA PHÂN CÔNG',
+                        problems: problemsText,
+                        actions: actionsText,
+                        technicalFeedback: technicalFeedbackText,
+                        customerFeedback: customerFeedbackText,
+
+                        // Đọc thông số kỹ thuật map chuẩn theo name tiếng Việt trong database của bạn
+                        mchCounter: order.workOrderDetail?.machineStartup,
+                        jetCounter: order.workOrderDetail?.inkjetTime,
+                        pressureTarget: getSpecValue(specs, 'Áp suất chuẩn'),
+                        pumpSpeed: getSpecValue(specs, 'Tốc độ bơm'),
+                        btfTarget: getSpecValue(specs, 'Nồng độ chuẩn'),
+                        btfLeave: getSpecValue(specs, 'Nồng độ hiện hành'),
+                        vacuumPressure: getSpecValue(specs, 'Áp chân không'),
+                        gutterPumpSpeed: getSpecValue(specs, 'Tốc độ bơm chân không'),
+
+                        modLevel: getSpecValue(specs, 'Mức giọt mực'),
+                        bupTime: getSpecValue(specs, 'Mức giọt mực', 'BUP'),
+
+                        inkTemperature: getSpecValue(specs, 'Nhiệt độ mực'),
+                        itechModuleExpiry: getSpecValue(specs, 'ITM'),
+                        firmware: getSpecValue(specs, 'Phần mềm sử dụng'),
+
+                        ambientTemperature: order.workOrderDetail?.ambientTemperature,
+                        humadity: order.workOrderDetail?.environmentHumidity,
+                    };
+
+                    const row = worksheet.addRow(rowData);
+
+                    // Bật wrapText giúp hiển thị xuống dòng (\n) đúng chuẩn trong ô Excel
+                    row.alignment = { vertical: 'top', wrapText: true };
+                });
+            }
 
             // Định dạng lại hàng Header (In đậm)
             worksheet.getRow(1).font = { bold: true };
 
             // 9. Ghi workbook xuất ra Buffer gửi về Controller hệ thống
+            const buffer = await workbook.xlsx.writeBuffer();
+            return buffer;
+
+        } catch (error) {
+            throw error;
+        }
+    },
+    reportWorkOrder: async (query) => {
+        try {
+            const { fromDate, toDate } = query;
+            const matchStage = {};
+
+            // 1. Xử lý khoảng thời gian (Nếu không truyền mặc định lấy trong tháng này)
+            matchStage.createdAt = {};
+            if (fromDate || toDate) {
+                if (fromDate) matchStage.createdAt.$gte = new Date(fromDate);
+                if (toDate) matchStage.createdAt.$lte = new Date(toDate);
+            } else {
+                const now = new Date();
+                const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+                const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+
+                matchStage.createdAt.$gte = firstDayOfMonth;
+                matchStage.createdAt.$lte = lastDayOfMonth;
+            }
+
+            // Chỉ thống kê các phiếu đã gán cho kỹ thuật viên
+            matchStage.technicianId = { $exists: true, $ne: null };
+
+            // 2. Chạy Aggregation Pipeline gom dữ liệu báo cáo kỹ thuật
+            const report = await WorkOrderModel.aggregate([
+                { $match: matchStage },
+                {
+                    $group: {
+                        _id: '$technicianId',
+                        suaChuaMay: { $sum: { $cond: [{ $eq: ['$typeWork', 'repair'] }, 1, 0] } },
+                        baoTriMay: { $sum: { $cond: [{ $eq: ['$typeWork', 'maintenance'] }, 1, 0] } },
+                        lapDatMayMoi: { $sum: { $cond: [{ $eq: ['$typeWork', 'installation'] }, 1, 0] } },
+                        phieuGiaoDich: { $sum: { $cond: [{ $eq: ['$typeWork', 'transaction'] }, 1, 0] } },
+                        tongSoLuongMay: { $sum: 1 },
+                        khachHangList: { $addToSet: '$customerId' },
+                        daThayLoc: {
+                            $sum: {
+                                $cond: [
+                                    { $regexMatch: { input: { $ifNull: ['$result', ''] }, regex: /thay lọc|thay loc/i } },
+                                    1, 0
+                                ]
+                            }
+                        },
+                        congTacTinh: {
+                            $sum: {
+                                $cond: [
+                                    {
+                                        $and: [
+                                            { $ifNull: ['$address.provinceCity', false] },
+                                            { $ne: ['$address.provinceCity', 'Thành phố Hà Nội'] },
+                                            { $ne: ['$address.provinceCity', 'Hà Nội'] }
+                                        ]
+                                    },
+                                    1, 0
+                                ]
+                            }
+                        }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'technicians', // Tên collection kỹ thuật viên trong DB
+                        localField: '_id',
+                        foreignField: '_id',
+                        as: 'technicianInfo'
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$technicianInfo',
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        technicianName: { $ifNull: ['$technicianInfo.fullname', 'Không rõ tên'] }, // Map theo trường fullname giống code mẫu của bạn
+                        suaChuaMay: 1,
+                        baoTriMay: 1,
+                        lapDatMayMoi: 1,
+                        phieuGiaoDich: 1,
+                        tongSoLuongMay: 1,
+                        tongSlKhachHang: { $size: '$khachHangList' },
+                        daThayLoc: 1,
+                        congTacTinh: 1
+                    }
+                },
+                { $sort: { technicianName: 1 } }
+            ]);
+
+            // 3. Tính toán dòng Grand Total (Tổng cộng cuối bảng)
+            const grandTotal = report.reduce((acc, curr) => {
+                acc.suaChuaMay += curr.suaChuaMay;
+                acc.baoTriMay += curr.baoTriMay;
+                acc.lapDatMayMoi += curr.lapDatMayMoi;
+                acc.phieuGiaoDich += curr.phieuGiaoDich;
+                acc.tongSoLuongMay += curr.tongSoLuongMay;
+                acc.tongSlKhachHang += curr.tongSlKhachHang;
+                acc.daThayLoc += curr.daThayLoc;
+                acc.congTacTinh += curr.congTacTinh;
+                return acc;
+            }, {
+                technicianName: "Grand Total",
+                suaChuaMay: 0,
+                baoTriMay: 0,
+                lapDatMayMoi: 0,
+                phieuGiaoDich: 0,
+                tongSoLuongMay: 0,
+                tongSlKhachHang: 0,
+                daThayLoc: 0,
+                congTacTinh: 0
+            });
+
+            // 4. Khởi tạo Workbook & vẽ Layout bảng tính ExcelJS
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet('Báo công tác phòng kỹ thuật');
+            worksheet.views = [{ showGridLines: true }];
+
+            // Định nghĩa cột tương ứng cấu trúc file Excel mẫu đầu tiên
+            worksheet.columns = [
+                { header: 'KỸ THUẬT VIÊN', key: 'technicianName', width: 30 },
+                { header: 'SỬA CHỮA MÁY', key: 'suaChuaMay', width: 18 },
+                { header: 'BẢO TRÌ MÁY', key: 'baoTriMay', width: 18 },
+                { header: 'LẮP ĐẶT MÁY MỚI', key: 'lapDatMayMoi', width: 20 },
+                { header: 'PHIẾU GIAO DỊCH', key: 'phieuGiaoDich', width: 20 },
+                { header: 'TỔNG SỐ LƯỢNG MÁY', key: 'tongSoLuongMay', width: 22 },
+                { header: 'TỔNG SL KHÁCH HÀNG', key: 'tongSlKhachHang', width: 22 },
+                { header: 'ĐÃ THAY LỌC 14831', key: 'daThayLoc', width: 20 },
+                { header: 'CÔNG TÁC TỈNH', key: 'congTacTinh', width: 18 }
+            ];
+
+            // --- Style tiêu đề Header (Dòng 1) ---
+            const headerRow = worksheet.getRow(1);
+
+            headerRow.font = { bold: true, size: 11, name: 'Times New Roman' };
+            headerRow.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+            headerRow.height = 30;
+
+            // Đổ màu nền nhạt cho các cột nghiệp vụ (Tùy chọn cho giống màu xanh/đỏ nhẹ của Excel)
+            // Màu đỏ nhạt cho các cột loại công việc (Cột 2, 3, 4, 5)
+            for (let i = 2; i <= 5; i++) {
+                headerRow.getCell(i).font = { bold: true, color: { argb: 'FFC00000' } }; // Chữ đỏ
+            }
+
+            // 5. Đổ dữ liệu chi tiết của từng Kỹ thuật viên
+            report.forEach((item) => {
+                const row = worksheet.addRow({
+                    technicianName: item.technicianName,
+                    suaChuaMay: item.suaChuaMay || '',
+                    baoTriMay: item.baoTriMay || '',
+                    lapDatMayMoi: item.lapDatMayMoi || '',
+                    phieuGiaoDich: item.phieuGiaoDich || '',
+                    tongSoLuongMay: item.tongSoLuongMay || 0,
+                    tongSlKhachHang: item.tongSlKhachHang || 0,
+                    daThayLoc: item.daThayLoc || '',
+                    congTacTinh: item.congTacTinh || ''
+                });
+                row.alignment = { vertical: 'middle', horizontal: 'center' };
+                row.getCell(1).alignment = { vertical: 'middle', horizontal: 'left' }; // Tên KTV căn trái
+            });
+
+            // 6. Thêm dòng Tổng cộng (Grand Total) xuống cuối bảng
+            const grandTotalRow = worksheet.addRow({
+                technicianName: grandTotal.technicianName,
+                suaChuaMay: grandTotal.suaChuaMay,
+                baoTriMay: grandTotal.baoTriMay,
+                lapDatMayMoi: grandTotal.lapDatMayMoi,
+                phieuGiaoDich: grandTotal.phieuGiaoDich,
+                tongSoLuongMay: grandTotal.tongSoLuongMay,
+                tongSlKhachHang: grandTotal.tongSlKhachHang,
+                daThayLoc: grandTotal.daThayLoc,
+                congTacTinh: grandTotal.congTacTinh
+            });
+
+            // Style dòng Grand Total: Chữ đỏ đậm như bản gốc Excel
+            grandTotalRow.font = { bold: true, color: { argb: 'FFC00000' }, name: 'Arial' };
+            grandTotalRow.alignment = { vertical: 'middle', horizontal: 'center' };
+            grandTotalRow.getCell(1).alignment = { vertical: 'middle', horizontal: 'right' }; // Chữ "Grand Total" đẩy sang phải
+
+            // Thêm viền (Borders) cho toàn bộ các ô để hiển thị lưới rõ ràng
+            worksheet.eachRow((row) => {
+                row.eachCell((cell) => {
+                    cell.border = {
+                        top: { style: 'thin', color: { argb: 'FFA6A6A6' } },
+                        left: { style: 'thin', color: { argb: 'FFA6A6A6' } },
+                        bottom: { style: 'thin', color: { argb: 'FFA6A6A6' } },
+                        right: { style: 'thin', color: { argb: 'FFA6A6A6' } }
+                    };
+                });
+            });
+
+            const targetDate = toDate ? new Date(toDate) : new Date();
+            const dateString = `Ngày ${moment(targetDate).format('DD')} tháng ${moment(targetDate).format('MM')} năm ${moment(targetDate).format('YYYY')}`;
+            const dateRow = worksheet.addRow([]);
+            dateRow.getCell(9).value = dateString;
+
+            const dateRowNumber = dateRow.number;
+            worksheet.mergeCells(`I${dateRowNumber}:K${dateRowNumber}`);
+            dateRow.getCell(9).font = { italic: true, name: 'Arial', size: 10, bold: true };
+            dateRow.getCell(9).alignment = { horizontal: 'right', vertical: 'middle' };
+            dateRow.height = 22;
+
+            // Thêm dòng các chức danh ký tên
+            const signatureRow = worksheet.addRow([]);
+            const sigRowNumber = signatureRow.number;
+
+            // Chia và gộp đều 3 block chức danh chữ ký theo bề ngang
+            worksheet.mergeCells(`A${sigRowNumber}:C${sigRowNumber}`);
+            worksheet.mergeCells(`E${sigRowNumber}:G${sigRowNumber}`);
+            worksheet.mergeCells(`I${sigRowNumber}:K${sigRowNumber}`);
+
+            signatureRow.getCell(1).value = 'NGƯỜI LẬP PHIẾU';
+            signatureRow.getCell(5).value = 'GIÁM ĐỐC KỸ THUẬT';
+            signatureRow.getCell(9).value = 'TỔNG GIÁM ĐỐC';
+
+            signatureRow.height = 25;
+            signatureRow.font = { bold: true, name: 'Arial', size: 10 };
+            signatureRow.getCell(1).alignment = { horizontal: 'center', vertical: 'middle' };
+            signatureRow.getCell(5).alignment = { horizontal: 'center', vertical: 'middle' };
+            signatureRow.getCell(9).alignment = { horizontal: 'center', vertical: 'middle' };
+
+            // Tạo khoảng cách 4 hàng trống ở dưới cùng để chừa không gian ký tên thực tế
+            for (let i = 0; i < 4; i++) {
+                worksheet.addRow([]);
+            }
+
+            // 7. Xuất Workbook ra định dạng Buffer trả về cho hệ thống
             const buffer = await workbook.xlsx.writeBuffer();
             return buffer;
 

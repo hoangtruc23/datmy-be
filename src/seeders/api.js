@@ -806,7 +806,12 @@ async function apiSeeder() {
         {
             _id: new Types.ObjectId('68ad58dfa053aa8a7b8dafd7'),
             api: '/reports/reportHistoryMachine', //reports/reportHistoryMachine
-            note: 'Xuất excel báo cáo lịch sử mày của từng khách hàng',
+            note: 'Xuất excel báo cáo lịch sử máy của từng khách hàng',
+        },
+        {
+            _id: new Types.ObjectId('68ad58dfa053aa8a7b8dafdd'),
+            api: '/reports/reportWorkOrder', // reports/reportWorkOrder
+            note: 'Xuất excel báo cáo công việc',
         },
         //System
         {
@@ -937,6 +942,11 @@ async function apiSeeder() {
             note: 'Lấy thông tin chi tiết của một hoặc nhiều đơn hàng',
         },
         //phiếu công việc
+        {
+            _id: new Types.ObjectId('68d1153524419859fede4ebb'),
+            api: '/workOrder/dashboard',
+            note: 'Dashboard phiếu yêu cầu công việc',
+        },
         {
             _id: new Types.ObjectId('68d1153524419859fede4ebe'),
             api: '/workOrder/getAll',
@@ -1215,6 +1225,11 @@ async function apiSeeder() {
             _id: new Types.ObjectId('691ebf6e7cd69b4b32fa3b5f'),
             api: '/contactPerson/getAllAddress',
             note: 'Lấy toàn bộ các địa chỉ theo khách hàng',
+        },
+        {
+            _id: new Types.ObjectId('691ebf6e7cd69b4b32fa3b5d'),
+            api: '/contactPerson/addressesByFilter',
+            note: 'Lấy toàn bộ các địa chỉ theo bộ lọc',
         },
         {
             _id: new Types.ObjectId('691c2c10cc14068cd86a1bf8'),

@@ -883,6 +883,19 @@ async function permissionSeeder() {
             code: 'xoa_thiet-bi-may-cua-khach-hang',
             parentPermissionId: null,
         },
+
+        {
+            _id: new Types.ObjectId('6914e05ccf9e7d1d96f5b0f8'),
+            name: 'Xem Report Lịch Sử Máy',
+            code: 'xem_report-lich-su-may',
+            parentPermissionId: null,
+        },
+        {
+            _id: new Types.ObjectId('6914e05ccf9e7d1d96f5b0f9'),
+            name: 'Lấy Address Theo Filter', // contactPerson/addressesByFilter
+            code: 'lay_address_theo_filter',
+            parentPermissionId: null,
+        },
     ])
     logger.info('Permissions seeded')
 }

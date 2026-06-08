@@ -11,6 +11,8 @@ const BadReq = require('../utils/response/requestError')
 const errorCode = require('../utils/response/errorCode')
 const { ObjectId } = require('mongodb')
 const PreviousDebtModel = require('../models/previousDebt')
+const WorkOrderModel = require('../models/workOrder')
+
 const reportService = {
     getSalesReport: async (
         startDate,
