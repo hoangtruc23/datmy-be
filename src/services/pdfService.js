@@ -400,8 +400,13 @@ const pdfService = {
             return value
         };
 
+
         const inkConcentration = Object.fromEntries(getValueSpec("Nồng độ mực").map(item => [item.name, item.value])); //Nồng độ mực
         const inkDropletLevel = Object.fromEntries(getValueSpec("Mức giọt mực").map(item => [item.name, item.value])); //Mức Giọt mực
+
+        const itmString = getValueSpec("ITM")
+            .map(item => `${item.name}: ${item.value}`)
+            .join(" | ");
 
         html = html
             .replace(/{{typeWorkLabel}}/g, typeWorkLabel ?? '')
@@ -473,8 +478,8 @@ const pdfService = {
             .replace(/{{replacement}}/g, replacementHtml) //Linh kiện đã thay
             .replace(/{{technicalFeedback}}/g, technicalFeedbackHtml)
             .replace(/{{customerFeedback}}/g, customerFeedback) // Ý kiến khách hàng
-            .replace(/{{inkArrival}}/g, inkConcentration['Lúc đến']) //Nồng độ mực Lúc đến
-            .replace(/{{inkLeaving}}/g, inkConcentration['Lúc đi']) //Nồng độ mực Lúc đến
+            .replace(/{{inkArrival}}/g, inkConcentration['Lúc đến'] || "-") //Nồng độ mực Lúc đến
+            .replace(/{{inkLeaving}}/g, inkConcentration['Lúc đi'] || "-") //Nồng độ mực Lúc đi
             .replace(/{{inkDropletLevelAuto}}/g, inkDropletLevel['Cài tự động']) //Mức giọt mực - Cài tự động
             .replace(/{{inkDropletLevelManual}}/g, inkDropletLevel['Thao tác tay']) //Mức giọt mực - Thao tác tay
             .replace(/{{inkDropletLevelBUP}}/g, inkDropletLevel['BUP']) //Mức giọt mực - BUP
@@ -488,8 +493,11 @@ const pdfService = {
             .replace(/{{vacuumPumpSpeed}}/g, getValueSpec("Tốc độ bơm chân không"))
             .replace(/{{printContent}}/g, getValueSpec("Nội dung in phun")) //Nội dung in phun
             .replace(/{{inkTemperature}}/g, getValueSpec("Nhiệt độ mực")) //Nhiệt độ mực
-            .replace(/{{ITM}}/g, getValueSpec("ITM")) //ITM
+            .replace(/{{ITM}}/g, itmString) //ITM
             .replace(/{{softwareUsed}}/g, getValueSpec("Phần mềm sử dụng")) //Phần mềm sử dụng
+            .replace(/{{environmentHumidity}}/g, data?.workOrderDetail?.environmentHumidity) //Phần mềm sử dụng
+            .replace(/{{ambientTemperature}}/g, data?.workOrderDetail?.ambientTemperature) //Phần mềm sử dụng
+            .replace(/{{dustLevel}}/g, data?.workOrderDetail?.dustLevel) //Phần mềm sử dụng
 
         const browser = await puppeteer.launch({
             headless: true,

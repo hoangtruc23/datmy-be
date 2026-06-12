@@ -9,6 +9,7 @@ const {
 } = require('../utils/helper/workOrderDetailHelper');
 const BadReq = require('../utils/response/requestError');
 const errorCode = require('../utils/response/errorCode');
+const { logger } = require('../config/loggerConfig');
 
 const excelService = {
     createCustomerReceivableDetailExcel: async (data) => {
@@ -671,7 +672,11 @@ const excelService = {
             const model = targetDevice?.productCode[0]
 
             if (serial == null || serial === undefined || serial.trim() === "") {
-                console.error("Không tìm thấy số serial cho thiết bị");
+                logger.error("Không tìm thấy số serial cho thiết bị");
+                throw new BadReq({
+                    code: "125",
+                    message: "Không tìm thấy số serial cho thiết bị",
+                })
             }
 
             // 4. Lấy danh sách các Work Order theo số Serial
@@ -679,6 +684,7 @@ const excelService = {
                 .populate('customerId', 'officialName contractDate')
                 .populate('technicianId', 'fullname')
                 .lean();
+
 
             if (!workOrders || workOrders.length === 0) {
                 throw new BadReq({
@@ -730,12 +736,14 @@ const excelService = {
                     { header: 'Technician', key: 'technician', width: 20 },
                     { header: 'Problems', key: 'problems', width: 30 },
                     { header: 'Actions', key: 'actions', width: 45 },
-                    { header: 'Technical Feedback', key: 'technicalFeedback', width: 30 },
+                    { header: 'Technical Feedback (linh kiện đề xuất thay)', key: 'technicalFeedback', width: 30 },
+                    { header: 'Components replaced (linh kiện đã thay)', key: 'componentsReplaced', width: 30 },
                     { header: 'Customer Feedback', key: 'customerFeedback', width: 30 },
                     { header: 'MCH Counter (thời gian mở máy)', key: 'mchCounter', width: 25 },
                     { header: 'JET Counter (thời gian in phun)', key: 'jetCounter', width: 25 },
                     { header: 'Pressure Target (áp suất chuẩn)', key: 'pressureTarget', width: 25 },
                     { header: 'Pump Speed (tốc độ bơm)', key: 'pumpSpeed', width: 20 },
+                    { header: 'Ink Code (loại mực)', key: 'inkCode', width: 20 },
                     { header: 'BTF Target (nồng độ chuẩn)', key: 'btfTarget', width: 20 },
                     { header: 'BTF Leave (nồng độ hiện hành)', key: 'btfLeave', width: 20 },
                     { header: 'Mod Level (mức giọt mực)', key: 'modLevel', width: 20 },
@@ -746,13 +754,12 @@ const excelService = {
                     { header: 'i-tech module expiry (thời hạn ITM)', key: 'itechModuleExpiry', width: 25 },
                     { header: 'Firmware (Phần mềm)', key: 'firmware', width: 20 },
                     { header: 'Ambient temp (Nhiệt độ môi trường)', key: 'ambientTemperature', width: 20 },
-                    { header: 'Humadity (Độ ẩm)', key: 'humadity', width: 20 },
+                    { header: 'Humadity (Độ ẩm)', key: 'environmentHumidity', width: 20 },
                 ];
 
                 //Lấy thông số
                 // const getSpecValue = (specs, matchName, subArrayKey = null) => {
                 //     if (!Array.isArray(specs)) return '';
-
                 //     // Tìm phần tử dựa trên trường propId.name tiếng Việt từ DB của bạn
                 //     const spec = specs.find(s =>
                 //         s && s.propId && s.propId.name &&
@@ -815,6 +822,7 @@ const excelService = {
                     return spec.value ?? '';
                 };
 
+
                 // 8. Duyệt dữ liệu gộp & đổ vào các hàng hàng Excel
                 fullWorkOrdersData.forEach((order) => {
                     const detail = order.workOrderDetail || {};
@@ -844,6 +852,26 @@ const excelService = {
                     if (Array.isArray(detail.customerFeedback)) {
                         customerFeedbackText = detail.customerFeedback.filter(item => item && item.trim() !== '').join('\n');
                     }
+
+                    let componentsReplacedText = '';
+                    if (Array.isArray(detail.replacement)) {
+                        componentsReplacedText = detail.replacement.filter(item => item && item.trim() !== '').join('\n');
+                    }
+
+                    const rawInkValue = getSpecValue(specs, "Nồng độ mực");
+                    let inkConcentration = {};
+                    if (typeof rawInkValue === 'string') {
+                        // Tách chuỗi "Lúc đến: 1, Lúc đi: 2" thành mảng các cặp key-value
+                        rawInkValue.split(',').forEach(item => {
+                            const [name, value] = item.split(':');
+                            if (name && value) {
+                                inkConcentration[name.trim()] = value.trim();
+                            }
+                        });
+                    } else if (Array.isArray(rawInkValue)) {
+                        inkConcentration = Object.fromEntries(rawInkValue.map(item => [item.name, item.value]));
+                    }
+                    // const inkConcentration = Object.fromEntries(getSpecValue(specs, "Nồng độ mực").map(item => [item.name, item.value])); //Nồng độ mực
                     // ===================================================
                     // Tạo đối tượng dòng dữ liệu map chuẩn với dữ liệu từ DB
                     const rowData = {
@@ -856,6 +884,7 @@ const excelService = {
                         problems: problemsText,
                         actions: actionsText,
                         technicalFeedback: technicalFeedbackText,
+                        componentsReplaced: componentsReplacedText,
                         customerFeedback: customerFeedbackText,
 
                         // Đọc thông số kỹ thuật map chuẩn theo name tiếng Việt trong database của bạn
@@ -864,7 +893,7 @@ const excelService = {
                         pressureTarget: getSpecValue(specs, 'Áp suất chuẩn'),
                         pumpSpeed: getSpecValue(specs, 'Tốc độ bơm'),
                         btfTarget: getSpecValue(specs, 'Nồng độ chuẩn'),
-                        btfLeave: getSpecValue(specs, 'Nồng độ hiện hành'),
+                        btfLeave: getSpecValue(specs, 'Nồng độ hiện hành') || inkConcentration['Lúc đi'],
                         vacuumPressure: getSpecValue(specs, 'Áp chân không'),
                         gutterPumpSpeed: getSpecValue(specs, 'Tốc độ bơm chân không'),
 
@@ -874,9 +903,9 @@ const excelService = {
                         inkTemperature: getSpecValue(specs, 'Nhiệt độ mực'),
                         itechModuleExpiry: getSpecValue(specs, 'ITM'),
                         firmware: getSpecValue(specs, 'Phần mềm sử dụng'),
-
+                        inkCode: order.workOrderDetail?.inkCode,
                         ambientTemperature: order.workOrderDetail?.ambientTemperature,
-                        humadity: order.workOrderDetail?.environmentHumidity,
+                        environmentHumidity: order.workOrderDetail?.environmentHumidity,
                     };
 
                     const row = worksheet.addRow(rowData);

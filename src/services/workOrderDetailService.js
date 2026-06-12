@@ -700,7 +700,7 @@ const workOrderDetailService = {
                 throw new BadReq(errorCode.WORK_ORDER_DETAIL_NOT_FOUND);
             }
 
-            // 3. Khối Logic KIỂM TRA ĐIỀU KIỆN HOÀN THÀNH (Validation)
+            // 3. KIỂM TRA ĐIỀU KIỆN (Validation)
             if (isComp) {
                 const { machineSpecs } = reqData;
                 const isMachineSpecsValid = machineSpecs && machineSpecs.length > 0 && machineSpecs.every(spec => {
@@ -745,6 +745,7 @@ const workOrderDetailService = {
 
             // PHIẾU BẢO TRÌ
             if (typeWork === constant.WORK_ORDER_TYPE.MAINTENANCE.value) {
+                //PHIẾU A
                 if (workOrderType === constant.WORK_ORDER_DETAIL_TYPE.A.value) {
                     const {
                         maintainContractDate, maintainDate, machineSpecs, replacement,
@@ -759,6 +760,11 @@ const workOrderDetailService = {
                         technicalFeedback, replacement, customerFeedback, inkCode,
                         machineStartup, inkjetTime, evaluate, ambientTemperature, environmentHumidity, dustLevel
                     });
+                }
+                // PHIẾU G
+                else if (workOrderType === constant.WORK_ORDER_DETAIL_TYPE.G.value) {
+                    const fieldsG = ['machineTypeId', 'machineInfo', 'maintainContract', 'repairDate', 'arrivalTime', 'leavingTime', 'workingTime', 'ambientTemperature', 'environmentHumidity', 'dustLevel', 'installationDate', 'printHead', 'inkSupply', 'singlePrintHead', 'compositePrintHead', 'singleSerialNumber', 'compositeSerialNumber', 'machineSpecs', 'groups', 'maintainOperations', 'technicalFeedback', 'customerFeedback'];
+                    fieldsG.forEach(key => reqData[key] !== undefined && (updateDetailPayload[key] = reqData[key]));
                 } else {
                     const { machineInfo, machineSpecs, groups, maintainOperations, technicalFeedback, customerFeedback } = reqData;
                     Object.assign(updateDetailPayload, { machineInfo, machineSpecs, groups, maintainOperations, technicalFeedback, customerFeedback });
@@ -813,7 +819,7 @@ const workOrderDetailService = {
                 { new: true }
             );
 
-            // 6. XỬ LÝ KHI HOÀN THÀNH PHIẾU (Chỉ chạy khi isCompleted thực sự bằng true)
+            // 6. XỬ LÝ KHI HOÀN THÀNH PHIẾU (isCompleted === true)
             if (isComp) {
                 // UPDATE WORKORDER thành completed
                 await WorkOrderModel.findByIdAndUpdate(workOrderId, {
@@ -830,6 +836,7 @@ const workOrderDetailService = {
                     serialNumber: reqData?.serialNumber,
                     productCode: reqData?.type
                 };
+
                 await contactPersonCustomerService.create(dataUpdate, 'update');
 
                 return null; // Hoàn thành toàn bộ quy trình đơn hàng

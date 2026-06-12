@@ -521,6 +521,14 @@ const workOrderService = {
                 isActive: true,
             })
 
+            if (!technician) {
+                throw new BadReq({
+                    code: 1,
+                    message: 'Vui lòng chọn kỹ thuật viên',
+                },)
+                return;
+            }
+
             if (technicianId && !technician) {
                 throw new BadReq(errorCode.TECHNICIAN_NOT_FOUND)
             }

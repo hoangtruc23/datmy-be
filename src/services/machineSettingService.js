@@ -41,6 +41,8 @@ const machineSettingService = {
 
             search = new RegExp(search, 'i')
             type = new RegExp(type, 'i')
+
+            const list = await ProductCategoryModel.find({})
             const categoryId = await ProductCategoryModel.findOne({
                 name: constant.CATEGORY_NAME.MACHINE,
             }, { _id: 1 })

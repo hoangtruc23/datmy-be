@@ -10,6 +10,7 @@ const userSeeder = require('./user')
 const unitSeeder = require('./unit')
 const machineProperties = require('./machineProperties')
 const workOrderBusiness = require('./workOrderBusiness')
+const productCategorySeeder = require('./productCategory')
 const args = process.argv.slice(2)
 async function run() {
     try {
@@ -48,6 +49,10 @@ async function run() {
             // }
             case 'workOrderBusiness': {
                 await workOrderBusiness()
+                break
+            }
+            case 'productCategory': {
+                await productCategorySeeder()
                 break
             }
             case 'all': {
