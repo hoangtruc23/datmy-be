@@ -364,7 +364,7 @@ const pdfService = {
             : data.typeWork === "maintain"
                 ? "BẢO TRÌ"
                 : "LẮP ĐẶT"; // Default fallback
-
+        
 
         // Xử lý Linh kiện đã thay
         const replacementHtml = data?.workOrderDetail?.replacement
@@ -379,7 +379,40 @@ const pdfService = {
         // Xử lý Ý kiến khách hàng (Nếu có)
         const customerFeedback = data?.workOrderDetail?.customerFeedback?.map(item => `<div style="color: #3b82f6;">- ${item}</div>`)
             .join('') ?? '';
-
+        // Tạo HTML cho phần đánh giá (checkbox + emoji)
+        // Lấy giá trị đánh giá khách hàng (1=vui, 2=bình, 3=buồn)
+        const customerEvaluate = data?.workOrderDetail?.evaluate;
+        
+        const evaluationRatings = `
+    <div style="
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        width: 100%;
+        gap: 8px;
+        margin-bottom: 8px;
+        padding: 0 4px;
+        box-sizing: border-box;
+    ">
+        <!-- Mặt cười -->
+        <div style="display: flex; align-items: center; gap: 3px; flex: 0 1 auto;">
+            <input type="checkbox" ${customerEvaluate === 3 ? 'checked' : ''} style="width: 14px; height: 14px; cursor: pointer;" />
+            <span style="font-size: 16px;">😊</span>
+        </div>
+        
+        <!-- Mặt bình thường -->
+        <div style="display: flex; align-items: center; gap: 3px; flex: 0 1 auto;">
+            <input type="checkbox" ${customerEvaluate === 2 ? 'checked' : ''} style="width: 14px; height: 14px; cursor: pointer;" />
+            <span style="font-size: 16px;">😐</span>
+        </div>
+        
+        <!-- Mặt buồn -->
+        <div style="display: flex; align-items: center; gap: 3px; flex: 0 1 auto;">
+            <input type="checkbox" ${customerEvaluate === 1 ? 'checked' : ''} style="width: 14px; height: 14px; cursor: pointer;" />
+            <span style="font-size: 16px;">☹️</span>
+        </div>
+    </div>
+`;
         // Xử lý Tình hình sự cố máy
         const failureHtml = data?.workOrderDetail?.failureSituation
             ?.map(item => `<div style="color: #2563eb; padding: 2px 0;">- ${item}</div>`)
@@ -450,6 +483,7 @@ const pdfService = {
                     // year: 'numeric',
                 }).format(new Date(data?.workOrderDetail?.leavingTime)),
             )
+            .replace(/{{customerFeedbackWithEmoji}}/g, evaluationRatings)
             .replace(
                 /{{\s*maintainContract_Yes\s*}}/g,
                 data?.workOrderDetail?.maintainContract === true ? 'X' : ''
@@ -475,7 +509,8 @@ const pdfService = {
             .replace(/{{logoPath}}/g, logoDataUri)
             .replace(/{{failureSituation}}/g, failureHtml)
             .replace(/{{differentApproach}}/g, approachHtml)
-            .replace(/{{replacement}}/g, replacementHtml) //Linh kiện đã thay
+            .replace(/{{replacementHtml}}/g, replacementHtml) //Linh kiện đã thay
+            .replace(/{{replacement}}/g, replacementHtml) // Backward compatible placeholder
             .replace(/{{technicalFeedback}}/g, technicalFeedbackHtml)
             .replace(/{{customerFeedback}}/g, customerFeedback) // Ý kiến khách hàng
             .replace(/{{inkArrival}}/g, inkConcentration['Lúc đến'] || "-") //Nồng độ mực Lúc đến

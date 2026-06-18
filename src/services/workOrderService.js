@@ -266,174 +266,173 @@ const workOrderService = {
     //     }
     // },
     getAll: async (reqUserId, query) => {
-        try {
-            let { limit = 10, page = 1, search = '', status, typeWork, startTime, endTime, history, address, typeHistory } = query
-            limit = Number(limit)
-            page = Number(page)
+    try {
+       
+        let { limit = 10, page = 1, search = '', status, typeWork, startTime, endTime, history = '', address = '', typeHistory } = query;
+        limit = Number(limit);
+        page = Number(page);
+        const skip = (page - 1) * limit;
 
-            // Giữ lại giá trị chuỗi thô của address để kiểm tra điều kiện bật filter
-            const rawAddress = address ? String(address).trim() : '';
+        // 2. LÀM SẠCH DỮ LIỆU (Sanitize) 
+        
+        const searchStr = search.trim();
+        const historyStr = history.trim();
+        const addressStr = address.trim();
 
-            search = new RegExp(search, 'i')
-            address = new RegExp(address, 'i')
+        // Chỉ tạo Regex khi thực sự có chuỗi ký tự (Truthy)
+        const searchRegex = searchStr ? new RegExp(searchStr, 'i') : null;
+        const historyRegex = historyStr ? new RegExp(historyStr, 'i') : null;
+        const addressRegex = addressStr ? new RegExp(addressStr, 'i') : null;
 
-            const technician = await TechnicianModel.findById(reqUserId)
-            const customers = await CustomerModel.find({ officialName: search })
-            const customerIds = customers ? customers.map((c) => c._id) : []
+        
+        if (!historyStr) {
             let conditions = {};
+            
+            // Chạy SONG SONG việc lấy Technician và Customer 
+           
+            const [technician, customers] = await Promise.all([
+                TechnicianModel.findById(reqUserId).select('_id').lean(),
+                searchRegex ? CustomerModel.find({ officialName: searchRegex }).select('_id').lean() : Promise.resolve([])
+            ]);
 
-            if (history == undefined) {
-                conditions = {
-                    $or: [
-                        { code: search },
-                        { header: search },
-                        { customerId: { $in: customerIds } },
-                    ],
-                    ...(status ? { status } : {}),
-                    ...(typeWork ? { typeWork } : {}),
-                    ...(technician ? { technicianId: reqUserId } : {}),
-                    ...(startTime && endTime ? {
-                        createdAt: {
-                            $gte: startTime,
-                            $lte: endTime
-                        }
-                    } : {}),
-                }
-            } else {
-                history = new RegExp(history, 'i')
-
-                if (typeHistory == 'serialNumber') {
-                    conditions = {
-                        ...(history ? { serialNumber: history } : {}),
-                    }
-                } else {
-                    const customers = await CustomerModel.find({ officialName: history }).select({ _id: 1 })
-                    const customerIds = customers.map(c => c._id);
-
-                    // 1. Tự động xây dựng điều kiện tìm kiếm động cho Contact
-                    const contactConditions = {
-                        customerId: { $in: customerIds }
-                    };
-
-                    // FIX LỖI TẠI ĐÂY: Chỉ khi user thực sự nhập chữ vào ô địa chỉ (rawAddress !== "") 
-                    // thì ta mới đưa $elemMatch vào để lọc. Nếu ô địa chỉ trống, hiển thị ALL (kể cả mảng address: [])
-                    if (rawAddress !== "") {
-                        contactConditions.address = {
-                            $elemMatch: {
-                                $or: [
-                                    { provinceCity: address },
-                                    { ward: address },
-                                    { specificAddress: address }
-                                ]
-                            }
-                        };
-                    }
-
-                    const contacts = await ContactPersonCustomerModel.find(contactConditions)
-                        .populate('customerId', 'officialName billingAddress')
-                        .select({ customerId: 1, devices: 1 }).lean();
-
-                    const productCodes = contacts.flatMap(c => c.devices.flatMap(device => device.productCode) || []);
-                    const products = await ProductModel.find({ code: { $in: productCodes } }).select({ name: 1, code: 1 })
-                    const productMap = new Map(products.map(p => [String(p.code), p]));
-
-                    for (const contact of contacts) {
-                        const devices = contact.devices;
-                        if (devices && Array.isArray(devices)) {
-                            for (const device of devices) {
-                                const matchedProduct = productMap.get(String(device.productCode));
-                                if (matchedProduct) {
-                                    device.machineName = matchedProduct.name
-                                }
-                            }
-                        }
-                    }
-
-                    //========= THỐNG KÊ ========
-                    const uniqueCustomerIds = new Set(contacts.map(c => String(c.customerId?._id || c.customerId)));
-                    const totalCustomers = uniqueCustomerIds.size;
-
-                    let totalDevices = 0;
-                    const deviceSummaryMap = {};
-
-                    contacts.forEach(contact => {
-                        if (contact.devices && Array.isArray(contact.devices)) {
-                            contact.devices.forEach(device => {
-                                totalDevices++;
-                                const code = device.productCode;
-                                const name = device.machineName || "Chưa xác định";
-
-                                if (!deviceSummaryMap[code]) {
-                                    deviceSummaryMap[code] = {
-                                        productCode: code,
-                                        machineName: name,
-                                        quantity: 0
-                                    };
-                                }
-                                deviceSummaryMap[code].quantity += 1;
-                            });
-                        }
-                    });
-
-                    return {
-                        statistics: {
-                            totalCustomers,
-                            totalDevices,
-                            deviceDetails: Object.values(deviceSummaryMap)
-                        },
-                        data: contacts
-                    };
-                }
+          
+            if (searchRegex) {
+                const customerIds = customers.map(c => c._id);
+                conditions.$or = [
+                    { code: searchRegex },
+                    { header: searchRegex },
+                    { customerId: { $in: customerIds } },
+                ];
             }
 
-            // Các khối lệnh chạy phân trang WorkOrder phía dưới...
+            // Gắn các điều kiện tĩnh
+            if (status) conditions.status = status;
+            if (typeWork) conditions.typeWork = typeWork;
+            if (technician) conditions.technicianId = reqUserId;
+            if (startTime && endTime) {
+                conditions.createdAt = { $gte: startTime, $lte: endTime };
+            }
+
+            // Chạy song song Query lấy Data và Query đếm tổng số dòng
             const [workOrders, totalItems] = await Promise.all([
                 WorkOrderModel.find(conditions)
                     .sort({ createdAt: -1 })
-                    .skip((page - 1) * limit)
+                    .skip(skip)
                     .limit(limit)
                     .populate('customerId', 'officialName representative.name phone email')
                     .populate('technicianId', 'fullname')
-                    .lean(),
+                    .lean(), // Trả về POJO (Plain Object) để tối ưu RAM
                 WorkOrderModel.countDocuments(conditions),
-            ])
+            ]);
 
-            let fullAddress = ''
             const result = workOrders.map((order) => {
-                let technicianInfo = null
-                if (order.technicianId) {
-                    technicianInfo = {
-                        technicianId: order.technicianId._id,
-                        fullname: order.technicianId.fullname,
-                    }
-                }
-                if (history) {
-                    const address = order?.address
-                    if (address?.specificAddress != null) {
-                        fullAddress = `${address?.specificAddress} ${address?.ward} ${address?.provinceCity}`
-                    } else {
-                        fullAddress = ''
-                    }
-                }
+               
+                let fullAddress = ''; 
+                
+            
 
                 return {
                     ...order,
-                    technicianInfo,
-                    technicianId: undefined,
+                    technicianInfo: order.technicianId ? {
+                        technicianId: order.technicianId._id,
+                        fullname: order.technicianId.fullname,
+                    } : null,
+                    technicianId: undefined, 
                     fullAddress
-                }
-            })
+                };
+            });
 
-            return {
-                result,
-                totalItems,
-                page,
-                totalPage: Math.ceil(totalItems / limit),
+            return { 
+                result, 
+                totalItems, 
+                page, 
+                totalPage: Math.ceil(totalItems / limit) 
+            };
+        } 
+        
+        
+        else {
+            let contactConditions = {};
+
+            if (typeHistory === 'serialNumber') {
+                if (historyRegex) contactConditions.serialNumber = historyRegex;
+            } else {
+                const customers = await CustomerModel.find({ officialName: historyRegex }).select('_id').lean();
+                const customerIds = customers.map(c => c._id);
+
+                contactConditions.customerId = { $in: customerIds };
+
+                // Áp dụng Regex rẽ nhánh an toàn cho địa chỉ
+                if (addressRegex) {
+                    contactConditions.address = {
+                        $elemMatch: {
+                            $or: [
+                                { provinceCity: addressRegex },
+                                { ward: addressRegex },
+                                { specificAddress: addressRegex }
+                            ]
+                        }
+                    };
+                }
+
+                // Gắn Phân trang (.skip, .limit) để chống sập RAM khi data phình to
+                const [contacts, totalContacts] = await Promise.all([
+                    ContactPersonCustomerModel.find(contactConditions)
+                        .populate('customerId', 'officialName billingAddress')
+                        .select('customerId devices')
+                        .skip(skip)
+                        .limit(limit)
+                        .lean(),
+                    ContactPersonCustomerModel.countDocuments(contactConditions)
+                ]);
+
+                // Kỹ thuật Map Product ID để tránh query n+1 trong vòng lặp
+                const productCodes = contacts.flatMap(c => c.devices?.map(d => d.productCode) || []);
+                const products = await ProductModel.find({ code: { $in: productCodes } }).select('name code').lean();
+                const productMap = new Map(products.map(p => [String(p.code), p.name]));
+
+                let totalDevices = 0;
+                const deviceSummaryMap = {};
+
+                // Gộp tính toán thiết bị vào chung 1 vòng lặp (O(n))
+                contacts.forEach(contact => {
+                    if (!contact.devices || !Array.isArray(contact.devices)) return;
+
+                    contact.devices.forEach(device => {
+                        const codeStr = String(device.productCode);
+                        device.machineName = productMap.get(codeStr) || "Chưa xác định";
+
+                        totalDevices++;
+                        if (!deviceSummaryMap[codeStr]) {
+                            deviceSummaryMap[codeStr] = {
+                                productCode: device.productCode,
+                                machineName: device.machineName,
+                                quantity: 0
+                            };
+                        }
+                        deviceSummaryMap[codeStr].quantity += 1;
+                    });
+                });
+
+                const uniqueCustomerIds = new Set(contacts.map(c => String(c.customerId?._id || c.customerId)));
+
+                return {
+                    statistics: {
+                        totalCustomers: uniqueCustomerIds.size,
+                        totalDevices,
+                        deviceDetails: Object.values(deviceSummaryMap)
+                    },
+                    data: contacts,
+                    totalItems: totalContacts,
+                    page,
+                    totalPage: Math.ceil(totalContacts / limit)
+                };
             }
-        } catch (error) {
-            throw error
         }
-    },
+    } catch (error) {
+        throw error;
+    }
+},
     getById: async (workOrderId) => {
         try {
             const workOrder = await WorkOrderModel.findById(workOrderId)

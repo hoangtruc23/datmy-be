@@ -14,6 +14,26 @@ const workOrderMaintainDSchema = new Schema(
             default: null,
         },
         machineInfo: [propSchema],
+        maintainContract: { 
+            type: Boolean,
+            default: null,
+        },
+        maintainDate: { 
+            type: Date,
+            default: null,
+        },
+        installationDate: { 
+            type: Date,
+            required: false,
+        },
+        serialControllerNumber: { 
+            type: String,
+            required: false,
+        },
+        serialLaserHeadNumber: { 
+            type: String,
+            required: false,
+        },
         arrivalTime: { //Giờ đến
             type: String,
             default: null,
@@ -61,6 +81,9 @@ const workOrderMaintainDSchema = new Schema(
                 },
             },
         ],
+        
+
+        
         machineSpecs: [propSchema], //Thông số
         differentApproach: [String], //Thao tác xử lý
         failureSituation: [String], //Tình trạng sự cố máy

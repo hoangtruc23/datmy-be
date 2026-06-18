@@ -765,7 +765,20 @@ const workOrderDetailService = {
                 else if (workOrderType === constant.WORK_ORDER_DETAIL_TYPE.G.value) {
                     const fieldsG = ['machineTypeId', 'machineInfo', 'maintainContract', 'repairDate', 'arrivalTime', 'leavingTime', 'workingTime', 'ambientTemperature', 'environmentHumidity', 'dustLevel', 'installationDate', 'printHead', 'inkSupply', 'singlePrintHead', 'compositePrintHead', 'singleSerialNumber', 'compositeSerialNumber', 'machineSpecs', 'groups', 'maintainOperations', 'technicalFeedback', 'customerFeedback'];
                     fieldsG.forEach(key => reqData[key] !== undefined && (updateDetailPayload[key] = reqData[key]));
-                } else {
+                }
+                else if (workOrderType === "D" || workOrderType === constant.WORK_ORDER_DETAIL_TYPE.D?.value) {
+                    const fieldsD = [
+                        'machineTypeId', 'machineInfo', 'maintainContract', 'maintainDate',
+                        'arrivalTime', 'leavingTime', 'workingTime', 'ambientTemperature', 
+                        'environmentHumidity', 'dustLevel', 'installationDate', 
+                        'serialControllerNumber', 'serialLaserHeadNumber', 'controllerTime', 
+                        'laserHeadTime', 'maintainOperations', 'machineSpecs', 
+                        'differentApproach', 'failureSituation', 'technicalFeedback', 
+                        'replacement', 'customerFeedback', 'evaluate', 'note', 'signature'
+                    ];
+                    fieldsD.forEach(key => reqData[key] !== undefined && (updateDetailPayload[key] = reqData[key]));
+                }
+                else {
                     const { machineInfo, machineSpecs, groups, maintainOperations, technicalFeedback, customerFeedback } = reqData;
                     Object.assign(updateDetailPayload, { machineInfo, machineSpecs, groups, maintainOperations, technicalFeedback, customerFeedback });
                 }
