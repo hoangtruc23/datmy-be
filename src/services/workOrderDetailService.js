@@ -1,3 +1,5 @@
+const ExcelJS = require('exceljs');
+const path = require('path');
 const WorkOrderBusinessModel = require('../models/workOrderBusiness')
 const WorkOrderModel = require('../models/workOrder')
 const constant = require('../utils/constant/constant')
@@ -769,11 +771,11 @@ const workOrderDetailService = {
                 else if (workOrderType === "D" || workOrderType === constant.WORK_ORDER_DETAIL_TYPE.D?.value) {
                     const fieldsD = [
                         'machineTypeId', 'machineInfo', 'maintainContract', 'maintainDate',
-                        'arrivalTime', 'leavingTime', 'workingTime', 'ambientTemperature', 
-                        'environmentHumidity', 'dustLevel', 'installationDate', 
-                        'serialControllerNumber', 'serialLaserHeadNumber', 'controllerTime', 
-                        'laserHeadTime', 'maintainOperations', 'machineSpecs', 
-                        'differentApproach', 'failureSituation', 'technicalFeedback', 
+                        'arrivalTime', 'leavingTime', 'workingTime', 'ambientTemperature',
+                        'environmentHumidity', 'dustLevel', 'installationDate',
+                        'serialControllerNumber', 'serialLaserHeadNumber', 'controllerTime',
+                        'laserHeadTime', 'maintainOperations', 'machineSpecs',
+                        'differentApproach', 'failureSituation', 'technicalFeedback',
                         'replacement', 'customerFeedback', 'evaluate', 'note', 'signature'
                     ];
                     fieldsD.forEach(key => reqData[key] !== undefined && (updateDetailPayload[key] = reqData[key]));
@@ -1121,6 +1123,7 @@ const workOrderDetailService = {
         }
 
         const data = { ...workOrder, workOrderDetail }
+
         const pdfBuffer = await pdfService.generateWorkOrderPdf(data)
 
         const typeWorkLabel = data.typeWork === 'repair'
@@ -1134,5 +1137,146 @@ const workOrderDetailService = {
             typeWorkLabel: typeWorkLabel,
         }
     },
+
+    generateExcel: async (workOrderId) => {
+        try {
+            // 1. Lấy dữ liệu từ DB (Dựa trên schema chính xác của bạn)
+            const workOrder = await WorkOrderModel.findById(workOrderId).populate('customerId', 'officialName').lean();
+            if (!workOrder) throw new BadReq(errorCode.WORK_ORDER_NOT_FOUND);
+
+            const WorkOrderDetailModel = getWorkOrderModel(workOrder.typeWork, workOrder.type[0]);
+            const detail = await WorkOrderDetailModel.findOne({ workOrderId }).populate('machineSpecs.propId').lean();
+            if (!detail) throw new BadReq(errorCode.WORK_ORDER_DETAIL_NOT_FOUND);
+
+            // 2. Đọc file Template Excel chứa các token {{biến}} của bạn
+            const workbook = new ExcelJS.Workbook();
+            await workbook.xlsx.readFile(path.join(__dirname, '../templates/excel_template_repair.xlsx'));
+            const ws = workbook.getWorksheet(1);
+
+            // 3. Chuẩn bị object map dữ liệu tương thích với các Token {{key}} trong Excel
+            const formatDate = (d) => d ? new Date(d).toLocaleDateString('vi-VN') : "";
+            // Xử lý mảng machineSpecs động
+            const mSpecs = detail.machineSpecs || [];
+
+            const getSpec = (name) => {
+                const spec = mSpecs.find(s => s?.propId?.name?.toLowerCase().trim() === name.toLowerCase().trim());
+                return spec ? (spec.value ?? "") : "";
+            };
+
+            const subValue = (arr, subName) => {
+                const item = arr.find(i => i && i.name && i.name.toLowerCase().trim() === subName.toLowerCase().trim());
+                return item ? (item.value ?? "") : "";
+            };
+
+            const itmArray = getSpec("ITM") || [];
+            const itmString = itmArray
+                .filter(item => item && item.value !== undefined && item.value !== null && String(item.value).trim() !== "")
+                .map(item => `${item.name}: ${item.value}`)
+                .join(', ');
+
+            const addr = workOrder?.address;
+
+            const replacements = {
+                // Dữ liệu từ workOrder cha
+                "{{officialName}}": workOrder.customerId?.officialName || "",
+                "{{reportDate}}": formatDate(workOrder.createdAt),
+                "{{machineType}}": workOrder.type || "",
+                "{{serialNumber}}": workOrder.serialNumber || "",
+                "{{contactPerson}}": workOrder?.contactPerson?.contactName || "",
+                "{{address}}": addr
+                    ? [addr.specificAddress, addr.ward, addr.provinceCity].filter(Boolean).join(", ")
+                    : "",
+
+                // Dữ liệu từ workOrderRepairASchema của bạn
+                "{{installationDate}}": formatDate(detail.installationDate),
+                "{{repairDate}}": formatDate(detail.repairDate),
+                // "{{arrivalTime}}": detail.arrivalTime || "",
+                // "{{leavingTime}}": detail.leavingTime || "",
+                "{{arrivalTime}}": detail.arrivalTime ? detail.arrivalTime.slice(11, 16) : "",
+                "{{leavingTime}}": detail.leavingTime ? detail.leavingTime.slice(11, 16) : "",
+                "{{workingTime}}": detail.workingTime ? `${detail.workingTime}` : "0 phút",
+                "{{ambientTemperature}}": detail.ambientTemperature !== null ? `${detail.ambientTemperature}°C` : "",
+                "{{environmentHumidity}}": detail.environmentHumidity !== null ? `${detail.environmentHumidity}%` : "",
+                "{{dustLevel}}": detail.dustLevel || "",
+                "{{inkCode}}": detail.inkCode || "",
+                "{{machineStartup}}": detail.machineStartup || "",
+                "{{inkjetTime}}": detail.inkjetTime || "",
+
+                // Xử lý các mảng chuỗi [String] bằng cách gom dòng bằng dấu xuống dòng \n
+                "{{failureSituation}}": Array.isArray(detail.failureSituation) ? detail.failureSituation.map(x => `- ${x}`).join('\n') : "",
+                "{{differentApproach}}": Array.isArray(detail.differentApproach) ? detail.differentApproach.map(x => `- ${x}`).join('\n') : "",
+                "{{technicalFeedback}}": Array.isArray(detail.technicalFeedback) ? detail.technicalFeedback.map(x => `- ${x}`).join('\n') : "",
+                "{{replacement}}": Array.isArray(detail.replacement) ? detail.replacement.map(x => `- ${x}`).join('\n') : "",
+                "{{customerFeedback}}": Array.isArray(detail.customerFeedback) ? detail.customerFeedback.map(x => `- ${x}`).join('\n') : "",
+
+                // Map các thông số con trong bảng máy
+                "{{ink_conc_arrival}}": subValue(getSpec("Nồng độ mực"), "Lúc đến"),
+                "{{ink_conc_departure}}": subValue(getSpec("Nồng độ mực"), "Lúc đi"),
+                "{{standard_conc}}": getSpec("Nồng độ chuẩn"),
+                "{{pump_speed}}": getSpec("Tốc độ bơm"),
+                "{{standard_pressure}}": getSpec("Áp suất chuẩn"),
+                "{{current_pressure}}": getSpec("Áp suất hiện hành"),
+                "{{nozzle}}": getSpec("Béc phun"),
+                "{{charge_level}}": getSpec("Charge level"),
+                "{{vacuum_pressure}}": getSpec("Áp chân không"),
+                "{{vacuum_pump_speed}}": getSpec("Tốc độ bơm chân không"),
+                "{{printContent}}": getSpec("Nội dung in phun"),
+                "{{cai_tu_dong}}": subValue(getSpec("Mức giọt mực"), "Cài tự động"),
+                "{{thao_tac_tay}}": subValue(getSpec("Mức giọt mực"), "Thao tác tay"),
+                "{{bup}}": subValue(getSpec("Mức giọt mực"), "BUP"),
+                "{{ink_temp}}": getSpec("Nhiệt độ mực"),
+                "{{itm}}": itmString,
+                "{{time_start}}": getSpec("Đầu thời gian"),
+                "{{software_version}}": getSpec("Phần mềm sử dụng"),
+            };
+
+            // 4. QUÉT QUA TOÀN BỘ CÁC Ô TRÊN SHEET ĐỂ REPLACE BIẾN
+            ws.eachRow((row) => {
+                row.eachCell((cell) => {
+                    if (cell.value && typeof cell.value === 'string') {
+                        let cellStr = cell.value;
+                        let updated = false;
+
+                        // Tìm xem nội dung ô có chứa token nào trong danh sách không
+                        for (const [token, realValue] of Object.entries(replacements)) {
+                            if (cellStr.includes(token)) {
+                                cellStr = cellStr.replace(new RegExp(token, 'g'), realValue);
+                                updated = true;
+                            }
+                        }
+
+                        if (updated) {
+                            cell.value = cellStr;
+                            // Giữ định dạng chuyên nghiệp: tự động xuống dòng đối với ô chứa nội dung dài
+                            if (cellStr.includes('\n')) {
+                                cell.alignment = { ...cell.alignment, wrapText: true, vertical: 'top' };
+                            }
+                        }
+                    }
+                });
+            });
+
+            // 5. Xử lý riêng biệt Checkbox cho `maintainContract` (Boolean)
+            const isMaintain = detail.maintainContract === true;
+            ws.eachRow((row) => {
+                row.eachCell((cell) => {
+                    if (cell.value === '{{maintainContract_true}}') cell.value = isMaintain ? "X" : "";
+                    if (cell.value === '{{maintainContract_false}}') cell.value = isMaintain ? "" : "X";
+
+                    if (cell.value === '{{evaluationRatings}}') {
+                        const score = detail.evaluate;
+                        cell.value = `${score >= 3 ? '[X]' : '[  ]'} 😊   ${score === 2 || !score ? '[X]' : '[  ]'} 😐   ${score <= 1 && score !== null ? '[X]' : '[  ]'} 🙁`;
+                    }
+                });
+            });
+
+            // 6. Trả file buffer về cho client tải xuống
+            const buffer = await workbook.xlsx.writeBuffer();
+            return buffer;
+
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 module.exports = workOrderDetailService

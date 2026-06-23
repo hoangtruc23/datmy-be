@@ -1,6 +1,6 @@
 const ExcelJS = require('exceljs')
 const moment = require('moment');
-const { formatDate } = require('../utils/helper/excelReportHelper')
+const { formatDate, appendSignatureFooter } = require('../utils/helper/excelReportHelper')
 const ContactPersonCustomerModel = require('../models/contactPersonCustomer')
 const WorkOrderModel = require('../models/workOrder')
 const {
@@ -931,7 +931,7 @@ const excelService = {
             const { fromDate, toDate } = query;
             const matchStage = {};
 
-            // 1. Xử lý khoảng thời gian (Nếu không truyền mặc định lấy trong tháng này)
+            // 1. Xử lý khoảng thời gian (Mặc định trong tháng hiện tại nếu không truyền)
             matchStage.createdAt = {};
             if (fromDate || toDate) {
                 if (fromDate) matchStage.createdAt.$gte = new Date(fromDate);
@@ -948,12 +948,15 @@ const excelService = {
             // Chỉ thống kê các phiếu đã gán cho kỹ thuật viên
             matchStage.technicianId = { $exists: true, $ne: null };
 
-            // 2. Chạy Aggregation Pipeline gom dữ liệu báo cáo kỹ thuật
-            const report = await WorkOrderModel.aggregate([
+            // 2. Aggregation Pipeline thu thập thông tin chi tiết
+            const rawReport = await WorkOrderModel.aggregate([
                 { $match: matchStage },
                 {
                     $group: {
-                        _id: '$technicianId',
+                        _id: {
+                            provinceCity: { $ifNull: ['$address.provinceCity', 'Không xác định'] },
+                            technicianId: '$technicianId'
+                        },
                         suaChuaMay: { $sum: { $cond: [{ $eq: ['$typeWork', 'repair'] }, 1, 0] } },
                         baoTriMay: { $sum: { $cond: [{ $eq: ['$typeWork', 'maintenance'] }, 1, 0] } },
                         lapDatMayMoi: { $sum: { $cond: [{ $eq: ['$typeWork', 'installation'] }, 1, 0] } },
@@ -975,19 +978,21 @@ const excelService = {
                                         $and: [
                                             { $ifNull: ['$address.provinceCity', false] },
                                             { $ne: ['$address.provinceCity', 'Thành phố Hà Nội'] },
-                                            { $ne: ['$address.provinceCity', 'Hà Nội'] }
+                                            { $ne: ['$address.provinceCity', 'Thành phố Hồ Chí Minh'] }
                                         ]
                                     },
                                     1, 0
                                 ]
                             }
-                        }
+                        },
+                        allProvinces: { $push: '$address.provinceCity' },
+                        allCustomers: { $push: { id: '$customerId', name: '$customerName', work: '$typeWork' } }
                     }
                 },
                 {
                     $lookup: {
-                        from: 'technicians', // Tên collection kỹ thuật viên trong DB
-                        localField: '_id',
+                        from: 'technicians',
+                        localField: '_id.technicianId',
                         foreignField: '_id',
                         as: 'technicianInfo'
                     }
@@ -1000,8 +1005,9 @@ const excelService = {
                 },
                 {
                     $project: {
-                        _id: 1,
-                        technicianName: { $ifNull: ['$technicianInfo.fullname', 'Không rõ tên'] }, // Map theo trường fullname giống code mẫu của bạn
+                        provinceCity: '$_id.provinceCity',
+                        technicianId: '$_id.technicianId',
+                        technicianName: { $ifNull: ['$technicianInfo.fullname', 'Không rõ tên'] },
                         suaChuaMay: 1,
                         baoTriMay: 1,
                         lapDatMayMoi: 1,
@@ -1009,149 +1015,281 @@ const excelService = {
                         tongSoLuongMay: 1,
                         tongSlKhachHang: { $size: '$khachHangList' },
                         daThayLoc: 1,
-                        congTacTinh: 1
+                        congTacTinh: 1,
+                        allProvinces: 1,
+                        allCustomers: 1
                     }
                 },
-                { $sort: { technicianName: 1 } }
+                { $sort: { provinceCity: 1, technicianName: 1 } }
             ]);
 
-            // 3. Tính toán dòng Grand Total (Tổng cộng cuối bảng)
-            const grandTotal = report.reduce((acc, curr) => {
-                acc.suaChuaMay += curr.suaChuaMay;
-                acc.baoTriMay += curr.baoTriMay;
-                acc.lapDatMayMoi += curr.lapDatMayMoi;
-                acc.phieuGiaoDich += curr.phieuGiaoDich;
-                acc.tongSoLuongMay += curr.tongSoLuongMay;
-                acc.tongSlKhachHang += curr.tongSlKhachHang;
-                acc.daThayLoc += curr.daThayLoc;
-                acc.congTacTinh += curr.congTacTinh;
-                return acc;
-            }, {
-                technicianName: "Grand Total",
-                suaChuaMay: 0,
-                baoTriMay: 0,
-                lapDatMayMoi: 0,
-                phieuGiaoDich: 0,
-                tongSoLuongMay: 0,
-                tongSlKhachHang: 0,
-                daThayLoc: 0,
-                congTacTinh: 0
+            const workbook = new ExcelJS.Workbook();
+            const targetMonthStr = moment(toDate ? new Date(toDate) : new Date()).format('MM/YYYY');
+            const targetMonthLongStr = moment(toDate ? new Date(toDate) : new Date()).format('MM/YYYY');
+
+            // Gom nhóm dữ liệu theo tỉnh phục vụ tách sheet
+            const provincesMap = {};
+            rawReport.forEach(item => {
+                let pName = item.provinceCity;
+                // Định dạng chuẩn hóa tên tỉnh làm tên sheet
+                pName = pName.replace('Thành phố ', '').replace('Tỉnh ', '').toUpperCase();
+                if (!provincesMap[pName]) provincesMap[pName] = [];
+                provincesMap[pName].push(item);
             });
 
-            // 4. Khởi tạo Workbook & vẽ Layout bảng tính ExcelJS
-            const workbook = new ExcelJS.Workbook();
-            const worksheet = workbook.addWorksheet('Báo công tác phòng kỹ thuật');
-            worksheet.views = [{ showGridLines: true }];
+            const provincesList = Object.keys(provincesMap).sort();
 
-            // Định nghĩa cột tương ứng cấu trúc file Excel mẫu đầu tiên
-            worksheet.columns = [
-                { header: 'KỸ THUẬT VIÊN', key: 'technicianName', width: 30 },
-                { header: 'SỬA CHỮA MÁY', key: 'suaChuaMay', width: 18 },
-                { header: 'BẢO TRÌ MÁY', key: 'baoTriMay', width: 18 },
-                { header: 'LẮP ĐẶT MÁY MỚI', key: 'lapDatMayMoi', width: 20 },
-                { header: 'PHIẾU GIAO DỊCH', key: 'phieuGiaoDich', width: 20 },
-                { header: 'TỔNG SỐ LƯỢNG MÁY', key: 'tongSoLuongMay', width: 22 },
-                { header: 'TỔNG SL KHÁCH HÀNG', key: 'tongSlKhachHang', width: 22 },
-                { header: 'ĐÃ THAY LỌC 14831', key: 'daThayLoc', width: 20 },
-                { header: 'CÔNG TÁC TỈNH', key: 'congTacTinh', width: 18 }
+            // =========================================================================
+            // VẼ SHEET 1: TỔNG HỢP (Layout 11 cột - Theo ảnh mẫu số 1)
+            // =========================================================================
+            const mainSheetName = `CÔNG VIỆC KỸ THUẬT T${moment(toDate ? new Date(toDate) : new Date()).format('MM.YY')}`;
+            const wsMain = workbook.addWorksheet(mainSheetName);
+            wsMain.views = [{ showGridLines: true }];
+
+            wsMain.columns = [
+                { key: 'technicianName', width: 25 },
+                { key: 'suaChuaMay', width: 14 },
+                { key: 'baoTriMay', width: 14 },
+                { key: 'lapDatMayMoi', width: 14 },
+                { key: 'phieuGiaoDich', width: 14 },
+                { key: 'tongSoLuongMay', width: 16 },
+                { key: 'tongSlKhachHang', width: 16 },
+                { key: 'daThayLoc', width: 15 },
+                { key: 'congTacTinh', width: 14 },
+                { key: 'noiCongTac', width: 30 },
+                { key: 'congTacHaNoi', width: 30 }
             ];
 
-            // --- Style tiêu đề Header (Dòng 1) ---
-            const headerRow = worksheet.getRow(1);
+            // Tiêu đề đầu trang Sheet 1
+            const mainTitle1 = wsMain.addRow([]);
+            mainTitle1.getCell(1).value = 'TÊN KHÁCH HÀNG';
+            mainTitle1.font = { name: 'Arial', size: 11 };
 
-            headerRow.font = { bold: true, size: 11, name: 'Times New Roman' };
-            headerRow.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
-            headerRow.height = 30;
+            const mainTitle2 = wsMain.addRow([]);
+            mainTitle2.getCell(1).value = `CÔNG VIỆC PHÒNG KỸ THUẬT T${targetMonthStr}`;
+            mainTitle2.font = { bold: true, name: 'Arial', size: 14, color: { argb: 'FF1F4E78' } };
+            wsMain.mergeCells('A2:K2');
 
-            // Đổ màu nền nhạt cho các cột nghiệp vụ (Tùy chọn cho giống màu xanh/đỏ nhẹ của Excel)
-            // Màu đỏ nhạt cho các cột loại công việc (Cột 2, 3, 4, 5)
-            for (let i = 2; i <= 5; i++) {
-                headerRow.getCell(i).font = { bold: true, color: { argb: 'FFC00000' } }; // Chữ đỏ
-            }
+            wsMain.addRow([]); // Hàng trống số 3
 
-            // 5. Đổ dữ liệu chi tiết của từng Kỹ thuật viên
-            report.forEach((item) => {
-                const row = worksheet.addRow({
-                    technicianName: item.technicianName,
-                    suaChuaMay: item.suaChuaMay || '',
-                    baoTriMay: item.baoTriMay || '',
-                    lapDatMayMoi: item.lapDatMayMoi || '',
-                    phieuGiaoDich: item.phieuGiaoDich || '',
-                    tongSoLuongMay: item.tongSoLuongMay || 0,
-                    tongSlKhachHang: item.tongSlKhachHang || 0,
-                    daThayLoc: item.daThayLoc || '',
-                    congTacTinh: item.congTacTinh || ''
+            // Header dữ liệu Sheet 1
+            const mainHeader = wsMain.addRow([
+                'KỸ THUẬT VIÊN', 'SỬA CHỮA MÁY', 'BẢO TRÌ MÁY', 'LẮP ĐẶT MÁY MỚI', 'PHIẾU GIAO DỊCH',
+                'TỔNG SỐ LƯỢNG MÁY', 'TỔNG SL KHÁCH HÀNG', 'ĐÃ THAY LỌC 14831', 'CÔNG TÁC TỈNH',
+                'NƠI CÔNG TÁC', 'CÔNG TÁC HÀ NỘI'
+            ]);
+            mainHeader.height = 35;
+            mainHeader.font = { bold: true, name: 'Times New Roman', size: 11 };
+            mainHeader.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+            for (let i = 2; i <= 5; i++) mainHeader.getCell(i).font = { bold: true, color: { argb: 'FFC00000' }, name: 'Times New Roman', size: 11 };
+            mainHeader.getCell(10).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD9E1F2' } };
+            mainHeader.getCell(11).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD9E1F2' } };
+
+            const mainGrandTotal = { suaChuaMay: 0, baoTriMay: 0, lapDatMayMoi: 0, phieuGiaoDich: 0, tongSoLuongMay: 0, tongSlKhachHang: 0, daThayLoc: 0, congTacTinh: 0 };
+
+            // Duyệt đổ dữ liệu phân tách theo từng cụm tỉnh
+            provincesList.forEach(provinceName => {
+                // Tạo dòng phân cách Tên Tỉnh (In đậm)
+                const provinceGroupRow = wsMain.addRow([provinceName]);
+                provinceGroupRow.font = { bold: true, name: 'Arial', size: 11 };
+                provinceGroupRow.alignment = { vertical: 'middle', horizontal: 'left' };
+
+                const rowsInProvince = provincesMap[provinceName];
+                rowsInProvince.forEach(item => {
+                    mainGrandTotal.suaChuaMay += item.suaChuaMay;
+                    mainGrandTotal.baoTriMay += item.baoTriMay;
+                    mainGrandTotal.lapDatMayMoi += item.lapDatMayMoi;
+                    mainGrandTotal.phieuGiaoDich += item.phieuGiaoDich;
+                    mainGrandTotal.tongSoLuongMay += item.tongSoLuongMay;
+                    mainGrandTotal.tongSlKhachHang += item.tongSlKhachHang;
+                    mainGrandTotal.daThayLoc += item.daThayLoc;
+                    mainGrandTotal.congTacTinh += item.congTacTinh;
+
+                    // Xử lý chuỗi Nơi công tác
+                    let noiCongTacStr = '';
+                    if (item.allProvinces && item.allProvinces.length > 0) {
+                        const counts = {};
+                        item.allProvinces.forEach(p => {
+                            if (p && p !== 'Thành phố Hà Nội' && p !== 'Thành phố Hồ Chí Minh') {
+                                const cleanP = p.replace('Thành phố ', '').replace('Tỉnh ', '').toUpperCase();
+                                counts[cleanP] = (counts[cleanP] || 0) + 1;
+                            }
+                        });
+                        noiCongTacStr = Object.entries(counts).map(([prov, cnt]) => `${prov} (${cnt})`).join(', ');
+                    }
+
+                    const r = wsMain.addRow([
+                        `  ${item.technicianName}`,
+                        item.suaChuaMay || '', item.baoTriMay || '', item.lapDatMayMoi || '', item.phieuGiaoDich || '',
+                        item.tongSoLuongMay || 0, item.tongSlKhachHang || 0, item.daThayLoc || '', item.congTacTinh || '',
+                        noiCongTacStr, ''
+                    ]);
+                    r.alignment = { vertical: 'middle', horizontal: 'center' };
+                    r.getCell(1).alignment = { vertical: 'middle', horizontal: 'left' };
+                    r.getCell(10).alignment = { vertical: 'middle', horizontal: 'left' };
                 });
-                row.alignment = { vertical: 'middle', horizontal: 'center' };
-                row.getCell(1).alignment = { vertical: 'middle', horizontal: 'left' }; // Tên KTV căn trái
             });
 
-            // 6. Thêm dòng Tổng cộng (Grand Total) xuống cuối bảng
-            const grandTotalRow = worksheet.addRow({
-                technicianName: grandTotal.technicianName,
-                suaChuaMay: grandTotal.suaChuaMay,
-                baoTriMay: grandTotal.baoTriMay,
-                lapDatMayMoi: grandTotal.lapDatMayMoi,
-                phieuGiaoDich: grandTotal.phieuGiaoDich,
-                tongSoLuongMay: grandTotal.tongSoLuongMay,
-                tongSlKhachHang: grandTotal.tongSlKhachHang,
-                daThayLoc: grandTotal.daThayLoc,
-                congTacTinh: grandTotal.congTacTinh
-            });
+            // Hàng Grand Total cho Sheet 1
+            const mainTotalRow = wsMain.addRow([
+                'Grand Total', mainGrandTotal.suaChuaMay, mainGrandTotal.baoTriMay, mainGrandTotal.lapDatMayMoi, mainGrandTotal.phieuGiaoDich,
+                mainGrandTotal.tongSoLuongMay, mainGrandTotal.tongSlKhachHang, mainGrandTotal.daThayLoc, mainGrandTotal.congTacTinh, '', ''
+            ]);
+            mainTotalRow.font = { bold: true, color: { argb: 'FFC00000' }, name: 'Arial', size: 11 };
+            mainTotalRow.alignment = { vertical: 'middle', horizontal: 'center' };
+            mainTotalRow.getCell(1).alignment = { vertical: 'middle', horizontal: 'right' };
 
-            // Style dòng Grand Total: Chữ đỏ đậm như bản gốc Excel
-            grandTotalRow.font = { bold: true, color: { argb: 'FFC00000' }, name: 'Arial' };
-            grandTotalRow.alignment = { vertical: 'middle', horizontal: 'center' };
-            grandTotalRow.getCell(1).alignment = { vertical: 'middle', horizontal: 'right' }; // Chữ "Grand Total" đẩy sang phải
-
-            // Thêm viền (Borders) cho toàn bộ các ô để hiển thị lưới rõ ràng
-            worksheet.eachRow((row) => {
-                row.eachCell((cell) => {
+            // Vẽ viền cho Sheet 1
+            for (let r = 4; r <= mainTotalRow.number; r++) {
+                wsMain.getRow(r).eachCell({ includeEmpty: true }, cell => {
                     cell.border = {
-                        top: { style: 'thin', color: { argb: 'FFA6A6A6' } },
-                        left: { style: 'thin', color: { argb: 'FFA6A6A6' } },
-                        bottom: { style: 'thin', color: { argb: 'FFA6A6A6' } },
-                        right: { style: 'thin', color: { argb: 'FFA6A6A6' } }
+                        top: { style: 'thin', color: { argb: 'FFA6A6A6' } }, left: { style: 'thin', color: { argb: 'FFA6A6A6' } },
+                        bottom: { style: 'thin', color: { argb: 'FFA6A6A6' } }, right: { style: 'thin', color: { argb: 'FFA6A6A6' } }
                     };
                 });
+            }
+            appendSignatureFooter(wsMain, toDate, 9, 11);
+
+
+            // =========================================================================
+            // VẼ CÁC SHEET TIẾP THEO: CHI TIẾT TỪNG TỈNH (Layout 13 cột - Theo ảnh mẫu số 2)
+            // =========================================================================
+            provincesList.forEach(provinceName => {
+                const wsProv = workbook.addWorksheet(provinceName);
+                wsProv.views = [{ showGridLines: true }];
+
+                wsProv.columns = [
+                    { key: 'stt', width: 6 }, { key: 'technicianName', width: 22 }, { key: 'soLanCongTac', width: 14 },
+                    { key: 'noiCongTac', width: 25 }, { key: 'khachHangLapLai', width: 35 }, { key: 'suaChuaMay', width: 11 },
+                    { key: 'baoTriMay', width: 11 }, { key: 'lapDatMayMoi', width: 12 }, { key: 'phieuGiaoDich', width: 12 },
+                    { key: 'tongSoLuongMay', width: 14 }, { key: 'tongSlKhachHang', width: 14 }, { key: 'daThayLoc', width: 14 },
+                    { key: 'ghiChu', width: 30 }
+                ];
+
+                // Dòng 1: Tiêu đề chính
+                const provTitle = wsProv.addRow([]);
+                provTitle.getCell(1).value = `CÔNG VIỆC KỸ THUẬT THÁNG ${targetMonthLongStr}`;
+                provTitle.font = { bold: true, name: 'Arial', size: 14 };
+                provTitle.height = 25;
+                wsProv.mergeCells('A1:M1');
+                provTitle.getCell(1).alignment = { horizontal: 'center', vertical: 'middle' };
+
+                // Dòng 2: Tên nhóm quản lý khu vực tỉnh
+                const rowsInProvince = provincesMap[provinceName];
+                const techNames = [...new Set(rowsInProvince.map(r => r.technicianName))].join(', ');
+                const provGroup = wsProv.addRow([]);
+                provGroup.getCell(1).value = `Nhóm ${provinceName} :  ${techNames}`;
+                provGroup.font = { bold: true, name: 'Arial', size: 10, color: { argb: 'FFC00000' } };
+                wsProv.mergeCells('A2:M2');
+
+                // Dòng 3 & 4: Khởi tạo Header hai tầng
+                const r3 = wsProv.addRow(['STT', 'KỸ THUẬT VIÊN', 'SỐ LẦN CÔNG TÁC', 'NƠI CÔNG TÁC', 'KHÁCH HÀNG LẬP LẠI', 'CÔNG VIỆC', '', '', '', 'TỔNG SỐ LƯỢNG MÁY', 'TỔNG SL KHÁCH HÀNG', 'ĐÃ THAY LỌC 14831', 'GHI CHÚ']);
+                const r4 = wsProv.addRow(['', '', '', '', '', 'SỬA CHỮA MÁY', 'BẢO TRÌ MÁY', 'LẮP ĐẶT MÁY MỚI', 'PHIẾU GIAO DỊCH', '', '', '', '']);
+                r3.height = 25; r4.height = 25;
+
+                // Tiến hành gộp ô dọc và gộp ô ngang cho header tầng
+                wsProv.mergeCells('A3:A4'); wsProv.mergeCells('B3:B4'); wsProv.mergeCells('C3:C4'); wsProv.mergeCells('D3:D4'); wsProv.mergeCells('E3:E4');
+                wsProv.mergeCells('F3:I3');
+                wsProv.mergeCells('J3:J4'); wsProv.mergeCells('K3:K4'); wsProv.mergeCells('L3:L4'); wsProv.mergeCells('M3:M4');
+
+                // Style phủ màu nền cho Header tầng
+                [r3, r4].forEach(row => {
+                    row.eachCell({ includeEmpty: true }, cell => {
+                        cell.font = { bold: true, size: 10, name: 'Arial' };
+                        cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+                        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFB4C6E7' } };
+                    });
+                });
+
+                const provGrandTotal = { suaChuaMay: 0, baoTriMay: 0, lapDatMayMoi: 0, phieuGiaoDich: 0, tongSoLuongMay: 0, tongSlKhachHang: 0, daThayLoc: 0 };
+
+                // Đổ dữ liệu chi tiết của kỹ thuật viên thuộc tỉnh này
+                rowsInProvince.forEach((item, index) => {
+                    provGrandTotal.suaChuaMay += item.suaChuaMay;
+                    provGrandTotal.baoTriMay += item.baoTriMay;
+                    provGrandTotal.lapDatMayMoi += item.lapDatMayMoi;
+                    provGrandTotal.phieuGiaoDich += item.phieuGiaoDich;
+                    provGrandTotal.tongSoLuongMay += item.tongSoLuongMay;
+                    provGrandTotal.tongSlKhachHang += item.tongSlKhachHang;
+                    provGrandTotal.daThayLoc += item.daThayLoc;
+
+                    // Phân tách chuỗi Nơi công tác chi tiết lẻ
+                    let noiCongTacStr = '0';
+                    if (item.allProvinces && item.allProvinces.length > 0) {
+                        const counts = {};
+                        item.allProvinces.forEach(p => {
+                            if (p && p !== 'Thành phố Hà Nội' && p !== 'Thành phố Hồ Chí Minh') {
+                                const cleanP = p.replace('Thành phố ', '').replace('Tỉnh ', '').toUpperCase();
+                                counts[cleanP] = (counts[cleanP] || 0) + 1;
+                            }
+                        });
+                        const entries = Object.entries(counts);
+                        if (entries.length > 0) noiCongTacStr = entries.map(([prov, cnt]) => `${prov} (${cnt})`).join(', ');
+                    }
+
+                    // Xử lý cột Khách hàng lập lại & Ghi chú
+                    let khachHangLapLaiStr = '';
+                    let ghiChuStr = '';
+                    if (item.allCustomers && item.allCustomers.length > 0) {
+                        const custCounts = {};
+                        item.allCustomers.forEach(c => { if (c.name) custCounts[c.name] = (custCounts[c.name] || 0) + 1; });
+
+                        let idx = 1;
+                        Object.entries(custCounts).forEach(([name, count]) => {
+                            if (count > 1) {
+                                khachHangLapLaiStr += `${idx}/ ${name} (${count} lần sửa chữa)\n`;
+                                idx++;
+                            } else {
+                                ghiChuStr += `${name} (1), `;
+                            }
+                        });
+                        if (ghiChuStr) ghiChuStr = ghiChuStr.slice(0, -2);
+                    }
+
+                    const r = wsProv.addRow([
+                        index + 1, item.technicianName, item.congTacTinh || 0, noiCongTacStr, khachHangLapLaiStr.trim(),
+                        item.suaChuaMay || 0, item.baoTriMay || 0, item.lapDatMayMoi || 0, item.phieuGiaoDich || 0,
+                        item.tongSoLuongMay || 0, item.tongSlKhachHang || 0, item.daThayLoc || 0, ghiChuStr
+                    ]);
+
+                    r.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+                    r.getCell(2).alignment = { vertical: 'middle', horizontal: 'left' };
+                    r.getCell(4).alignment = { vertical: 'middle', horizontal: 'left' };
+                    r.getCell(5).alignment = { vertical: 'middle', horizontal: 'left' };
+                    r.getCell(13).alignment = { vertical: 'middle', horizontal: 'left' };
+                });
+
+                // Tạo dòng TỔNG SỐ LƯỢNG ở đáy bảng dữ liệu của sheet tỉnh
+                const provTotalRow = wsProv.addRow([
+                    'TỔNG SỐ LƯỢNG', '', '', '', '', provGrandTotal.suaChuaMay, provGrandTotal.baoTriMay,
+                    provGrandTotal.lapDatMayMoi, provGrandTotal.phieuGiaoDich, provGrandTotal.tongSoLuongMay,
+                    provGrandTotal.tongSlKhachHang, provGrandTotal.daThayLoc, ''
+                ]);
+                const provTotalRowNumber = provTotalRow.number;
+                wsProv.mergeCells(`A${provTotalRowNumber}:E${provTotalRowNumber}`);
+
+                provTotalRow.font = { bold: true, color: { argb: 'FFC00000' }, name: 'Arial', size: 10 };
+                provTotalRow.alignment = { vertical: 'middle', horizontal: 'center' };
+
+                // Đổ màu nền cho dòng tổng kết đồng bộ mẫu 2
+                provTotalRow.eachCell({ includeEmpty: true }, cell => {
+                    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFB4C6E7' } };
+                });
+
+                // Kẻ khung viền lưới ô cho Sheet Tỉnh
+                for (let r = 3; r <= provTotalRowNumber; r++) {
+                    const row = wsProv.getRow(r);
+                    for (let c = 1; c <= 13; c++) {
+                        row.getCell(c).border = {
+                            top: { style: 'thin', color: { argb: 'FFA6A6A6' } }, left: { style: 'thin', color: { argb: 'FFA6A6A6' } },
+                            bottom: { style: 'thin', color: { argb: 'FFA6A6A6' } }, right: { style: 'thin', color: { argb: 'FFA6A6A6' } }
+                        };
+                    }
+                }
+                appendSignatureFooter(wsProv, toDate, 10, 13);
             });
 
-            const targetDate = toDate ? new Date(toDate) : new Date();
-            const dateString = `Ngày ${moment(targetDate).format('DD')} tháng ${moment(targetDate).format('MM')} năm ${moment(targetDate).format('YYYY')}`;
-            const dateRow = worksheet.addRow([]);
-            dateRow.getCell(9).value = dateString;
-
-            const dateRowNumber = dateRow.number;
-            worksheet.mergeCells(`I${dateRowNumber}:K${dateRowNumber}`);
-            dateRow.getCell(9).font = { italic: true, name: 'Arial', size: 10, bold: true };
-            dateRow.getCell(9).alignment = { horizontal: 'right', vertical: 'middle' };
-            dateRow.height = 22;
-
-            // Thêm dòng các chức danh ký tên
-            const signatureRow = worksheet.addRow([]);
-            const sigRowNumber = signatureRow.number;
-
-            // Chia và gộp đều 3 block chức danh chữ ký theo bề ngang
-            worksheet.mergeCells(`A${sigRowNumber}:C${sigRowNumber}`);
-            worksheet.mergeCells(`E${sigRowNumber}:G${sigRowNumber}`);
-            worksheet.mergeCells(`I${sigRowNumber}:K${sigRowNumber}`);
-
-            signatureRow.getCell(1).value = 'NGƯỜI LẬP PHIẾU';
-            signatureRow.getCell(5).value = 'GIÁM ĐỐC KỸ THUẬT';
-            signatureRow.getCell(9).value = 'TỔNG GIÁM ĐỐC';
-
-            signatureRow.height = 25;
-            signatureRow.font = { bold: true, name: 'Arial', size: 10 };
-            signatureRow.getCell(1).alignment = { horizontal: 'center', vertical: 'middle' };
-            signatureRow.getCell(5).alignment = { horizontal: 'center', vertical: 'middle' };
-            signatureRow.getCell(9).alignment = { horizontal: 'center', vertical: 'middle' };
-
-            // Tạo khoảng cách 4 hàng trống ở dưới cùng để chừa không gian ký tên thực tế
-            for (let i = 0; i < 4; i++) {
-                worksheet.addRow([]);
-            }
-
-            // 7. Xuất Workbook ra định dạng Buffer trả về cho hệ thống
+            // 5. Kết xuất Workbook gửi trả Buffer dữ liệu file
             const buffer = await workbook.xlsx.writeBuffer();
             return buffer;
 

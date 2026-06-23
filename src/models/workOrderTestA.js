@@ -12,7 +12,7 @@ const workOrderTestASchema = new Schema(
             type: Date,
             default: null,
         },
-        testerId: {
+        technicalId: {
             type: Types.ObjectId,
             ref: 'technicians',
             default: null,
@@ -20,6 +20,10 @@ const workOrderTestASchema = new Schema(
         machineTypeId: {
             type: Types.ObjectId,
             ref: 'products',
+            default: null,
+        },
+        inkCode: { //Loại mực
+            type: String,
             default: null,
         },
         props: [propSchema],

@@ -266,173 +266,173 @@ const workOrderService = {
     //     }
     // },
     getAll: async (reqUserId, query) => {
-    try {
-       
-        let { limit = 10, page = 1, search = '', status, typeWork, startTime, endTime, history = '', address = '', typeHistory } = query;
-        limit = Number(limit);
-        page = Number(page);
-        const skip = (page - 1) * limit;
+        try {
 
-        // 2. LÀM SẠCH DỮ LIỆU (Sanitize) 
-        
-        const searchStr = search.trim();
-        const historyStr = history.trim();
-        const addressStr = address.trim();
+            let { limit = 10, page = 1, search = '', status, typeWork, startTime, endTime, history = '', address = '', typeHistory } = query;
+            limit = Number(limit);
+            page = Number(page);
+            const skip = (page - 1) * limit;
 
-        // Chỉ tạo Regex khi thực sự có chuỗi ký tự (Truthy)
-        const searchRegex = searchStr ? new RegExp(searchStr, 'i') : null;
-        const historyRegex = historyStr ? new RegExp(historyStr, 'i') : null;
-        const addressRegex = addressStr ? new RegExp(addressStr, 'i') : null;
+            // 2. LÀM SẠCH DỮ LIỆU (Sanitize) 
 
-        
-        if (!historyStr) {
-            let conditions = {};
-            
-            // Chạy SONG SONG việc lấy Technician và Customer 
-           
-            const [technician, customers] = await Promise.all([
-                TechnicianModel.findById(reqUserId).select('_id').lean(),
-                searchRegex ? CustomerModel.find({ officialName: searchRegex }).select('_id').lean() : Promise.resolve([])
-            ]);
+            const searchStr = search.trim();
+            const historyStr = history.trim();
+            const addressStr = address.trim();
 
-          
-            if (searchRegex) {
-                const customerIds = customers.map(c => c._id);
-                conditions.$or = [
-                    { code: searchRegex },
-                    { header: searchRegex },
-                    { customerId: { $in: customerIds } },
-                ];
-            }
+            // Chỉ tạo Regex khi thực sự có chuỗi ký tự (Truthy)
+            const searchRegex = searchStr ? new RegExp(searchStr, 'i') : null;
+            const historyRegex = historyStr ? new RegExp(historyStr, 'i') : null;
+            const addressRegex = addressStr ? new RegExp(addressStr, 'i') : null;
 
-            // Gắn các điều kiện tĩnh
-            if (status) conditions.status = status;
-            if (typeWork) conditions.typeWork = typeWork;
-            if (technician) conditions.technicianId = reqUserId;
-            if (startTime && endTime) {
-                conditions.createdAt = { $gte: startTime, $lte: endTime };
-            }
 
-            // Chạy song song Query lấy Data và Query đếm tổng số dòng
-            const [workOrders, totalItems] = await Promise.all([
-                WorkOrderModel.find(conditions)
-                    .sort({ createdAt: -1 })
-                    .skip(skip)
-                    .limit(limit)
-                    .populate('customerId', 'officialName representative.name phone email')
-                    .populate('technicianId', 'fullname')
-                    .lean(), // Trả về POJO (Plain Object) để tối ưu RAM
-                WorkOrderModel.countDocuments(conditions),
-            ]);
+            if (!historyStr) {
+                let conditions = {};
 
-            const result = workOrders.map((order) => {
-               
-                let fullAddress = ''; 
-                
-            
+                // Chạy SONG SONG việc lấy Technician và Customer 
 
-                return {
-                    ...order,
-                    technicianInfo: order.technicianId ? {
-                        technicianId: order.technicianId._id,
-                        fullname: order.technicianId.fullname,
-                    } : null,
-                    technicianId: undefined, 
-                    fullAddress
-                };
-            });
-
-            return { 
-                result, 
-                totalItems, 
-                page, 
-                totalPage: Math.ceil(totalItems / limit) 
-            };
-        } 
-        
-        
-        else {
-            let contactConditions = {};
-
-            if (typeHistory === 'serialNumber') {
-                if (historyRegex) contactConditions.serialNumber = historyRegex;
-            } else {
-                const customers = await CustomerModel.find({ officialName: historyRegex }).select('_id').lean();
-                const customerIds = customers.map(c => c._id);
-
-                contactConditions.customerId = { $in: customerIds };
-
-                // Áp dụng Regex rẽ nhánh an toàn cho địa chỉ
-                if (addressRegex) {
-                    contactConditions.address = {
-                        $elemMatch: {
-                            $or: [
-                                { provinceCity: addressRegex },
-                                { ward: addressRegex },
-                                { specificAddress: addressRegex }
-                            ]
-                        }
-                    };
-                }
-
-                // Gắn Phân trang (.skip, .limit) để chống sập RAM khi data phình to
-                const [contacts, totalContacts] = await Promise.all([
-                    ContactPersonCustomerModel.find(contactConditions)
-                        .populate('customerId', 'officialName billingAddress')
-                        .select('customerId devices')
-                        .skip(skip)
-                        .limit(limit)
-                        .lean(),
-                    ContactPersonCustomerModel.countDocuments(contactConditions)
+                const [technician, customers] = await Promise.all([
+                    TechnicianModel.findById(reqUserId).select('_id').lean(),
+                    searchRegex ? CustomerModel.find({ officialName: searchRegex }).select('_id').lean() : Promise.resolve([])
                 ]);
 
-                // Kỹ thuật Map Product ID để tránh query n+1 trong vòng lặp
-                const productCodes = contacts.flatMap(c => c.devices?.map(d => d.productCode) || []);
-                const products = await ProductModel.find({ code: { $in: productCodes } }).select('name code').lean();
-                const productMap = new Map(products.map(p => [String(p.code), p.name]));
 
-                let totalDevices = 0;
-                const deviceSummaryMap = {};
+                if (searchRegex) {
+                    const customerIds = customers.map(c => c._id);
+                    conditions.$or = [
+                        { code: searchRegex },
+                        { header: searchRegex },
+                        { customerId: { $in: customerIds } },
+                    ];
+                }
 
-                // Gộp tính toán thiết bị vào chung 1 vòng lặp (O(n))
-                contacts.forEach(contact => {
-                    if (!contact.devices || !Array.isArray(contact.devices)) return;
+                // Gắn các điều kiện tĩnh
+                if (status) conditions.status = status;
+                if (typeWork) conditions.typeWork = typeWork;
+                if (technician) conditions.technicianId = reqUserId;
+                if (startTime && endTime) {
+                    conditions.createdAt = { $gte: startTime, $lte: endTime };
+                }
 
-                    contact.devices.forEach(device => {
-                        const codeStr = String(device.productCode);
-                        device.machineName = productMap.get(codeStr) || "Chưa xác định";
+                // Chạy song song Query lấy Data và Query đếm tổng số dòng
+                const [workOrders, totalItems] = await Promise.all([
+                    WorkOrderModel.find(conditions)
+                        .sort({ createdAt: -1 })
+                        .skip(skip)
+                        .limit(limit)
+                        .populate('customerId', 'officialName representative.name phone email')
+                        .populate('technicianId', 'fullname')
+                        .lean(), // Trả về POJO (Plain Object) để tối ưu RAM
+                    WorkOrderModel.countDocuments(conditions),
+                ]);
 
-                        totalDevices++;
-                        if (!deviceSummaryMap[codeStr]) {
-                            deviceSummaryMap[codeStr] = {
-                                productCode: device.productCode,
-                                machineName: device.machineName,
-                                quantity: 0
-                            };
-                        }
-                        deviceSummaryMap[codeStr].quantity += 1;
-                    });
+                const result = workOrders.map((order) => {
+
+                    let fullAddress = '';
+
+
+
+                    return {
+                        ...order,
+                        technicianInfo: order.technicianId ? {
+                            technicianId: order.technicianId._id,
+                            fullname: order.technicianId.fullname,
+                        } : null,
+                        technicianId: undefined,
+                        fullAddress
+                    };
                 });
 
-                const uniqueCustomerIds = new Set(contacts.map(c => String(c.customerId?._id || c.customerId)));
-
                 return {
-                    statistics: {
-                        totalCustomers: uniqueCustomerIds.size,
-                        totalDevices,
-                        deviceDetails: Object.values(deviceSummaryMap)
-                    },
-                    data: contacts,
-                    totalItems: totalContacts,
+                    result,
+                    totalItems,
                     page,
-                    totalPage: Math.ceil(totalContacts / limit)
+                    totalPage: Math.ceil(totalItems / limit)
                 };
             }
+
+
+            else {
+                let contactConditions = {};
+
+                if (typeHistory === 'serialNumber') {
+                    if (historyRegex) contactConditions.serialNumber = historyRegex;
+                } else {
+                    const customers = await CustomerModel.find({ officialName: historyRegex }).select('_id').lean();
+                    const customerIds = customers.map(c => c._id);
+
+                    contactConditions.customerId = { $in: customerIds };
+
+                    // Áp dụng Regex rẽ nhánh an toàn cho địa chỉ
+                    if (addressRegex) {
+                        contactConditions.address = {
+                            $elemMatch: {
+                                $or: [
+                                    { provinceCity: addressRegex },
+                                    { ward: addressRegex },
+                                    { specificAddress: addressRegex }
+                                ]
+                            }
+                        };
+                    }
+
+                    // Gắn Phân trang (.skip, .limit) để chống sập RAM khi data phình to
+                    const [contacts, totalContacts] = await Promise.all([
+                        ContactPersonCustomerModel.find(contactConditions)
+                            .populate('customerId', 'officialName billingAddress')
+                            .select('customerId devices')
+                            .skip(skip)
+                            .limit(limit)
+                            .lean(),
+                        ContactPersonCustomerModel.countDocuments(contactConditions)
+                    ]);
+
+                    // Kỹ thuật Map Product ID để tránh query n+1 trong vòng lặp
+                    const productCodes = contacts.flatMap(c => c.devices?.map(d => d.productCode) || []);
+                    const products = await ProductModel.find({ code: { $in: productCodes } }).select('name code').lean();
+                    const productMap = new Map(products.map(p => [String(p.code), p.name]));
+
+                    let totalDevices = 0;
+                    const deviceSummaryMap = {};
+
+                    // Gộp tính toán thiết bị vào chung 1 vòng lặp (O(n))
+                    contacts.forEach(contact => {
+                        if (!contact.devices || !Array.isArray(contact.devices)) return;
+
+                        contact.devices.forEach(device => {
+                            const codeStr = String(device.productCode);
+                            device.machineName = productMap.get(codeStr) || "Chưa xác định";
+
+                            totalDevices++;
+                            if (!deviceSummaryMap[codeStr]) {
+                                deviceSummaryMap[codeStr] = {
+                                    productCode: device.productCode,
+                                    machineName: device.machineName,
+                                    quantity: 0
+                                };
+                            }
+                            deviceSummaryMap[codeStr].quantity += 1;
+                        });
+                    });
+
+                    const uniqueCustomerIds = new Set(contacts.map(c => String(c.customerId?._id || c.customerId)));
+
+                    return {
+                        statistics: {
+                            totalCustomers: uniqueCustomerIds.size,
+                            totalDevices,
+                            deviceDetails: Object.values(deviceSummaryMap)
+                        },
+                        data: contacts,
+                        totalItems: totalContacts,
+                        page,
+                        totalPage: Math.ceil(totalContacts / limit)
+                    };
+                }
+            }
+        } catch (error) {
+            throw error;
         }
-    } catch (error) {
-        throw error;
-    }
-},
+    },
     getById: async (workOrderId) => {
         try {
             const workOrder = await WorkOrderModel.findById(workOrderId)
@@ -823,6 +823,28 @@ const workOrderService = {
             return null
         } catch (error) {
             throw error
+        }
+    },
+
+    getAllProvinces: async () => {
+        const api = "https://provinces.open-api.vn/api/v2/p/";
+        try {
+            const response = await fetch(api);
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("Failed to fetch provinces:", error);
+        }
+    },
+    getAllWards: async (query) => {
+        const { code } = query
+        const api = `https://provinces.open-api.vn/api/v2/w/?province=${code}`;
+        try {
+            const response = await fetch(api);
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("Failed to fetch provinces:", error);
         }
     },
 

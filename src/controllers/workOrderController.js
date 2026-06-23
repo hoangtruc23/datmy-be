@@ -71,6 +71,22 @@ const workOrderController = {
             next(error)
         }
     },
+    getAllProvinces: async (req, res, next) => {
+        try {
+            const result = await workOrderService.getAllProvinces()
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
+    getAllWards: async (req, res, next) => {
+        try {
+            const result = await workOrderService.getAllWards(req.query)
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
     getAllPriority: (req, res, next) => {
         try {
             const result = workOrderService.getAllPriority()

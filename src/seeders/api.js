@@ -973,6 +973,16 @@ async function apiSeeder() {
             note: 'Lấy ra tất cả các mức độ ưu tiên',
         },
         {
+            _id: new Types.ObjectId('68f89736d0014bb79a3e080d'),
+            api: '/workOrder/getAllProvinces',
+            note: 'Lấy ra Provinces',
+        },
+        {
+            _id: new Types.ObjectId('68f89736d0014bb79a3e079d'),
+            api: '/workOrder/getAllWards',
+            note: 'Lấy ra Wards',
+        },
+        {
             _id: new Types.ObjectId('68fee754df90864cd0ba5306'),
             api: '/workOrder/getAllWorkType',
             note: 'Lấy ra tất cả loại công việc ',
@@ -1214,6 +1224,11 @@ async function apiSeeder() {
             _id: new Types.ObjectId('6864fd7c1d9ec4d84204b79d'),
             api: '/workOrderDetail/generatePdf',
             note: 'Tải file PDF các phiếu',
+        },
+        {
+            _id: new Types.ObjectId('6864fd7c1d9ec4d84204b79e'),
+            api: '/workOrderDetail/generateExcel',
+            note: 'Tải file Excel các phiếu',
         },
         //contactPersonCustomer
         {

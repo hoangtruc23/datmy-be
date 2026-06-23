@@ -3,10 +3,11 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Phiếu Bảo Trì Máy</title>
         <style>
             @page {
                 size: A4;
-                margin: 8mm 10mm;
+                margin: 0;
             }
             * {
                 box-sizing: border-box;
@@ -20,61 +21,67 @@
                 background: white;
             }
             .page-wrapper {
-                width: 100%;
-                max-width: 100%;
-                padding: 6px 8px;
-                box-sizing: border-box;
+                width: 210mm;
+                height: 297mm;
+                padding: 10mm 12mm;
                 overflow: hidden;
+                flex-direction: column;
+                justify-content: space-between;
             }
             /* Header */
             .header {
                 display: grid;
                 grid-template-columns: 100px 1fr 1fr 100px;
-                gap: 6px;
+                gap: 10px;
                 align-items: start;
-                margin-bottom: 4px;
+                margin-bottom: 5px;
             }
             .logo-block {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                gap: 4px;
+                gap: 2px;
             }
             .logo-block img {
-                height: 48px;
+                height: 45px;
                 width: auto;
             }
             .logo-block .dmc {
                 font-weight: 700;
-                font-size: 18px;
+                font-size: 16px;
                 line-height: 1;
+                margin-top: 2px;
             }
             .company-info {
-                font-size: 10px;
-                line-height: 1.4;
+                font-size: 9px;
+                line-height: 1.3;
             }
             .company-info .name {
                 font-weight: 700;
-                font-size: 11px;
+                font-size: 10px;
             }
             .company-info .underline {
                 text-decoration: underline;
+                font-weight: bold;
             }
             .domino-logo {
                 display: flex;
+                flex-direction: column;
+                align-items: center;
                 justify-content: center;
-                align-items: flex-end;
+                padding-top: 5px;
             }
             .domino-logo img {
-                height: 22px;
+                height: 20px;
                 width: auto;
             }
             /* Title */
             .title {
                 font-weight: bold;
-                font-size: 18px;
+                font-size: 19px;
                 text-align: center;
-                margin: 4px 0;
+                margin: 5px 0 10px 0;
+                letter-spacing: 0.5px;
             }
             /* Main table */
             table {
@@ -85,52 +92,57 @@
             }
             td {
                 border: 1px solid #000;
-                padding: 2px 4px;
+                padding: 3.5px 5px;
                 vertical-align: middle;
             }
             .blue {
                 color: #2563eb;
+                font-weight: 500;
             }
             .bold-center {
                 text-align: center;
                 font-weight: bold;
                 background-color: #f3f4f6;
-                padding: 3px 4px;
-            }
-            .section-content {
-                vertical-align: top;
                 padding: 4px;
-                min-height: 60px;
             }
-            .small-section {
-                vertical-align: top;
-                padding: 4px;
-                min-height: 35px;
+
+            .checkbox-group {
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
+                font-size: 13px;
+            }
+            .checkbox-item {
+                display: flex;
+                align-items: center;
+                gap: 3px;
+            }
+            .checkbox-box {
+                width: 12px;
+                height: 12px;
+                border: 1px solid #000;
+                display: inline-block;
             }
             /* Footer signatures */
             .signature-table {
                 width: 100%;
                 border-collapse: collapse;
-                margin-top: 4px;
-                font-size: 10.5px;
+                margin-top: 10px;
             }
             .signature-table td {
                 border: 1px solid #000;
-                padding: 2px 4px;
+                padding: 5px;
                 text-align: center;
-                height: 50px;
                 vertical-align: top;
             }
             .signature-table .sig-label {
                 font-weight: bold;
-                height: auto;
-                min-height: unset;
             }
         </style>
     </head>
     <body>
         <div class="page-wrapper">
-            <!-- HEADER -->
+            <!-- HEADER BLOCK -->
             <div class="header">
                 <div class="logo-block">
                     <img
@@ -138,7 +150,7 @@
                         alt=""
                         style="height: 4rem; width: auto"
                     />
-                    <span class="dmc" style="font-size: 1.5rem">DMC</span>
+                    <span class="dmc">DMC</span>
                 </div>
 
                 <div class="company-info">
@@ -147,9 +159,9 @@
                     </div>
                     <span class="underline">Văn phòng chính tại TP.HCM</span
                     ><br />
-                    Số 12-14, Đường Số 16, Khu Dân Cư An Lạc,<br />
-                    Phường An Lạc, TP. Hồ Chí Minh, Việt Nam<br />
-                    Tel: 028-37.511.715, 62.600.800 - Fax: 028-37.511.714<br />
+                    Số 12-14, KDC An Lạc, Đường Số 16,<br />
+                    Phường An Lạc, TPHCM, Việt Nam<br />
+                    Tel: 028-37511715, 62600800 - Fax: 028-37.511.714<br />
                     Email: info@datmy.com.vn
                 </div>
 
@@ -157,7 +169,7 @@
                     <span class="underline">Văn phòng giao dịch tại Hà Nội</span
                     ><br />
                     Ô số 31 dãy 16B3, Làng Việt Kiều Châu Âu,<br />
-                    KĐT Mỗ Lao, Phường Hà Đông, Hà Nội, Việt Nam<br />
+                    KĐT Mỗ Lao, Phường Hà Đông, Hà Nội<br />
                     Tel: 024-33.546.787, 33.547.028 - Fax: 024-33.547.035<br />
                     Website: www.datmy.com.vn
                 </div>
@@ -171,127 +183,195 @@
                 </div>
             </div>
 
-            <!-- TITLE -->
-            <div class="title">PHIẾU {{typeWorkLabel}} MÁY</div>
+            <!-- TITLE BLOCK -->
+            <div class="title">PHIẾU BẢO TRÌ MÁY</div>
 
-            <!-- MAIN TABLE -->
+            <!-- DATA TABLE BLOCK -->
             <table>
                 <tr>
-                    <td style="width: 14%">Tên khách hàng</td>
-                    <td colspan="5" class="blue">{{officialName}}</td>
-                    <td style="width: 11%">Ngày báo</td>
-                    <td class="blue">{{createdAt}}</td>
-                </tr>
-                <tr>
-                    <td>Người liên hệ</td>
-                    <td colspan="2" class="blue">{{contactName}}</td>
-                    <td style="width: 8%">Chức vụ</td>
-                    <td colspan="2" class="blue">{{contactPhone}}</td>
-                    <td>Ngày sửa chữa</td>
-                    <td class="blue">{{repairDate}}</td>
+                    <td style="width: 20%">Tên khách hàng</td>
+                    <td colspan="3" class="blue">{{officialName}}</td>
+                    <td style="width: 12%">Ngày</td>
+                    <td colspan="3" class="blue">{{createdAt}}</td>
                 </tr>
                 <tr>
                     <td>Địa chỉ</td>
                     <td colspan="3" class="blue">{{fullAddress}}</td>
-                    <td style="width: 8%">Giờ đến</td>
-                    <td class="blue">{{arrivalTime}}</td>
-                    <td>Giờ ra</td>
-                    <td class="blue">{{leavingTime}}</td>
+                    <td>Giờ đến</td>
+                    <td style="width: 13%" class="blue">{{arrivalTime}}</td>
+                    <td style="width: 8%">Giờ ra</td>
+                    <td style="width: 13%" class="blue">{{leavingTime}}</td>
                 </tr>
                 <tr>
-                    <td>Hợp đồng bảo trì</td>
-                    <td style="width: 5%">Có</td>
-                    <td class="blue">{{maintainContract_Yes}}</td>
-                    <td>Không</td>
-                    <td class="blue">{{maintainContract_No}}</td>
-                    <td colspan="2">Thời gian sửa chữa</td>
-                    <td class="blue">{{workingTime}}</td>
+                    <td>Người liên hệ</td>
+                    <td style="width: 20%" class="blue">{{contactName}}</td>
+                    <td style="width: 10%">Chức vụ</td>
+                    <!-- <td style="width: 20%" class="blue">{{contactTitle}}</td> -->
+                    <td style="width: 20%" class="blue"></td>
+                    <td>Giờ ra</td>
+                    <td colspan="3" class="blue">{{leavingTimeAlternative}}</td>
                 </tr>
                 <tr>
                     <td>Loại máy</td>
-                    <td colspan="2" class="blue">{{type}}</td>
+                    <td class="blue">{{type}}</td>
                     <td>Số series</td>
-                    <td colspan="2" class="blue">{{serialNumber}}</td>
+                    <td class="blue">{{serialNumber}}</td>
                     <td>Mã số mực</td>
-                    <td class="blue">{{inkCode}}</td>
+                    <td colspan="3" class="blue">{{inkCode}}</td>
                 </tr>
                 <tr>
-                    <td>Ngày lắp đặt</td>
-                    <td class="blue">{{installationDate}}</td>
+                    <td>Ngày ký hợp đồng</td>
+                    <td class="blue">{{contractDate}}</td>
                     <td>Thời gian mở máy</td>
-                    <td colspan="2" class="blue">{{machineStartup}}</td>
+                    <td class="blue">{{machineStartup}}</td>
                     <td>Thời gian in phun</td>
-                    <td colspan="2" class="blue">{{inkjetTime}}</td>
+                    <td colspan="3" class="blue">{{inkjetTime}}</td>
+                </tr>
+
+                <tr>
+                    <td colspan="8" class="bold-center">Thông số của máy</td>
                 </tr>
                 <tr>
-                    <td
-                        colspan="8"
-                        style="
-                            text-align: center;
-                            font-weight: bold;
-                            background: #f3f4f6;
-                            padding: 3px;
-                        "
-                    >
-                        Thông số của máy
-                    </td>
-                </tr>
-                <tr>
-                    <td>Nồng độ mực (lúc đến)</td>
-                    <td class="blue">{{inkArrival}}</td>
-                    <td>Rời khỏi</td>
-                    <td class="blue">{{inkLeaving}}</td>
                     <td>Nồng độ chuẩn</td>
                     <td class="blue">{{inkStandard}}</td>
+                    <td colspan="2">Nồng độ hiện hành</td>
+                    <td class="blue">{{inkCurrent}}</td>
                     <td>Tốc độ bơm</td>
-                    <td class="blue">{{pumpSpeed}}</td>
+                    <td colspan="2" class="blue">{{pumpSpeed}}</td>
                 </tr>
                 <tr>
                     <td>Áp suất chuẩn</td>
                     <td class="blue">{{standardPressure}}</td>
-                    <td>Áp suất hiện hành</td>
+                    <td colspan="2">Áp suất hiện hành</td>
                     <td class="blue">{{currentPressure}}</td>
                     <td>Béc phun</td>
-                    <td class="blue">{{nozzle}}</td>
-                    <td>Charge level</td>
-                    <td class="blue">{{chargeLevel}}</td>
+                    <td colspan="2" class="blue">{{nozzle}}</td>
                 </tr>
                 <tr>
                     <td>Áp chân không</td>
                     <td class="blue">{{vacuumPressure}}</td>
                     <td colspan="2">Tốc độ bơm chân không</td>
                     <td class="blue">{{vacuumPumpSpeed}}</td>
-                    <td>Nội dung in phun</td>
-                    <td colspan="2" class="blue">{{printContent}}</td>
+                    <td>Charge level</td>
+                    <td colspan="2" class="blue">{{chargeLevel}}</td>
                 </tr>
                 <tr>
                     <td>Mức giọt mực</td>
-                    <td colspan="2">Cài tự động</td>
-                    <td class="blue">{{inkDropletLevelAuto}}</td>
+                    <td>Cài tự động</td>
+                    <td class="blue">{{inkDropletAuto}}</td>
                     <td>Thao tác tay</td>
-                    <td class="blue">{{inkDropletLevelManual}}</td>
+                    <td class="blue">{{inkDropletManual}}</td>
                     <td>BUP</td>
-                    <td class="blue">{{inkDropletLevelBUP}}</td>
+                    <td colspan="2" class="blue">{{inkDropletBUP}}</td>
                 </tr>
                 <tr>
                     <td>Nhiệt độ mực</td>
                     <td class="blue">{{inkTemperature}}</td>
-                    <td>ITM</td>
-                    <td class="blue">{{ITM}}</td>
                     <td colspan="2">Phần mềm sử dụng</td>
-                    <td colspan="2" class="blue">{{softwareUsed}}</td>
+                    <td class="blue">{{softwareUsed}}</td>
+                    <td>ITM</td>
+                    <td colspan="2" class="blue">{{ITM}}</td>
                 </tr>
                 <tr>
                     <td>Độ ẩm môi trường</td>
                     <td class="blue">{{environmentHumidity}}</td>
-                    <td>Nhiệt độ môi trường</td>
+                    <td colspan="2">Nhiệt độ môi trường</td>
                     <td class="blue">{{ambientTemperature}}</td>
-                    <td colspan="2">Mức độ bụi bẩn</td>
+                    <td>Bụi</td>
                     <td colspan="2" class="blue">{{dustLevel}}</td>
                 </tr>
 
-                <!-- Tình hình sự cố / Cách xử lý -->
                 <tr>
+                    <td colspan="2" class="bold-center">Thao tác bảo trì</td>
+                    <td style="width: 8%" class="bold-center">Có</td>
+                    <td style="width: 8%" class="bold-center">Không</td>
+                    <td
+                        colspan="4"
+                        rowspan="7"
+                        style="vertical-align: top; padding: 0px"
+                    >
+                        <div
+                            style="
+                                font-weight: bold;
+                                text-align: center;
+                                border-bottom: 1px solid #000;
+                                background: #f3f4f6;
+                                padding: 4px;
+                            "
+                        >
+                            Cách xử lý khác
+                        </div>
+                        <div
+                            class="blue dotted-note-box"
+                            style="padding: 4px 6px"
+                        >
+                            {{differentApproach}}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Vệ sinh vỏ ngoài của máy</td>
+                    <td class="blue"></td>
+                    <td style="text-align: center">
+                        <span class="blue">{{cleanOuter_Yes}}</span>
+                    </td>
+                    <td style="text-align: center">
+                        <span class="blue">{{cleanOuter_No}}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Lưới lọc gió</td>
+                    <td class="blue"></td>
+                    <td style="text-align: center">
+                        <span class="blue">{{airFilter_Yes}}</span>
+                    </td>
+                    <td style="text-align: center">
+                        <span class="blue">{{airFilter_No}}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Board điện</td>
+                    <td class="blue"></td>
+                    <td style="text-align: center">
+                        <span class="blue">{{electricBoard_Yes}}</span>
+                    </td>
+                    <td style="text-align: center">
+                        <span class="blue">{{electricBoard_No}}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Bình dung môi</td>
+                    <td class="blue"></td>
+                    <td style="text-align: center">
+                        <span class="blue">{{solventTank_Yes}}</span>
+                    </td>
+                    <td style="text-align: center">
+                        <span class="blue">{{solventTank_No}}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Điện nguồn</td>
+                    <td class="blue"></td>
+                    <td style="text-align: center">
+                        <span class="blue">{{powerSupply_Yes}}</span>
+                    </td>
+                    <td style="text-align: center">
+                        <span class="blue">{{powerSupply_No}}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Dây tiếp mass</td>
+                    <td class="blue"></td>
+                    <td style="text-align: center">
+                        <span class="blue">{{groundWire_Yes}}</span>
+                    </td>
+                    <td style="text-align: center">
+                        <span class="blue">{{groundWire_No}}</span>
+                    </td>
+                </tr>
+
+                <!-- Tình hình sự cố / Cách xử lý -->
+                <!-- <tr>
                     <td colspan="4" class="bold-center">Tình hình sự cố máy</td>
                     <td colspan="4" class="bold-center">Cách xử lý khác</td>
                 </tr>
@@ -308,7 +388,7 @@
                     >
                         {{differentApproach}}
                     </td>
-                </tr>
+                </tr> -->
 
                 <!-- Ý kiến kỹ thuật / khách hàng -->
                 <tr>
@@ -316,7 +396,7 @@
                     <td colspan="4" class="bold-center">Ý kiến khách hàng</td>
                 </tr>
 
-                <!-- Hàng: Linh kiện đã thay | Emoji (cùng hàng, nét liền) -->
+                <!-- Hàng: Linh kiện đã thay | Emoji (cùng hàng) -->
                 <tr>
                     <td
                         colspan="4"
@@ -414,26 +494,33 @@
                 </tr>
             </table>
 
-            <!-- SIGNATURE FOOTER -->
+            <!-- FOOTER SIGNATURES BLOCK -->
             <table class="signature-table">
                 <tr>
-                    <td class="sig-label" style="width: 25%; height: auto">
+                    <td class="sig-label" style="width: 25%">
                         BGĐ Công ty Đạt Mỹ
                     </td>
-                    <td class="sig-label" style="width: 25%; height: auto">
+                    <td class="sig-label" style="width: 25%">
                         Kỹ thuật viên lập phiếu
                     </td>
-                    <td class="sig-label" style="width: 25%; height: auto">
-                        BGĐ Khách hàng
-                    </td>
-                    <td class="sig-label" style="width: 25%; height: auto">
+                    <td class="sig-label" style="width: 25%">BGĐ Khách hàng</td>
+                    <td class="sig-label" style="width: 25%">
                         Kỹ thuật theo dõi máy
                     </td>
                 </tr>
                 <tr>
                     <td style="height: 55px"></td>
                     <td></td>
-                    <td></td>
+                    <td
+                        style="
+                            vertical-align: bottom;
+                            text-align: left;
+                            padding: 4px;
+                            font-size: 10px;
+                        "
+                    >
+                        Chức vụ:
+                    </td>
                     <td></td>
                 </tr>
             </table>

@@ -26,6 +26,8 @@ router.post(
 router.delete('/delete/:workOrderId', workOrderController.delete)
 router.get('/getAllState', workOrderController.getAllState)
 router.get('/getAllPriority', workOrderController.getAllPriority)
+router.get('/getAllProvinces', workOrderController.getAllProvinces)
+router.get('/getAllWards', workOrderController.getAllWards)
 router.get('/getAllWorkType', workOrderController.getAllWorkType)
 router.get('/getAllType', workOrderController.getAllType)
 router.get(

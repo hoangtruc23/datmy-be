@@ -270,6 +270,21 @@ const workOrderDetailController = {
             next(err)
         }
     },
+    generateExcel: async (req, res, next) => {
+        try {
+            const { workOrderId } = req.params
+
+            const buffer = await workOrderDetailService.generateExcel(workOrderId);
+
+            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            res.setHeader('Content-Disposition', 'attachment; filename=Phieu_Sua_Chua_May.xlsx');
+            return res.send(buffer);
+
+        } catch (err) {
+            next(err)
+        }
+    },
+
 
 }
 module.exports = workOrderDetailController

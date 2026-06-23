@@ -1,5 +1,6 @@
 // src/utils/helper/excelReportHelper.js
 const ExcelJS = require('exceljs')
+const moment = require('moment');
 
 const generateGoodsReport = async (groupedData, config) => {
     const workbook = new ExcelJS.Workbook()
@@ -182,4 +183,64 @@ const formatDate = (date) => {
     }).format(d)
 }
 
-module.exports = { generateGoodsReport, formatDate }
+// --- HÀM HELPER IN KHỐI NGÀY THÁNG VÀ CHỮ KÝ AN TOÀN KHÔNG BỊ TRÙNG LẶP MERGE ---
+function appendSignatureFooter(worksheet, toDate, dateColIdx, totalCols) {
+    worksheet.addRow([]);
+
+    const targetDate = toDate ? new Date(toDate) : new Date();
+    const dateString = `Ngày ${moment(targetDate).format('DD')} tháng ${moment(targetDate).format('MM')} năm ${moment(targetDate).format('YYYY')}`;
+
+    const dateRow = worksheet.addRow([]);
+    dateRow.getCell(dateColIdx).value = dateString;
+    const dateRowNumber = dateRow.number;
+
+    const endColLetter = String.fromCharCode(64 + totalCols);
+    const startColLetter = String.fromCharCode(64 + dateColIdx);
+    worksheet.mergeCells(`${startColLetter}${dateRowNumber}:${endColLetter}${dateRowNumber}`);
+
+    dateRow.getCell(dateColIdx).font = { italic: true, name: 'Arial', size: 10, bold: true };
+    dateRow.getCell(dateColIdx).alignment = { horizontal: 'right', vertical: 'middle' };
+    dateRow.height = 22;
+
+    const signatureRow = worksheet.addRow([]);
+    const sigRowNumber = signatureRow.number;
+
+    if (totalCols <= 11) {
+        worksheet.mergeCells(`A${sigRowNumber}:C${sigRowNumber}`);
+        worksheet.mergeCells(`E${sigRowNumber}:G${sigRowNumber}`);
+        worksheet.mergeCells(`I${sigRowNumber}:K${sigRowNumber}`);
+        signatureRow.getCell(1).value = 'NGƯỜI LẬP PHIẾU';
+        signatureRow.getCell(5).value = 'GIÁM ĐỐC KỸ THUẬT';
+        signatureRow.getCell(9).value = 'TỔNG GIÁM ĐỐC';
+
+        signatureRow.getCell(1).alignment = { horizontal: 'center', vertical: 'middle' };
+        signatureRow.getCell(5).alignment = { horizontal: 'center', vertical: 'middle' };
+        signatureRow.getCell(9).alignment = { horizontal: 'center', vertical: 'middle' };
+    } else {
+        worksheet.mergeCells(`A${sigRowNumber}:C${sigRowNumber}`);
+        worksheet.mergeCells(`F${sigRowNumber}:H${sigRowNumber}`);
+        worksheet.mergeCells(`K${sigRowNumber}:M${sigRowNumber}`);
+        signatureRow.getCell(1).value = 'NGƯỜI LẬP PHIẾU';
+        signatureRow.getCell(6).value = 'GIÁM ĐỐC KỸ THUẬT';
+        signatureRow.getCell(11).value = 'TỔNG GIÁM ĐỐC';
+
+        signatureRow.getCell(1).alignment = { horizontal: 'center', vertical: 'middle' };
+        signatureRow.getCell(6).alignment = { horizontal: 'center', vertical: 'middle' };
+        signatureRow.getCell(11).alignment = { horizontal: 'center', vertical: 'middle' };
+    }
+
+    signatureRow.height = 25;
+    signatureRow.font = { bold: true, name: 'Arial', size: 10 };
+
+    // In nhãn tên người lập phiếu "PHAN THỊ ANH ĐÀO"
+    worksheet.addRow([]);
+    const nameRow = worksheet.addRow([]);
+    worksheet.mergeCells(`A${nameRow.number}:C${nameRow.number}`);
+    nameRow.getCell(1).value = 'PHAN THỊ ANH ĐÀO';
+    nameRow.getCell(1).font = { bold: true, name: 'Arial', size: 10 };
+    nameRow.getCell(1).alignment = { horizontal: 'center', vertical: 'middle' };
+
+    for (let i = 0; i < 3; i++) { worksheet.addRow([]); }
+}
+
+module.exports = { generateGoodsReport, formatDate, appendSignatureFooter }

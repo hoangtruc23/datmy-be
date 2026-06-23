@@ -76,6 +76,7 @@ router.get(
     workOrderDetailController.getAllIncludeAccessories,
 )
 router.get('/generatePdf/:workOrderId', workOrderDetailController.generatePdf)
+router.get('/generateExcel/:workOrderId', workOrderDetailController.generateExcel)
 /**
  * @swagger
  * tags:

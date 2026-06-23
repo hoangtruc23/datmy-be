@@ -433,6 +433,10 @@ async function permissionApiSeeder() {
             permissionId: '6864fd7c1d9ec4d84204b71f', // Tải file PDF phiếu xuất kho
             apiId: '6864fd7c1d9ec4d84204b71d', // /goodsIssue/generatePdf
         },
+        {
+            permissionId: '6864fd7c1d9ec4d84204b71f', // Tải file PDF phiếu xuất kho
+            apiId: '6864fd7c1d9ec4d84204b79e', // /goodsIssue/generateExcel
+        },
 
         // Tạm ứng
         {
@@ -861,6 +865,14 @@ async function permissionApiSeeder() {
         },
         {
             permissionId: '68d3750d4828a7c4347ad1bd', // Tạo phiếu yêu cầu công việc
+            apiId: '68f89736d0014bb79a3e080d', // /workOrder/getAllProvinces
+        },
+        {
+            permissionId: '68d3750d4828a7c4347ad1bd', // Tạo phiếu yêu cầu công việc
+            apiId: '68f89736d0014bb79a3e079d', // /workOrder/getAllWards
+        },
+        {
+            permissionId: '68d3750d4828a7c4347ad1bd', // Tạo phiếu yêu cầu công việc
             apiId: '691c2c10cc14068cd86a1bf7', // /contactPerson/getAllPerson
         },
         {
@@ -1080,8 +1092,12 @@ async function permissionApiSeeder() {
             apiId: '6926c0fa284e72cfe4ed6a52',
         },
         {
-            permissionId: '6914e05ccf9e7d1d96f5a0f3',
+            permissionId: '6914e05ccf9e7d1d96f5a0f3', //Tải phiếu chi tiết công việc
             apiId: '6864fd7c1d9ec4d84204b79d',
+        },
+        {
+            permissionId: '6914e05ccf9e7d1d96f5a0f3', //Tải phiếu chi tiết công việc
+            apiId: '6864fd7c1d9ec4d84204b79e', // workOrderDetail/generateExcel
         },
     ])
     logger.info('PermissionApis seeded')
