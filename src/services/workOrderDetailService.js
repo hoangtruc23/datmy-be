@@ -116,7 +116,7 @@ const workOrderDetailService = {
 
             const machine = await ProductModel.findOne({ code: workOrder.type }, { name: 1 })
 
-            //Lấy ra thông số của machine
+           
             const machineSetting = await MachineSettingModel.findOne({
                 nameType: workOrder.type[0],
                 workType: workOrder.typeWork
@@ -131,8 +131,15 @@ const workOrderDetailService = {
                 workOrderId,
             }, { _id: 0 })
 
-            const spectValue = workOrderDetail?.machineSpecs
-            //Thông số của phiếu theo dòng máy -> Dòng A , B,...
+            const isTestDetail =
+                workOrder.typeWork === constant.WORK_ORDER_TYPE.TEST_IO.value &&
+                ['D', 'G', 'M', 'V'].includes(workOrder.type?.[0])
+
+            
+            const spectValue = isTestDetail
+                ? workOrderDetail?.props
+                : workOrderDetail?.machineSpecs
+           
             const settingMap = machineSetting?.props.reduce((acc, setting) => {
                 acc[setting._id.toString()] = setting;
                 return acc;
@@ -144,7 +151,7 @@ const workOrderDetailService = {
 
                 if (spectValue) {
                     spectMap = spectValue.reduce((acc, spect) => {
-                        acc[spect.propId] = spect.value;
+                        acc[spect.propId.toString()] = spect.value;
                         return acc;
                     }, {});
                 }
@@ -745,8 +752,56 @@ const workOrderDetailService = {
             // 5. PAYLOAD CẬP NHẬT THEO TỪNG LOẠI PHIẾU
             let updateDetailPayload = { ...timeUpdatePayload };
 
+            // PHIẾU TEST (TEST_IO)
+            if (typeWork === constant.WORK_ORDER_TYPE.TEST_IO.value) {
+                
+                if (reqData?.machineSpecs && !reqData?.props) {
+                    reqData.props = reqData.machineSpecs
+                }
+
+                
+                if (workOrderType === constant.WORK_ORDER_DETAIL_TYPE.A.value) {
+                    const { testDate, technicalId, machineTypeId, inkCode, props } = reqData
+
+                    Object.assign(updateDetailPayload, {
+                        testDate,
+                        technicalId,
+                        machineTypeId,
+                        inkCode,
+                        props,
+                    })
+                } else {
+                    // workOrderTestD/G/M/V: fields nằm trong baseInfo
+                    // UI hiện tại có thể gửi top-level: testDate/purposeTest/receiptDate và machineSpecs
+                    // -> convert sang đúng shape backend nhận
+
+                    let baseInfo = reqData?.baseInfo
+                    let props = reqData?.props
+                    const { machineTypeId, image } = reqData
+
+                    if (!baseInfo && (reqData?.testDate || reqData?.purposeTest || reqData?.receiptDate !== undefined)) {
+                        baseInfo = {
+                            testDate: reqData?.testDate ?? null,
+                            purposeTest: reqData?.purposeTest ?? null,
+                            receiptDate: reqData?.receiptDate ?? null,
+                        }
+                    }
+
+                    if (!props && Array.isArray(reqData?.machineSpecs)) {
+                        // machineSpecs UI gửi đúng dạng { propId, value } nên có thể gán thẳng vào props
+                        props = reqData.machineSpecs
+                    }
+
+                    Object.assign(updateDetailPayload, {
+                        baseInfo,
+                        machineTypeId,
+                        props,
+                        image,
+                    })
+                }
+            }
             // PHIẾU BẢO TRÌ
-            if (typeWork === constant.WORK_ORDER_TYPE.MAINTENANCE.value) {
+            else if (typeWork === constant.WORK_ORDER_TYPE.MAINTENANCE.value) {
                 //PHIẾU A
                 if (workOrderType === constant.WORK_ORDER_DETAIL_TYPE.A.value) {
                     const {
