@@ -12,12 +12,25 @@ const workOrderTestMSchema = new Schema(
             type: testBaseSchema,
             default: null,
         },
+        purposeTest: {
+            type: String,
+            default: null,
+        },
+        receiptDate: {
+            type: Date,
+            default: null,
+        },
+        testDate: {
+            type: Date,
+            default: null,
+        },
         machineTypeId: {
             type: Types.ObjectId,
             ref: 'products',
             default: null,
         },
         props: [propSchema],
+
         image: {
             type: String,
             default: null,

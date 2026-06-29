@@ -12,9 +12,34 @@ const workOrderTestDSchema = new Schema(
             type: testBaseSchema,
             default: null,
         },
+        // UI đôi khi gán các thông tin test ở top-level
+        purposeTest: {
+            type: String,
+            default: null,
+        },
+        receiptDate: {
+            type: Date,
+            default: null,
+        },
+        testDate: {
+            type: Date,
+            default: null,
+        },
+
+
+
         machineTypeId: {
             type: Types.ObjectId,
             ref: 'products',
+            default: null,
+        },
+        // Serial thiết bị (UI đang hiển thị nhưng schema hiện thiếu)
+        serialControllerNumber: {
+            type: String,
+            default: null,
+        },
+        serialLaserHeadNumber: {
+            type: String,
             default: null,
         },
         props: [propSchema],
@@ -25,6 +50,7 @@ const workOrderTestDSchema = new Schema(
     },
     { timestamps: true },
 )
+
 
 const WorkOrderTestDModel = model('workOrderTestD', workOrderTestDSchema)
 module.exports = WorkOrderTestDModel

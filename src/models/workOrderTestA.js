@@ -12,6 +12,14 @@ const workOrderTestASchema = new Schema(
             type: Date,
             default: null,
         },
+        purposeTest: {
+            type: String,
+            default: null,
+        },
+        receiptDate: {
+            type: Date,
+            default: null,
+        },
         technicalId: {
             type: Types.ObjectId,
             ref: 'technicians',
@@ -30,6 +38,7 @@ const workOrderTestASchema = new Schema(
     },
     { timestamps: true },
 )
+
 
 const WorkOrderTestAModel = model('workOrderTestA', workOrderTestASchema)
 module.exports = WorkOrderTestAModel

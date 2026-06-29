@@ -788,15 +788,32 @@ const workOrderDetailService = {
                     }
 
                     if (!props && Array.isArray(reqData?.machineSpecs)) {
-                        // machineSpecs UI gửi đúng dạng { propId, value } nên có thể gán thẳng vào props
-                        props = reqData.machineSpecs
+                        // Normalize về đúng shape propSchema: { propId, value }
+                        props = reqData.machineSpecs.map((s) => ({
+                            propId: s.propId,
+                            value: s.value,
+                        }))
                     }
+
+
+                   
+                    const testDate = reqData?.testDate ? new Date(reqData.testDate) : (baseInfo?.testDate ?? null)
+                    const purposeTest = reqData?.purposeTest ?? baseInfo?.purposeTest ?? null
+                    const receiptDate = reqData?.receiptDate ? new Date(reqData.receiptDate) : (baseInfo?.receiptDate ?? null)
 
                     Object.assign(updateDetailPayload, {
                         baseInfo,
+                        purposeTest,
+                        receiptDate,
+                        testDate,
+
                         machineTypeId,
                         props,
                         image,
+
+                        // Serial thiết bị (chỉ tồn tại ở một số schema như workOrderTestD)
+                        serialControllerNumber: reqData?.serialControllerNumber ?? null,
+                        serialLaserHeadNumber: reqData?.serialLaserHeadNumber ?? null,
                     })
                 }
             }
