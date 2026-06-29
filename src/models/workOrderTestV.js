@@ -36,6 +36,12 @@ const workOrderTestVSchema = new Schema(
             type: String,
             default: null,
         },
+
+        // Số series máy (UI gửi trong payload)
+        serialNumber: {
+            type: String,
+            default: null,
+        },
     },
     { timestamps: true },
 )

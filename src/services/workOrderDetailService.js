@@ -811,9 +811,19 @@ const workOrderDetailService = {
                         props,
                         image,
 
-                        // Serial thiết bị (chỉ tồn tại ở một số schema như workOrderTestD)
+                        // Serial thiết bị
                         serialControllerNumber: reqData?.serialControllerNumber ?? null,
                         serialLaserHeadNumber: reqData?.serialLaserHeadNumber ?? null,
+
+                        // Số series máy (UI gửi serialNumber)
+                        serialNumber: reqData?.serialNumber ?? null,
+
+
+                        // Thông tin đầu in/ghép cho TEST_IO type G
+                        printHead: reqData?.printHead ?? null,
+                        singleHeadCount: reqData?.singleHeadCount ?? null,
+                        compositeHeadCount: reqData?.compositeHeadCount ?? null,
+                        serialPrintHeads: reqData?.serialPrintHeads ?? [],
                     })
                 }
             }

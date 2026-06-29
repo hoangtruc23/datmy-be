@@ -46,6 +46,28 @@ const workOrderTestGSchema = new Schema(
             ref: 'products',
             default: null,
         },
+        // Serial controller và thông tin đầu in/đầu ghép
+        serialControllerNumber: {
+            type: String,
+            default: null,
+        },
+        printHead: {
+            type: String,
+            default: null,
+        },
+        singleHeadCount: {
+            type: Number,
+            default: null,
+        },
+        compositeHeadCount: {
+            type: Number,
+            default: null,
+        },
+        serialPrintHeads: {
+            type: [String],
+            default: [],
+        },
+
         props: [propSchema],
         printHeads: [printHeadSchema],
     },
