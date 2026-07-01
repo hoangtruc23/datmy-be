@@ -802,30 +802,53 @@ const workOrderDetailService = {
                     const purposeTest = reqData?.purposeTest ?? baseInfo?.purposeTest ?? null
                     const receiptDate = reqData?.receiptDate ? new Date(reqData.receiptDate) : (baseInfo?.receiptDate ?? null)
 
-                    Object.assign(updateDetailPayload, {
+                    const sharedPayload = {
                         baseInfo,
                         purposeTest,
                         receiptDate,
                         testDate,
-
                         machineTypeId,
                         props,
                         image,
+                    }
 
-                        // Serial thiết bị
-                        serialControllerNumber: reqData?.serialControllerNumber ?? null,
-                        serialLaserHeadNumber: reqData?.serialLaserHeadNumber ?? null,
+                    if (workOrderType === constant.WORK_ORDER_DETAIL_TYPE.G.value) {
+                        Object.assign(sharedPayload, {
+                            inkCode: reqData?.inkCode ?? null,
+                            printHeads: reqData?.printHeads ?? [],
+                            printHead: reqData?.printHead ?? null,
+                            singleHeadCount: reqData?.singleHeadCount ?? null,
+                            compositeHeadCount: reqData?.compositeHeadCount ?? null,
+                            serialPrintHeads: reqData?.serialPrintHeads ?? [],
+                            serialControllerNumber: reqData?.serialControllerNumber ?? null,
+                        })
+                    }
 
-                        // Số series máy (UI gửi serialNumber)
-                        serialNumber: reqData?.serialNumber ?? null,
+                    if (workOrderType === constant.WORK_ORDER_DETAIL_TYPE.D.value) {
+                        Object.assign(sharedPayload, {
+                            serialControllerNumber: reqData?.serialControllerNumber ?? null,
+                            serialLaserHeadNumber: reqData?.serialLaserHeadNumber ?? null,
+                            controllerTime: reqData?.controllerTime ?? null,
+                            laserHeadTime: reqData?.laserHeadTime ?? null,
+                        })
+                    }
 
-                        
-                        // Thông tin đầu in/ghép cho TEST_IO type G
-                        printHead: reqData?.printHead ?? null,
-                        singleHeadCount: reqData?.singleHeadCount ?? null,
-                        compositeHeadCount: reqData?.compositeHeadCount ?? null,
-                        serialPrintHeads: reqData?.serialPrintHeads ?? [],
-                    })
+                    if (workOrderType === constant.WORK_ORDER_DETAIL_TYPE.M.value) {
+                        Object.assign(sharedPayload, {
+                            serialControllerNumber: reqData?.serialControllerNumber ?? null,
+                            serialNumber: reqData?.serialNumber ?? null,
+                            otherFeatures: reqData?.otherFeatures ?? [],
+                        })
+                    }
+
+                    if (workOrderType === constant.WORK_ORDER_DETAIL_TYPE.V.value) {
+                        Object.assign(sharedPayload, {
+                            serialNumber: reqData?.serialNumber ?? null,
+                            serialControllerNumber: reqData?.serialControllerNumber ?? null,
+                        })
+                    }
+
+                    Object.assign(updateDetailPayload, sharedPayload)
                 }
             }
             // PHIẾU BẢO TRÌ
