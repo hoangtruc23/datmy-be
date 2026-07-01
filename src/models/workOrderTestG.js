@@ -69,6 +69,11 @@ const workOrderTestGSchema = new Schema(
         },
 
         props: [propSchema],
+        props: [propSchema],
+        image: {
+            type: String,
+            default: null,
+        },
         printHeads: [printHeadSchema],
     },
     { timestamps: true },

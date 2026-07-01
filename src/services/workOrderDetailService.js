@@ -761,7 +761,7 @@ const workOrderDetailService = {
 
                 
                 if (workOrderType === constant.WORK_ORDER_DETAIL_TYPE.A.value) {
-                    const { testDate, technicalId, machineTypeId, inkCode, props } = reqData
+                    const { testDate, technicalId, machineTypeId, inkCode, props , image } = reqData
 
                     Object.assign(updateDetailPayload, {
                         testDate,
@@ -769,6 +769,7 @@ const workOrderDetailService = {
                         machineTypeId,
                         inkCode,
                         props,
+                        image,
                     })
                 } else {
                     // workOrderTestD/G/M/V: fields nằm trong baseInfo
@@ -818,7 +819,7 @@ const workOrderDetailService = {
                         // Số series máy (UI gửi serialNumber)
                         serialNumber: reqData?.serialNumber ?? null,
 
-
+                        
                         // Thông tin đầu in/ghép cho TEST_IO type G
                         printHead: reqData?.printHead ?? null,
                         singleHeadCount: reqData?.singleHeadCount ?? null,
