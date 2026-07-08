@@ -110,12 +110,15 @@ const contactPersonCustomerService = {
                 const checkProductCode = record.devices.find((a) => a.productCode == productCode)
                 if (typeAction == 'update' && checkProductCode) {
                     await ContactPersonCustomerModel.findOneAndUpdate(
+                        { _id: record._id },
                         {
-                            _id: record._id,
-                            "devices._id": checkProductCode._id
+                            $set: { 'devices.$[elem].serialNumber': serialNumber },
                         },
                         {
-                            $set: { "devices.$.serialNumber": serialNumber }
+                            arrayFilters: [
+                                { 'elem._id': checkProductCode._id },
+                            ],
+                            new: true,
                         },
                     )
                 }
