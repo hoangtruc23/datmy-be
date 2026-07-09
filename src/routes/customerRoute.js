@@ -8,12 +8,12 @@ const router = express.Router()
 
 router.post(
     '/create',
-    validate(customerValidation.create),
+    // validate(customerValidation.create),
     customerController.create,
 )
 router.post(
     '/update/:id',
-    validate(customerValidation.update),
+    // validate(customerValidation.update),
     customerController.update,
 )
 router.get('/getById/:id', customerController.getById)

@@ -194,7 +194,6 @@ const contactPersonCustomerService = {
             const matchCondition = {};
 
             if (provinceCity && provinceCity.trim() !== "") {
-                // Dùng Regex 'i' để tìm kiếm không phân biệt hoa thường
                 matchCondition["address.provinceCity"] = { $regex: new RegExp(`^${provinceCity.trim()}$`, 'i') };
             }
 
@@ -203,38 +202,46 @@ const contactPersonCustomerService = {
             }
 
             if (specificAddress && specificAddress.trim() !== "") {
-                // Đối với địa chỉ cụ thể, dùng regex chứa (gần đúng) sẽ tiện hơn cho user search
                 matchCondition["address.specificAddress"] = { $regex: new RegExp(specificAddress.trim(), 'i') };
             }
 
             // 2. Thực hiện Aggregation Pipeline
             const pipeline = [];
 
-            // Nếu người dùng không truyền bất kỳ điều kiện nào, matchCondition sẽ rỗng {}
-            // Ta chỉ $match vòng ngoài nếu có ít nhất 1 điều kiện để tối ưu tốc độ quét dữ liệu
+            // Bước 1: $match trước khi unwind để lọc bớt các document không liên quan (Tối ưu performance)
             if (Object.keys(matchCondition).length > 0) {
                 pipeline.push({ $match: matchCondition });
             }
 
-            pipeline.push(
-                // Phẳng hóa mảng address để lọc chuẩn xác từng phần tử
-                { $unwind: "$address" }
-            );
+            // Bước 2: Phẳng hóa mảng address
+            pipeline.push({ $unwind: "$address" });
 
-            // Bắt buộc phải $match lại lần 2 sau khi unwind để loại bỏ các địa chỉ sai điều kiện
+            // Bước 3: $match lại lần 2 để loại bỏ các địa chỉ không khớp trong mảng
             if (Object.keys(matchCondition).length > 0) {
                 pipeline.push({ $match: matchCondition });
             }
 
-            // Định dạng lại dữ liệu đầu ra cho gọn đẹp
+            // Bước 4: Nhóm (Group) lại để loại bỏ trùng lặp địa chỉ giống nhau
+            pipeline.push({
+                $group: {
+                    _id: {
+                        provinceCity: "$address.provinceCity",
+                        ward: "$address.ward",
+                        specificAddress: "$address.specificAddress"
+                    },
+                    // Nếu bạn vẫn muốn giữ lại danh sách các customerId thuộc địa chỉ này (tùy chọn)
+                    customerIds: { $addToSet: "$customerId" }
+                }
+            });
+
+            // Bước 5: Định dạng lại dữ liệu đầu ra cho gọn đẹp
             pipeline.push({
                 $project: {
                     _id: 0,
-                    customerId: 1,
-                    addressId: "$address._id",
-                    provinceCity: "$address.provinceCity",
-                    ward: "$address.ward",
-                    specificAddress: "$address.specificAddress"
+                    provinceCity: "$_id.provinceCity",
+                    ward: "$_id.ward",
+                    specificAddress: "$_id.specificAddress",
+                    customerIds: 1
                 }
             });
 

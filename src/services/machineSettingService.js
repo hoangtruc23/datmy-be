@@ -211,55 +211,29 @@ const machineSettingService = {
         let { page = 1, limit = 10, search } = query
         page = Number(page)
         limit = Number(limit)
-        search = new RegExp(search, 'i')
+
+        // Tính số lượng bản ghi cần bỏ qua
+        const skip = (page - 1) * limit
 
         const category = await ProductCategoryModel.findOne({
             name: constant.CATEGORY_NAME.MACHINE,
         })
 
-        // const machines = await ProductModel.find({
-        //     $or: [{ name: search }, { shortName: search }, { code: search }],
-        //     categoryId: category._id,
-        // })
+        // 1. Đếm tổng số bản ghi thỏa mãn điều kiện trước (để tính tổng số trang)
+        const totalItems = await MachineSettingModel.countDocuments({})
 
-        // const machines = await ProductModel.find({}).populate('categoryId')
-
-        const machineSetting = await MachineSettingModel.find({}, { workType: 1, nameType: 1, props: 1 }).populate('props')
+        // 2. Truy vấn dữ liệu có phân trang bằng skip và limit
+        const machineSetting = await MachineSettingModel.find({}, { workType: 1, nameType: 1, props: 1 })
+            .populate('props')
+            .skip(skip)
+            .limit(limit)
 
         return {
             machineSetting,
             page,
-            totalItems: machineSetting.length,
-            totalPage: Math.ceil(machineSetting.length / limit),
+            totalItems,
+            totalPage: Math.ceil(totalItems / limit),
         }
-
-        // const machineIds = machines.map((m) => m._id)
-        // const [items, totalItems] = await Promise.all([
-        //     MachineSettingModel.find({ machineId: { $in: machineIds } })
-        //         .skip((page - 1) * limit)
-        //         .limit(limit)
-        //         .populate('machineId', 'name code')
-        //         .lean(),
-
-        //     MachineSettingModel.countDocuments({
-        //         machineId: { $in: machineIds },
-        //     }),
-        // ])
-
-
-        // const result = items.map((i) => ({
-        //     _id: i._id,
-        //     machineId: i.machineId._id,
-        //     machineName: i.machineId.name,
-        //     machineCode: i.machineId.code,
-        // }))
-
-        // return {
-        //     result,
-        //     page,
-        //     totalItems,
-        //     totalPage: Math.ceil(totalItems / limit),
-        // }
     },
     getById: async (machineSettingId) => {
         try {

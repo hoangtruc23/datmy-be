@@ -1847,10 +1847,7 @@ async function rolePermissionSeeder() {
         //     roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
         //     permissionId: '6853d1b6fa10ea77cf67990f', // Xem
         // },
-        // {
-        //     roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
-        //     permissionId: '6853d1b6fa10ea77cf67990a', // Cập nhật
-        // },
+
         // {
         //     roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
         //     permissionId: '6853d1b6fa10ea77cf67990d', // khoá hoặc mở khoá
@@ -1933,10 +1930,10 @@ async function rolePermissionSeeder() {
         //     roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
         //     permissionId: '6854e30d6b90439ad8c00dbc', // Xem
         // },
-        // {
-        //     roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
-        //     permissionId: '6854e30d6b90439ad8c00dbd', // Cập nhật
-        // },
+        {
+            roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
+            permissionId: '6854e30d6b90439ad8c00dbd', // Cập nhật -> upload/image
+        },
         // {
         //     roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
         //     permissionId: '6854e30d6b90439ad8c00dbe', // Khóa Mở khóa
@@ -2356,6 +2353,10 @@ async function rolePermissionSeeder() {
         {
             roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật 
             permissionId: '685135a0f2a5cb3fcc6b8f03', // Thêm khách hàng
+        },
+        {
+            roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật
+            permissionId: '6853d1b6fa10ea77cf67990a', // Cập nhật khách hàng
         },
         //#endregion
         //#region Kỹ thuật viên

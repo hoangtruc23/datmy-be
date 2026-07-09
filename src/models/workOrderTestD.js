@@ -25,20 +25,21 @@ const workOrderTestDSchema = new Schema(
             type: Date,
             default: null,
         },
-
-
-
         machineTypeId: {
             type: Types.ObjectId,
             ref: 'products',
             default: null,
         },
-        // Serial thiết bị (UI đang hiển thị nhưng schema hiện thiếu)
+        // Serial thiết bị
         serialControllerNumber: {
             type: String,
             default: null,
         },
         serialLaserHeadNumber: {
+            type: String,
+            default: null,
+        },
+        controllerTime: {
             type: String,
             default: null,
         },

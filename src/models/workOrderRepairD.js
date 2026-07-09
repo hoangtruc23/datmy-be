@@ -47,11 +47,11 @@ const workOrderRepairDSchema = new Schema(
             type: Date,
             required: false,
         },
-        serialControllerNumber: {
+        serialControllerNumber: { // Số serial controller
             type: String,
             required: false,
         },
-        serialLaserHeadNumber: {
+        serialLaserHeadNumber: { // Số serial laser head
             type: String,
             required: false,
         },
