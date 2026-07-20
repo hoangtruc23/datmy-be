@@ -26,7 +26,7 @@ const workOrderService = {
             }
 
             // 2. Sử dụng Promise.all để chạy song song các bảng khác nhau
-            const [workOrderStats, technicianStats, totalCustomers] = await Promise.all([
+            const [workOrderStats, technicianStats] = await Promise.all([
                 // Gom tất cả các điều kiện đếm của WorkOrder vào 1 cú quét duy nhất (Aggregation Facet)
                 WorkOrderModel.aggregate([
                     { $match: matchStage },
@@ -48,6 +48,10 @@ const workOrderService = {
                             totalPending: [
                                 { $match: { status: constant.WORK_REQUEST_STATUS.PENDING.value } },
                                 { $count: "count" }
+                            ],
+                            totalUniqueCustomers: [
+                                { $group: { _id: "$customerId" } },
+                                { $count: "count" }
                             ]
                         }
                     }
@@ -68,10 +72,7 @@ const workOrderService = {
                             ]
                         }
                     }
-                ]),
-
-                // Đếm số lượng khách hàng (Thường không bị ảnh hưởng bởi bộ lọc ngày của phiếu)
-                ContactPersonCustomerModel.countDocuments()
+                ])
             ]);
 
             // 3. Bóc tách dữ liệu từ mảng kết quả Aggregation Facet
@@ -81,6 +82,7 @@ const workOrderService = {
             const totalCompleted = stats.totalCompleted[0]?.count || 0;
             const totalOverdue = stats.totalOverdue[0]?.count || 0;
             const totalPending = stats.totalPending[0]?.count || 0;
+            const totalCustomers = stats.totalUniqueCustomers[0]?.count || 0;
 
             // 4. Bóc tách dữ liệu từ Technician
             const techStats = technicianStats[0] || {};
@@ -281,7 +283,10 @@ const workOrderService = {
             limit = Number(limit)
             page = Number(page)
             search = new RegExp(search, 'i')
-            address = new RegExp(address, 'i')
+
+            const addressRegex = address && typeof address === 'string' && address.trim() !== '' 
+                ? new RegExp(address.trim(), 'i') 
+                : null;
 
             // 2. CHUẨN HÓA ĐIỀU KIỆN LỌC NGÀY THÁNG (Bảo hiểm đầu ngày - cuối ngày)
             let dateFilter = null;
@@ -330,22 +335,24 @@ const workOrderService = {
                     const customers = await CustomerModel.find({ officialName: history }).select({ _id: 1 })
                     const customerIds = customers.map(c => c._id);
 
-                    // Thêm điều kiện thời gian trực tiếp vào danh sách contact (nếu ContactPerson có trường createdAt)
                     const contacts = await ContactPersonCustomerModel.find({
                         customerId: { $in: customerIds },
-                        address: {
-                            $elemMatch: {
-                                $or: [
-                                    { provinceCity: address },
-                                    { ward: address },
-                                    { specificAddress: address }
-                                ]
+                        ...(addressRegex ? {
+                            address: {
+                                $elemMatch: {
+                                    $or: [
+                                        { provinceCity: addressRegex },
+                                        { ward: addressRegex },
+                                        { specificAddress: addressRegex }
+                                    ]
+                                }
                             }
-                        },
+                        } : {}),
                         ...(dateFilter ? { createdAt: dateFilter } : {}),
                     })
                         .populate('customerId', 'officialName billingAddress')
                         .select({ customerId: 1, devices: 1 }).lean();
+
 
                     const productCodes = contacts.flatMap(c => c.devices.flatMap(device => device.productCode) || []);
                     const products = await ProductModel.find({ code: { $in: productCodes } }).select({ name: 1, code: 1 })
@@ -367,6 +374,7 @@ const workOrderService = {
 
                     let totalDevices = 0;
                     const deviceSummaryMap = {};
+
 
                     contacts.forEach(contact => {
                         if (contact.devices && Array.isArray(contact.devices)) {
@@ -727,6 +735,7 @@ const workOrderService = {
                 specificAddress: address?.specificAddress,
                 productCode: type, //Loại máy
                 serialNumber,
+                oldSerialNumber: checkWorkOrder.serialNumber,
             }, "update")
 
             await WorkOrderModel.findByIdAndUpdate(workOrderId, {

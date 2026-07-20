@@ -24,6 +24,18 @@ const workOrderTestMSchema = new Schema(
             type: Date,
             default: null,
         },
+        serialControllerNumber: {
+            type: String,
+            default: null,
+        },
+        serialNumber: {
+            type: String,
+            default: null,
+        },
+        otherFeatures: {
+            type: [String],
+            default: [],
+        },
         machineTypeId: {
             type: Types.ObjectId,
             ref: 'products',

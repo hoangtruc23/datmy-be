@@ -25,6 +25,14 @@ const workOrderTestDSchema = new Schema(
             type: Date,
             default: null,
         },
+        controllerTime: {
+            type: Number,
+            default: null,
+        },
+        laserHeadTime: {
+            type: Number,
+            default: null,
+        },
         machineTypeId: {
             type: Types.ObjectId,
             ref: 'products',

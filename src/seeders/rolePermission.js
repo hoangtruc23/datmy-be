@@ -2350,6 +2350,10 @@ async function rolePermissionSeeder() {
             roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật 
             permissionId: '6914e05ccf9e7d1d96f5a0f8', // contactPerson/deleteAddress 
         },
+        {//Thêm thiết bị của Khách hàng
+            roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật 
+            permissionId: '6914e05ccf9e7d1d96f5a0f9', // contactPerson/addMachine
+        },
         {
             roleId: '68f6f623dc799da9305e4349', // Quản lý kỹ thuật 
             permissionId: '685135a0f2a5cb3fcc6b8f03', // Thêm khách hàng

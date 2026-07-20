@@ -1,21 +1,6 @@
 const { model, Types, Schema } = require('mongoose')
 const { propSchema, testBaseSchema } = require('./workOrderDetailHelp')
 
-const printHeadSchema = new Schema(
-    {
-        serialNumber: {
-            type: String,
-        },
-        leftImage: {
-            type: String,
-        },
-        rightImage: {
-            type: String,
-        },
-    },
-    { _id: false },
-)
-
 const workOrderTestGSchema = new Schema(
     {
         workOrderId: {
@@ -39,6 +24,10 @@ const workOrderTestGSchema = new Schema(
         },
         testDate: {
             type: Date,
+            default: null,
+        },
+        inkCode: {
+            type: String,
             default: null,
         },
         machineTypeId: {
@@ -69,7 +58,14 @@ const workOrderTestGSchema = new Schema(
         },
 
         props: [propSchema],
-        printHeads: [printHeadSchema],
+        image: {
+            type: String,
+            default: null,
+        },
+        printHeads: {
+            type: [String],
+            default: [],
+        },
     },
     { timestamps: true },
 )

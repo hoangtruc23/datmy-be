@@ -1267,6 +1267,11 @@ async function apiSeeder() {
             note: 'Xóa máy của khách hàng',
         },
         {
+            _id: new Types.ObjectId('691ebf6e7cd69b4b32fa3b6c'),
+            api: '/contactPerson/addMachine',
+            note: 'Thêm thiết bị cho khách hàng',
+        },
+        {
             _id: new Types.ObjectId('691ebf6e7cd69b4b32fa3b61'),
             api: '/contract/getAll',
             note: 'Lấy danh sách hợp đồng',

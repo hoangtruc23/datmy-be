@@ -35,6 +35,10 @@ const workOrderTestASchema = new Schema(
             default: null,
         },
         props: [propSchema],
+        image: {
+            type: String,
+            default: null,
+        },
     },
     { timestamps: true },
 )

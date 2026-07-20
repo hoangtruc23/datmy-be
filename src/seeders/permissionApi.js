@@ -919,7 +919,11 @@ async function permissionApiSeeder() {
 
         {
             permissionId: '6914e05ccf9e7d1d96f5a0f8', // Xóa thiết bị của khách hàng
-            apiId: '691ebf6e7cd69b4b32fa3b13', // /contactPerson/deleteAddress
+            apiId: '691ebf6e7cd69b4b32fa3b13', // /contactPerson/deleteMachine
+        },
+        {
+            permissionId: '6914e05ccf9e7d1d96f5a0f9', // Thêm thiết bị của khách hàng
+            apiId: '691ebf6e7cd69b4b32fa3b6c', // /contactPerson/addMachine
         },
 
         // Kỹ thuật viên

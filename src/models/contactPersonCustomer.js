@@ -49,7 +49,7 @@ const contactPersonCustomerSchema = new Schema({
                 type: String,
                 required: false,
             },
-            contractType: { // Máy thuê / mua ,...
+            contractType: { // rent - buy - demo
                 type: String,
                 required: false,
             },

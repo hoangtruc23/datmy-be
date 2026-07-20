@@ -131,7 +131,7 @@ const customerSchema = new Schema(
             type: Number,
         },
         internalTransport: { type: Boolean, default: false },
-        //warehouseId: { type: Schema.Types.ObjectId, ref: 'Warehouse' },
+        warehouseId: {type:Schema.Types.ObjectId,ref: 'warehouses'},
         productsInUse: [{ type: Schema.Types.ObjectId, ref: 'products' }],
         status: {
             type: String,

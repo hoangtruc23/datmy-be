@@ -28,9 +28,14 @@ router.get(
     contactPersonCustomerController.getSerialNumber,
 )
 router.post(
+    '/addMachine/:customerId',
+    contactPersonCustomerController.addMachine,
+)
+router.post(
     '/deleteMachine/:customerId',
     contactPersonCustomerController.deleteMachine,
 )
+
 
 /**
  * @swagger
@@ -505,6 +510,76 @@ router.post(
  *                 data:
  *                   type: string
  *                   example: null
+ */
+
+/**
+ * @swagger
+ * /contactPerson/addMachine/{customerId}:
+ *   post:
+ *     summary: Thêm thiết bị cho khách hàng
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: customerId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID của khách hàng
+ *     tags: [ContactPerson]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - devices
+ *             properties:
+ *               devices:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - productCode
+ *                   properties:
+ *                     productCode:
+ *                       type: string
+ *                       example: A100
+ *                     serialNumber:
+ *                       type: string
+ *                       example: SN001
+ *                     contractType:
+ *                       type: string
+ *                       example: Thuê máy
+ *     responses:
+ *       200:
+ *         description: Thêm thiết bị thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
+ *                 code:
+ *                   type: integer
+ *                   example: 1
+ *                 message:
+ *                   type: string
+ *                   example: OK!
+ *                 data:
+ *                   type: object
+ *                   example: null
+ *       400:
+ *         description: Lỗi input
+ *       401:
+ *         description: Chưa đăng nhập
+ *       403:
+ *         description: Không có quyền truy cập
+ *       500:
+ *         description: Lỗi server
  */
 
 module.exports = router

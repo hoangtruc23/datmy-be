@@ -42,11 +42,15 @@ const contactPersonCustomerService = {
                         contactEmail: contactEmail?.trim() || "",
                         contactPhone: contactPhone?.trim() || ""
                     }] : [],
-                    devices: { productCode }
+                    devices: []
                 }
 
-                if (serialNumber && serialNumber !== "") {
-                    recordData.serialNumber = { serialNumber }
+                if (productCode && productCode.trim() !== "") {
+                    recordData.devices.push({
+                        productCode: productCode.trim(),
+                        serialNumber: (serialNumber || "").trim(),
+                        isActive: true
+                    })
                 }
 
                 if (provinceCity != null && ward != null && specificAddress != null) {
@@ -106,28 +110,173 @@ const contactPersonCustomerService = {
                         },
                     )
                 }
-                //-----XỬ LÝ MÃ SẢN PHẨM
-                const checkProductCode = record.devices.find((a) => a.productCode == productCode)
-                if (typeAction == 'update' && checkProductCode) {
-                    await ContactPersonCustomerModel.findOneAndUpdate(
-                        {
-                            _id: record._id,
-                            "devices._id": checkProductCode._id
-                        },
-                        {
-                            $set: { "devices.$.serialNumber": serialNumber }
-                        },
-                    )
-                }
-                else if (typeAction == 'installation') {
-                    await ContactPersonCustomerModel.findByIdAndUpdate(
-                        record._id,
-                        {
-                            $push: {
-                                devices: { productCode, serialNumber }
-                            },
-                        },
-                    )
+
+                //-----XỬ LÝ MÃ SẢN PHẨM (DEVICES)
+                if (productCode && productCode.trim() !== "") {
+                    const normProductCode = productCode.trim();
+                    const normSerialNumber = (serialNumber || "").trim();
+                    const normOldSerialNumber = (reqData.oldSerialNumber || "").trim();
+
+                    if (typeAction === 'installation') {
+                        // For installation, we want to add the device.
+                        // To avoid duplicates, let's first check if this exact productCode and serialNumber already exists.
+                        const exactMatch = record.devices.find(
+                            (d) =>
+                                d.productCode === normProductCode &&
+                                (d.serialNumber || "").trim() === normSerialNumber
+                        );
+                        if (exactMatch) {
+                            if (!exactMatch.isActive) {
+                                await ContactPersonCustomerModel.findOneAndUpdate(
+                                    { _id: record._id, "devices._id": exactMatch._id },
+                                    { $set: { "devices.$.isActive": true } }
+                                );
+                            }
+                        } else {
+                            await ContactPersonCustomerModel.findByIdAndUpdate(
+                                record._id,
+                                {
+                                    $push: {
+                                        devices: {
+                                            productCode: normProductCode,
+                                            serialNumber: normSerialNumber,
+                                            isActive: true
+                                        }
+                                    },
+                                }
+                            );
+                        }
+                    } else if (typeAction === 'update') {
+                        // Update action: We want to update an existing device's serial number.
+                        let deviceToUpdate = null;
+                        if (normOldSerialNumber !== "") {
+                            deviceToUpdate = record.devices.find(
+                                (d) =>
+                                    d.productCode === normProductCode &&
+                                    (d.serialNumber || "").trim() === normOldSerialNumber
+                            );
+                        }
+
+                        // If not found by oldSerialNumber, or oldSerialNumber was empty, let's check if there is a device with empty serial number.
+                        if (!deviceToUpdate) {
+                            deviceToUpdate = record.devices.find(
+                                (d) =>
+                                    d.productCode === normProductCode &&
+                                    (!d.serialNumber || d.serialNumber.trim() === "")
+                            );
+                        }
+
+                        if (deviceToUpdate) {
+                            // Update the found device
+                            await ContactPersonCustomerModel.findOneAndUpdate(
+                                { _id: record._id, "devices._id": deviceToUpdate._id },
+                                {
+                                    $set: {
+                                        "devices.$.serialNumber": normSerialNumber,
+                                        "devices.$.isActive": true
+                                    }
+                                }
+                            );
+                        } else {
+                            // If no matching device to update was found, push it as a new device if exact combination doesn't exist yet.
+                            const exactMatch = record.devices.find(
+                                (d) =>
+                                    d.productCode === normProductCode &&
+                                    (d.serialNumber || "").trim() === normSerialNumber
+                            );
+                            if (!exactMatch) {
+                                await ContactPersonCustomerModel.findByIdAndUpdate(
+                                    record._id,
+                                    {
+                                        $push: {
+                                            devices: {
+                                                productCode: normProductCode,
+                                                serialNumber: normSerialNumber,
+                                                isActive: true
+                                            }
+                                        }
+                                    }
+                                );
+                            } else if (!exactMatch.isActive) {
+                                await ContactPersonCustomerModel.findOneAndUpdate(
+                                    { _id: record._id, "devices._id": exactMatch._id },
+                                    { $set: { "devices.$.isActive": true } }
+                                );
+                            }
+                        }
+                    } else {
+                        // Default action (creating a ticket / generic check):
+                        // Check if exact match exists.
+                        const exactMatch = record.devices.find(
+                            (d) =>
+                                d.productCode === normProductCode &&
+                                (d.serialNumber || "").trim() === normSerialNumber
+                        );
+
+                        if (exactMatch) {
+                            if (!exactMatch.isActive) {
+                                await ContactPersonCustomerModel.findOneAndUpdate(
+                                    { _id: record._id, "devices._id": exactMatch._id },
+                                    { $set: { "devices.$.isActive": true } }
+                                );
+                            }
+                        } else {
+                            // No exact match found.
+                            if (normSerialNumber !== "") {
+                                // Ticket has serial number. Check for empty slot to update.
+                                const emptySlot = record.devices.find(
+                                    (d) =>
+                                        d.productCode === normProductCode &&
+                                        (!d.serialNumber || d.serialNumber.trim() === "")
+                                );
+
+                                if (emptySlot) {
+                                    await ContactPersonCustomerModel.findOneAndUpdate(
+                                        { _id: record._id, "devices._id": emptySlot._id },
+                                        {
+                                            $set: {
+                                                "devices.$.serialNumber": normSerialNumber,
+                                                "devices.$.isActive": true
+                                            }
+                                        }
+                                    );
+                                } else {
+                                    // No empty slot. Push new device.
+                                    await ContactPersonCustomerModel.findByIdAndUpdate(
+                                        record._id,
+                                        {
+                                            $push: {
+                                                devices: {
+                                                    productCode: normProductCode,
+                                                    serialNumber: normSerialNumber,
+                                                    isActive: true
+                                                }
+                                            }
+                                        }
+                                    );
+                                }
+                            } else {
+                                // Ticket has no serial number. Check if they have ANY device with this productCode.
+                                const hasAnyDevice = record.devices.some(
+                                    (d) => d.productCode === normProductCode
+                                );
+                                if (!hasAnyDevice) {
+                                    await ContactPersonCustomerModel.findByIdAndUpdate(
+                                        record._id,
+                                        {
+                                            $push: {
+                                                devices: {
+                                                    productCode: normProductCode,
+                                                    serialNumber: "",
+                                                    isActive: true
+                                                }
+                                            }
+                                        }
+                                    );
+                                }
+                            }
+                        }
+                    }
                 }
             }
             return null
@@ -392,6 +541,108 @@ const contactPersonCustomerService = {
                     //     }
                     // },
                 )
+            }
+
+            return null
+        } catch (error) {
+            throw error
+        }
+    },
+    addMachine: async (customerId, reqData) => {
+        try {
+            console.log(reqData)
+
+            let devices;
+            // Nếu reqData bản chất đã là một mảng sẵn rồi
+            if (Array.isArray(reqData)) {
+                devices = reqData;
+            }
+            // Nếu reqData là Object chứa key devices bên trong: { devices: [...] }
+            else if (reqData && reqData.devices) {
+                devices = reqData.devices;
+            }
+            // Nếu reqData chỉ là 1 Object thiết bị lẻ duy nhất: { productCode: 'A100', ... }
+            else if (reqData && reqData.productCode) {
+                devices = [reqData];
+            }
+
+            console.log("Devices sau khi xử lý:", devices)
+
+            // Kiểm tra tính hợp lệ của mảng devices
+            if (!devices || !Array.isArray(devices) || devices.length === 0) {
+                throw new BadReq({
+                    code: 1,
+                    message: 'Danh sách thiết bị (devices) không hợp lệ hoặc trống'
+                })
+            }
+
+            // --- Giữ nguyên các logic validate và lưu DB tối ưu (dùng .save() ở trên) ---
+            const validContractTypes = ['rent', 'buy', 'demo'];
+            for (const item of devices) {
+                if (!item.productCode || item.productCode.trim() === "") {
+                    throw new BadReq({
+                        code: 1,
+                        message: 'Mã máy (productCode) của thiết bị không được để trống'
+                    })
+                }
+                if (item.contractType && item.contractType.trim() !== "") {
+                    const normType = item.contractType.trim().toLowerCase();
+                    if (!validContractTypes.includes(normType)) {
+                        throw new BadReq({
+                            code: 1,
+                            message: `Loại hợp đồng (contractType) không hợp lệ. Phải là một trong: ${validContractTypes.join(', ')}`
+                        })
+                    }
+                }
+            }
+
+            const customer = await CustomerModel.findById(customerId)
+            if (!customer) {
+                throw new BadReq(errorCode.CUSTOMER_NOT_FOUND)
+            }
+
+            let record = await ContactPersonCustomerModel.findOne({ customerId })
+
+            if (!record) {
+                const newDevices = devices.map(item => ({
+                    productCode: item.productCode.trim(),
+                    serialNumber: (item.serialNumber || "").trim(),
+                    contractType: item.contractType ? item.contractType.trim().toLowerCase() : "",
+                    isActive: true
+                }))
+
+                const recordData = {
+                    customerId,
+                    contactPerson: [],
+                    devices: newDevices,
+                    address: []
+                }
+                await ContactPersonCustomerModel.create(recordData)
+            } else {
+                for (const item of devices) {
+                    const normProductCode = item.productCode.trim()
+                    const normSerialNumber = (item.serialNumber || "").trim()
+                    const normContractType = item.contractType ? item.contractType.trim().toLowerCase() : ""
+
+                    const exactMatch = record.devices.find(
+                        (d) =>
+                            d.productCode === normProductCode &&
+                            (d.serialNumber || "").trim() === normSerialNumber
+                    )
+
+                    if (exactMatch) {
+                        exactMatch.contractType = normContractType
+                        exactMatch.isActive = true
+                    } else {
+                        record.devices.push({
+                            productCode: normProductCode,
+                            serialNumber: normSerialNumber,
+                            contractType: normContractType,
+                            isActive: true
+                        })
+                    }
+                }
+                await record.save()
             }
 
             return null

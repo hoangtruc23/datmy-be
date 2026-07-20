@@ -69,6 +69,17 @@ const contactPersonCustomerController = {
         } catch (error) {
             next(error)
         }
+    },
+    addMachine: async (req, res, next) => {
+        try {
+            const result = await contactPersonCustomerServices.addMachine(
+                req.params.customerId,
+                req.body
+            )
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
     }
 }
 module.exports = contactPersonCustomerController

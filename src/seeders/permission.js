@@ -883,6 +883,12 @@ async function permissionSeeder() {
             code: 'xoa_thiet-bi-may-cua-khach-hang',
             parentPermissionId: null,
         },
+        {
+            _id: new Types.ObjectId('6914e05ccf9e7d1d96f5a0f9'),
+            name: 'Thêm thiết bị máy của khách hàng',
+            code: 'them_thiet-bi-may-cua-khach-hang',
+            parentPermissionId: null,
+        },
 
         {
             _id: new Types.ObjectId('6914e05ccf9e7d1d96f5b0f8'),

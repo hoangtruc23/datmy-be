@@ -88,7 +88,7 @@ const customerService = {
 
             // 3. Define all other common fields to be returned
             const commonFields =
-                'code name officialName taxCode isActive status fax email phone billingAddress garageAddress deliveryAddresses representative notes purchaseCycleInWeeks internalTransport productsInUse createdAt updatedAt'
+                'code name officialName taxCode isActive status fax email phone billingAddress garageAddress deliveryAddresses representative notes purchaseCycleInWeeks internalTransport warehouseId productsInUse createdAt updatedAt'
 
             // 4. Combine the fields into the final select string
             const fieldsToSelect = contactPersonsFields
@@ -96,7 +96,9 @@ const customerService = {
                 : commonFields
 
             // 5. Execute the query with the select clause
-            const customer = await CustomerModel.findById(id).populate({
+            const customer = await CustomerModel.findById(id)
+                .select(fieldsToSelect)
+                .populate({
                 path: 'productsInUse',
                 select: 'name code', // chỉ lấy field name của
             })
