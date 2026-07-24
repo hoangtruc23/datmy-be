@@ -11,6 +11,50 @@ const MachineSettingModel = require('../models/machineSetting')
 const ProductModel = require('../models/product')
 const { getWorkOrderModel } = require('../utils/helper/workOrderDetailHelper')
 const technicianService = require('./technicianService')
+const mailService = require('./mailService')
+
+const sendAssignmentEmail = async (technicianId, workOrderData) => {
+    try {
+
+        if (!technicianId) return;
+        const technician = await TechnicianModel.findById(technicianId);
+        if (!technician || !technician.email) {
+            console.log(`No email found for technician ${technicianId}. Skipping assignment email.`);
+            return;
+        }
+
+        const typeWorkLabels = {
+            repair: "Sửa chữa",
+            maintenance: "Bảo trì",
+            installation: "Lắp đặt",
+            testIO: "Test Xuất/Nhập",
+            demo: "Demo"
+        };
+
+
+        const typeWorkLabel = typeWorkLabels[workOrderData.typeWork] || workOrderData.typeWork || "Yêu cầu công việc";
+
+        const subject = `[DMC] Phân công công việc mới - ${workOrderData.code}`;
+        const html = `
+            <p>Xin chào <strong>${technician.fullname}</strong>,</p>
+            <p>Bạn đã được phân công một công việc mới trên hệ thống DMC.</p>
+            <ul>
+                <li><strong>Mã công việc:</strong> ${workOrderData.code}</li>
+                <li><strong>Loại công việc:</strong> ${typeWorkLabel}</li>
+                <li><strong>Loại máy:</strong> ${workOrderData.type || '-'}</li>
+                <li><strong>Liên hệ:</strong> ${workOrderData?.contactPerson?.contactName - workOrderData?.contactPerson?.contactPhone || '-'}</li>
+                <li><strong>Mô tả:</strong> ${workOrderData?.description || '-'}</li>
+
+            </ul>
+            <p>Vui lòng đăng nhập hệ thống để xem chi tiết công việc.</p>
+            <p>Trân trọng,<br>Hệ thống DMC</p>
+        `;
+
+        await mailService.sendMailToTechnician(technician.email, subject, html);
+    } catch (err) {
+        console.error("Failed to send task assignment email:", err);
+    }
+};
 
 const workOrderService = {
     dashboard: async (query) => {
@@ -284,8 +328,8 @@ const workOrderService = {
             page = Number(page)
             search = new RegExp(search, 'i')
 
-            const addressRegex = address && typeof address === 'string' && address.trim() !== '' 
-                ? new RegExp(address.trim(), 'i') 
+            const addressRegex = address && typeof address === 'string' && address.trim() !== ''
+                ? new RegExp(address.trim(), 'i')
                 : null;
 
             // 2. CHUẨN HÓA ĐIỀU KIỆN LỌC NGÀY THÁNG (Bảo hiểm đầu ngày - cuối ngày)
@@ -318,7 +362,7 @@ const workOrderService = {
                     ],
                     ...(status ? { status } : {}),
                     ...(typeWork ? { typeWork } : {}),
-                    ...(technician ? { technicianId: reqUserId } : {}),
+                    ...(technician && !technician.isSupervisor ? { technicianId: reqUserId } : {}),
                     // Áp dụng bộ lọc ngày tháng đã chuẩn hóa vào đây
                     ...(dateFilter ? { createdAt: dateFilter } : {}),
                 }
@@ -620,7 +664,7 @@ const workOrderService = {
             // }
 
             await workOrderDetailService.create(workOrder)
-
+            console.log("============", workOrder)
             if (technicianId) {
                 //ktv có việc => status = working
                 await TechnicianModel.findByIdAndUpdate(technicianId, {
@@ -629,6 +673,7 @@ const workOrderService = {
                 await WorkOrderModel.findByIdAndUpdate(workOrder._id, {
                     assignedTime: new Date(),
                 })
+                sendAssignmentEmail(technicianId, workOrderData);
             }
             return null
         } catch (error) {
@@ -764,7 +809,7 @@ const workOrderService = {
             })
 
             //cập nhật ktv
-            if (technicianId && checkWorkOrder.technicianId !== technicianId) {
+            if (technicianId && String(checkWorkOrder.technicianId || '') !== String(technicianId || '')) {
                 await WorkOrderModel.findByIdAndUpdate(workOrderId, {
                     assignedTime: new Date(),
                 })
@@ -788,6 +833,11 @@ const workOrderService = {
 
                 // Update trạng thái KTV
                 // await technicianService.checkStatusTechnical(checkWorkOrder?.technicianId)
+
+                sendAssignmentEmail(
+                    technicianId,
+                    checkWorkOrder
+                );
             }
 
             if (!technicianId && checkWorkOrder.technicianId) {

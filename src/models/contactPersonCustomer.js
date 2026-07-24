@@ -57,7 +57,30 @@ const contactPersonCustomerSchema = new Schema({
                 type: Boolean,
                 required: true,
                 default: true
-            }
+            },
+            installDate: { // Ngày lắp đặt
+                type: Date,
+                required: false,
+            },
+            // lastFilterChangeDate: { //Ngày thay đầu lọc gần nhất
+            //     type: Date,
+            //     required: false,
+            // },
+            // lastFilterChangeInkjetTime: { //Thời gian in phun gần nhất
+            //     type: Number,
+            //     required: false,
+            //     default: 0,
+            // },
+            // currentInkjetTime: { // Thời gian in phun hiện tại
+            //     type: Number,
+            //     required: false,
+            //     default: 0,
+            // },
+            // warningReplaceFilter: {  // Cảnh báo thay đầu lọc
+            //     type: Boolean,
+            //     required: false,
+            //     default: false,
+            // }
         }
     ]
 })

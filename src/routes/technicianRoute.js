@@ -41,6 +41,10 @@ router.post(
     validate(technicianValidation.changePassword),
     technicianController.changePassword,
 )
+router.post(
+    '/resetPassword/:technicianId',  //technician/resetPassword
+    technicianController.resetPassword,
+)
 router.get('/logout', technicianController.logout)
 
 module.exports = router

@@ -33,6 +33,10 @@ const technicianModel = new Schema(
         area: {
             type: String,
         },
+        isSupervisor: {
+            type: Boolean,
+            required: false,
+        },
         status: {
             type: String,
             enum: Object.values(constant.TECHNICIAN_STATUS).map((s) => s.value),

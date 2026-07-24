@@ -1043,10 +1043,16 @@ async function apiSeeder() {
             api: '/technician/changeActive',
             note: 'Khóa/Mở khóa kỹ thuật viên',
         },
+
         {
             _id: new Types.ObjectId('68fee754df90864cd0ba5309'),
             api: '/technician/getAllTechnicianStatus',
             note: 'Lấy ra tất cả trạng thái của KTV',
+        },
+        {
+            _id: new Types.ObjectId('691ebf6e7cd69b4b32fa3b8b'),
+            api: '/technician/resetPassword',
+            note: 'Reset mật khẩu kỹ thuật viên',
         },
         //machineSetting
         {

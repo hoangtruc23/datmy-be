@@ -3,6 +3,7 @@ const MailServerModel = require('../models/mailServer')
 const UserModel = require('../models/user')
 const BadReq = require('../utils/response/requestError')
 const errorCode = require('../utils/response/errorCode')
+const { logger } = require('../config/loggerConfig')
 
 const mailService = {
     configMailServer: async (reqData) => {
@@ -106,6 +107,50 @@ const mailService = {
             throw error
         }
     },
+    sendMailToTechnician: async (technicianEmail, subject, html) => {
+        try {
+            if (!technicianEmail) return null;
+
+            const mailServer = await MailServerModel.findOne({})
+
+            console.log(mailServer)
+
+            if (!mailServer) {
+                logger.warn("Mail server is not configured. Cannot send email to technician.")
+                return null
+            }
+
+            const transporter = nodemailer.createTransport({
+                host: mailServer.host,
+                port: mailServer.port,
+                secure: mailServer.secure,
+                auth: {
+                    user: mailServer.user,
+                    pass: mailServer.pass,
+                },
+            })
+
+            console.log(transporter)
+
+            const email = {
+                from: mailServer.user,
+                to: technicianEmail,
+                subject,
+                html,
+            }
+
+            try {
+                const res = await transporter.sendMail(email)
+                console.log(res)
+            } catch (error) {
+                logger.error("Error sending email to technician:", error)
+            }
+            return null
+        } catch (error) {
+            logger.error("Mail server error:", error)
+            return null
+        }
+    }
 }
 
 module.exports = mailService

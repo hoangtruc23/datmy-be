@@ -428,6 +428,7 @@ const workOrderDetailService = {
             let timeUpdatePayload = {};
             const { arrivalTime, leavingTime } = reqData;
 
+            //KTV CHECK-OUT
             if (leavingTime) {
                 const arrival = arrivalTime || workOrderDetail?.arrivalTime;
                 if (!arrival) {
@@ -448,7 +449,12 @@ const workOrderDetailService = {
             } else if (arrivalTime && workOrderDetail.leavingTime) {
                 throw new BadReq(errorCode.CANT_UPDATE_TIME);
             } else if (arrivalTime) {
+                //KTV CHECK-IN
                 timeUpdatePayload = { arrivalTime };
+
+                await WorkOrderModel.findByIdAndUpdate(workOrderId, {
+                    status: constant.WORK_REQUEST_STATUS.IN_PROGRESS.value || 'inProgress'
+                });
             }
 
             // 5. PAYLOAD CẬP NHẬT THEO TỪNG LOẠI PHIẾU
@@ -644,6 +650,20 @@ const workOrderDetailService = {
                 { new: true }
             );
 
+            // // Trigger filter change warning checks for machine Model A (starts with "A")
+            // if (workOrderType === "A" || (workOrder.type && workOrder.type[0] === "A")) {
+            //     const replacement = reqData.replacement !== undefined ? reqData.replacement : updatedDetail.replacement;
+            //     const inkjetTime = reqData.inkjetTime !== undefined ? reqData.inkjetTime : updatedDetail.inkjetTime;
+            //     const dateOfChange = reqData.repairDate || reqData.maintainDate || updatedDetail.repairDate || updatedDetail.maintainDate;
+
+            //     await contactPersonCustomerService.updateFilterChangeStatus(
+            //         workOrder.customerId,
+            //         reqData.serialNumber || workOrder.serialNumber,
+            //         workOrderType,
+            //         { replacement, inkjetTime, dateOfChange }
+            //     );
+            // }
+
             // 6. XỬ LÝ KHI HOÀN THÀNH PHIẾU (isCompleted === true)
             if (isComp) {
                 // UPDATE WORKORDER thành completed
@@ -660,7 +680,8 @@ const workOrderDetailService = {
                     customerId: workOrder?.customerId,
                     serialNumber: reqData?.serialNumber,
                     productCode: reqData?.type,
-                    oldSerialNumber: workOrder?.serialNumber
+                    oldSerialNumber: workOrder?.serialNumber,
+                    installDate: reqData?.installationDate || updatedDetail?.installationDate || reqData?.installDate || updatedDetail?.installDate
                 };
 
                 await contactPersonCustomerService.create(dataUpdate, 'update');

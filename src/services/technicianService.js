@@ -151,14 +151,13 @@ const technicianService = {
             throw error
         }
     },
-
     update: async (technicianId, reqData) => {
         try {
             const technician = await TechnicianModel.findById(technicianId)
             if (!technician) {
                 throw new BadReq(errorCode.TECHNICIAN_NOT_FOUND)
             }
-            const { username, fullname, email, phoneNumber, area } = reqData
+            const { username, fullname, email, phoneNumber, area, isSupervisor } = reqData
 
             const checkUsername = await TechnicianModel.findOne({
                 username,
@@ -173,6 +172,7 @@ const technicianService = {
                 email,
                 phoneNumber,
                 area,
+                isSupervisor
             })
             return null
         } catch (error) {
@@ -281,6 +281,26 @@ const technicianService = {
             await TechnicianModel.findByIdAndUpdate(technicianId, {
                 password: hashPass,
             })
+            return null
+        } catch (error) {
+            throw error
+        }
+    },
+    resetPassword: async (technicianId, data) => {
+        try {
+            const { newPassword } = data
+            const user = await TechnicianModel.findById(technicianId)
+
+            if (!user) {
+                throw new BadReq(errorCode.USER_NOT_FOUND)
+            }
+
+            const hashPass = await bcrypt.hash(newPassword, 10)
+
+            await TechnicianModel.findByIdAndUpdate(technicianId, {
+                password: hashPass
+            })
+
             return null
         } catch (error) {
             throw error

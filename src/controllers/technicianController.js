@@ -84,6 +84,18 @@ const technicianController = {
             next(error)
         }
     },
+    resetPassword: async (req, res, next) => {
+        try {
+            const { technicianId } = req.params
+            const result = await technicianService.resetPassword(
+                technicianId,
+                req.body,
+            )
+            return res.status(200).json(response.success(result))
+        } catch (error) {
+            next(error)
+        }
+    },
     getTechnicianLoginDetail: async (req, res, next) => {
         try {
             const result = await technicianService.getTechnicianLoginDetail(

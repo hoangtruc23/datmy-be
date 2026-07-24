@@ -49,6 +49,7 @@ const contactPersonCustomerService = {
                     recordData.devices.push({
                         productCode: productCode.trim(),
                         serialNumber: (serialNumber || "").trim(),
+                        installDate: reqData.installDate ? new Date(reqData.installDate) : null,
                         isActive: true
                     })
                 }
@@ -608,6 +609,7 @@ const contactPersonCustomerService = {
                     productCode: item.productCode.trim(),
                     serialNumber: (item.serialNumber || "").trim(),
                     contractType: item.contractType ? item.contractType.trim().toLowerCase() : "",
+                    installDate: item.installDate ? new Date(item.installDate) : null,
                     isActive: true
                 }))
 
@@ -632,12 +634,16 @@ const contactPersonCustomerService = {
 
                     if (exactMatch) {
                         exactMatch.contractType = normContractType
+                        if (item.installDate) {
+                            exactMatch.installDate = new Date(item.installDate)
+                        }
                         exactMatch.isActive = true
                     } else {
                         record.devices.push({
                             productCode: normProductCode,
                             serialNumber: normSerialNumber,
                             contractType: normContractType,
+                            installDate: item.installDate ? new Date(item.installDate) : null,
                             isActive: true
                         })
                     }
@@ -649,6 +655,68 @@ const contactPersonCustomerService = {
         } catch (error) {
             throw error
         }
-    }
+    },
+    // updateFilterChangeStatus: async (customerId, serialNumber, productCode, reqData) => {
+    //     try {
+    //         const { replacement, inkjetTime, dateOfChange } = reqData
+
+    //         // Normalize productCode & serialNumber
+    //         const normProductCode = productCode ? productCode.trim() : ""
+    //         const normSerialNumber = serialNumber ? serialNumber.trim() : ""
+
+    //         // Only run if productCode starts with "A" (machine modelA)
+    //         if (!normProductCode.startsWith("A")) return;
+
+    //         const record = await ContactPersonCustomerModel.findOne({ customerId })
+    //         if (!record) return;
+
+    //         // Find matching device
+    //         const device = record.devices.find(
+    //             (d) =>
+    //                 d.productCode === normProductCode &&
+    //                 (d.serialNumber || "").trim() === normSerialNumber
+    //         )
+
+    //         if (!device) return;
+
+    //         let updatedFields = {}
+
+    //         // Check if replacement contains "đầu lọc"
+    //         let hasFilterChange = false
+    //         if (replacement && Array.isArray(replacement)) {
+    //             hasFilterChange = replacement.some(item => /đầu lọc|dau loc/i.test(item))
+    //         }
+
+    //         const inkTime = Number(inkjetTime)
+    //         if (!isNaN(inkTime) && inkTime > 0) {
+    //             updatedFields["devices.$[elem].currentInkjetTime"] = inkTime
+
+    //             if (hasFilterChange) {
+    //                 updatedFields["devices.$[elem].lastFilterChangeDate"] = dateOfChange || new Date()
+    //                 updatedFields["devices.$[elem].lastFilterChangeInkjetTime"] = inkTime
+    //                 updatedFields["devices.$[elem].warningReplaceFilter"] = false
+    //             } else {
+    //                 // Calculate warning based on current inkjetTime and existing lastFilterChangeInkjetTime
+    //                 const lastInkTime = device.lastFilterChangeInkjetTime || 0
+    //                 if (inkTime - lastInkTime >= 2000) {
+    //                     updatedFields["devices.$[elem].warningReplaceFilter"] = true
+    //                 } else {
+    //                     updatedFields["devices.$[elem].warningReplaceFilter"] = false
+    //                 }
+    //             }
+
+    //             await ContactPersonCustomerModel.findOneAndUpdate(
+    //                 { customerId },
+    //                 { $set: updatedFields },
+    //                 {
+    //                     arrayFilters: [{ "elem._id": device._id }],
+    //                     new: true
+    //                 }
+    //             )
+    //         }
+    //     } catch (error) {
+    //         console.error("Error in updateFilterChangeStatus:", error)
+    //     }
+    // }
 }
 module.exports = contactPersonCustomerService
