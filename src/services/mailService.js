@@ -8,26 +8,26 @@ const { logger } = require('../config/loggerConfig')
 const mailService = {
     configMailServer: async (reqData) => {
         try {
-            const { host, port, secure, username, password } = reqData
-            const transporter = nodemailer.createTransport({
-                host: host,
-                port: port,
-                secure: secure,
-                auth: {
-                    user: username,
-                    pass: password,
-                },
-            })
+            const { host, port, secure, user, pass } = reqData
+            // const transporter = nodemailer.createTransport({
+            //     host: host,
+            //     port: port,
+            //     secure: secure, //Phương thức mã hóa
+            //     auth: {
+            //         user,
+            //         pass: password,
+            //     },
+            // })
 
-            try {
-                await transporter.verify()
-            } catch (error) {
-                throw new BadReq(errorCode.MAIL_SERVER_INVALID)
-            }
+            // try {
+            //     await transporter.verify()
+            // } catch (error) {
+            //     throw new BadReq(errorCode.MAIL_SERVER_INVALID)
+            // }
 
             await MailServerModel.findOneAndUpdate(
                 {},
-                { host, port, secure, user: username, pass: password },
+                { host, port, secure, user, pass },
                 { upsert: true },
             )
             return null
@@ -113,8 +113,6 @@ const mailService = {
 
             const mailServer = await MailServerModel.findOne({})
 
-            console.log(mailServer)
-
             if (!mailServer) {
                 logger.warn("Mail server is not configured. Cannot send email to technician.")
                 return null
@@ -130,8 +128,6 @@ const mailService = {
                 },
             })
 
-            console.log(transporter)
-
             const email = {
                 from: mailServer.user,
                 to: technicianEmail,
@@ -141,7 +137,6 @@ const mailService = {
 
             try {
                 const res = await transporter.sendMail(email)
-                console.log(res)
             } catch (error) {
                 logger.error("Error sending email to technician:", error)
             }

@@ -10,8 +10,10 @@ const ContactPersonCustomerModel = require('../models/contactPersonCustomer')
 const MachineSettingModel = require('../models/machineSetting')
 const ProductModel = require('../models/product')
 const { getWorkOrderModel } = require('../utils/helper/workOrderDetailHelper')
+const mongoose = require('mongoose')
 const technicianService = require('./technicianService')
 const mailService = require('./mailService')
+const { logger } = require('../config/loggerConfig')
 
 const sendAssignmentEmail = async (technicianId, workOrderData) => {
     try {
@@ -19,7 +21,7 @@ const sendAssignmentEmail = async (technicianId, workOrderData) => {
         if (!technicianId) return;
         const technician = await TechnicianModel.findById(technicianId);
         if (!technician || !technician.email) {
-            console.log(`No email found for technician ${technicianId}. Skipping assignment email.`);
+            logger.error(`No email found for technician ${technicianId}. Skipping assignment email.`);
             return;
         }
 
@@ -323,7 +325,7 @@ const workOrderService = {
     getAll: async (reqUserId, query) => {
         try {
             // 1. ĐỔI TÊN BIẾN CHO KHỚP API: startDate, endDate thay vì startTime, endTime
-            let { limit = 10, page = 1, search = '', status, typeWork, startDate, endDate, history, address, typeHistory } = query
+            let { limit = 10, page = 1, search = '', status, typeWork, technician: technicianFilter, startDate, endDate, history, address, typeHistory } = query
             limit = Number(limit)
             page = Number(page)
             search = new RegExp(search, 'i')
@@ -358,10 +360,12 @@ const workOrderService = {
                     $or: [
                         { code: search },
                         { header: search },
+                        { serialNumber: search },
                         { customerId: { $in: customerIds } },
                     ],
                     ...(status ? { status } : {}),
                     ...(typeWork ? { typeWork } : {}),
+                    ...(technicianFilter && mongoose.Types.ObjectId.isValid(technicianFilter) ? { technicianId: technicianFilter } : {}),
                     ...(technician && !technician.isSupervisor ? { technicianId: reqUserId } : {}),
                     // Áp dụng bộ lọc ngày tháng đã chuẩn hóa vào đây
                     ...(dateFilter ? { createdAt: dateFilter } : {}),
@@ -664,7 +668,7 @@ const workOrderService = {
             // }
 
             await workOrderDetailService.create(workOrder)
-            console.log("============", workOrder)
+
             if (technicianId) {
                 //ktv có việc => status = working
                 await TechnicianModel.findByIdAndUpdate(technicianId, {
