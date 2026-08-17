@@ -787,6 +787,20 @@ const workOrderService = {
                 oldSerialNumber: checkWorkOrder.serialNumber,
             }, "update")
 
+            //Migrate phiếu chi tiết khi đổi typeWork/type (sang collection khác)
+            const oldTypeWork = checkWorkOrder.typeWork
+            const oldType = checkWorkOrder.type?.[0]
+            const newType = type?.[0]
+            if (oldTypeWork !== typeWork || oldType !== newType) {
+                await workOrderDetailService.migrateDetail(
+                    workOrderId,
+                    oldTypeWork,
+                    oldType,
+                    typeWork,
+                    newType,
+                )
+            }
+
             await WorkOrderModel.findByIdAndUpdate(workOrderId, {
                 technicianId,
                 typeWork,

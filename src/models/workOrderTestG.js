@@ -66,6 +66,11 @@ const workOrderTestGSchema = new Schema(
             type: [String],
             default: [],
         },
+        status: {
+            type: String,
+            enum: ['active', 'cancelled'],
+            default: 'active',
+        },
     },
     { timestamps: true },
 )

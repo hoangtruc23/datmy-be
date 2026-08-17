@@ -16,6 +16,11 @@ const workOrderDemoSchema = new Schema(
         props: [propSchema],
         technicalFeedback: [String],
         customerFeedback: [String],
+        status: {
+            type: String,
+            enum: ['active', 'cancelled'],
+            default: 'active',
+        },
     },
     { timestamps: true },
 )

@@ -98,7 +98,12 @@ const workOrderMaintainDSchema = new Schema(
         signature: {
             type: String,
             default: null
-        }
+        },
+        status: {
+            type: String,
+            enum: ['active', 'cancelled'],
+            default: 'active',
+        },
     },
     { timestamps: true },
 )

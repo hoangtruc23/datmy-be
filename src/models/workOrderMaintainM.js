@@ -32,6 +32,11 @@ const workOrderMaintainMSchema = new Schema(
         ],
         technicalFeedback: [String],
         customerFeedback: [String],
+        status: {
+            type: String,
+            enum: ['active', 'cancelled'],
+            default: 'active',
+        },
     },
     { timestamps: true },
 )

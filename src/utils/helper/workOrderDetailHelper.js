@@ -86,7 +86,9 @@ async function checkExist(workOrderId) {
             typeof i === 'object' ? Object.values(i) : [i],
         )
         const results = await Promise.all(
-            allModel.map((m) => m.findOne({ workOrderId })),
+            allModel.map((m) =>
+                m.findOne({ workOrderId, status: { $in: [null, 'active'] } }),
+            ),
         )
         return results.some(Boolean)
     } catch (error) {

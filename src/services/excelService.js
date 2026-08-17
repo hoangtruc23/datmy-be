@@ -706,6 +706,7 @@ const excelService = {
                         if (WorkOrderDetailModel) {
                             workOrderDetail = await WorkOrderDetailModel.findOne({
                                 workOrderId: order._id,
+                                status: { $in: [null, 'active'] },
                             }).populate('machineSpecs.propId', 'name').lean();
                         }
 

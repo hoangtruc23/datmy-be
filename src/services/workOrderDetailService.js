@@ -18,6 +18,27 @@ const technicianService = require('./technicianService')
 const contactPersonCustomerService = require('./contactPersonCustomerService')
 const pdfService = require('./pdfService')
 
+const SHARED_FIELDS = [
+    'machineTypeId',
+    'machineSpecs',
+    'arrivalTime',
+    'leavingTime',
+    'workingTime',
+    'ambientTemperature',
+    'environmentHumidity',
+    'dustLevel',
+    'inkCode',
+    'machineStartup',
+    'inkjetTime',
+    'technicalFeedback',
+    'customerFeedback',
+    'differentApproach',
+    'replacement',
+    'evaluate',
+    'note',
+    'machineCode',
+]
+
 const workOrderDetailService = {
     create: async (workOrderId) => {
         try {
@@ -71,6 +92,73 @@ const workOrderDetailService = {
             throw error
         }
     },
+    migrateDetail: async (workOrderId, oldTypeWork, oldType, newTypeWork, newType) => {
+        try {
+            const OldDetailModel = getWorkOrderModel(oldTypeWork, oldType)
+            const NewDetailModel = getWorkOrderModel(newTypeWork, newType)
+
+            //Cùng collection: không cần migrate
+            if (OldDetailModel === NewDetailModel) {
+                return null
+            }
+
+            const ACTIVE_FILTER = { workOrderId, status: { $in: [null, 'active'] } }
+
+            const oldDetail = await OldDetailModel.findOne(ACTIVE_FILTER)
+            //Không có phiếu active ở collection cũ: không migrate
+            if (!oldDetail) {
+                return null
+            }
+
+            //Collection đích đã có phiếu active: giữ nguyên
+            const destActive = await NewDetailModel.findOne(ACTIVE_FILTER)
+            if (destActive) {
+                return null
+            }
+
+            //Collection đích đã có phiếu cancelled (phiếu gốc): phục hồi và cập nhật
+            const destCancelled = await NewDetailModel.findOne({
+                workOrderId,
+                status: 'cancelled',
+            })
+
+            const oldLean = oldDetail.toObject()
+
+            if (destCancelled) {
+                // Phục hồi phiếu cũ đã huỷ và cập nhật các trường chung mới nhất
+                destCancelled.status = 'active'
+                for (const field of SHARED_FIELDS) {
+                    if (
+                        oldLean[field] !== undefined &&
+                        oldLean[field] !== null
+                    ) {
+                        destCancelled[field] = oldLean[field]
+                    }
+                }
+                await destCancelled.save()
+            } else {
+                // Tạo mới phiếu
+                const data = { workOrderId, status: 'active' }
+                for (const field of SHARED_FIELDS) {
+                    if (
+                        oldLean[field] !== undefined &&
+                        oldLean[field] !== null
+                    ) {
+                        data[field] = oldLean[field]
+                    }
+                }
+                await NewDetailModel.create(data)
+            }
+
+            // Ẩn phiếu cũ đi
+            oldDetail.status = 'cancelled'
+            await oldDetail.save()
+
+            return null
+        } catch (error) {
+            throw error
+        }
+    },
     delete: async (workOrderId) => {
         try {
             //check WorkOrder
@@ -86,12 +174,16 @@ const workOrderDetailService = {
 
             const workOrderDetail = await WorkOrderDetailModel.findOne({
                 workOrderId,
+                status: { $in: [null, 'active'] },
             })
             //check workOrderDetail có tồn tại hay không
             if (!workOrderDetail) {
                 throw new BadReq(errorCode.WORK_ORDER_DETAIL_NOT_FOUND)
             }
-            await WorkOrderDetailModel.findOneAndDelete({ workOrderId })
+            await WorkOrderDetailModel.findOneAndDelete({
+                workOrderId,
+                status: { $in: [null, 'active'] },
+            })
             return null
         } catch (error) {
             throw error
@@ -129,6 +221,7 @@ const workOrderDetailService = {
 
             const workOrderDetail = await WorkOrderDetailModel.findOne({
                 workOrderId,
+                status: { $in: [null, 'active'] },
             }, { _id: 0 }).lean()
 
             const isTestDetail =
@@ -198,6 +291,7 @@ const workOrderDetailService = {
 
             const workOrderDetail = await WorkOrderDetailModel.findOne({
                 workOrderId,
+                status: { $in: [null, 'active'] },
             })
             //check workOrderDetail có tồn tại hay không
             if (!workOrderDetail) {
@@ -406,7 +500,7 @@ const workOrderDetailService = {
 
             // 2. Lấy chi tiết WorkOrderDetail
             const WorkOrderDetailModel = getWorkOrderModel(typeWork, workOrderType);
-            const workOrderDetail = await WorkOrderDetailModel.findOne({ workOrderId });
+            const workOrderDetail = await WorkOrderDetailModel.findOne({ workOrderId, status: { $in: [null, 'active'] } });
             if (!workOrderDetail) {
                 throw new BadReq(errorCode.WORK_ORDER_DETAIL_NOT_FOUND);
             }
@@ -948,6 +1042,7 @@ const workOrderDetailService = {
 
         const workOrderDetail = await WorkOrderDetailModel.findOne({
             workOrderId,
+            status: { $in: [null, 'active'] },
         }).populate('machineSpecs.propId');
 
         if (!workOrderDetail) {
@@ -977,7 +1072,7 @@ const workOrderDetailService = {
             if (!workOrder) throw new BadReq(errorCode.WORK_ORDER_NOT_FOUND);
 
             const WorkOrderDetailModel = getWorkOrderModel(workOrder.typeWork, workOrder.type[0]);
-            const detail = await WorkOrderDetailModel.findOne({ workOrderId }).populate('machineSpecs.propId').lean();
+            const detail = await WorkOrderDetailModel.findOne({ workOrderId, status: { $in: [null, 'active'] } }).populate('machineSpecs.propId').lean();
             if (!detail) throw new BadReq(errorCode.WORK_ORDER_DETAIL_NOT_FOUND);
 
             // 2. Đọc file Template Excel chứa các token {{biến}} của bạn

@@ -88,6 +88,11 @@ const workOrderSamplePrintingSchema = new Schema(
             type: String,
             default: null,
         },
+        status: {
+            type: String,
+            enum: ['active', 'cancelled'],
+            default: 'active',
+        },
     },
     { timestamps: true },
 )
